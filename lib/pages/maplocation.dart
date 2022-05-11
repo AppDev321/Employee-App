@@ -6,18 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hnh_flutter/pages/location/location_background_service_class.dart';
-import 'package:hnh_flutter/pages/location/location_callback_handler.dart';
 import 'package:location/location.dart';
 
-import '../custom_style/applog.dart';
-
 class MapLocation extends StatefulWidget {
+  final MapLocationStateful myAppState = new MapLocationStateful();
+
   @override
   State<MapLocation> createState() => MapLocationStateful();
+
+  void setUpdateLocation(LocationDto data) {
+    myAppState.updateLocationData(data);
+  }
 }
 
-class MapLocationStateful extends State<MapLocation>
-    {
+class MapLocationStateful extends State<MapLocation> {
   Completer _controller = Completer();
 
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -38,12 +40,18 @@ class MapLocationStateful extends State<MapLocation>
   PermissionStatus? _permissionGranted;
 
   String error = "";
+  LocationServiceClass locationServiceClass = new LocationServiceClass();
+  late LocationDto _updatedLocationDTO;
 
   @override
   void initState() {
     super.initState();
-     _locationService.requestPermission();
+    _locationService.requestPermission();
+    locationServiceClass.initState(this);
 
+    locationServiceClass
+        .checkCheckService()
+        .then((value) => {updateStarted = value});
 
     maptype = MapType.normal;
     markerId1 = MarkerId("Current");
@@ -142,6 +150,18 @@ class MapLocationStateful extends State<MapLocation>
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.pink, fontSize: 20),
                   ),
+                )),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  color: Colors.white60,
+                  child: new Text(
+                    _updatedLocationDTO != null
+                        ? 'Current location: \nlat: ${_updatedLocationDTO.latitude}\n  long: ${_updatedLocationDTO.longitude} '
+                        : 'Error: $error\n',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.pink, fontSize: 20),
+                  ),
                 ))
           ],
         ),
@@ -195,7 +215,6 @@ class MapLocationStateful extends State<MapLocation>
   }
 
   enableLocationSubscription() async {
-
     _locationSubscription =
         _locationService.onLocationChanged.listen((LocationData result) async {
       if (mounted) {
@@ -236,7 +255,8 @@ class MapLocationStateful extends State<MapLocation>
     setState(() {
       updateStarted = true;
     });
-   // locationServiceClass.onStartService();
+    //Enable location Service foreground
+    locationServiceClass.onStartService();
   }
 
   Future<void> _stopTrack() async {
@@ -246,7 +266,7 @@ class MapLocationStateful extends State<MapLocation>
       updateStarted = false;
     });
 
-//    locationServiceClass.onStopService();
+    locationServiceClass.onStopService();
   }
 
   animateCamera(marker1) async {
@@ -264,7 +284,14 @@ class MapLocationStateful extends State<MapLocation>
     //  AppLog.e('Current location: \nlat: ${loc.latitude}\n  long: ${loc.longitude} ');
   }
 
+  void updateLocationData(LocationDto data) {
+    print('location data gettting....');
+    _updatedLocationDTO = data;
+    var lat = _updatedLocationDTO.latitude;
+    print("user update:$lat");
+    /* setState(() {
 
-
-
+      print('data saving....');
+    });*/
+  }
 }

@@ -20,7 +20,7 @@ dependencies:
   location: any
   background_locator: any
   permission_handler: ^8.1.4+2
-  location_permissions: any
+  location_permissions: ^3.0.0+1
   path_provider: ^2.0.8
 
 

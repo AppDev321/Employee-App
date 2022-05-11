@@ -11,16 +11,22 @@ import 'package:flutter/material.dart';
 import 'package:location_permissions/location_permissions.dart';
 
 import 'file_manager.dart';
-import 'listners.dart';
+
 import 'location_callback_handler.dart';
 import 'location_service_repository.dart';
 
 class LocationService extends StatefulWidget {
+
+  final _LocationServiceState myAppState = new _LocationServiceState();
+
   @override
   _LocationServiceState createState() => _LocationServiceState();
+
+
+
 }
 
-class _LocationServiceState extends State<LocationService> implements Listners{
+class _LocationServiceState extends State<LocationService> {
   ReceivePort port = ReceivePort();
 
   String logStr = '';
@@ -31,7 +37,6 @@ class _LocationServiceState extends State<LocationService> implements Listners{
   @override
   void initState() {
     super.initState();
-// Platform messages are asynchronous, so we initialize in an async method.
 
     if (IsolateNameServer.lookupPortByName(
             LocationServiceRepository.isolateName) !=
@@ -180,8 +185,9 @@ class _LocationServiceState extends State<LocationService> implements Listners{
       });
     } else {
       // show error
-
+      await _checkLocationPermission();
     }
+
   }
 
   Future<bool> _checkLocationPermission() async {
@@ -234,15 +240,8 @@ class _LocationServiceState extends State<LocationService> implements Listners{
                     LocationCallbackHandler.notificationCallback)));
   }
 
-  Future<void> updateNewLocation(LocationDto data) async {
-    setState(() {
-      if (data != null) newLocData = "New Data is comming";
-      print(newLocData);
-    });
-  }
 
-  @override
-  void shareUpdatedLocation(LocationDto data) {
-print('check its update');
-  }
+
+
+
 }

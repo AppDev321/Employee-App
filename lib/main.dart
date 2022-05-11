@@ -12,7 +12,7 @@ void main() {
   runApp(
       MaterialApp(
         title: "Pick Image Camera",
-        home: LocationService() ,
+        home: MapLocation() ,
       )
   );
 }

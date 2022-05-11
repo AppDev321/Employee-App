@@ -27,8 +27,7 @@ class LocationServiceClass {
   late State<MapLocation> statefulWidgetClass;
 
 
-  void initState(State<MapLocation> statefulWidgetClass
-) {
+  void initState(State<MapLocation> statefulWidgetClass) {
 
     this.statefulWidgetClass = statefulWidgetClass;
     if (IsolateNameServer.lookupPortByName(
@@ -44,33 +43,32 @@ class LocationServiceClass {
     port.listen(
       //Update any line of data
       (dynamic data) async {
-        await updateUI(data);
+     //   await updateUI(data);
+        await _updateNotificationText(data);
 
-
-
-        print("DATA Recieved--->:${data.latitude}, ${data.longitude}");
       },
     );
     initPlatformState();
   }
 
   Future<void> updateUI(LocationDto data) async {
-    final log = await FileManager.readLogFile();
-
-    await _updateNotificationText(data);
-
-    statefulWidgetClass.setState(() {
+   // final log = await FileManager.readLogFile();
+    print('update Ui');
+/*    statefulWidgetClass.setState(() {
       if (data != null) {
         lastLocation = data;
       }
-      logStr = log;
-    });
+      logStr = "Start Data updating";
+    });*/
+    await _updateNotificationText(data);
+
   }
 
   Future<void> _updateNotificationText(LocationDto data) async {
     if (data == null) {
       return;
     }
+    print('update notification Ui');
 
     await BackgroundLocator.updateNotificationText(
         title: "new location received",
@@ -81,7 +79,7 @@ class LocationServiceClass {
   Future<void> initPlatformState() async {
     print('Initializing...');
     await BackgroundLocator.initialize();
-    logStr = await FileManager.readLogFile();
+   // logStr = await FileManager.readLogFile();
     print('Initialization done');
     final _isRunning = await BackgroundLocator.isServiceRunning();
     statefulWidgetClass.setState(() {
@@ -89,68 +87,6 @@ class LocationServiceClass {
     });
     print('Running ${isRunning.toString()}');
   }
-
-  /*
-
-  @override
-  Widget build(BuildContext context) {
-    final start = SizedBox(
-      width: double.maxFinite,
-      child: ElevatedButton(
-        child: Text('Start'),
-        onPressed: () {
-          _onStart();
-        },
-      ),
-    );
-    final stop = SizedBox(
-      width: double.maxFinite,
-      child: ElevatedButton(
-        child: Text('Stop'),
-        onPressed: () {
-          onStop();
-        },
-      ),
-    );
-    final clear = SizedBox(
-      width: double.maxFinite,
-      child: ElevatedButton(
-        child: Text('Clear Log'),
-        onPressed: () {
-          FileManager.clearLogFile();
-          statefulWidgetClass.setState(() {
-            logStr = '';
-          });
-        },
-      ),
-    );
-    String msgStatus = "-";
-
-    }
-    final status = Text("Status: $msgStatus");
-
-    final log = Text(
-      logStr,
-    );
-
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter background Locator'),
-        ),
-        body: Container(
-          width: double.maxFinite,
-          padding: const EdgeInsets.all(22),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[start, stop, clear, status, log],
-            ),
-          ),
-        ),
-      ),
-    );
-  }*/
 
   Future<void> onStopService() async {
     await BackgroundLocator.unRegisterLocationUpdate();
@@ -174,29 +110,6 @@ class LocationServiceClass {
     return isRunning;
   }
 
-  Future<bool> _checkLocationPermission() async {
-    final access = await LocationPermissions().checkPermissionStatus();
-    switch (access) {
-      case PermissionStatus.unknown:
-      case PermissionStatus.denied:
-      case PermissionStatus.restricted:
-        final permission = await LocationPermissions().requestPermissions(
-          permissionLevel: LocationPermissionLevel.locationAlways,
-        );
-        if (permission == PermissionStatus.granted) {
-          return true;
-        } else {
-          return false;
-        }
-        break;
-      case PermissionStatus.granted:
-        return true;
-        break;
-      default:
-        return false;
-        break;
-    }
-  }
 
   Future<void> _startLocator() async {
     Map<String, dynamic> data = {'countInit': 1};
@@ -224,10 +137,5 @@ class LocationServiceClass {
                     LocationCallbackHandler.notificationCallback)));
   }
 
-  static Future<void> updateLocationData(LocationDto locationDto) async {
-    print('comes in class');
 
-
-
-  }
 }
