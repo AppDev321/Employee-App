@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -9,10 +8,10 @@ import 'package:background_locator/settings/android_settings.dart';
 import 'package:background_locator/settings/ios_settings.dart';
 import 'package:background_locator/settings/locator_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:hnh_flutter/custom_style/applog.dart';
 import 'package:location_permissions/location_permissions.dart';
 
 import 'file_manager.dart';
+import 'listners.dart';
 import 'location_callback_handler.dart';
 import 'location_service_repository.dart';
 
@@ -21,14 +20,13 @@ class LocationService extends StatefulWidget {
   _LocationServiceState createState() => _LocationServiceState();
 }
 
-class _LocationServiceState extends State<LocationService> {
+class _LocationServiceState extends State<LocationService> implements Listners{
   ReceivePort port = ReceivePort();
 
   String logStr = '';
+  String newLocData = '';
   late bool isRunning;
   late LocationDto? lastLocation;
-
-
 
   @override
   void initState() {
@@ -234,5 +232,17 @@ class _LocationServiceState extends State<LocationService> {
                 notificationIconColor: Colors.grey,
                 notificationTapCallback:
                     LocationCallbackHandler.notificationCallback)));
+  }
+
+  Future<void> updateNewLocation(LocationDto data) async {
+    setState(() {
+      if (data != null) newLocData = "New Data is comming";
+      print(newLocData);
+    });
+  }
+
+  @override
+  void shareUpdatedLocation(LocationDto data) {
+print('check its update');
   }
 }

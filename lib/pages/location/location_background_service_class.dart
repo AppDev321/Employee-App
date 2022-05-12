@@ -8,6 +8,8 @@ import 'package:background_locator/settings/android_settings.dart';
 import 'package:background_locator/settings/ios_settings.dart';
 import 'package:background_locator/settings/locator_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:hnh_flutter/pages/location/listners.dart';
+import 'package:hnh_flutter/pages/location/location_background_service.dart';
 import 'package:hnh_flutter/pages/location/location_callback_handler.dart';
 import 'package:location_permissions/location_permissions.dart';
 
@@ -220,5 +222,12 @@ class LocationServiceClass {
                 notificationIconColor: Colors.grey,
                 notificationTapCallback:
                     LocationCallbackHandler.notificationCallback)));
+  }
+
+  static Future<void> updateLocationData(LocationDto locationDto) async {
+    print('comes in class');
+
+
+
   }
 }

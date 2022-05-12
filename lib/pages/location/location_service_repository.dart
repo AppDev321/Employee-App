@@ -4,8 +4,10 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:background_locator/location_dto.dart';
+import 'package:hnh_flutter/pages/location/location_background_service_class.dart';
 
 import 'file_manager.dart';
+import 'location_background_service.dart';
 
 class LocationServiceRepository {
   static LocationServiceRepository _instance = LocationServiceRepository._();
@@ -54,11 +56,13 @@ class LocationServiceRepository {
   Future<void> callback(LocationDto locationDto) async {
     print('$_count location in dart: ${locationDto.toString()}');
 
+    await LocationServiceClass.updateLocationData(locationDto);
 
     await setLogPosition(_count, locationDto);
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
     send?.send(locationDto);
     _count++;
+
 
   }
 

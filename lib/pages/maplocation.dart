@@ -264,4 +264,7 @@ class MapLocationStateful extends State<MapLocation>
     //  AppLog.e('Current location: \nlat: ${loc.latitude}\n  long: ${loc.longitude} ');
   }
 
+
+
+
 }
