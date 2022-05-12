@@ -16,6 +16,12 @@ dependencies:
  
   logger: any  #for logging purpose
   splash_screen_view: any
+  google_maps_flutter: ^2.0.6
+  location: any
+  background_locator: any
+  permission_handler: ^8.1.4+2
+  location_permissions: any
+  path_provider: ^2.0.8
 
 
 dev_dependencies:
@@ -26,6 +32,8 @@ dev_dependencies:
   build_runner: ^2.0.6
   retrofit_generator: ^2.0.0+3
   image_picker: ^0.8.3+3
+
+
 flutter:
   uses-material-design: true
 
