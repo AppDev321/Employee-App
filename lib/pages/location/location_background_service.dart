@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:location_permissions/location_permissions.dart';
 
 import 'file_manager.dart';
-
+import 'listners.dart';
 import 'location_callback_handler.dart';
 import 'location_service_repository.dart';
 
@@ -21,9 +21,6 @@ class LocationService extends StatefulWidget {
 
   @override
   _LocationServiceState createState() => _LocationServiceState();
-
-
-
 }
 
 class _LocationServiceState extends State<LocationService> {
@@ -92,7 +89,7 @@ class _LocationServiceState extends State<LocationService> {
   Future<void> initPlatformState() async {
     print('Initializing...');
     await BackgroundLocator.initialize();
-    logStr = await FileManager.readLogFile();
+   // logStr = await FileManager.readLogFile();
     print('Initialization done');
     final _isRunning = await BackgroundLocator.isServiceRunning();
     setState(() {
@@ -240,8 +237,15 @@ class _LocationServiceState extends State<LocationService> {
                     LocationCallbackHandler.notificationCallback)));
   }
 
+  Future<void> updateNewLocation(LocationDto data) async {
+    setState(() {
+      if (data != null) newLocData = "New Data is comming";
+      print(newLocData);
+    });
+  }
 
-
-
-
+  @override
+  void shareUpdatedLocation(LocationDto data) {
+print('check its update');
+  }
 }

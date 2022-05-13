@@ -9,17 +9,39 @@ import 'package:hnh_flutter/pages/location/location_background_service_class.dar
 import 'package:location/location.dart';
 
 class MapLocation extends StatefulWidget {
-  final MapLocationStateful myAppState = new MapLocationStateful();
+ // final MapLocationStateful myAppState = new MapLocationStateful();
 
-  @override
-  State<MapLocation> createState() => MapLocationStateful();
+ // @override
+ // State<MapLocation> createState() => MapLocationStateful();
 
   void setUpdateLocation(LocationDto data) {
-    myAppState.updateLocationData(data);
+   // myAppState.updateLocationData(data);
+
+    this.locationData =data;
   }
+
+  LocationDto? locationData;
+  MapLocation({ this.locationData});
+
+  @override
+  MapLocationStateful createState() => MapLocationStateful(locationData: locationData);  // <--- Constructor 1
+
+
 }
 
 class MapLocationStateful extends State<MapLocation> {
+
+  LocationDto? locationData;
+
+  MapLocationStateful({ this.locationData});  // <--- Constructor 2
+
+
+
+  StreamController<LocationDto> _updatedLocationStream =
+      StreamController<LocationDto>.broadcast();
+
+  Stream<LocationDto> get getUpdateLocationStream =>
+      _updatedLocationStream.stream;
   Completer _controller = Completer();
 
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -41,7 +63,7 @@ class MapLocationStateful extends State<MapLocation> {
 
   String error = "";
   LocationServiceClass locationServiceClass = new LocationServiceClass();
-  late LocationDto _updatedLocationDTO;
+  LocationDto? _updatedLocationDTO;
 
   @override
   void initState() {
@@ -154,14 +176,18 @@ class MapLocationStateful extends State<MapLocation> {
             Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
+
                   color: Colors.white60,
-                  child: new Text(
-                    _updatedLocationDTO != null
-                        ? 'Current location: \nlat: ${_updatedLocationDTO.latitude}\n  long: ${_updatedLocationDTO.longitude} '
+                   child: new Text(
+
+                     locationData != null
+                        ? 'Current location: \nlat: ${locationData!.latitude}\n  long: ${locationData!.longitude} '
                         : 'Error: $error\n',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.pink, fontSize: 20),
                   ),
+
+
                 ))
           ],
         ),
@@ -286,12 +312,13 @@ class MapLocationStateful extends State<MapLocation> {
 
   void updateLocationData(LocationDto data) {
     print('location data gettting....');
+    _updatedLocationStream.sink.add(data);
     _updatedLocationDTO = data;
-    var lat = _updatedLocationDTO.latitude;
+    var lat = _updatedLocationDTO?.latitude;
     print("user update:$lat");
-    /* setState(() {
 
-      print('data saving....');
-    });*/
+
   }
+
+
 }

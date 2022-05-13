@@ -137,5 +137,10 @@ class LocationServiceClass {
                     LocationCallbackHandler.notificationCallback)));
   }
 
+  static Future<void> updateLocationData(LocationDto locationDto) async {
+    print('comes in class');
 
+
+
+  }
 }

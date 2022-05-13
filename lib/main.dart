@@ -9,10 +9,17 @@ import 'package:splash_screen_view/SplashScreenView.dart';
 
 void main() {
   //runApp(CameraWidget());
+
   runApp(
       MaterialApp(
+       initialRoute: 'splash',
+        debugShowCheckedModeBanner: false,
         title: "Pick Image Camera",
-        home: MapLocation() ,
+
+       routes: {
+         'splash' : (context) => MyApp(),
+         'login' : (context) => LoginClass()
+       },
       )
   );
 }
