@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:hnh_flutter/custom_style/colors.dart';
-import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/repository/model/response/login_response.dart';
 import 'package:hnh_flutter/repository/retrofit/api_client.dart';
 
 import '../custom_style/progress_hud.dart';
+import '../repository/model/response/login_api_response.dart';
 
 class LoginClass extends StatefulWidget {
   const LoginClass({Key? key}) : super(key: key);
@@ -29,9 +28,9 @@ class LoginClassStateful extends State<LoginClass> {
   @override
   void initState() {
     super.initState();
-      setState(() {
+    /* setState(() {
         pressed = false;
-      });
+      });*/
   }
 
   @override
@@ -115,78 +114,83 @@ class LoginClassStateful extends State<LoginClass> {
                             padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                             child: ElevatedButton(
                               child: const Text(loginText),
-                              onPressed: () {
-                                print(nameController.text);
-                                print(passwordController.text);
-                                setState(() {
-                                //  isApiCallProcess = true;
-                                  pressed = true;
-                                });
+                            onPressed: () {
+                              print(nameController.text);
+                              print(passwordController.text);
+                              setValuesOnLoginPress(500);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                minimumSize: Size(300, 50),
+                                primary: Colors.black54,
+                                padding: EdgeInsets.all(10),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(32.0)),
+                                textStyle: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal)),
+                          )),
 
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(300, 50),
-                                  primary: Colors.black54,
-                                  padding: EdgeInsets.all(10),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          32.0)),
-                                  textStyle: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal)),
-                            )),
-                        pressed ? _buildBody(context): SizedBox(),
+
+                        pressed ? _buildBody(context) : SizedBox(),
+
                       ],
-                    )),
-              )
-            ],
-          ),
+                  )
+                )
+                ,
+            )
+          ],
         ),
-      );
-    }
+      ),
+    );
+  }
 
-  showLoaderDialog(BuildContext context){
-    AlertDialog alert=AlertDialog(
+  setValuesOnLoginPress(int mils) {
+      Future.delayed(
+        Duration(milliseconds: mils ),
+            () {
+              setState(() {
+                //  isApiCallProcess = true;
+                pressed = true;
+              });
+        },
+      );
+  }
+
+
+  showLoaderDialog(BuildContext context) {
+    AlertDialog alert = AlertDialog(
       content: new Row(
         children: [
           CircularProgressIndicator(),
-          Container(margin: EdgeInsets.only(left: 20),child:Text("Loading..." )),
-        ],),
+          Container(
+              margin: EdgeInsets.only(left: 20), child: Text("Loading...")),
+        ],
+      ),
     );
-    showDialog(barrierDismissible: false,
-      context:context,
-      builder:(BuildContext context){
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
         return alert;
       },
     );
   }
 
+  FutureBuilder<LoginApiResponse> _buildBody(BuildContext context) {
+    LoginRequestBody requestBody =
+        LoginRequestBody(email: "mohsin121@afj.com", password: "123456");
 
-  FutureBuilder<LoginResponse> _buildBody(BuildContext context) {
-    LoginRequestBody requestBody = LoginRequestBody(email: "testbody", password: "testbody");
-
-    final client = ApiClient(
-        Dio(
-            BaseOptions
-              (
-            contentType: "application/json",
-            headers: {
-            'Authorization': 'Basic ZGlzYXBpdXNlcjpkaXMjMTIz',
-            'X-ApiKey': 'ZGslzIzEyMw==',
-            'Content-Type': 'application/json'
-            }
-        )
-        )
-    );
-    return FutureBuilder<LoginResponse>(
+    final client = ApiClient(Dio(BaseOptions(
+        contentType: "application/json",
+        headers: {'Content-Type': 'application/json'})));
+    return FutureBuilder<LoginApiResponse>(
       future: client.login(requestBody),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-
-          final LoginResponse posts = snapshot.data!;
+          final LoginApiResponse posts = snapshot.data!;
           return Center(
             child: Text(
-              posts.message.toString(),
+              posts.token.toString(),
               textAlign: TextAlign.center,
               textScaleFactor: 1.3,
             ),
@@ -194,8 +198,15 @@ class LoginClassStateful extends State<LoginClass> {
         }
 
         else {
-          return Center(
+          /*return Center(
             child:showLoaderDialog(context),
+          );*/
+          return Center(
+            child: Text(
+              "Sending request to serverz",
+              textAlign: TextAlign.center,
+              textScaleFactor: 1.3,
+            ),
           );
         }
       },
@@ -203,12 +214,12 @@ class LoginClassStateful extends State<LoginClass> {
   }
 
 
-  FutureBuilder<LoginResponse> _loginRequest(BuildContext context) {
+  FutureBuilder<LoginApiResponse> _loginRequest(BuildContext context) {
     LoginRequestBody requestBody = LoginRequestBody(email: "testbody", password: "testbody");
     //  createUser(userInfo: requestBody);
 
     final client = ApiClient(Dio());
-    return FutureBuilder<LoginResponse>(
+    return FutureBuilder<LoginApiResponse>(
         future: client.login(requestBody),
         builder: (context, snapshot) {
        print("snapping data $snapshot");

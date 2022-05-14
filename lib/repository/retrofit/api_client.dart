@@ -4,9 +4,11 @@ import 'package:hnh_flutter/repository/model/response/login_response.dart';
 import 'package:hnh_flutter/repository/retrofit/logging.dart';
 
 import 'package:retrofit/http.dart';
+
+import '../model/response/login_api_response.dart';
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: 'http://124.130.54.88/api') // Enter you base URL
+@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api/') // Enter you base URL
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
@@ -30,8 +32,8 @@ dio.interceptors.add(Logging());
 
 
 // Login service
-  @POST('/ApiLogin') // enter your api method
-  Future<LoginResponse> login(@Body() LoginRequestBody body);
+  @POST('/login') // enter your api method
+  Future<LoginApiResponse> login(@Body() LoginRequestBody body);
 
 /*
   @GET(Api.users)

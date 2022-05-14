@@ -8,7 +8,7 @@ part of 'api_client.dart';
 
 class _ApiClient implements ApiClient {
   _ApiClient(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'http://124.130.54.88/api';
+    baseUrl ??= 'http://vmi808920.contaboserver.net/api/';
   }
 
   final Dio _dio;
@@ -16,18 +16,18 @@ class _ApiClient implements ApiClient {
   String? baseUrl;
 
   @override
-  Future<LoginResponse> login(body) async {
+  Future<LoginApiResponse> login(body) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<LoginResponse>(
+        _setStreamType<LoginApiResponse>(
             Options(method: 'POST', headers: <String, dynamic>{}, extra: _extra)
-                .compose(_dio.options, '/ApiLogin',
+                .compose(_dio.options, '/login',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = LoginResponse.fromJson(_result.data!);
+    final value = LoginApiResponse.fromJson(_result.data!);
     return value;
   }
 
