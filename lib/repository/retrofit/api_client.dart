@@ -12,17 +12,15 @@ part 'api_client.g.dart';
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
-    dio.options = BaseOptions(
+   /* dio.options = BaseOptions(
         receiveTimeout: 30000,
         connectTimeout: 30000,
         contentType: 'application/json',
-        /* If needed headers */
+        *//* If needed headers *//*
         headers: {
-          'Authorization': 'Basic ZGlzYXBpdXNlcjpkaXMjMTIz',
-          'X-ApiKey': 'ZGslzIzEyMw==',
           'Content-Type': 'application/json'
         });
- //   dio.interceptors.add(LogInterceptor()); //开启请求日志
+ //   dio.interceptors.add(LogInterceptor()); //开启请求日志*/
 dio.interceptors.add(Logging());
 
     return _ApiClient(dio, baseUrl: baseUrl);
@@ -34,6 +32,11 @@ dio.interceptors.add(Logging());
 // Login service
   @POST('/login') // enter your api method
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);
+
+  @POST('/logout') // enter your api method
+  Future<void> logout();
+
+
 
 /*
   @GET(Api.users)

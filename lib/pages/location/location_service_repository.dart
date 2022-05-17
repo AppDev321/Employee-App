@@ -57,7 +57,7 @@ class LocationServiceRepository {
   Future<void> callback(LocationDto locationDto) async {
     print('$_count location in dart: ${locationDto.toString()}');
 
-    MapLocation mapLocation = new MapLocation(locationData: locationDto);
+    MapLocation mapLocation = new MapLocation();
     mapLocation.setUpdateLocation(locationDto);
 
     LocationServiceClass locationServiceClass = new LocationServiceClass();
