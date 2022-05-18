@@ -32,12 +32,7 @@ class MapLocation extends StatefulWidget {
 
 class MapLocationStateful extends State<MapLocation> {
 
-    // <--- Constructor 2
-  StreamController<LocationDto> _updatedLocationStream =
-      StreamController<LocationDto>.broadcast();
 
-  Stream<LocationDto> get getUpdateLocationStream =>
-      _updatedLocationStream.stream;
   Completer _controller = Completer();
 
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -106,10 +101,12 @@ class MapLocationStateful extends State<MapLocation> {
 
     print('l....lat=${_updatedLocationDTO}');
 
-    latitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.latitude}' :'Failed';
+  /*  latitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.latitude}' :'Failed';
     longitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.longitude}' :'Failed';
     accuracyController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.accuracy}' :'Failed';
     speedController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.speed}' :'Failed';
+ */  // latitudeController.text=_currentLocation  != null ? '${_currentLocation!.latitude}' :'Failed';
+
 
 
     return new Scaffold(
@@ -508,12 +505,20 @@ class MapLocationStateful extends State<MapLocation> {
   void updateLocationData(LocationDto? data) {
 
     _updatedLocationDTO = data;
-    setState(() {
+   /* setState(() {
       _updatedLocationDTO = data; // Future is completed with a value.
-    });
+    });*/
      print('gettting....lat=${_updatedLocationDTO!.latitude}');
+    latitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.latitude}' :'Failed';
+    longitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.longitude}' :'Failed';
+    accuracyController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.accuracy}' :'Failed';
+    speedController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.speed}' :'Failed';
+    print('gettting....lng=${longitudeController.text}');
 
   }
+
+
+
   Future<String?> getUserToken() async {
     final pref = await SharedPreferences.getInstance() ;
     return pref.getString(ConstantData.pref_user_token);
