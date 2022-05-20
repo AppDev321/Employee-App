@@ -505,9 +505,6 @@ class MapLocationStateful extends State<MapLocation> {
   void updateLocationData(LocationDto? data) {
 
     _updatedLocationDTO = data;
-   /* setState(() {
-      _updatedLocationDTO = data; // Future is completed with a value.
-    });*/
      print('gettting....lat=${_updatedLocationDTO!.latitude}');
     latitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.latitude}' :'Failed';
     longitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.longitude}' :'Failed';

@@ -165,7 +165,8 @@ class LoginClassStateful extends State<LoginClass> {
 
     final client = ApiClient(Dio(BaseOptions(
         contentType: "application/json",
-        headers: {'Content-Type': 'application/json'})));
+        headers: {'Content-Type': 'application/json'
+        })));
     return FutureBuilder<LoginApiResponse>(
       future: client.login(requestBody),
       builder: (context, snapshot) {
