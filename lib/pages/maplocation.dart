@@ -14,21 +14,51 @@ import '../custom_style/colors.dart';
 import '../custom_style/strings.dart';
 
 class MapLocation extends StatefulWidget {
+   String userToken="";
+ // MapLocation({Key? key, required this.userToken}) : super(key: key);
+
+
   final MapLocationStateful myAppState = new MapLocationStateful();
 
   @override
- State<MapLocation> createState() => MapLocationStateful();
+  State<MapLocation> createState() => MapLocationStateful();
 
-  void setUpdateLocation(LocationDto data) {
-     myAppState.updateLocationData(data);
+  Future setUpdateLocation(LocationDto data) async{
 
+    updateLocationApi(data, userToken);
   }
 
 
 
-
-
+  FutureBuilder<void> updateLocationApi(LocationDto data, String? userToken) {
+    print('token=$userToken');
+    final client = ApiClient(Dio(BaseOptions(
+        contentType: "application/json",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userToken}',
+          'Accept': 'application/json'
+        }
+    )));
+    return FutureBuilder<void>(
+      future: client.updateLocation(data),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            return Center();
+          } else {
+            return Center(
+            );
+          }
+        } else {
+          return Center();
+        }
+      },
+    );
+  }
 }
+
+
 
 class MapLocationStateful extends State<MapLocation> {
 
@@ -54,13 +84,14 @@ class MapLocationStateful extends State<MapLocation> {
 
   String error = "";
   LocationServiceClass locationServiceClass = new LocationServiceClass();
-   LocationDto? _updatedLocationDTO;
+  LocationDto? _updatedLocationDTO;
 
   TextEditingController latitudeController = TextEditingController();
   TextEditingController longitudeController = TextEditingController();
   TextEditingController accuracyController = TextEditingController();
   TextEditingController speedController = TextEditingController();
-  String userToken='';
+  static String userToken = '';
+  late BuildContext context;
 
   @override
   void initState() {
@@ -70,7 +101,8 @@ class MapLocationStateful extends State<MapLocation> {
 
     locationServiceClass
         .checkCheckService()
-        .then((value) => {
+        .then((value) =>
+    {
           updateStarted = value
 
 
@@ -98,15 +130,15 @@ class MapLocationStateful extends State<MapLocation> {
 
   @override
   Widget build(BuildContext context) {
-
-    print('l....lat=${_updatedLocationDTO}');
-
-  /*  latitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.latitude}' :'Failed';
-    longitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.longitude}' :'Failed';
-    accuracyController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.accuracy}' :'Failed';
-    speedController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.speed}' :'Failed';
- */  // latitudeController.text=_currentLocation  != null ? '${_currentLocation!.latitude}' :'Failed';
-
+    this.context = context;
+    latitudeController.text =
+    _currentLocation != null ? '${_currentLocation!.latitude}' : 'Failed';
+    longitudeController.text =
+    _currentLocation != null ? '${_currentLocation!.longitude}' : 'Failed';
+    accuracyController.text =
+    _currentLocation != null ? '${_currentLocation!.accuracy}' : 'Failed';
+    speedController.text =
+    _currentLocation != null ? '${_currentLocation!.speed}' : 'Failed';
 
 
     return new Scaffold(
@@ -115,7 +147,7 @@ class MapLocationStateful extends State<MapLocation> {
         elevation: 0,
         backgroundColor: primaryColor,
         title: Text(
-          "Flutter Track Location",
+          "Track Location",
           style: TextStyle(color: Colors.white),
         ),
         /* actions: [
@@ -502,17 +534,6 @@ class MapLocationStateful extends State<MapLocation> {
     //  AppLog.e('Current location: \nlat: ${loc.latitude}\n  long: ${loc.longitude} ');
   }
 
-  void updateLocationData(LocationDto? data) {
-
-    _updatedLocationDTO = data;
-     print('gettting....lat=${_updatedLocationDTO!.latitude}');
-    latitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.latitude}' :'Failed';
-    longitudeController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.longitude}' :'Failed';
-    accuracyController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.accuracy}' :'Failed';
-    speedController.text= _updatedLocationDTO  != null ? '${_updatedLocationDTO!.speed}' :'Failed';
-    print('gettting....lng=${longitudeController.text}');
-
-  }
 
 
 
@@ -541,10 +562,9 @@ class MapLocationStateful extends State<MapLocation> {
         contentType: "application/json",
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':'bearer ${userToken}'
-
+          'Authorization': 'Bearer ${userToken}',
+          'Accept': 'application/json'
         }
-
     )));
     return FutureBuilder<void>(
       future: client.logout(),
@@ -562,5 +582,6 @@ class MapLocationStateful extends State<MapLocation> {
       },
     );
   }
+
 
 }

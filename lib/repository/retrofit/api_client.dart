@@ -1,3 +1,4 @@
+import 'package:background_locator/location_dto.dart';
 import 'package:dio/dio.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/repository/model/response/login_response.dart';
@@ -22,16 +23,16 @@ abstract class ApiClient {
         });
  //   dio.interceptors.add(LogInterceptor()); //开启请求日志*/
 dio.interceptors.add(Logging());
-
     return _ApiClient(dio, baseUrl: baseUrl);
   }
-
-
 
 
 // Login service
   @POST('/login') // enter your api method
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);
+
+  @POST('/update-location') // enter your api method
+  Future<void> updateLocation(@Body() LocationDto body);
 
   @POST('/logout') // enter your api method
   Future<void> logout();
