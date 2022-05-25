@@ -12,10 +12,9 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../custom_style/colors.dart';
 import '../custom_style/strings.dart';
+import '../utils/controller.dart';
 
 class MapLocation extends StatefulWidget {
-   String userToken="";
- // MapLocation({Key? key, required this.userToken}) : super(key: key);
 
 
   final MapLocationStateful myAppState = new MapLocationStateful();
@@ -23,39 +22,9 @@ class MapLocation extends StatefulWidget {
   @override
   State<MapLocation> createState() => MapLocationStateful();
 
-  Future setUpdateLocation(LocationDto data) async{
-
-    updateLocationApi(data, userToken);
-  }
 
 
 
-  FutureBuilder<void> updateLocationApi(LocationDto data, String? userToken) {
-    print('token=$userToken');
-    final client = ApiClient(Dio(BaseOptions(
-        contentType: "application/json",
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${userToken}',
-          'Accept': 'application/json'
-        }
-    )));
-    return FutureBuilder<void>(
-      future: client.updateLocation(data),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData) {
-            return Center();
-          } else {
-            return Center(
-            );
-          }
-        } else {
-          return Center();
-        }
-      },
-    );
-  }
 }
 
 

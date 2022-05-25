@@ -60,9 +60,9 @@ class LocationServiceRepository {
 
     print('$_count location in dart: ${locationDto.toString()}');
 
-    MapLocation mapLocation = new MapLocation();
+  /*  MapLocation mapLocation = new MapLocation();
     await mapLocation.setUpdateLocation(locationDto);
-
+*/
 
 
     LocationServiceClass locationServiceClass = new LocationServiceClass();

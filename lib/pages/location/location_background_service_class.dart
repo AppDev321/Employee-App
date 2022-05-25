@@ -11,8 +11,10 @@ import 'package:flutter/material.dart';
 import 'package:hnh_flutter/pages/location/listners.dart';
 import 'package:hnh_flutter/pages/location/location_background_service.dart';
 import 'package:hnh_flutter/pages/location/location_callback_handler.dart';
+import 'package:hnh_flutter/repository/retrofit/api_client.dart';
+import 'package:hnh_flutter/utils/controller.dart';
 import 'package:location_permissions/location_permissions.dart';
-
+import 'package:dio/dio.dart';
 import '../maplocation.dart';
 import 'file_manager.dart';
 import 'location_callback_handler.dart';
@@ -74,7 +76,16 @@ class LocationServiceClass {
         title: "new location received",
         msg: "${DateTime.now()}",
         bigMsg: "${data.latitude}, ${data.longitude}");
+
+    setUpdateLocation(data);
   }
+
+
+
+
+
+
+
 
   Future<void> initPlatformState() async {
     print('Initializing...');
@@ -137,10 +148,46 @@ class LocationServiceClass {
                     LocationCallbackHandler.notificationCallback)));
   }
 
-  static Future<void> updateLocationData(LocationDto locationDto) async {
-    print('comes in class');
 
 
 
+  Future setUpdateLocation(LocationDto loc) async{
+    Controller controller =  Controller();
+    String? authToken = await controller.getAuthToken();
+   // print("authenticaiton Token " + authToken.toString());
+    updateLocationApi(loc,authToken.toString());
   }
+
+
+
+  FutureBuilder<void> updateLocationApi(LocationDto data, String? userToken) {
+    print('token=$userToken');
+    final client = ApiClient(Dio(BaseOptions(
+        contentType: "application/json",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userToken}',
+          'Accept': 'application/json'
+        }
+    )));
+    return FutureBuilder<void>(
+      future: client.updateLocation(data),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            return Center();
+          } else {
+            return Center(
+            );
+          }
+        } else {
+          return Center();
+        }
+      },
+    );
+  }
+
+
+
+
 }

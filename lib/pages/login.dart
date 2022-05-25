@@ -4,6 +4,7 @@ import 'package:hnh_flutter/pages/home_page.dart';
 import 'package:hnh_flutter/pages/maplocation.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/repository/retrofit/api_client.dart';
+import 'package:hnh_flutter/utils/controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../custom_style/colors.dart';
@@ -177,7 +178,7 @@ class LoginClassStateful extends State<LoginClass> {
           if (snapshot.hasData ) {
             final LoginApiResponse posts = snapshot.data!;
             saveUserToken(posts.token);
-            var token = getUserToken();
+
             return Center();
           } else {
             return Center(
@@ -199,8 +200,11 @@ class LoginClassStateful extends State<LoginClass> {
   }
 
   saveUserToken(String? token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(ConstantData.pref_user_token, token!);
+  //  SharedPreferences prefs = await SharedPreferences.getInstance();
+  //  prefs.setString(ConstantData.pref_user_token, token!);
+
+    Controller controller = Controller();
+    await controller.setAuthToken(token!);
 
     setState(() {
       isDataReceived =true;
@@ -215,14 +219,7 @@ class LoginClassStateful extends State<LoginClass> {
     );
   }
 
-  Future<String?> getUserToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? value = prefs.getString(ConstantData.pref_user_token);
-    //print('value:$value');
-  }
 
-  deleteUserToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(ConstantData.pref_user_token);
-  }
+
+
 }
