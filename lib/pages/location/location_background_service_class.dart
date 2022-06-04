@@ -7,16 +7,13 @@ import 'package:background_locator/location_dto.dart';
 import 'package:background_locator/settings/android_settings.dart';
 import 'package:background_locator/settings/ios_settings.dart';
 import 'package:background_locator/settings/locator_settings.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:hnh_flutter/pages/location/listners.dart';
-import 'package:hnh_flutter/pages/location/location_background_service.dart';
 import 'package:hnh_flutter/pages/location/location_callback_handler.dart';
 import 'package:hnh_flutter/repository/retrofit/api_client.dart';
 import 'package:hnh_flutter/utils/controller.dart';
-import 'package:location_permissions/location_permissions.dart';
-import 'package:dio/dio.dart';
-import '../maplocation.dart';
-import 'file_manager.dart';
+
+import 'maplocation.dart';
 import 'location_callback_handler.dart';
 import 'location_service_repository.dart';
 
@@ -82,11 +79,6 @@ class LocationServiceClass {
 
 
 
-
-
-
-
-
   Future<void> initPlatformState() async {
     print('Initializing...');
     await BackgroundLocator.initialize();
@@ -134,7 +126,7 @@ class LocationServiceClass {
         autoStop: false,
         androidSettings: AndroidSettings(
             accuracy: LocationAccuracy.NAVIGATION,
-            interval: 5,
+            interval: 20,
             distanceFilter: 0,
             client: LocationClient.google,
             androidNotificationSettings: AndroidNotificationSettings(

@@ -9,3 +9,6 @@ const Color tertiaryTextColor = Color(0xFFB5ADAC);
 final Color greenColor = Colors.green.shade400;
 const Color blueColor = Colors.lightBlueAccent;
 const Color whiteColor = Colors.white;
+const Color textFielBoxBorderColor = Colors.black;
+const Color textFielBoxFillColor = Colors.white;
+const Color inspectionTableColor= Color(0xFFD9D8D8);

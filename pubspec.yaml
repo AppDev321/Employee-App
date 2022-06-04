@@ -24,6 +24,9 @@ dependencies:
   path_provider: ^2.0.8
   progress_dialog: ^1.2.4
   shared_preferences: any
+  flutter_svg: any
+  provider: any
+
 
 dev_dependencies:
   flutter_test:

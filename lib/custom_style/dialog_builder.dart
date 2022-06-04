@@ -3,23 +3,29 @@ import 'package:hnh_flutter/custom_style/loading_indicator.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 class DialogBuilder {
-  ProgressDialog? pr;
+  ProgressDialog? _progressDialog;
 
-  DialogBuilder(this.dialogContext);
+  DialogBuilder(this._dialogContext);
 
-  final BuildContext dialogContext;
+  final BuildContext _dialogContext;
 
   void initiateLDialog(String text) {
-    pr = new ProgressDialog(dialogContext,
+    _progressDialog = new ProgressDialog(_dialogContext,
         isDismissible: false, customBody: new LoadingIndicator(title: text));
+
+  }
+  ProgressDialog? getDiaog()
+  {
+    return _progressDialog;
   }
 
-
   void showLoadingDialog() {
-    pr?.show();
+    if(_progressDialog?.isShowing()==false)
+    _progressDialog?.show();
   }
 
   void hideOpenDialog() {
-    pr?.hide();
+    if(_progressDialog?.isShowing()==true)
+    _progressDialog?.hide();
   }
 }

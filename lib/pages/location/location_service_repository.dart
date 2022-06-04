@@ -5,11 +5,11 @@ import 'dart:ui';
 
 import 'package:background_locator/location_dto.dart';
 import 'package:hnh_flutter/pages/location/location_background_service_class.dart';
-import 'package:hnh_flutter/pages/maplocation.dart';
+import 'package:hnh_flutter/pages/location/maplocation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'file_manager.dart';
-import 'location_background_service.dart';
+
 
 class LocationServiceRepository {
   static LocationServiceRepository _instance = LocationServiceRepository._();

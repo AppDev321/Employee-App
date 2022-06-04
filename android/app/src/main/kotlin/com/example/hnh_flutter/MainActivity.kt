@@ -3,4 +3,5 @@ package com.example.hnh_flutter
 import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity: FlutterActivity() {
+
 }

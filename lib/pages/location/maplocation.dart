@@ -10,9 +10,9 @@ import 'package:hnh_flutter/repository/retrofit/api_client.dart';
 import 'package:location/location.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../custom_style/colors.dart';
-import '../custom_style/strings.dart';
-import '../utils/controller.dart';
+import '../../custom_style/colors.dart';
+import '../../custom_style/strings.dart';
+import '../../utils/controller.dart';
 
 class MapLocation extends StatefulWidget {
 
@@ -108,7 +108,6 @@ class MapLocationStateful extends State<MapLocation> {
     _currentLocation != null ? '${_currentLocation!.accuracy}' : 'Failed';
     speedController.text =
     _currentLocation != null ? '${_currentLocation!.speed}' : 'Failed';
-
 
     return new Scaffold(
       backgroundColor: primaryColor,

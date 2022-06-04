@@ -16,8 +16,8 @@ class LoadingIndicator extends StatelessWidget {
             border: Border.all(
               color: Colors.black87,
             ),
-            borderRadius: BorderRadius.all(Radius.circular(20))),
-        padding: EdgeInsets.all(10),
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        padding: EdgeInsets.all(8),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,

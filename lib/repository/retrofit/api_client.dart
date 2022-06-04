@@ -1,12 +1,14 @@
 import 'package:background_locator/location_dto.dart';
 import 'package:dio/dio.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
-import 'package:hnh_flutter/repository/model/response/login_response.dart';
+import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
 import 'package:hnh_flutter/repository/retrofit/logging.dart';
 
 import 'package:retrofit/http.dart';
 
+import '../model/request/vechicle_get_inspection_request.dart';
 import '../model/response/login_api_response.dart';
+import '../model/response/vehicle_get_inspection_resposne.dart';
 part 'api_client.g.dart';
 
 @RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api/') // Enter you base URL
@@ -37,7 +39,11 @@ dio.interceptors.add(Logging());
   @POST('/logout') // enter your api method
   Future<void> logout();
 
+  @GET('/vehicles')
+  Future<GetVehicleListResponse> getVehiclesList();
 
+  @POST('/vehicles/inspections')
+  Future<VehicleGetInspectionResponse> getVehiclesInspectionList(@Body() VechicleInspectionRequest body);
 
 /*
   @GET(Api.users)
