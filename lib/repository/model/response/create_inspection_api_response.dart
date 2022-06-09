@@ -1,19 +1,19 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'login_api_response.g.dart';
+part 'create_inspection_api_response.g.dart';
 
 //done this file
 
 @JsonSerializable()
-class LoginApiResponse {
+class CreateInspectionResponse {
   int? code;
   String? message;
   Data? data;
   List<Errors>? errors;
 
-  LoginApiResponse({this.code, this.message, this.data, this.errors});
+  CreateInspectionResponse({this.code, this.message, this.data, this.errors});
 
-  LoginApiResponse.fromJson(Map<String, dynamic> json) {
+  CreateInspectionResponse.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
@@ -58,20 +58,40 @@ class Errors {
   }
 }
 
-
-
 class Data {
-  String? token;
+  int? id;
+  String? vehicleId;
 
-  Data({this.token});
+  Data({this.id, this.vehicleId});
 
   Data.fromJson(Map<String, dynamic> json) {
-    token = json['token'];
+    id = json['id'];
+    vehicleId = json['vehicle_id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['token'] = this.token;
+    data['id'] = this.id;
+    data['vehicle_id'] = this.vehicleId;
+    return data;
+  }
+}
+
+class Inspection {
+  int? id;
+  String? vehicleId;
+
+  Inspection({this.id, this.vehicleId});
+
+  Inspection.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    vehicleId = json['vehicle_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['vehicle_id'] = this.vehicleId;
     return data;
   }
 }

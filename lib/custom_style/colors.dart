@@ -11,4 +11,4 @@ const Color blueColor = Colors.lightBlueAccent;
 const Color whiteColor = Colors.white;
 const Color textFielBoxBorderColor = Colors.black;
 const Color textFielBoxFillColor = Colors.white;
-const Color inspectionTableColor= Color(0xFFD9D8D8);
+const Color inspectionTableColor= Color(0xFFDBDBDB);

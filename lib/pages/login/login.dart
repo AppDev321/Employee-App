@@ -37,20 +37,49 @@ class LoginClassStateful extends State<LoginClass> {
  final bool _isApiCallProcess = false;
   bool _passRemember= false;
   bool _isApiError=false;
+  String _errorMsg= "";
+
+
+   LoginViewModel _loginViewModel= LoginViewModel();
+
 
 
   @override
   void initState() {
     super.initState();
     _progressDialog =  DialogBuilder(context);
-    _progressDialog?.initiateLDialog('Pleas wait..');
+    _progressDialog?.initiateLDialog('Please wait..');
+
+    _loginViewModel.addListener(() {
+      if(_loginViewModel.getResponseStatus()) {
+        var checkErrorApiStatus = _loginViewModel.getIsErrorRecevied();
+        if(checkErrorApiStatus){
+          setState(() {
+            _isApiError = checkErrorApiStatus;
+            _errorMsg =_loginViewModel.getErrorMsg();
+          });
+        }
+        else
+        {
+          var auth = _loginViewModel.getUserToken();
+          saveUserToken(auth);
+          setState(() {
+            _isApiError = checkErrorApiStatus;
+            _errorMsg = "";
+
+          });
+        }
+        _progressDialog?.hideOpenDialog();
+        _loginViewModel.setResponseStatus(false);
+      }
+
+    });
   }
 
-  late LoginViewModel _loginViewModel;
 
   @override
   Widget build(BuildContext context) {
-    _loginViewModel = LoginViewModel();
+
     return ProgressHUD(
       child: _uiSetup(context),
       inAsyncCall: _isApiCallProcess,
@@ -131,9 +160,33 @@ class LoginClassStateful extends State<LoginClass> {
                             child: ElevatedButton(
                               child: const Text(_loginText),
                             onPressed: () {
-                              print(_emailController.text);
-                              print(_passwordController.text);
-                              _onLoginButtonPress(context);
+                              if(_emailController.text.isEmpty)
+                                {
+                                  setState(() {
+                                    _isApiError = true;
+                                    _errorMsg ="Please enter email";
+                                  });
+                                }else if (!RegExp(r'\S+@\S+\.\S+').hasMatch(_emailController.text)) {
+                                setState(() {
+                                  _isApiError = true;
+                                  _errorMsg ="Enter valid Email address";
+                                });
+                              }
+                              else if(_passwordController.text.isEmpty)
+                                {
+                                  setState(() {
+                                    _isApiError = true;
+                                    _errorMsg ="Please enter password";
+                                  });
+                                }
+
+                              else {
+                                setState(() {
+                                  _isApiError = false;
+                                  _errorMsg ="";
+                                });
+                                _onLoginButtonPress(context);
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                                 minimumSize:const Size(300, 50),
@@ -147,7 +200,7 @@ class LoginClassStateful extends State<LoginClass> {
                           )),
                      // _pressed ? _buildBody(context) : SizedBox(),
 
-                      _isApiError? const Text("Wrong Email/Password"):const SizedBox(),
+                      _isApiError?  Text("$_errorMsg" , style: TextStyle(fontSize: 16,color: Colors.red),):const SizedBox(),
 
                       CheckboxListTile(
                         controlAffinity: ListTileControlAffinity.leading,
@@ -179,29 +232,11 @@ class LoginClassStateful extends State<LoginClass> {
 
 
     LoginRequestBody
-    _requestBody = //LoginRequestBody( email: nameController.text, password: passwordController.text);
-    LoginRequestBody(email: "mohsin121@afj.com", password: "123456");
+    _requestBody = LoginRequestBody( email: _emailController.text, password: _passwordController.text);
+   // LoginRequestBody(email: "mohsin121@afj.com", password: "123456");
     _loginViewModel.getUserLogin(_requestBody);
 
-      _loginViewModel.addListener(() {
-        if(_loginViewModel.getResponseStatus()) {
-          var auth = _loginViewModel.getUserToken();
-          if (auth.contains(APIWebService.exceptionString)) {
-            _progressDialog?.hideOpenDialog();
-            setState(() {
-              _isApiError = true;
-            });
-          }
-          else {
-            _progressDialog?.hideOpenDialog();
-            saveUserToken(auth);
-            setState(() {
-              _isApiError = false;
-            });
-          }
-        }
 
-      });
 
 
   }

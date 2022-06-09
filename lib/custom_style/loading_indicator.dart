@@ -12,9 +12,9 @@ class LoadingIndicator extends StatelessWidget {
 
     return Container(
         decoration: BoxDecoration(
-            color: Colors.black87,
+            color: Colors.white,
             border: Border.all(
-              color: Colors.black87,
+              color: Colors.white,
             ),
             borderRadius: BorderRadius.all(Radius.circular(8))),
         padding: EdgeInsets.all(8),
@@ -34,14 +34,14 @@ class LoadingIndicator extends StatelessWidget {
             child: CircularProgressIndicator(strokeWidth: 3),
             width: 32,
             height: 32),
-        padding: EdgeInsets.only(bottom: 16));
+        padding: EdgeInsets.only(bottom: 16,top:10));
   }
 
   Widget _getHeading(context) {
     return Padding(
         child: Text(
           title,
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(color: Colors.black, fontSize: 16),
           textAlign: TextAlign.center,
         ),
         padding: EdgeInsets.only(bottom: 4));
@@ -50,7 +50,7 @@ class LoadingIndicator extends StatelessWidget {
   Text _getText(String displayedText) {
     return Text(
       displayedText,
-      style: TextStyle(color: Colors.white, fontSize: 14),
+      style: TextStyle(color: Colors.black, fontSize: 14),
       textAlign: TextAlign.center,
     );
   }

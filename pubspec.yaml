@@ -26,7 +26,7 @@ dependencies:
   shared_preferences: any
   flutter_svg: any
   provider: any
-
+  intl: any
 
 dev_dependencies:
   flutter_test:

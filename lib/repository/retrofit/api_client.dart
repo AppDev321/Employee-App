@@ -6,37 +6,35 @@ import 'package:hnh_flutter/repository/retrofit/logging.dart';
 
 import 'package:retrofit/http.dart';
 
+import '../model/request/create_inspection_request.dart';
+import '../model/request/inspection_check_request.dart';
+import '../model/request/save_inspection_request.dart';
 import '../model/request/vechicle_get_inspection_request.dart';
+import '../model/response/create_inspection_api_response.dart';
+import '../model/response/get_inspection_check_api_response.dart';
 import '../model/response/login_api_response.dart';
+import '../model/response/save_inspection_check_api_response.dart';
 import '../model/response/vehicle_get_inspection_resposne.dart';
+
 part 'api_client.g.dart';
 
 @RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api/') // Enter you base URL
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
-   /* dio.options = BaseOptions(
-        receiveTimeout: 30000,
-        connectTimeout: 30000,
-        contentType: 'application/json',
-        *//* If needed headers *//*
-        headers: {
-          'Content-Type': 'application/json'
-        });
- //   dio.interceptors.add(LogInterceptor()); //开启请求日志*/
+
 dio.interceptors.add(Logging());
     return _ApiClient(dio, baseUrl: baseUrl);
   }
 
 
-// Login service
-  @POST('/login') // enter your api method
+  @POST('/login')
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);
 
-  @POST('/update-location') // enter your api method
+  @POST('/update-location')
   Future<void> updateLocation(@Body() LocationDto body);
 
-  @POST('/logout') // enter your api method
+  @POST('/logout')
   Future<void> logout();
 
   @GET('/vehicles')
@@ -44,6 +42,15 @@ dio.interceptors.add(Logging());
 
   @POST('/vehicles/inspections')
   Future<VehicleGetInspectionResponse> getVehiclesInspectionList(@Body() VechicleInspectionRequest body);
+
+  @POST('/vehicles/inspection/create')
+  Future<CreateInspectionResponse> createVehicleInspection(@Body() CreateInspectionRequest body);
+
+  @POST('/vehicles/inspection/check')
+  Future<GetInspectionCheckResponse> getInspectionCheck(@Body() CheckInspectionRequest body);
+
+  @POST('/vehicles/inspection/check/save')
+  Future<SaveInspectionCheckResponse> saveInspectionCheck(@Body() SaveInspectionCheckRequest body);
 
 /*
   @GET(Api.users)

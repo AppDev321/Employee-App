@@ -9,14 +9,22 @@ part of 'vehicle_get_inspection_resposne.dart';
 VehicleGetInspectionResponse _$VehicleGetInspectionResponseFromJson(
     Map<String, dynamic> json) {
   return VehicleGetInspectionResponse(
-    vehicle: json['vehicle'] == null
+    code: json['code'] as int?,
+    message: json['message'] as String?,
+    data: json['data'] == null
         ? null
-        : Vehicle.fromJson(json['vehicle'] as Map<String, dynamic>),
+        : Data.fromJson(json['data'] as Map<String, dynamic>),
+    errors: (json['errors'] as List<dynamic>?)
+        ?.map((e) => Errors.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 
 Map<String, dynamic> _$VehicleGetInspectionResponseToJson(
         VehicleGetInspectionResponse instance) =>
     <String, dynamic>{
-      'vehicle': instance.vehicle,
+      'code': instance.code,
+      'message': instance.message,
+      'data': instance.data,
+      'errors': instance.errors,
     };

@@ -1,23 +1,22 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'login_api_response.g.dart';
+part 'save_inspection_check_api_response.g.dart';
 
 //done this file
 
 @JsonSerializable()
-class LoginApiResponse {
+class SaveInspectionCheckResponse {
   int? code;
   String? message;
   Data? data;
   List<Errors>? errors;
 
-  LoginApiResponse({this.code, this.message, this.data, this.errors});
+  SaveInspectionCheckResponse({this.code, this.message, this.data, this.errors});
 
-  LoginApiResponse.fromJson(Map<String, dynamic> json) {
+  SaveInspectionCheckResponse.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-
     if (json['errors'] != null) {
       errors = <Errors>[];
       json['errors'].forEach((v) {
@@ -40,8 +39,6 @@ class LoginApiResponse {
   }
 }
 
-
-
 class Errors {
   String? message;
 
@@ -58,20 +55,27 @@ class Errors {
   }
 }
 
-
-
 class Data {
-  String? token;
+  int? id;
+  int? vehicleId;
+  int? nextCheck;
+  bool? completed;
 
-  Data({this.token});
+  Data({this.id, this.vehicleId, this.nextCheck, this.completed});
 
   Data.fromJson(Map<String, dynamic> json) {
-    token = json['token'];
+    id = json['id'];
+    vehicleId = json['vehicle_id'];
+    nextCheck = json['next_check'];
+    completed = json['completed'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['token'] = this.token;
+    data['id'] = this.id;
+    data['vehicle_id'] = this.vehicleId;
+    data['next_check'] = this.nextCheck;
+    data['completed'] = this.completed;
     return data;
   }
 }

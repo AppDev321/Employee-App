@@ -8,5 +8,6 @@ static const String title_Second= "Second Page";
 static const String pref_user_token ="token";
 static const String vehicle_inspection ="Vehicle Inspection";
 static const String vehicle_detail ="Vehicle Detail";
+static const String inspection ="Inspection";
 }
 

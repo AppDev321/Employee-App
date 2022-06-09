@@ -20,12 +20,12 @@ class DialogBuilder {
   }
 
   void showLoadingDialog() {
-    if(_progressDialog?.isShowing()==false)
+  //  if(_progressDialog?.isShowing()==false)
     _progressDialog?.show();
   }
 
   void hideOpenDialog() {
-    if(_progressDialog?.isShowing()==true)
+  //  if(_progressDialog?.isShowing()==true)
     _progressDialog?.hide();
   }
 }

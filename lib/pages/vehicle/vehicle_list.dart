@@ -23,6 +23,7 @@ class VehicleListState extends State<VehicleList> {
   bool _isFirstLoadRunning = false;
   bool _isLoadMoreRunning = false;
   bool _isErrorInApi = false;
+  String? _errorMsg= "";
   List<Vehicles> _vehicleList = [];
   List<Vehicles> _vehicleListComplete = [];
   List<Vehicles> _vehiclePaginatedList = [];
@@ -34,7 +35,7 @@ class VehicleListState extends State<VehicleList> {
   void getData() async {
     setState(() {
       _isFirstLoadRunning = _vehicleListViewModel.getLoading();
-      _isErrorInApi = _vehicleListViewModel.getErrorApi();
+      _isErrorInApi = _vehicleListViewModel.getIsErrorRecevied();
     });
     if (_vehicleListComplete.length > 0) {
       _setPaginationList();
@@ -86,8 +87,28 @@ class VehicleListState extends State<VehicleList> {
     _vehicleListViewModel = VehicleListViewModel();
     _vehicleListViewModel.addListener(() {
       _vehicleListComplete.clear();
-        _vehicleListComplete =_vehicleListViewModel.getVehiclesList();
-        getData();
+
+
+        var checkErrorApiStatus = _vehicleListViewModel.getIsErrorRecevied();
+        if(checkErrorApiStatus){
+          setState(() {
+            _isErrorInApi = checkErrorApiStatus;
+            _errorMsg =_vehicleListViewModel.getErrorMsg();
+          });
+        }
+        else
+        {
+           _vehicleListComplete =_vehicleListViewModel.getVehiclesList();
+          setState(() {
+            _isErrorInApi = checkErrorApiStatus;
+            _errorMsg = "";
+          });
+        }
+
+
+      getData();
+
+
     });
 
 
@@ -100,15 +121,6 @@ class VehicleListState extends State<VehicleList> {
     super.dispose();
   }
 
-  var textWidget = Center(
-      child: Text(
-    'No Data Found',
-    textAlign: TextAlign.center,
-    textScaleFactor: 1.3,
-    style: TextStyle(
-      color: primaryTextColor,
-    ),
-  ));
 
   @override
   Widget build(BuildContext context) {
@@ -122,8 +134,17 @@ class VehicleListState extends State<VehicleList> {
       ),
 
       body: _isErrorInApi
-          ? textWidget
-          : _isFirstLoadRunning
+          ?  Center(
+          child: Text('$_errorMsg',
+            textAlign: TextAlign.center,
+            textScaleFactor: 1.3,
+            style: TextStyle(
+                color: Colors.red,
+                fontSize: 16
+            ),
+          ))
+
+        : _isFirstLoadRunning
               ? Center(
                   child: CircularProgressIndicator(),
                 )
@@ -195,10 +216,18 @@ class VehicleListState extends State<VehicleList> {
 
 
   Widget indexBuilder(BuildContext context,  int index) {
+    final navigateTo = (page) => Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => page,
+    ));
     final data = _vehicleList[index];
     return ListTile(
       onTap: () => {
-      _displayOptionDialog(context,data.id!)
+
+
+    _displayOptionDialog(context,data.id!)
+
+    //  navigateTo(VehicleInspectionList(vehicleID: data.id!))
+
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       title: LayoutBuilder(
@@ -261,20 +290,16 @@ class VehicleListState extends State<VehicleList> {
     );
   }
 
-  _displayOptionDialog(BuildContext context,int _vehicleID) async {
+  _displayOptionDialog(BuildContext context,int _vehicleID)  {
 
     final navigateTo = (page) => Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => page,
     ));
-
-      await showDialog(
-      context: context,
+    showDialog(
+        context: context,
         barrierDismissible: true,
-
       builder: (BuildContext context) {
-        return Expanded(
-
-          child: SimpleDialog(
+        return  SimpleDialog(
             contentPadding: EdgeInsets.fromLTRB(0, 20, 0, 0),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))
@@ -306,7 +331,7 @@ class VehicleListState extends State<VehicleList> {
             ],
             elevation: 10,
             //backgroundColor: Colors.green,
-          ),
+
         );
       },
     );

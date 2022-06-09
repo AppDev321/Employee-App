@@ -2,38 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 
-class LoginViewModel extends ChangeNotifier {
-  bool isLoading = false;
+import 'base_view_model.dart';
 
-  bool getLoading() => isLoading;
+class LoginViewModel extends BaseViewModel {
+
+
   String authToken = "";
-
   String getUserToken() => authToken;
-
-  bool isResponseRecived = false;
-  bool getResponseStatus() => isResponseRecived;
-
-
-  setResponseStatus(bool loading) async {
-    isResponseRecived = loading;
-    // notifyListeners(); //only single time required
-  }
-  setLoading(bool loading) async {
-    isLoading = loading;
-   // notifyListeners(); //only single time required
-  }
 
   setUserAuth(String token) async {
     authToken = token;
   }
 
- Future<void>getUserLogin(LoginRequestBody body) async {
+
+  Future<void> getUserLogin(LoginRequestBody body) async {
     setLoading(true);
     final results = await APIWebService().getLoginAuth(body);
-    //this.movies = results.map((item) => MovieViewModel(movie: item)).toList();
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+      setIsErrorReceived(true);
+    } else {
+      if (results.code == 200) {
+        setUserAuth(results.data!.token!);
+        setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += results.errors![i].message! + "\n";
+        }
+        setErrorMsg(errorString);
+        setIsErrorReceived(true);
+      }
+
+    }
     setResponseStatus(true);
-    setUserAuth(results);
     setLoading(false);
-     notifyListeners();
+    notifyListeners();
+
   }
+
+
 }

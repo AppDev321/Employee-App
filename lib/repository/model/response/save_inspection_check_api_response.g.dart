@@ -1,13 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'login_api_response.dart';
+part of 'save_inspection_check_api_response.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoginApiResponse _$LoginApiResponseFromJson(Map<String, dynamic> json) {
-  return LoginApiResponse(
+SaveInspectionCheckResponse _$SaveInspectionCheckResponseFromJson(
+    Map<String, dynamic> json) {
+  return SaveInspectionCheckResponse(
     code: json['code'] as int?,
     message: json['message'] as String?,
     data: json['data'] == null
@@ -19,7 +20,8 @@ LoginApiResponse _$LoginApiResponseFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$LoginApiResponseToJson(LoginApiResponse instance) =>
+Map<String, dynamic> _$SaveInspectionCheckResponseToJson(
+        SaveInspectionCheckResponse instance) =>
     <String, dynamic>{
       'code': instance.code,
       'message': instance.message,
