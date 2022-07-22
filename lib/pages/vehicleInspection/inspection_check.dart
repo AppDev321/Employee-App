@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/request/inspection_check_request.dart';
 import 'package:hnh_flutter/repository/model/request/save_inspection_request.dart';
 import 'package:hnh_flutter/repository/model/response/get_inspection_check_api_response.dart';
 import 'package:hnh_flutter/view_models/get_inspection_vm.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../../custom_style/strings.dart';
+import '../../custom_style/text_style.dart';
+import '../../repository/model/request/save_inspection_post_data.dart';
 
 class InspectionCheck extends StatefulWidget {
   final int? inspectionID;
-
-  const InspectionCheck({Key? key, @required this.inspectionID})
+  final VoidCallback onApiExecutedSuccessfully;
+  const InspectionCheck({Key? key, @required this.inspectionID,required this.onApiExecutedSuccessfully})
       : super(key: key);
 
   @override
@@ -33,10 +35,13 @@ class InspectionCheckStateful extends State<InspectionCheck> {
   final TextEditingController _commentController = TextEditingController();
   Vehicle? _vehicleData;
   Inspection? _inspectionData;
-  Check? _checkData;
+  Checks? _checkData;
   List<CheckOptions>? _radioOptions;
 
   int _totalCheckCount = 0;
+  int _checkIndex = 0;
+
+
 
   @override
   void initState() {
@@ -76,60 +81,82 @@ class InspectionCheckStateful extends State<InspectionCheck> {
             _radioOptions = _getInspectionCheckViewModel.getRadioOptions();
             _vehicleData = _getInspectionCheckViewModel.getVehicleData();
             _inspectionData = _getInspectionCheckViewModel.getInspectionData();
-            _checkData = _getInspectionCheckViewModel.getCheckData();
+
             _totalCheckCount =
                 _getInspectionCheckViewModel.getTotalCheckCount();
-            titlePage =
-                "$inspectionText ${(_checkData!.checkNo! - 1)}/${_totalCheckCount}";
+
             _groupValue = 0;
+
+
+            _getCheckData(_checkIndex);
           });
-          Solved? solved =
-              _getInspectionCheckViewModel.getAlreadySolvedComments();
-          if (solved != null) {
-            String? comment=solved.comment;
-            if (comment == null) {
-              _commentController.text = '';
-            } else {
-              _commentController.text = comment;
-            }
-            for (int i = 0; i < _radioOptions!.length; i++) {
-              if (_radioOptions![i].id == solved.code) {
-                _groupValue = i;
-                return;
-              }
-            }
-          }
+
           _getInspectionCheckViewModel.setResponseStatus(false);
         }
       }
     });
   }
 
+  _getCheckData(int index) {
+    //**************** Listing of checks ***///////
+    setState(() {
+      titlePage = "$inspectionText ${_checkIndex}/${_totalCheckCount}";
+      _groupValue=0;
+      _commentController.text = '';
+    });
+
+    _getInspectionCheckViewModel.getCheckDataFromIndex(index);
+    _checkData = _getInspectionCheckViewModel.getCheckData();
+    if (_checkData!.savedInspections!.length > 0) {
+      SavedInspections? solved =
+          _getInspectionCheckViewModel.getSavedInspection();
+      if (solved != null) {
+        String? comment = solved.comment;
+        if (comment == null) {
+          _commentController.text = '';
+        } else {
+          _commentController.text = comment;
+        }
+        for (int i = 0; i < _radioOptions!.length; i++) {
+          if (_radioOptions![i].id == solved.code) {
+            _groupValue = i;
+            return;
+          }
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-        title: const Text(ConstantData.inspection),
-      ),
-      body: _isErrorInApi
-          ? Center(
-              child: Text(
-              '$_errorMsg',
-              textAlign: TextAlign.center,
-              textScaleFactor: 1.3,
-              style: TextStyle(color: Colors.red, fontSize: 16),
-            ))
-          : _isFirstLoadRunning
+    return new WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () async {
+                  bool isExit = await _onWillPop();
+                  if (isExit == true) {
+                    Navigator.of(context).pop();
+                  }
+                }),
+            title: const Text(ConstantData.inspection),
+          ),
+          body: _isErrorInApi
               ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : createFirstView(context),
-    );
+                  child: Text(
+                  '$_errorMsg',
+                  textAlign: TextAlign.center,
+                  textScaleFactor: 1.3,
+                  style:errorTextStyle,
+                ))
+              : _isFirstLoadRunning
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : createFirstView(context),
+        ));
   }
 
   Widget createFirstView(BuildContext context) {
@@ -140,7 +167,12 @@ class InspectionCheckStateful extends State<InspectionCheck> {
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.all(20),
             child: Text(titlePage,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
+                style: titleTextStyle)),
+
+
+        _showHorizontalProgress(),
+
+
         Padding(
             padding: EdgeInsets.all(10),
             child: Container(
@@ -171,7 +203,7 @@ class InspectionCheckStateful extends State<InspectionCheck> {
                             alignment: Alignment.topLeft,
                             child: Text(
                               _checkData?.type ?? 'N/A',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: normalBoldTextStyle,
                             ))),
                     Divider(
                       height: 1,
@@ -191,8 +223,7 @@ class InspectionCheckStateful extends State<InspectionCheck> {
                                           0.15,
                                       child: Text(
                                         "Check No:",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                        style: normalBoldTextStyle,
                                       ),
                                     ),
                                     Container(
@@ -210,46 +241,49 @@ class InspectionCheckStateful extends State<InspectionCheck> {
                                           0.15,
                                       child: Text(
                                         "Imf Ref:",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                        style: normalBoldTextStyle,
                                       ),
                                     ),
                                     Container(
-                                      child: Text("10"),
+                                      child:   Text("${_checkData!.imRef=='' ? 'N/A': _checkData!.imRef}"),
+
                                     ),
                                   ],
                                 ))
                           ],
                         )),
                     Padding(
-                        padding: EdgeInsets.only(bottom: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                                child: Row(
-                              children: [
-                                Container(
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                              child: Expanded(
+                                  child: Row(
+                            children: [
+                              Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.25,
                                   child: Text(
                                     "Item Inspected:",
                                     style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text("${_checkData!.name ?? 'N/A'}"),
-                                ),
-                              ],
-                            )),
-                          ],
-                        )),
+                                    normalBoldTextStyle,
+                                  )),
+                              Container(
+                                  child: Expanded(
+                                      child: Text(
+                                "${_checkData!.name ?? 'N/A'}",
+                              ))),
+                            ],
+                          ))),
+                        ],
+                      ),
+                    ),
                     Align(
                       alignment: Alignment.topLeft,
                       child: Text(
                         "Inspection Code *",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: normalBoldTextStyle,
                       ),
                     ),
                     Padding(
@@ -274,12 +308,7 @@ class InspectionCheckStateful extends State<InspectionCheck> {
                                     width: 100,
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        setState(() {
-                                          _isFirstLoadRunning = true;
-                                          _isErrorInApi = false;
-                                        });
-                                        callGetApiData(
-                                            _checkData!.checkNo! - 1);
+                                        saveVehicleInspectionChecks(true);
                                       },
                                       style: ButtonStyle(
                                           backgroundColor:
@@ -296,7 +325,7 @@ class InspectionCheckStateful extends State<InspectionCheck> {
                                   width: 100,
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      saveCheckAndLoadNext();
+                                      saveVehicleInspectionChecks(false);
                                     },
                                     style: ButtonStyle(
                                         backgroundColor:
@@ -304,7 +333,7 @@ class InspectionCheckStateful extends State<InspectionCheck> {
                                                 Colors.blue),
                                         textStyle: MaterialStateProperty.all(
                                             TextStyle(fontSize: 12))),
-                                    child: Text('Next'),
+                                    child: Text(_checkIndex == _totalCheckCount-1 ?'Finish':'Next'),
                                   ),
                                 ),
                               ],
@@ -315,6 +344,26 @@ class InspectionCheckStateful extends State<InspectionCheck> {
     ));
   }
 
+
+Widget _showHorizontalProgress()
+{
+  return  Container(
+    margin: EdgeInsets.only(left: 10,right: 10),
+    alignment:Alignment.center,
+    child: LinearPercentIndicator( //leaner progress bar
+      animation: false,
+      lineHeight: 15.0,
+
+      percent: (_checkIndex/_totalCheckCount),
+      linearStrokeCap: LinearStrokeCap.roundAll,
+      progressColor: Colors.blue[400],
+      backgroundColor: Colors.grey[300],
+    ),
+  );
+
+
+}
+
   Widget _showCommentBox() {
     return Padding(
         padding: EdgeInsets.only(bottom: 20, top: 10),
@@ -324,7 +373,7 @@ class InspectionCheckStateful extends State<InspectionCheck> {
                 alignment: Alignment.topLeft,
                 child: Text(
                   "Comment *",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: normalBoldTextStyle,
                 )),
             Padding(
               padding: const EdgeInsets.only(top: 10),
@@ -358,11 +407,11 @@ class InspectionCheckStateful extends State<InspectionCheck> {
               width: MediaQuery.of(context).size.width * 0.3,
               child: Text(
                 title,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: normalBoldTextStyle,
               ),
             ),
             Container(
-              child: Text(value),
+              child: Text(value,style: normalTextStyle,),
             ),
           ],
         )
@@ -386,7 +435,7 @@ class InspectionCheckStateful extends State<InspectionCheck> {
               ),
               Text(
                 text,
-                style: TextStyle(fontSize: 14),
+                style: normalTextStyle,
               ),
             ],
           ),
@@ -400,44 +449,90 @@ class InspectionCheckStateful extends State<InspectionCheck> {
     });
   }
 
-  void saveCheckAndLoadNext() async {
-    SaveInspectionCheckRequest request = SaveInspectionCheckRequest();
-    request.checkNo = "${_checkData!.checkNo}";
-    request.vehicleInspectionId = "${_inspectionData!.id}";
-    request.type = "${_checkData!.type}";
-    request.code = "${_radioOptions![_groupValue].id}";
-    request.name = "${_checkData!.name}";
-    request.comment = "";
+  void saveVehicleInspectionChecks(bool _isPreviousIndex) {
+    SolvedChecked solvedChecked = SolvedChecked();
+    solvedChecked.checkNo = _checkData!.checkNo;
+    solvedChecked.vehicleInspectionId = "${_inspectionData!.id}";
+    solvedChecked.type = "${_checkData!.type}";
+    solvedChecked.code = "${_radioOptions![_groupValue].id}";
+    solvedChecked.name = "${_checkData!.name}";
+    solvedChecked.comment = "";
 
     if (_groupValue > 0) {
       if (_commentController.text.isEmpty) {
         _showToast(context, "Please enter your comment");
       } else {
-        request.comment = _commentController.text;
-        setState(() {
-          _isFirstLoadRunning = true;
-          _isErrorInApi = false;
-        });
-        _callSaveInspectionApi(request,_checkData!.checkNo! + 1);
+        solvedChecked.comment = _commentController.text;
+
+        _callSaveInspectionApi(solvedChecked, _isPreviousIndex);
       }
     } else {
-      _callSaveInspectionApi(request,_checkData!.checkNo! + 1);
+      _callSaveInspectionApi(solvedChecked, _isPreviousIndex);
     }
   }
 
+  _callSaveInspectionApi(SolvedChecked solvedChecked, bool _isPreviousIndex) {
 
-  _callSaveInspectionApi(SaveInspectionCheckRequest request,int check) async
-  {
-    setState(() {
-      _isFirstLoadRunning = true;
-      _isErrorInApi = false;
-    });
-    await _getInspectionCheckViewModel.saveInspectionCheck(request);
-    if (_getInspectionCheckViewModel.getInspectionCompleted()) {
-      _showDialog(context, "Inspection Completed");
+    //Update list in view model class
+    Checks checks = Checks();
+    var inspectionData = SavedInspections();
+
+    inspectionData.code = solvedChecked.code;
+    inspectionData.comment = solvedChecked.comment;
+    inspectionData.imRef = "";
+    inspectionData.name = solvedChecked.name;
+    inspectionData.checkNo = solvedChecked.checkNo;
+    inspectionData.vehicleInspectionId = int.parse(solvedChecked.vehicleInspectionId!);
+    inspectionData.type = solvedChecked.type;
+
+    checks.name = solvedChecked.name;
+    checks.type =  solvedChecked.type;
+    checks.imRef = _checkData!.imRef;
+    checks.checkNo = solvedChecked.checkNo;
+    checks.savedInspections = [inspectionData];
+
+    var listData = _getInspectionCheckViewModel.checkList;
+
+    listData[_checkIndex] = checks;
+
+    _getInspectionCheckViewModel.setCheckList(listData);
+
+    // *********************************************//
+
+
+
+    if (_isPreviousIndex) {
+      if (_checkIndex >= 0) {
+        setState(() {
+          _checkIndex--;
+        });
+      }
     } else {
-      callGetApiData(check);
+      if (_checkIndex < (_totalCheckCount-1)) {
+        setState(() {
+          _checkIndex++;
+        });
+      }
+      else{
+        print(_checkIndex);
+        setState(() async{
+          _isFirstLoadRunning = true;
+          _isErrorInApi = false;
+
+          var _apiPostData = PostInspectionData();
+          _apiPostData.inspectionId = widget.inspectionID;
+          _apiPostData.checks = _getInspectionCheckViewModel.checkList;
+         await _getInspectionCheckViewModel.saveInspectionCheck(_apiPostData);
+
+          _showDialog(context,"Inspection Completed Successfully!!");
+
+        });
+      }
     }
+
+
+
+    _getCheckData(_checkIndex);
   }
 
   void _showToast(BuildContext context, String text) {
@@ -465,14 +560,53 @@ class InspectionCheckStateful extends State<InspectionCheck> {
             FlatButton(
               child: new Text("Close"),
               onPressed: () {
+                widget.onApiExecutedSuccessfully();
                 Navigator.pop(dialogContext);
-                Navigator.pop(_context, true) ;
+                Navigator.pop(_context, true);
               },
             ),
-
           ],
         );
       },
     );
+  }
+
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to save your inspection'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('No'),
+              ),
+              TextButton(
+                onPressed: () async {
+
+                            setState(() {
+                    _isFirstLoadRunning = true;
+                _isErrorInApi = false;
+
+                    var _apiPostData=  PostInspectionData();
+                    _apiPostData.inspectionId=widget.inspectionID;
+                    _apiPostData.checks=_getInspectionCheckViewModel.checkList;
+                    _getInspectionCheckViewModel.saveInspectionCheck(_apiPostData);
+
+
+               });
+
+
+
+                     Navigator.of(context).pop(true);
+                     widget.onApiExecutedSuccessfully();
+                },
+                child: new Text('Yes'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
   }
 }

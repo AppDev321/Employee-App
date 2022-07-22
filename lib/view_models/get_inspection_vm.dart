@@ -2,6 +2,7 @@ import 'package:hnh_flutter/repository/model/request/inspection_check_request.da
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 
+import '../repository/model/request/save_inspection_post_data.dart';
 import '../repository/model/request/save_inspection_request.dart';
 import '../repository/model/response/get_inspection_check_api_response.dart';
 
@@ -9,20 +10,27 @@ class GetInspectionCheckViewModel extends BaseViewModel {
   late Vehicle _vehicleData;
 
   late Inspection _inspectionData;
-  late Check _checkDetail;
+  late Checks _checkDetail;
   late List<CheckOptions> _radioOptions;
    bool _isInspectionCompleted = false;
   int _totalCheckCount = 0;
-  late Solved? _solvedAnwser;
+  late SavedInspections? _savedInspection;
+  late List<Checks> _checkList;
+  List<Checks> get checkList => _checkList;
 
 
 
-  Solved? getAlreadySolvedComments() {
-    return _solvedAnwser;
+
+  setCheckList(List<Checks> value) {
+    _checkList = value;
   }
 
-  setSolvedComment(Solved? data) async {
-    _solvedAnwser = data;
+  SavedInspections? getSavedInspection() {
+    return _savedInspection;
+  }
+
+  setSavedInspection(SavedInspections? data) async {
+    _savedInspection = data;
   }
 
 
@@ -51,11 +59,11 @@ class GetInspectionCheckViewModel extends BaseViewModel {
     _inspectionData = data;
   }
 
-  Check getCheckData() {
+  Checks getCheckData() {
     return _checkDetail;
   }
 
-  setCheckData(Check data) async {
+  setCheckData(Checks data) async {
     _checkDetail = data;
   }
 
@@ -89,13 +97,15 @@ class GetInspectionCheckViewModel extends BaseViewModel {
       setIsErrorReceived(true);
     } else {
       if (results.code == 200) {
+
         //Vehicle info result
+        setCheckList( results.data!.checks!);
         setVehicleData(results.data!.vehicle!);
         setInspectionData(results.data!.inspection!);
-        setCheckData(results.data!.check!);
         setRadioOptions(results.data!.options!);
         setTotalCheckCount(results.data!.totalCount!);
-       setSolvedComment(results.data!.check!.solved);
+     //  setSolvedComment(results.data!.checks!);
+     //   setCheckData(results.data!.checks!);
 
 
         setIsErrorReceived(false);
@@ -114,7 +124,24 @@ class GetInspectionCheckViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> saveInspectionCheck(SaveInspectionCheckRequest body) async {
+   getCheckDataFromIndex(int index)
+  {
+    if(index <= _totalCheckCount)
+      {
+       var checkData= checkList[index];
+       setCheckData(checkData);
+          if(checkData.savedInspections!.length >0) {
+            setSavedInspection(checkData.savedInspections![0]);
+          }
+
+      }
+    else
+      {
+        print("Count of checked reached");
+      }
+  }
+
+  Future<void> saveInspectionCheck(PostInspectionData body) async {
     setLoading(true);
     final results = await APIWebService().saveInspection(body);
     if (results == null) {
@@ -123,7 +150,7 @@ class GetInspectionCheckViewModel extends BaseViewModel {
       setIsErrorReceived(true);
     } else {
       if (results.code == 200) {
-        setInspectionCompleted(results.data!.completed!);
+       // setInspectionCompleted(results.data!);
         setIsErrorReceived(false);
       } else {
         var errorString = "";
@@ -138,4 +165,7 @@ class GetInspectionCheckViewModel extends BaseViewModel {
     setLoading(false);
     notifyListeners();
   }
+
+
+
 }

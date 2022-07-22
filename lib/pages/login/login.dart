@@ -1,19 +1,12 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
-import 'package:hnh_flutter/pages/home_page.dart';
-import 'package:hnh_flutter/pages/location/maplocation.dart';
+import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
-import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
-import 'package:hnh_flutter/repository/retrofit/api_client.dart';
-import 'package:hnh_flutter/repository/retrofit/client_header.dart';
 import 'package:hnh_flutter/utils/controller.dart';
-import 'package:hnh_flutter/webservices/APIWebServices.dart';
-import 'package:provider/provider.dart';
+
 import '../../custom_style/dialog_builder.dart';
 import '../../custom_style/progress_hud.dart';
-import '../../repository/model/response/login_api_response.dart';
 import '../../view_models/login_view_model.dart';
 import '../vehicle/vehicle_list.dart';
 
@@ -179,7 +172,6 @@ class LoginClassStateful extends State<LoginClass> {
                                     _errorMsg ="Please enter password";
                                   });
                                 }
-
                               else {
                                 setState(() {
                                   _isApiError = false;
@@ -199,9 +191,7 @@ class LoginClassStateful extends State<LoginClass> {
                                     fontWeight: FontWeight.normal)),
                           )),
                      // _pressed ? _buildBody(context) : SizedBox(),
-
                       _isApiError?  Text("$_errorMsg" , style: TextStyle(fontSize: 16,color: Colors.red),):const SizedBox(),
-
                       CheckboxListTile(
                         controlAffinity: ListTileControlAffinity.leading,
                         title: const Text('Remember Me'),
@@ -212,8 +202,6 @@ class LoginClassStateful extends State<LoginClass> {
                           });
                         },
                       )
-
-
                     ],
                   )),
             )
@@ -223,36 +211,31 @@ class LoginClassStateful extends State<LoginClass> {
     );
   }
 
-
-
-
-
   void _onLoginButtonPress(BuildContext context) async {
     _progressDialog?.showLoadingDialog();
-
-
     LoginRequestBody
     _requestBody = LoginRequestBody( email: _emailController.text, password: _passwordController.text);
    // LoginRequestBody(email: "mohsin121@afj.com", password: "123456");
     _loginViewModel.getUserLogin(_requestBody);
-
-
-
-
   }
-
-
-
 
   saveUserToken(String? token) async {
     Controller controller = Controller();
     await controller.setAuthToken(token!);
     await  controller.setRememberLogin(_passRemember);
     //Move to next location
-    Navigator.push(
+
+
+
+    Navigator.pushAndRemoveUntil<dynamic>(
       context,
-      MaterialPageRoute(builder: (context) =>  VehicleList()),
+      MaterialPageRoute<dynamic>(
+        builder: (BuildContext context) => ShiftList(),
+      ),
+          (route) =>
+      false, //if you want to disable back feature set to false
     );
+
   }
 
 

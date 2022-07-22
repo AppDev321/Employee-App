@@ -1,12 +1,16 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:hnh_flutter/custom_style/colors.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/pages/vehicleInspection/vehicle_inspection_list.dart';
 import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
 import 'package:hnh_flutter/view_models/vehicle_list_vm.dart';
-import 'package:provider/provider.dart';
+import 'package:hnh_flutter/widget/navigation_drawer_new.dart';
 
-import '../../widget/navigation_drawer_widget.dart';
+import '../../custom_style/text_style.dart';
+import '../../main.dart';
+import '../../notification/firebase_notification.dart';
+import '../login/login.dart';
 
 class VehicleList extends StatefulWidget {
   @override
@@ -79,6 +83,7 @@ class VehicleListState extends State<VehicleList> {
   @override
   void initState() {
     super.initState();
+
     setState(() {
       _isFirstLoadRunning = true;
       _isErrorInApi = false;
@@ -87,14 +92,22 @@ class VehicleListState extends State<VehicleList> {
     _vehicleListViewModel = VehicleListViewModel();
     _vehicleListViewModel.addListener(() {
       _vehicleListComplete.clear();
-
-
         var checkErrorApiStatus = _vehicleListViewModel.getIsErrorRecevied();
         if(checkErrorApiStatus){
           setState(() {
             _isErrorInApi = checkErrorApiStatus;
-            _errorMsg =_vehicleListViewModel.getErrorMsg();
-          });
+          _errorMsg = _vehicleListViewModel.getErrorMsg();
+          if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
+            Navigator.pushAndRemoveUntil<dynamic>(
+              context,
+              MaterialPageRoute<dynamic>(
+                builder: (BuildContext context) => LoginClass(),
+              ),
+              (route) =>
+                  false, //if you want to disable back feature set to false
+            );
+          }
+        });
         }
         else
         {
@@ -115,6 +128,10 @@ class VehicleListState extends State<VehicleList> {
     _controller =  ScrollController()..addListener(_loadMore);
   }
 
+
+
+
+
   @override
   void dispose() {
     _controller.removeListener(_loadMore);
@@ -132,19 +149,16 @@ class VehicleListState extends State<VehicleList> {
       appBar: AppBar(
         title: Text('Vehicle Inspection'),
       ),
-
+      drawer: NavigationDrawer(),
       body: _isErrorInApi
-          ?  Center(
-          child: Text('$_errorMsg',
-            textAlign: TextAlign.center,
-            textScaleFactor: 1.3,
-            style: TextStyle(
-                color: Colors.red,
-                fontSize: 16
-            ),
-          ))
-
-        : _isFirstLoadRunning
+          ? Center(
+              child: Text(
+              '$_errorMsg',
+              textAlign: TextAlign.center,
+              textScaleFactor: 1.3,
+              style: errorTextStyle,
+            ))
+          : _isFirstLoadRunning
               ? Center(
                   child: CircularProgressIndicator(),
                 )
@@ -244,14 +258,9 @@ class VehicleListState extends State<VehicleList> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10)),
                       child:
-                      Text("$index",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                              fontSize: 15))
+                      Text("$index", style: normalTextStyle)
 
-
-                      /*Image.asset("assets/icons/ic_launcher.png",
+                        /*Image.asset("assets/icons/ic_launcher.png",
                           width: 100, height: 100),*/
                     ),
                   ),
@@ -262,23 +271,17 @@ class VehicleListState extends State<VehicleList> {
                       children: [
                         Container(
                           width: constraint.maxWidth - 130,
-                          child: Text(data.vrn ?? 'N/A',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                  fontSize: 15)),
+                          child: Text(data.vrn ?? 'N/A', style: subTitleStyle),
                         ),
                         Container(
                           width: constraint.maxWidth - 130,
                           child: Text('Type: ${data.type ?? 'N/A'}',
-                              style: TextStyle(
-                                  color: Colors.black87, fontSize: 10)),
+                              style: normalTextStyle),
                         ),
                         Container(
                           width: constraint.maxWidth - 130,
                           child: Text('Model: ${data.model ?? 'N/A'}',
-                              style: TextStyle(
-                                  color: Colors.black87, fontSize: 10)),
+                              style: normalTextStyle),
                         ),
                       ],
                     ),
@@ -310,15 +313,14 @@ class VehicleListState extends State<VehicleList> {
             children:[
 
               SimpleDialogOption(
-                padding: EdgeInsets.all( 15),
-                onPressed: () {
-                 Navigator.pop(context);
-                  navigateTo(VehicleInspectionList(vehicleID: _vehicleID));
-                  },
-                child: const Text(ConstantData.vehicle_inspection,style: TextStyle(
-
-                    fontSize: 15)),
-              ),
+                padding: EdgeInsets.all(15),
+              onPressed: () {
+                Navigator.pop(context);
+                navigateTo(VehicleInspectionList(vehicleID: _vehicleID));
+              },
+              child: const Text(ConstantData.vehicle_inspection,
+                  style: TextStyle(fontSize: 15)),
+            ),
               SimpleDialogOption(
                 padding: EdgeInsets.all( 15),
                 onPressed: () {

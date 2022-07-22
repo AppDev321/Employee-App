@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class BaseViewModel extends ChangeNotifier
 {
@@ -16,6 +17,7 @@ class BaseViewModel extends ChangeNotifier
   }
   setErrorMsg(String error) async {
     errorMsg = error;
+
   }
   setLoading(bool loading) async {
     isLoading = loading;

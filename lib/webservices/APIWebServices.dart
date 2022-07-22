@@ -1,4 +1,6 @@
+import 'package:hnh_flutter/repository/model/request/claim_shift_request.dart';
 import 'package:hnh_flutter/repository/model/request/save_inspection_request.dart';
+import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/repository/model/response/login_api_response.dart';
 import 'package:hnh_flutter/repository/model/response/save_inspection_check_api_response.dart';
 import 'package:hnh_flutter/repository/model/response/vehicle_get_inspection_resposne.dart';
@@ -7,6 +9,7 @@ import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart
 import '../repository/model/request/create_inspection_request.dart';
 import '../repository/model/request/inspection_check_request.dart';
 import '../repository/model/request/login_data.dart';
+import '../repository/model/request/save_inspection_post_data.dart';
 import '../repository/model/request/vechicle_get_inspection_request.dart';
 import '../repository/model/response/create_inspection_api_response.dart';
 import '../repository/model/response/get_inspection_check_api_response.dart';
@@ -73,7 +76,7 @@ class APIWebService {
   }
 
 
-  Future<SaveInspectionCheckResponse?> saveInspection(SaveInspectionCheckRequest body) async {
+  Future<SaveInspectionCheckResponse?> saveInspection(PostInspectionData body) async {
     try {
       final client = await RetroClinetHeader.getClientWithAuth();
       var response = await client.saveInspectionCheck(body);
@@ -83,4 +86,28 @@ class APIWebService {
       return null;
     }
   }
+
+
+
+  Future<GetShiftListResponse?> getShiftList(String weeklyShiftDate) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getShiftDataList(weeklyShiftDate);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+  Future<LoginApiResponse?> getClaimOpenShift(ClaimShiftRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.claimOpenShift(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
 }

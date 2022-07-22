@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/data/drawer_item.dart';
-import 'package:hnh_flutter/pages/get_started_page.dart';
+import 'package:hnh_flutter/pages/leave/my_leave_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -30,7 +30,7 @@ class NavigationDrawerWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(vertical: 80).add(safeArea),
                 width: double.infinity,
-                color: Colors.grey,
+                color: primaryColor,
                 child: buildHeader(isCollapsed),
               ),
               const SizedBox(height: 24),
@@ -85,7 +85,7 @@ class NavigationDrawerWidget extends StatelessWidget {
 
     switch (index) {
       case 0:
-        navigateTo(GetStartedPage());
+        navigateTo(MyLeaveList());
         break;
 
     }
@@ -145,11 +145,12 @@ class NavigationDrawerWidget extends StatelessWidget {
   }
 
   Widget buildHeader(bool isCollapsed) => isCollapsed
-      ? FlutterLogo(size: 48)
-      : Row(
+      ?
+  SizedBox(height: 48,width: 48,child:   Image.asset(ConstantData.logoIconPath) )
+      : Column(
           children: [
-            const SizedBox(width: 24),
-            FlutterLogo(size: 48),
+
+            SizedBox(height: 48,width: 48,child:   Image.asset(ConstantData.logoIconPath) ),
             const SizedBox(width: 16),
             Text(
               ConstantData.appName,

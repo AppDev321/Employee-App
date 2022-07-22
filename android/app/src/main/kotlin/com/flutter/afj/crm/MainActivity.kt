@@ -1,4 +1,4 @@
-package com.example.hnh_flutter
+package com.flutter.afj.crm
 
 import io.flutter.embedding.android.FlutterActivity
 

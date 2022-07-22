@@ -161,7 +161,9 @@ class LocationServiceClass {
           'Authorization': 'Bearer ${userToken}',
           'Accept': 'application/json'
         }
-    )));
+    )
+    )
+    );
     return FutureBuilder<void>(
       future: client.updateLocation(data),
       builder: (context, snapshot) {

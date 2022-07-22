@@ -56,34 +56,42 @@ class Errors {
   }
 }
 
+
+
+@JsonSerializable()
 class Data {
   Vehicle? vehicle;
   int? totalCount;
-  Check? check;
-  List<CheckOptions>? options;
   Inspection? inspection;
+  List<CheckOptions>? options;
+  List<Checks>? checks;
 
   Data(
       {this.vehicle,
-      this.totalCount,
-      this.check,
-      this.options,
-      this.inspection});
+        this.totalCount,
+        this.inspection,
+        this.options,
+        this.checks});
 
   Data.fromJson(Map<String, dynamic> json) {
     vehicle =
-        json['vehicle'] != null ? new Vehicle.fromJson(json['vehicle']) : null;
+    json['vehicle'] != null ? new Vehicle.fromJson(json['vehicle']) : null;
     totalCount = json['total_count'];
-    check = json['check'] != null ? new Check.fromJson(json['check']) : null;
+    inspection = json['inspection'] != null
+        ? new Inspection.fromJson(json['inspection'])
+        : null;
     if (json['options'] != null) {
       options = <CheckOptions>[];
       json['options'].forEach((v) {
         options!.add(new CheckOptions.fromJson(v));
       });
     }
-    inspection = json['inspection'] != null
-        ? new Inspection.fromJson(json['inspection'])
-        : null;
+    if (json['checks'] != null) {
+      checks = <Checks>[];
+      json['checks'].forEach((v) {
+        checks!.add(new Checks.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -92,14 +100,14 @@ class Data {
       data['vehicle'] = this.vehicle!.toJson();
     }
     data['total_count'] = this.totalCount;
-    if (this.check != null) {
-      data['check'] = this.check!.toJson();
+    if (this.inspection != null) {
+      data['inspection'] = this.inspection!.toJson();
     }
     if (this.options != null) {
       data['options'] = this.options!.map((v) => v.toJson()).toList();
     }
-    if (this.inspection != null) {
-      data['inspection'] = this.inspection!.toJson();
+    if (this.checks != null) {
+      data['checks'] = this.checks!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -118,14 +126,14 @@ class Vehicle {
 
   Vehicle(
       {this.id,
-      this.employeeId,
-      this.vrn,
-      this.type,
-      this.make,
-      this.model,
-      this.createdAt,
-      this.updatedAt,
-      this.detail});
+        this.employeeId,
+        this.vrn,
+        this.type,
+        this.make,
+        this.model,
+        this.createdAt,
+        this.updatedAt,
+        this.detail});
 
   Vehicle.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -137,7 +145,7 @@ class Vehicle {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     detail =
-        json['detail'] != null ? new Detail.fromJson(json['detail']) : null;
+    json['detail'] != null ? new Detail.fromJson(json['detail']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -174,18 +182,18 @@ class Detail {
 
   Detail(
       {this.id,
-      this.vehicleId,
-      this.purchaseCondition,
-      this.purchaseDate,
-      this.spareKey,
-      this.roadStatus,
-      this.vehicleType,
-      this.isTrackerInstalled,
-      this.lastLocationLat,
-      this.lastLocationLong,
-      this.lastLocationTime,
-      this.createdAt,
-      this.updatedAt});
+        this.vehicleId,
+        this.purchaseCondition,
+        this.purchaseDate,
+        this.spareKey,
+        this.roadStatus,
+        this.vehicleType,
+        this.isTrackerInstalled,
+        this.lastLocationLat,
+        this.lastLocationLong,
+        this.lastLocationTime,
+        this.createdAt,
+        this.updatedAt});
 
   Detail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -222,134 +230,6 @@ class Detail {
   }
 }
 
-class Check {
-  int? id;
-  int? checkNo;
-  int? imRef;
-  String? name;
-  String? type;
-  String? createdAt;
-  String? updatedAt;
-  Solved? solved;
-
-  Check(
-      {this.id,
-      this.checkNo,
-      this.imRef,
-      this.name,
-      this.type,
-      this.createdAt,
-      this.updatedAt,
-      this.solved});
-
-  Check.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    checkNo = json['check_no'];
-    imRef = json['im_ref'];
-    name = json['name'];
-    type = json['type'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    solved =
-        json['solved'] != null ? new Solved.fromJson(json['solved']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['check_no'] = this.checkNo;
-    data['im_ref'] = this.imRef;
-    data['name'] = this.name;
-    data['type'] = this.type;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.solved != null) {
-      data['solved'] = this.solved!.toJson();
-    }
-    return data;
-  }
-}
-
-class Solved {
-  int? id;
-  int? employeeId;
-  int? vehicleInspectionId;
-  int? checkNo;
-  Null? imRef;
-  String? name;
-  String? type;
-  String? code;
-  String? comment;
-  String? status;
-  String? createdAt;
-  String? updatedAt;
-
-  Solved(
-      {this.id,
-      this.employeeId,
-      this.vehicleInspectionId,
-      this.checkNo,
-      this.imRef,
-      this.name,
-      this.type,
-      this.code,
-      this.comment,
-      this.status,
-      this.createdAt,
-      this.updatedAt});
-
-  Solved.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    employeeId = json['employee_id'];
-    vehicleInspectionId = json['vehicle_inspection_id'];
-    checkNo = json['check_no'];
-    imRef = json['im_ref'];
-    name = json['name'];
-    type = json['type'];
-    code = json['code'];
-    comment = json['comment'];
-    status = json['status'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['employee_id'] = this.employeeId;
-    data['vehicle_inspection_id'] = this.vehicleInspectionId;
-    data['check_no'] = this.checkNo;
-    data['im_ref'] = this.imRef;
-    data['name'] = this.name;
-    data['type'] = this.type;
-    data['code'] = this.code;
-    data['comment'] = this.comment;
-    data['status'] = this.status;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    return data;
-  }
-}
-
-class CheckOptions {
-  String? id;
-  String? value;
-
-  CheckOptions({this.id, this.value});
-
-  CheckOptions.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    value = json['value'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['value'] = this.value;
-    return data;
-  }
-}
-
 class Inspection {
   int? id;
   int? employeeId;
@@ -365,16 +245,16 @@ class Inspection {
 
   Inspection(
       {this.id,
-      this.employeeId,
-      this.vehicleId,
-      this.type,
-      this.date,
-      this.odometerReading,
-      this.vehicleType,
-      this.status,
-      this.isRead,
-      this.createdAt,
-      this.updatedAt});
+        this.employeeId,
+        this.vehicleId,
+        this.type,
+        this.date,
+        this.odometerReading,
+        this.vehicleType,
+        this.status,
+        this.isRead,
+        this.createdAt,
+        this.updatedAt});
 
   Inspection.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -401,6 +281,139 @@ class Inspection {
     data['vehicle_type'] = this.vehicleType;
     data['status'] = this.status;
     data['is_read'] = this.isRead;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    return data;
+  }
+}
+
+class CheckOptions {
+  String? id;
+  String? value;
+
+  CheckOptions({this.id, this.value});
+
+  CheckOptions.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    value = json['value'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['value'] = this.value;
+    return data;
+  }
+}
+
+class Checks {
+  int? id;
+  int? checkNo;
+  String? name;
+  String? type;
+  String? createdAt;
+  String? updatedAt;
+  String? imRef;
+  List<SavedInspections>? savedInspections;
+
+  Checks(
+      {this.id,
+        this.checkNo,
+        this.name,
+        this.type,
+        this.createdAt,
+        this.updatedAt,
+        this.imRef,
+        this.savedInspections});
+
+  Checks.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    checkNo = json['check_no'];
+    name = json['name'];
+    type = json['type'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    imRef = json['im_ref'];
+    if (json['saved_inspections'] != null) {
+      savedInspections = <SavedInspections>[];
+      json['saved_inspections'].forEach((v) {
+        savedInspections!.add(new SavedInspections.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['check_no'] = this.checkNo;
+    data['name'] = this.name;
+    data['type'] = this.type;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['im_ref'] = this.imRef;
+    if (this.savedInspections != null) {
+      data['saved_inspections'] =
+          this.savedInspections!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class SavedInspections {
+  int? id;
+  int? employeeId;
+  int? vehicleInspectionId;
+  int? checkNo;
+  String? imRef;
+  String? name;
+  String? type;
+  String? code;
+  String? comment;
+  String? status;
+  String? createdAt;
+  String? updatedAt;
+
+  SavedInspections(
+      {this.id,
+        this.employeeId,
+        this.vehicleInspectionId,
+        this.checkNo,
+        this.imRef,
+        this.name,
+        this.type,
+        this.code,
+        this.comment,
+        this.status,
+        this.createdAt,
+        this.updatedAt});
+
+  SavedInspections.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    employeeId = json['employee_id'];
+    vehicleInspectionId = json['vehicle_inspection_id'];
+    checkNo = json['check_no'];
+    imRef = json['im_ref'];
+    name = json['name'];
+    type = json['type'];
+    code = json['code'];
+    comment = json['comment'];
+    status = json['status'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['employee_id'] = this.employeeId;
+    data['vehicle_inspection_id'] = this.vehicleInspectionId;
+    data['check_no'] = this.checkNo;
+    data['im_ref'] = this.imRef;
+    data['name'] = this.name;
+    data['type'] = this.type;
+    data['code'] = this.code;
+    data['comment'] = this.comment;
+    data['status'] = this.status;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     return data;

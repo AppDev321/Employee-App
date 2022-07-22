@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
+import 'package:hnh_flutter/custom_style/text_style.dart';
 import 'package:hnh_flutter/pages/vehicleInspection/inspection_check.dart';
 import 'package:hnh_flutter/view_models/vehicle_inspection_list_vm.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ import '../../custom_style/dialog_builder.dart';
 import '../../repository/model/request/create_inspection_request.dart';
 import '../../repository/model/request/vechicle_get_inspection_request.dart';
 import '../../repository/model/response/vehicle_get_inspection_resposne.dart';
+import '../../widget/navigation_drawer_new.dart';
 import '../../widget/navigation_drawer_widget.dart';
 
 class VehicleInspectionList extends StatefulWidget {
@@ -125,16 +127,19 @@ class VehicleInspectionListState extends State<VehicleInspectionList> {
 
   @override
   void dispose() {
+
     super.dispose();
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         title: Text(ConstantData.vehicle_inspection),
       ),
-      drawer: NavigationDrawerWidget(),
+      //drawer: NavigationDrawer(),
       body:
       Column(
         children:[
@@ -162,8 +167,7 @@ class VehicleInspectionListState extends State<VehicleInspectionList> {
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.all(20),
             child: Text(vehicleInfoTitile,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 18))),
+                style:titleTextStyle)),
 
         Container(
             alignment: Alignment.centerRight,
@@ -193,9 +197,7 @@ class VehicleInspectionListState extends State<VehicleInspectionList> {
                           '$_errorMsg',
                           textAlign: TextAlign.center,
                           textScaleFactor: 1.3,
-                          style: TextStyle(
-                            color: primaryTextColor,
-                          ),
+                          style:errorTextStyle
                         )))
                       : Expanded(
                           child: ListView.builder(
@@ -248,7 +250,7 @@ class VehicleInspectionListState extends State<VehicleInspectionList> {
                       ),
                       padding: const EdgeInsets.all(15),
 
-      //    DateFormat('yyyy-MM-dd HH:mm:ss').parse(data.createdAt!)}
+                      //DateFormat('yyyy-MM-dd HH:mm:ss').parse(data.createdAt!)}
                       child: Text("${ DateFormat('yyyy-MM-dd  hh:mm a').
                       format(DateTime.parse(data.createdAt!).toLocal())}"
                       )
@@ -311,7 +313,26 @@ class VehicleInspectionListState extends State<VehicleInspectionList> {
                                     builder: (context) => page,
                                   ));
                               navigateTo(
-                                  InspectionCheck(inspectionID: data.id));
+                                  InspectionCheck(inspectionID: data.id,
+
+                                     onApiExecutedSuccessfully:(){
+
+                                       setState(() {
+                                         dropdownValue = initialSelection;
+                                         _isFirstLoadRunning = true;
+                                         _isErrorInApi = false;
+                                         _isInspectionViewOpen = false;
+                                         _moveToNextScreen =false;
+
+                                         var request = VechicleInspectionRequest();
+                                         request.vehicleId = "$_vehicleID";
+                                         _vehicleListViewModel.getInspectionVehicles(request);
+                                       });
+
+
+
+                                      }
+                                  ));
                             },
                             style: ButtonStyle(
                                 backgroundColor:
@@ -585,10 +606,8 @@ class VehicleInspectionListState extends State<VehicleInspectionList> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Alert!!"),
           content: new Text(msg),
           actions: <Widget>[
-
             FlatButton(
               child: new Text("Close"),
               onPressed: () {
@@ -608,4 +627,7 @@ class VehicleInspectionListState extends State<VehicleInspectionList> {
       },
     );
   }
+
+
+
 }

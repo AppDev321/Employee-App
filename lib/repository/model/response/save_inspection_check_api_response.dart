@@ -5,10 +5,11 @@ part 'save_inspection_check_api_response.g.dart';
 //done this file
 
 @JsonSerializable()
-class SaveInspectionCheckResponse {
+class SaveInspectionCheckResponse
+{
   int? code;
   String? message;
-  Data? data;
+  String? data;
   List<Errors>? errors;
 
   SaveInspectionCheckResponse({this.code, this.message, this.data, this.errors});
@@ -16,7 +17,7 @@ class SaveInspectionCheckResponse {
   SaveInspectionCheckResponse.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'];
     if (json['errors'] != null) {
       errors = <Errors>[];
       json['errors'].forEach((v) {
@@ -29,9 +30,7 @@ class SaveInspectionCheckResponse {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['code'] = this.code;
     data['message'] = this.message;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
+    data['data'] = this.data;
     if (this.errors != null) {
       data['errors'] = this.errors!.map((v) => v.toJson()).toList();
     }
@@ -55,27 +54,3 @@ class Errors {
   }
 }
 
-class Data {
-  int? id;
-  int? vehicleId;
-  int? nextCheck;
-  bool? completed;
-
-  Data({this.id, this.vehicleId, this.nextCheck, this.completed});
-
-  Data.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    vehicleId = json['vehicle_id'];
-    nextCheck = json['next_check'];
-    completed = json['completed'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['vehicle_id'] = this.vehicleId;
-    data['next_check'] = this.nextCheck;
-    data['completed'] = this.completed;
-    return data;
-  }
-}

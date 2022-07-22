@@ -6,19 +6,25 @@ import 'package:hnh_flutter/repository/retrofit/logging.dart';
 
 import 'package:retrofit/http.dart';
 
+import '../model/request/claim_shift_request.dart';
 import '../model/request/create_inspection_request.dart';
 import '../model/request/inspection_check_request.dart';
+import '../model/request/save_inspection_post_data.dart';
 import '../model/request/save_inspection_request.dart';
 import '../model/request/vechicle_get_inspection_request.dart';
 import '../model/response/create_inspection_api_response.dart';
 import '../model/response/get_inspection_check_api_response.dart';
+import '../model/response/get_shift_list.dart';
 import '../model/response/login_api_response.dart';
 import '../model/response/save_inspection_check_api_response.dart';
 import '../model/response/vehicle_get_inspection_resposne.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api/') // Enter you base URL
+@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
+
+
+//@RestApi(baseUrl: 'http://192.168.1.15:8000/api') // Enter you base URL
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
@@ -50,7 +56,13 @@ dio.interceptors.add(Logging());
   Future<GetInspectionCheckResponse> getInspectionCheck(@Body() CheckInspectionRequest body);
 
   @POST('/vehicles/inspection/check/save')
-  Future<SaveInspectionCheckResponse> saveInspectionCheck(@Body() SaveInspectionCheckRequest body);
+  Future<SaveInspectionCheckResponse> saveInspectionCheck(@Body() PostInspectionData body);
+
+  @GET('/my-shifts?date={date}')
+  Future<GetShiftListResponse> getShiftDataList(@Path("date") String weeklyShiftDate);
+
+  @POST('/claim-shift')
+  Future<LoginApiResponse> claimOpenShift(@Body() ClaimShiftRequest body);
 
 /*
   @GET(Api.users)

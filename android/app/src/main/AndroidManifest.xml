@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.hnh_flutter">
+    package="com.flutter.afj.crm">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -17,9 +17,9 @@
     To let the plugins operate as a service.-->
 
     <application
-        android:label="hnh_flutter"
+        android:label="AFJ CRM"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/afj_logo">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -49,7 +49,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDs-G6o1BgGQezIWkWHMjlQvniZLBsn6dw" />
-
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="pushnotificationapp"/>
         <service
             android:name="rekab.app.background_locator.IsolateHolderService"
             android:exported="true"
