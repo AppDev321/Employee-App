@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Controller {
@@ -43,5 +44,13 @@ class Controller {
     return isRemember;
   }
 
+
+  String getConvertedDate(DateTime now)
+  {
+    //var now = new DateTime.now();
+    var formatter = new DateFormat('yyyy-MM-dd');
+    String formattedDate = formatter.format(now);
+    return formattedDate;
+  }
 
 }

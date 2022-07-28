@@ -6,15 +6,24 @@ import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/data/drawer_item.dart';
 import 'package:hnh_flutter/pages/leave/my_leave_list.dart';
+import 'package:hnh_flutter/pages/shift/claimed_shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../data/drawer_items.dart';
+import '../main.dart';
 import '../pages/login/login.dart';
 import '../pages/shift/shift_list.dart';
+import '../utils/controller.dart';
 
 class NavigationDrawer extends StatelessWidget {
   final padding = EdgeInsets.symmetric(horizontal: 0);
+
+  Map<String,String> map = {
+    'device_type': 'android',
+    'fcm_token':fcmToken!
+  };
+
 
   @override
   Widget build(BuildContext context) {
@@ -182,15 +191,17 @@ class NavigationDrawer extends StatelessWidget {
       case menuVehicle:
       //  navigateTo(GetStartedPage());
         break;
-      case subMenuMyLeave:
-        navigateTo(MyLeaveList());
+      case subMenuOpenShift:
+        navigateTo(ClaimedShiftList());
         break;
 
-      case menuShift:
+      case subMenuMyShift:
         navigateTo(ShiftList());
         break;
 
       case "Logout":
+        Controller controller = Controller();
+        controller.setRememberLogin(false);
         Navigator.pushAndRemoveUntil<dynamic>(
           context,
           MaterialPageRoute<dynamic>(

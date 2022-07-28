@@ -1,25 +1,24 @@
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hnh_flutter/pages/login/login.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:hnh_flutter/view_models/login_view_model.dart';
-import 'package:hnh_flutter/view_models/vehicle_inspection_list_vm.dart';
-import 'package:hnh_flutter/view_models/vehicle_list_vm.dart';
+import 'package:hnh_flutter/view_models/shift_list_vm.dart';
+import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:provider/provider.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 
 import 'custom_style/strings.dart';
 import 'notification/firebase_notification.dart';
-import 'pages/vehicle/vehicle_list.dart';
 import 'utils/controller.dart';
-
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 //Global app initialization
@@ -44,7 +43,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 
 Future<String> storeFCMTokenOnServer(String url, Map jsonMap) async {
-
+print("url $jsonMap");
   Controller controller = Controller();
   String? userToken = await controller.getAuthToken();
 
@@ -56,9 +55,14 @@ Future<String> storeFCMTokenOnServer(String url, Map jsonMap) async {
   request.add(utf8.encode(json.encode(jsonMap)));
   HttpClientResponse response = await request.close();
   String reply = await response.transform(utf8.decoder).join();
+  print("url -response: $reply");
   httpClient.close();
   return reply;
 }
+
+ String? fcmToken ="";
+String? platFormType ="android";
+
 
 
 void main() async{
@@ -67,18 +71,12 @@ void main() async{
   await Firebase.initializeApp();
   //when app is in backgorund
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  final fcmToken =  FirebaseMessaging.instance.getToken();
-  print("tokent $fcmToken");
-
-  //Call service to update token
-  String url = "http://vmi808920.contaboserver.net/api/update-fcm-token";
-  Map map = {
-   'device_type': 'android',
-   'fcm_token':fcmToken
-  };
-
-  print(storeFCMTokenOnServer(url, map));
+  fcmToken = await FirebaseMessaging.instance.getToken();
+  if (Platform.isIOS) {
+    platFormType = "IOS";
+  } else {
+    platFormType = "Android";
+  }
 
   LocalNotificationService.initializeNotification();
 
@@ -86,6 +84,8 @@ void main() async{
       .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
+
+  //For IOS
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,
@@ -104,9 +104,29 @@ void main() async{
     },
   ));
 }
+Future<bool> checkPassPreference() async {
+  Controller controller = Controller();
+  bool isRememmber = await controller.getRememberLogin();
+  if (isRememmber) {
+    String? isAuth = await controller.getAuthToken();
+    if (isAuth != null) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
 
 class MyApp extends StatelessWidget {
 
+  Map<String,String> map = {
+    'device_type': 'android',
+    'fcm_token':fcmToken!
+  };
+
+var api =APIWebService();
   late Widget routeClass;
 
   Future<bool> checkPassPreference() async {
@@ -127,6 +147,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /// Logo with Normal Text example
+    ///
+
     Widget example5 = SplashScreenView(
       navigateRoute:
       FutureBuilder<bool>(
@@ -135,26 +157,30 @@ class MyApp extends StatelessWidget {
           {
             if(snapshot.hasData){
               if(snapshot.data!)
-                {
-
-                  //return LeaveList();
-                  return ShiftList();
-                }
+              {
+                return ShiftList();
+                 /* FutureBuilder<String?>(
+                      future:  APIWebService().postTokenToServer(map),
+                      builder: (context, snapshot)
+                      {
+                        if(snapshot.hasData){
+                          return ShiftList();
+                        }
+                        else
+                        {
+                          return ShiftList();
+                        }
+                      });*/
+              }
               else
-                {
-
-
-                /*return  ChangeNotifierProvider(
-                    create: (context) => LoginViewModel(),
-                    child: LoginClass(),
-                  );*/
-                  return LoginClass();
-                }
+              {
+                return LoginClass();
+              }
             }
-            return LoginClass();
+            return Center();
           }),
       duration: 3000,
-      imageSize: 130,
+      imageSize: 300,
       imageSrc: ConstantData.logoIconPath,
     /*  text: ConstantData.appName,
       textType: TextType.NormalText,
@@ -167,9 +193,8 @@ class MyApp extends StatelessWidget {
     return
       MultiProvider(providers: [
           ChangeNotifierProvider( create: (context) => LoginViewModel()),
-          ChangeNotifierProvider( create: (context) => VehicleListViewModel()),
           ChangeNotifierProvider(create: (context) => NavigationProvider()),
-          ChangeNotifierProvider(create: (context) => VehicleInspectionListViewModel())
+
       ],
       child:
       MaterialApp(
@@ -184,3 +209,5 @@ class MyApp extends StatelessWidget {
 
 
 }
+
+

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hnh_flutter/pages/shift/claimed_shift_list.dart';
 import 'package:hnh_flutter/repository/model/request/claim_shift_request.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
@@ -6,24 +7,37 @@ import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:intl/intl.dart';
 
+import '../repository/model/request/claim_shift_history_request.dart';
+import '../repository/model/response/claimed_shift_list.dart';
+
 class ShiftListViewModel extends BaseViewModel {
 
 
   ShiftListViewModel() {
-      var now = new DateTime.now();
-      var formatter = new DateFormat('yyyy-MM-dd');
-      String formattedDate = formatter.format(now);
-      getShiftList(formattedDate);
+
   }
 
   List<Shifts> _shiftsList = [];
   List<Shifts> _openShiftList = [];
+  List<Claims> _claimedHisotryList = [];
+
+
   bool _claimResponseSuccess = false;
 
   bool get claimResponseSuccess => _claimResponseSuccess;
 
+
    setClaimResponse(bool value)  {
     _claimResponseSuccess = value;
+  }
+
+
+  List<Claims> getClaimedHistoryShiftList() {
+    return _claimedHisotryList;
+  }
+
+  setClaimedHisotryList(List<Claims> data) async {
+    _claimedHisotryList = data;
   }
 
   List<Shifts> getMyShiftList() {
@@ -109,6 +123,39 @@ class ShiftListViewModel extends BaseViewModel {
     notifyListeners();
     setIsErrorReceived(false);
   }
+
+
+
+  Future<void> getClaimedShiftHistoryList(ClaimShiftHistoryRequest weeklyShiftDate) async {
+    setLoading(true);
+    final results = await APIWebService().getClaimHistoryShift(weeklyShiftDate);
+
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+      setIsErrorReceived(true);
+    } else {
+      if (results.code == 200) {
+        setClaimedHisotryList(results.data!.claims!);
+
+        setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += results.errors![i].message! + "\n";
+        }
+        setErrorMsg(errorString);
+        setIsErrorReceived(true);
+      }
+    }
+
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+  }
+
+
+
 
 
 }

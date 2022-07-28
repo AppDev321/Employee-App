@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
+import 'package:hnh_flutter/repository/model/response/login_api_response.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 
 import 'base_view_model.dart';
@@ -15,9 +16,12 @@ class LoginViewModel extends BaseViewModel {
   }
 
 
+
   Future<void> getUserLogin(LoginRequestBody body) async {
     setLoading(true);
-    final results = await APIWebService().getLoginAuth(body);
+
+   final results = await APIWebService().getLoginAuth(body);
+
     if (results == null) {
       var errorString = "Check your internet connection";
       setErrorMsg(errorString);

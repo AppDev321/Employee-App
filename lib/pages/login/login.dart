@@ -4,10 +4,12 @@ import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/utils/controller.dart';
+import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
 import '../../custom_style/dialog_builder.dart';
 import '../../custom_style/progress_hud.dart';
 import '../../view_models/login_view_model.dart';
+import '../../widget/custom_edit_text_widget.dart';
 import '../vehicle/vehicle_list.dart';
 
 class LoginClass extends StatefulWidget {
@@ -99,56 +101,16 @@ class LoginClassStateful extends State<LoginClass> {
                       left: 35),
                   child: Column(
                     children: [
-                    const  Text(
-                        'Login to start your session',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.end,
-                        style:  TextStyle(color: primaryTextColor,fontSize: 14,fontWeight: FontWeight.bold),
-                      ),
+                     CustomTextWidget(text:      'Login to start your session',fontWeight: FontWeight.bold,),
+
                       const SizedBox(
                         height: 20,
                       ),
-                      TextField(
-                        controller: _emailController,
-                        decoration:  InputDecoration(
-                            filled: true,
-                            fillColor: textFielBoxFillColor,
-                            hintText: 'Email',
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: textFielBoxBorderColor, width: 1.0)),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      color: textFielBoxBorderColor,
-                                      width: 1.0))),
-                        ),
-                      const SizedBox(
-                          height: 20,
-                        ),
-                        TextField(
-                          controller: _passwordController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                              filled: true,
-                              fillColor:textFielBoxFillColor,
-                              hintText: 'Password',
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      color: textFielBoxBorderColor, width: 1.0)),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const  BorderSide(
-                                      color: textFielBoxBorderColor,
-                                      width: 1.0))),
-                        ),
-                      const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
+                      CustomEditTextWidget(text:"Email",controller:  _emailController,),
+                      const SizedBox(height: 20),
+                      CustomEditTextWidget(text:"Password",controller:  _passwordController,isPasswordField: true),
+                      const SizedBox(height: 10),
+                      Container(
                             padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                             child: ElevatedButton(
                               child: const Text(_loginText),

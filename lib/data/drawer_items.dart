@@ -17,8 +17,8 @@ final itemsSecond = [
 const String menuVehicle="Vehicle";
 
 const String menuShift="Shift";
-const String subMenuMyShift="My Shift";
-const String subMenuOpenShift="Open Shift";
+const String subMenuMyShift="Open Shift";
+const String subMenuOpenShift="Claimed History";
 
 const String menuAttandance="Attandence";
 const String subMenuToday="Today";
@@ -41,7 +41,9 @@ List<DrawerItem> itemsFirst = [
 */
   new DrawerItem(
     menuShift,
-    [],
+    [
+      subMenuOpenShift
+    ],
     Icons.analytics_outlined,
   ),
 

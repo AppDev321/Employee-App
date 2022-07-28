@@ -7,10 +7,13 @@ import 'package:table_calendar/table_calendar.dart';
 
 import '../../custom_style/colors.dart';
 import '../../custom_style/strings.dart';
-import '../../custom_style/text_style.dart';
+import '../../main.dart';
 import '../../notification/firebase_notification.dart';
 import '../../repository/model/request/claim_shift_request.dart';
+import '../../utils/controller.dart';
+import '../../webservices/APIWebServices.dart';
 import '../../widget/calander_widget.dart';
+import '../../widget/custom_text_widget.dart';
 import '../../widget/error_message.dart';
 import '../../widget/navigation_drawer_new.dart';
 import '../login/login.dart';
@@ -37,6 +40,14 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
   CalendarController _controller = CalendarController();
   late TabController _tabController;
 
+
+
+  Map<String,String> map = {
+    'device_type': platFormType!,
+    'fcm_token':fcmToken!
+  };
+
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +57,16 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
       _isErrorInApi = false;
     });
 
+    APIWebService().postTokenToServer(map);
+
     _shiftListViewModel = ShiftListViewModel();
+
+    var now = new DateTime.now();
+    String formattedDate = Controller().getConvertedDate(now);
+    _shiftListViewModel.getShiftList(formattedDate);
+
+
+
     _shiftListViewModel.addListener(() {
       _shiftList.clear();
       _openShiftList.clear();
@@ -58,6 +78,8 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
           _isErrorInApi = checkErrorApiStatus;
           _errorMsg = _shiftListViewModel.getErrorMsg();
           if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
+            Controller controller = Controller();
+           controller.setRememberLogin(false);
             Navigator.pushAndRemoveUntil<dynamic>(
               context,
               MaterialPageRoute<dynamic>(
@@ -82,11 +104,12 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
       //Check claim Status
       var isClaimSuccessFul = _shiftListViewModel.claimResponseSuccess;
       if (isClaimSuccessFul) {
-        var snackBar = SnackBar(content: Text('Claim Successful'));
+        var snackBar = SnackBar(content:  CustomTextWidget(text:"Claim Successful",color: Colors.white,));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
         var now = new DateTime.now();
-        var formatter = new DateFormat('yyyy-MM-dd');
+        var formatter = new DateFormat('yyyy-'
+            'MM-dd');
         String formattedDate = formatter.format(now);
         _shiftListViewModel.getShiftList(formattedDate);
         _shiftListViewModel.setClaimResponse(false);
@@ -184,14 +207,50 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
 
   Widget showListData(
       BuildContext context, List<Shifts> shifts, bool openShiftData) {
+
+
     return ListView.builder(
       itemCount: shifts.length,
       itemBuilder: (_, index) => Card(
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        child: indexBuilder(context, index, shifts, openShiftData),
+
+
+
+
+        color:   shifts[index].claimed  ==null  ? claimedShiftApprovedColor :
+        shifts[index].claimed  == true ? claimedShiftColor :
+        claimedShiftApprovedColor,
+
+
+        elevation: 5,
+        shadowColor: cardShadow,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child:
+        Container(
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(10),
+                  topRight: Radius.circular(10))),
+          margin: EdgeInsets.only(left: 10),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child:indexBuilder(context, index, shifts, openShiftData)
+        )
+
+
+          ,
       ),
     );
   }
+
+
+
+
+
+
 
   Widget indexBuilder(BuildContext context, int index, List<Shifts> shifts,
       bool openShiftData) {
@@ -200,33 +259,24 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
         ));
 
     final data = shifts[index];
-    return ExpansionTile(
-      title: LayoutBuilder(
-        builder: (context, constraint) {
-          return Container(
-              width: constraint.maxWidth,
-              height: 140,
-              child: itemShiftList(context, data, openShiftData));
-        },
-      ),
-      children: <Widget>[
-        openShiftData
-            ? ListTile(
-                title: LayoutBuilder(
-                  builder: (context, constraint) {
-                    return Container(child: itemOpenShiftDetail(context, data));
-                  },
-                ),
-              )
-            : ListTile(
-                title: LayoutBuilder(
-                  builder: (context, constraint) {
-                    return Container(child: itemShiftDetail(context, data));
-                  },
-                ),
-              )
-      ],
-    );
+    return
+      Theme(
+        data:Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child:
+     ExpansionTile(
+
+            tilePadding:EdgeInsets.all(0),
+            title: LayoutBuilder(
+              builder: (context, constraint) {
+                return    itemShiftList(context, data, openShiftData);
+              },
+            ),
+            children: <Widget>[
+              openShiftData ? Container(child: itemOpenShiftDetail(context, data))
+                    : Container(child: itemShiftDetail(context, data)),
+                  ],
+
+      ));
   }
 
   Widget itemShiftList(BuildContext context, Shifts item, bool openShift) {
@@ -235,43 +285,18 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
       isClaimed = false;
     }
 
-    return InkWell(
+    return  InkWell(
       onTap: () {},
-      child: Row(
-        children: <Widget>[
-          isClaimed
-              ? SizedBox(
-                  width: 20,
-                  child: Container(color: Colors.orangeAccent),
-                )
-              : SizedBox(
-                  width: 20,
-                  child: Container(color: primaryColor),
-                ),
-          Flexible(
-              //padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-              child: Column(
-            children: [
+      child:
+    Column(
+              children: [
               Padding(
-                padding: EdgeInsets.only(left: 10.0, top: 10),
+                padding: EdgeInsets.only(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    openShift
-                        ? Container()
-                        : Text(
-                            item.empName ?? 'N/A',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: normalBoldTextStyle,
-                          ),
-                    Text(
-                      item.designation ?? 'N/A',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 14,
-                      ),
-                    ),
+                    openShift ? Container() : CustomTextWidget(text:item.empName ?? 'N/A',fontWeight: FontWeight.bold),
+                    CustomTextWidget(text:item.designation ?? 'N/A'),
                     SizedBox(
                       height: 5,
                     ),
@@ -282,70 +307,32 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                           color: primaryColor,
                           size: 20.0,
                         ),
-                        Text(
-                          item.location ?? 'N/A',
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Text("Shift Date:",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14)),
-                        Padding(
-                          padding: EdgeInsets.only(left: 5),
-                          child: Text("${item.date}",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 14)),
-                        )
+                        CustomTextWidget(  text:item.location ?? 'N/A'),
                       ],
                     ),
                     SizedBox(
                       height: 5,
                     ),
-                    Row(
-                      children: [
-                        Text("Shift Time:",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14)),
-                        Padding(
-                          padding: EdgeInsets.only(left: 5),
-                          child: Text("${item.shiftTime}",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 14)),
-                        )
-                      ],
-                    ),
+                    createRowDate("Shift Date:", "${item.date == '' ? 'N/A' : item.date}"),
+                    createRowDate("Shift Time:", "${item.shiftTime == '' ? 'N/A' : item.shiftTime}"),
+
                   ],
                 ),
               ),
             ],
-          )),
-        ],
-      ),
+          ),
+
     );
   }
 
   Widget itemShiftDetail(BuildContext context, Shifts item) {
-    return InkWell(
-      onTap: () {},
-      child: Row(
-        children: <Widget>[
-          Flexible(
+    var isClaimed = item.claimed;
+    if (isClaimed == null) {
+      isClaimed = false;
+    }
+    return  Center(
+      child: Container(
               child:    detailInfoItems(item)
-          )
-        ],
       ),
     );
   }
@@ -356,26 +343,18 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
       isClaimed = false;
     }
 
-    return InkWell(
-      onTap: () {},
-      child: Column(
+    return Column(
         children: [
 
           detailInfoItems(item),
           isClaimed
-              ? Row(
-                  children: [
-                    Text("Claim Status:", style: normalBoldTextStyle),
-                    Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text("Already Claimed"))
-                  ],
-                )
+              ?
+              createRowDate("Claim Status:", "Already Claimed")
               : Container(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.orange, // background
+                      primary: claimedShiftColor, // background
                       onPrimary: Colors.white, // foreground
                     ),
                     onPressed: () {
@@ -389,144 +368,62 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                     },
                     child: Text('Claim this Shift'),
                   ),
-                ),
-        ],
-      ),
-    );
+
+
+    )
+    ]);
   }
 
   Widget subInformation(Shifts item) {
     return Column(children: [
-      Row(
-        children: [
-          Text("Name:", style: normalBoldTextStyle),
-          Padding(
-            padding: EdgeInsets.only(left: 5),
-            child: Text("${item.empName == '' ? 'N/A' : item.empName}"),
-          )
-        ],
-      ),
-      SizedBox(
-        height: 5,
-      ),
-      Row(
-        children: [
-          Text("Designation:", style: normalBoldTextStyle),
-          Padding(
-            padding: EdgeInsets.only(left: 5),
-            child: Text("${item.designation == '' ? 'N/A' : item.designation}"),
-          )
-        ],
-      ),
-      SizedBox(
-        height: 5,
-      ),
-      Row(
-        children: [
-          Text("Location:", style: normalBoldTextStyle),
-          Padding(
-            padding: EdgeInsets.only(left: 5),
-            child: Text("${item.location == '' ? 'N/A' : item.location}"),
-          )
-        ],
-      ),
-      SizedBox(
-        height: 5,
-      ),
-      Row(
-        children: [
-          Text("Shift Date:", style: normalBoldTextStyle),
-          Padding(
-            padding: EdgeInsets.only(left: 5),
-            child: Text("${item.date}"),
-          )
-        ],
-      ),
-      SizedBox(
-        height: 5,
-      ),
-      Row(
-        children: [
-          Text("Shift Time:", style: normalBoldTextStyle),
-          Padding(
-            padding: EdgeInsets.only(left: 5),
-            child: Text(
-              "${item.shiftTime}",
-            ),
-          )
-        ],
-      ),
+      createRowDate("Name:", "${item.empName == '' ? 'N/A' : item.empName}"),
+      createRowDate("Designation:", "${item.designation == '' ? 'N/A' : item.designation}"),
+      createRowDate("Location:", "${item.location == '' ? 'N/A' : item.location}"),
+      createRowDate("Shift Date:", "${item.date == '' ? 'N/A' : item.date}"),
+      createRowDate("Shift Time:", "${item.shiftTime == '' ? 'N/A' : item.shiftTime}")
     ]);
   }
 
   Widget detailInfoItems(Shifts item)
   {
     return Column(children:[
-      Row(
-        children: [
-          Container(
-              child: Text(
-                "Break Time:",
-                style: normalBoldTextStyle,
-              )),
-          Container(
-              child: Expanded(
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: Text(
-                        "${item.shiftBreak == '' ? 'N/A' : item.shiftBreak}",
-                      ))))
-        ],
-      ),
-
-      Row(
-        children: [
-          Container(
-              child: Text(
-                "Vehicle:",
-                style: normalBoldTextStyle,
-              )),
-          Container(
-              child: Expanded(
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: Text(
-                        "${item.vehicle == '' ? 'N/A' : item.vehicle}",
-                      ))))
-        ],
-      ),
-      Row(
-        children: [
-          Container(
-              child: Text(
-                "Notes:",
-                style: normalBoldTextStyle,
-              )),
-          Container(
-              child: Expanded(
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: Text(
-                        "${item.note == '' ? 'N/A' : item.note}",
-                      ))))
-        ],
-      ),
+      createRowDate("Break Time:", "${item.shiftBreak == '' ? 'N/A' : item.shiftBreak}"),
+      createRowDate("Vehicle:", "${item.vehicle == '' ? 'N/A' : item.vehicle}"),
+      createRowDate("Notes:", "${item.note == '' ? 'N/A' : item.note}")
     ]);
   }
 
 
+  Widget createRowDate(String title,String? value)
+  {
 
+    return Column(
+      children: [
+        SizedBox(
+          height: 5,
+        ),
+
+        Row(
+          children: [
+            CustomTextWidget(  text:title,fontWeight: FontWeight.bold),
+            Expanded(
+              child: Padding(
+                  padding: EdgeInsets.only(left: 5),
+                  child:
+                  CustomTextWidget(  text:value)),
+            )
+
+          ],
+        )
+      ],
+    )
+    ;
+  }
 
   //Notificaiton
-
-
   void firebaseMessaging(BuildContext context) {
 
-
-
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp ......!');
-
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
@@ -539,20 +436,6 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
         }
 
         LocalNotificationService.createandDisplayNotification(message);
-        /* flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                // channel.description,
-                color: Colors.blue,
-                playSound: true,
-                icon: '@mipmap/ic_launcher',
-              ),
-            ));*/
       }
     });
 

@@ -142,9 +142,6 @@ class VehicleListState extends State<VehicleList> {
   @override
   Widget build(BuildContext context) {
     contextBuild = context;
-
-
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Vehicle Inspection'),

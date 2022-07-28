@@ -17,8 +17,6 @@ dependencies:
   logger: any  #for logging purpose
   splash_screen_view: any
   google_maps_flutter: ^2.0.6
-  location: any
-  background_locator: any
   permission_handler: ^8.1.4+2
   location_permissions: ^3.0.0+1
   path_provider: ^2.0.8
@@ -33,6 +31,8 @@ dependencies:
   firebase_messaging: ^12.0.1
   overlay_support: ^2.0.1
   flutter_local_notifications: ^9.5.3+1
+  onesignal_flutter: ^3.3.2
+
 
 
 

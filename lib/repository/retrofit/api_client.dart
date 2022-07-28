@@ -1,4 +1,3 @@
-import 'package:background_locator/location_dto.dart';
 import 'package:dio/dio.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
@@ -6,12 +5,14 @@ import 'package:hnh_flutter/repository/retrofit/logging.dart';
 
 import 'package:retrofit/http.dart';
 
+import '../model/request/claim_shift_history_request.dart';
 import '../model/request/claim_shift_request.dart';
 import '../model/request/create_inspection_request.dart';
 import '../model/request/inspection_check_request.dart';
 import '../model/request/save_inspection_post_data.dart';
 import '../model/request/save_inspection_request.dart';
 import '../model/request/vechicle_get_inspection_request.dart';
+import '../model/response/claimed_shift_list.dart';
 import '../model/response/create_inspection_api_response.dart';
 import '../model/response/get_inspection_check_api_response.dart';
 import '../model/response/get_shift_list.dart';
@@ -21,24 +22,19 @@ import '../model/response/vehicle_get_inspection_resposne.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
-
-
-//@RestApi(baseUrl: 'http://192.168.1.15:8000/api') // Enter you base URL
+//@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
+@RestApi(baseUrl: 'http://192.168.1.15:8000/api') // Enter you base URL
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
 
-dio.interceptors.add(Logging());
+    dio.interceptors.add(Logging());
     return _ApiClient(dio, baseUrl: baseUrl);
   }
 
 
   @POST('/login')
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);
-
-  @POST('/update-location')
-  Future<void> updateLocation(@Body() LocationDto body);
 
   @POST('/logout')
   Future<void> logout();
@@ -63,6 +59,13 @@ dio.interceptors.add(Logging());
 
   @POST('/claim-shift')
   Future<LoginApiResponse> claimOpenShift(@Body() ClaimShiftRequest body);
+
+  @POST('/claim-history')
+  Future<ClaimShiftListResponse> claimShiftHistory(@Body() ClaimShiftHistoryRequest body);
+
+  @POST('/update-fcm-token')
+  Future<String> postFcmToken(@Body() Map<String,String> body);
+
 
 /*
   @GET(Api.users)

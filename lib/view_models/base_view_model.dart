@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
 class BaseViewModel extends ChangeNotifier
 {
+
+
   bool isLoading = false;
   bool getLoading() => isLoading;
   bool isErrorReceived = false;

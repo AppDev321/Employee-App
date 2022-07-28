@@ -8,7 +8,7 @@ part of 'api_client.dart';
 
 class _ApiClient implements ApiClient {
   _ApiClient(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'http://vmi808920.contaboserver.net/api';
+    baseUrl ??= 'http://192.168.1.15:8000/api';
   }
 
   final Dio _dio;
@@ -29,20 +29,6 @@ class _ApiClient implements ApiClient {
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = LoginApiResponse.fromJson(_result.data!);
     return value;
-  }
-
-  @override
-  Future<void> updateLocation(body) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(body.toJson());
-    await _dio.fetch<void>(_setStreamType<void>(
-        Options(method: 'POST', headers: <String, dynamic>{}, extra: _extra)
-            .compose(_dio.options, '/update-location',
-                queryParameters: queryParameters, data: _data)
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    return null;
   }
 
   @override
@@ -165,6 +151,37 @@ class _ApiClient implements ApiClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = LoginApiResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ClaimShiftListResponse> claimShiftHistory(body) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ClaimShiftListResponse>(
+            Options(method: 'POST', headers: <String, dynamic>{}, extra: _extra)
+                .compose(_dio.options, '/claim-history',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ClaimShiftListResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<String> postFcmToken(body) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _result = await _dio.fetch<String>(_setStreamType<String>(
+        Options(method: 'POST', headers: <String, dynamic>{}, extra: _extra)
+            .compose(_dio.options, '/update-fcm-token',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = _result.data!;
     return value;
   }
 

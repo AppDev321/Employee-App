@@ -6,11 +6,13 @@ import 'package:hnh_flutter/repository/model/response/save_inspection_check_api_
 import 'package:hnh_flutter/repository/model/response/vehicle_get_inspection_resposne.dart';
 import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
 
+import '../repository/model/request/claim_shift_history_request.dart';
 import '../repository/model/request/create_inspection_request.dart';
 import '../repository/model/request/inspection_check_request.dart';
 import '../repository/model/request/login_data.dart';
 import '../repository/model/request/save_inspection_post_data.dart';
 import '../repository/model/request/vechicle_get_inspection_request.dart';
+import '../repository/model/response/claimed_shift_list.dart';
 import '../repository/model/response/create_inspection_api_response.dart';
 import '../repository/model/response/get_inspection_check_api_response.dart';
 import '../repository/retrofit/client_header.dart';
@@ -109,5 +111,29 @@ class APIWebService {
       return null;
     }
   }
+
+  Future<ClaimShiftListResponse?> getClaimHistoryShift(ClaimShiftHistoryRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.claimShiftHistory(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+
+  Future<String?> postTokenToServer(Map<String,String> request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.postFcmToken(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
 
 }

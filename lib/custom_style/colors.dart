@@ -12,3 +12,8 @@ const Color whiteColor = Colors.white;
 const Color textFielBoxBorderColor = Colors.black;
 const Color textFielBoxFillColor = Colors.white;
 const Color inspectionTableColor= Color(0xFFDBDBDB);
+const Color claimedShiftColor = Colors.orange;
+const Color claimedShiftApprovedColor = Color(0xFF0692C9);
+const Color claimedShiftRejectColor = Color(0xFFD92C3C);
+const Color cardShadow= Color(0x33959BA5);
+
