@@ -2,10 +2,14 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/data/drawer_item.dart';
-import 'package:hnh_flutter/pages/leave/my_leave_list.dart';
+import 'package:hnh_flutter/pages/leave/leave_page.dart';
+import 'package:hnh_flutter/pages/overtime/add_overtime.dart';
+import 'package:hnh_flutter/pages/profile/user_detail.dart';
 import 'package:hnh_flutter/pages/shift/claimed_shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +17,8 @@ import 'package:provider/provider.dart';
 import '../data/drawer_items.dart';
 import '../main.dart';
 import '../pages/login/login.dart';
+import '../pages/overtime/overtime_list.dart';
+import '../pages/profile/profile_screen.dart';
 import '../pages/shift/shift_list.dart';
 import '../utils/controller.dart';
 
@@ -181,35 +187,30 @@ class NavigationDrawer extends StatelessWidget {
 
 
   void selectItem(BuildContext context, int index,String menuItem) {
-    final navigateTo = (page) => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => page,
-        ));
 
     Navigator.of(context).pop();
 
     switch (menuItem) {
-      case menuVehicle:
-      //  navigateTo(GetStartedPage());
+      case profile:
+        Get.to(()=>ProfileScreen());
         break;
+      case overtime:
+        Get.to(()=>OverTimePage());
+        break;
+      case menuLeave:
+        Get.to(()=>LeavePage());
+        break;
+
       case subMenuOpenShift:
-        navigateTo(ClaimedShiftList());
+        Get.to(()=>ClaimedShiftList());
         break;
 
       case subMenuMyShift:
-        navigateTo(ShiftList());
+        Get.to(()=>ShiftList());
         break;
 
       case "Logout":
-        Controller controller = Controller();
-        controller.setRememberLogin(false);
-        Navigator.pushAndRemoveUntil<dynamic>(
-          context,
-          MaterialPageRoute<dynamic>(
-            builder: (BuildContext context) => LoginClass(),
-          ),
-              (route) =>
-          false, //if you want to disable back feature set to false
-        );
+        Controller().logoutUser();
         break;
     }
   }

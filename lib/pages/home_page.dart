@@ -4,7 +4,7 @@ import 'package:hnh_flutter/pages/vehicle/vehicle_list.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/repository/retrofit/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../custom_style/dialog_builder.dart';
+import '../widget/dialog_builder.dart';
 import '../custom_style/progress_hud.dart';
 import '../custom_style/strings.dart';
 import '../repository/model/response/login_api_response.dart';

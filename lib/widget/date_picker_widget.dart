@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
-class DatePickerWidget extends StatelessWidget {
+import '../utils/controller.dart';
 
-  const DatePickerWidget({
+class DatePickerWidget extends StatefulWidget {
+
+   DatePickerWidget({
     Key? key,
     required this.label,
     required this.selectedDate,
@@ -12,8 +14,16 @@ class DatePickerWidget extends StatelessWidget {
   }) : super(key: key);
 
   final String label;
- final  DateTime selectedDate ;
-  final ValueChanged<String> onDateChange;
+  DateTime selectedDate ;
+  final ValueChanged<DateTime> onDateChange;
+
+
+  @override
+  _DateWidget createState() => _DateWidget();
+}
+
+class _DateWidget extends State<DatePickerWidget> {
+  late DateTime selectedDate = widget.selectedDate;
 
 
   @override
@@ -22,8 +32,8 @@ class DatePickerWidget extends StatelessWidget {
       padding: const EdgeInsets.only(top: 10),
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-   children: [
-        CustomTextWidget(text: label),
+       children: [
+        CustomTextWidget(text: widget.label,fontWeight: FontWeight.bold,),
         SizedBox(height: 10,),
         Row(
        mainAxisSize: MainAxisSize.min,
@@ -41,9 +51,9 @@ class DatePickerWidget extends StatelessWidget {
                     _selectDate(context);
                   },
                   child: Row(
-
                     children: [
-                      CustomTextWidget(text: selectedDate ==  null  ? 'No date was chosen!'  : "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}"),
+                      CustomTextWidget(text: selectedDate ==  null  ? 'No date was chosen!'  :
+                      Controller().getConvertedDate(selectedDate)),
                       const SizedBox(width: 10),
                       IconButton(
                         icon: Icon(Icons.calendar_today),
@@ -65,10 +75,14 @@ class DatePickerWidget extends StatelessWidget {
       firstDate: DateTime(2022),
       lastDate: DateTime(2035),
     );
-    if (selected != null && selected != selectedDate)
+    if (selected != null && selected !=selectedDate)
       {
-        var dateSelected = "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
-          onDateChange(dateSelected);
+        setState(() {
+          selectedDate = selected;
+          build(context);
+          widget.onDateChange(selectedDate);
+        });
+
       }
 
 

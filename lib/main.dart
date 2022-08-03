@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:hnh_flutter/pages/login/login.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
@@ -146,8 +147,6 @@ var api =APIWebService();
 
   @override
   Widget build(BuildContext context) {
-    /// Logo with Normal Text example
-    ///
 
     Widget example5 = SplashScreenView(
       navigateRoute:
@@ -159,18 +158,6 @@ var api =APIWebService();
               if(snapshot.data!)
               {
                 return ShiftList();
-                 /* FutureBuilder<String?>(
-                      future:  APIWebService().postTokenToServer(map),
-                      builder: (context, snapshot)
-                      {
-                        if(snapshot.hasData){
-                          return ShiftList();
-                        }
-                        else
-                        {
-                          return ShiftList();
-                        }
-                      });*/
               }
               else
               {
@@ -182,27 +169,19 @@ var api =APIWebService();
       duration: 3000,
       imageSize: 300,
       imageSrc: ConstantData.logoIconPath,
-    /*  text: ConstantData.appName,
-      textType: TextType.NormalText,
-      textStyle: TextStyle(
-        fontSize: 30.0,
-      ),*/
       backgroundColor: Colors.white,
     );
-
-    return
-      MultiProvider(providers: [
-          ChangeNotifierProvider( create: (context) => LoginViewModel()),
-          ChangeNotifierProvider(create: (context) => NavigationProvider()),
-
+      var re =  MultiProvider(providers: [
+        ChangeNotifierProvider(create: (context) => NavigationProvider()),
       ],
-      child:
-      MaterialApp(
+    child:
+    GetMaterialApp(
       title:  ConstantData.appName,
       home: example5,
       debugShowCheckedModeBanner: false,
     )
-      );
+);
+    return re ;
   }
 
 

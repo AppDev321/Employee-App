@@ -1,10 +1,15 @@
 import 'package:dio/dio.dart';
+import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
+import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
+import 'package:hnh_flutter/repository/model/response/leave_list.dart';
+import 'package:hnh_flutter/repository/model/response/user_profile.dart';
 import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
 import 'package:hnh_flutter/repository/retrofit/logging.dart';
 
 import 'package:retrofit/http.dart';
 
+import '../model/request/change_password_request.dart';
 import '../model/request/claim_shift_history_request.dart';
 import '../model/request/claim_shift_request.dart';
 import '../model/request/create_inspection_request.dart';
@@ -17,13 +22,14 @@ import '../model/response/create_inspection_api_response.dart';
 import '../model/response/get_inspection_check_api_response.dart';
 import '../model/response/get_shift_list.dart';
 import '../model/response/login_api_response.dart';
+import '../model/response/overtime_list.dart';
 import '../model/response/save_inspection_check_api_response.dart';
 import '../model/response/vehicle_get_inspection_resposne.dart';
 
 part 'api_client.g.dart';
 
-//@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
-@RestApi(baseUrl: 'http://192.168.1.15:8000/api') // Enter you base URL
+@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
+//@RestApi(baseUrl: 'http://192.168.1.21:8000/api') // Enter you base URL
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
@@ -62,6 +68,28 @@ abstract class ApiClient {
 
   @POST('/claim-history')
   Future<ClaimShiftListResponse> claimShiftHistory(@Body() ClaimShiftHistoryRequest body);
+
+  @POST('/my-leaves')
+  Future<LeaveListResponse> leavesListHistory(@Body() ClaimShiftHistoryRequest body);
+
+  @POST('/leave-request')
+  Future<LoginApiResponse> leaveRequest(@Body() LeaveRequest body);
+
+  @POST('/change-password')
+  Future<LoginApiResponse> changePassword(@Body() ChangePasswordRequest body);
+
+  @GET('/profile-details')
+  Future<UserProfileDetail> getProfileAccount();
+
+  @POST('/update-profile')
+  Future<LoginApiResponse> updateProfileAccount(@Body() Profile body);
+
+  @POST('/request-overtime')
+  Future<LoginApiResponse> saveOvertimeRequest(@Body() OvertimeRequest body);
+
+  @POST('/overtime-request-history')
+  Future<OvertimeListResponse> getOvertimeHistory(@Body() ClaimShiftHistoryRequest body);
+
 
   @POST('/update-fcm-token')
   Future<String> postFcmToken(@Body() Map<String,String> body);

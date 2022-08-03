@@ -8,6 +8,9 @@ class BaseViewModel extends ChangeNotifier
 
   bool isLoading = false;
   bool getLoading() => isLoading;
+
+
+
   bool isErrorReceived = false;
   bool getIsErrorRecevied() => isErrorReceived;
   bool isResponseRecived = false;

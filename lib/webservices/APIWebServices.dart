@@ -1,8 +1,12 @@
+import 'package:hnh_flutter/repository/model/request/change_password_request.dart';
 import 'package:hnh_flutter/repository/model/request/claim_shift_request.dart';
+import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
+import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/save_inspection_request.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/repository/model/response/login_api_response.dart';
 import 'package:hnh_flutter/repository/model/response/save_inspection_check_api_response.dart';
+import 'package:hnh_flutter/repository/model/response/user_profile.dart';
 import 'package:hnh_flutter/repository/model/response/vehicle_get_inspection_resposne.dart';
 import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
 
@@ -15,6 +19,8 @@ import '../repository/model/request/vechicle_get_inspection_request.dart';
 import '../repository/model/response/claimed_shift_list.dart';
 import '../repository/model/response/create_inspection_api_response.dart';
 import '../repository/model/response/get_inspection_check_api_response.dart';
+import '../repository/model/response/leave_list.dart';
+import '../repository/model/response/overtime_list.dart';
 import '../repository/retrofit/client_header.dart';
 
 class APIWebService {
@@ -122,6 +128,95 @@ class APIWebService {
       return null;
     }
   }
+
+
+  Future<LeaveListResponse?> getLeaveListHistory(ClaimShiftHistoryRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.leavesListHistory(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+
+  Future<LoginApiResponse?> saveLeaveRequest(LeaveRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.leaveRequest(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+  Future<OvertimeListResponse?> getOvertimeListHistory(ClaimShiftHistoryRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getOvertimeHistory(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+
+
+
+  Future<LoginApiResponse?> saveOvertimeRequest(OvertimeRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.saveOvertimeRequest(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+
+
+  Future<LoginApiResponse?> changePasswordRequest(ChangePasswordRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.changePassword(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+
+
+  Future<UserProfileDetail?> getUserProfileDetails() async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getProfileAccount();
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+
+  Future<LoginApiResponse?> updateUserProfileDetail(Profile request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.updateProfileAccount(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+
 
 
   Future<String?> postTokenToServer(Map<String,String> request) async {

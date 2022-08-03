@@ -9,9 +9,17 @@ static const String pref_user_token ="token";
 static const String vehicle_inspection ="Vehicle Inspection";
 static const String vehicle_detail ="Vehicle Detail";
 static const String inspection ="Inspection";
-static const String attendence ="Attendence";
+static const String leave ="Leave";
+static const String overTime ="Overtime";
 static const String unauthenticatedMsg="Unauthenticated";
 static const  String logoIconPath = "assets/images/afj_logo.png";
 
+
+
+
 }
+
+
+
+
 

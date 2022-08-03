@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/data/drawer_item.dart';
-import 'package:hnh_flutter/pages/leave/my_leave_list.dart';
+import 'package:hnh_flutter/pages/leave/leave_page.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -85,7 +85,7 @@ class NavigationDrawerWidget extends StatelessWidget {
 
     switch (index) {
       case 0:
-        navigateTo(MyLeaveList());
+        navigateTo(LeavePage());
         break;
 
     }

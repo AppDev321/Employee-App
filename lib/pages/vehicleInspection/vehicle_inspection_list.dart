@@ -7,7 +7,7 @@ import 'package:hnh_flutter/pages/vehicleInspection/inspection_check.dart';
 import 'package:hnh_flutter/view_models/vehicle_inspection_list_vm.dart';
 import 'package:intl/intl.dart';
 
-import '../../custom_style/dialog_builder.dart';
+import '../../widget/dialog_builder.dart';
 import '../../repository/model/request/create_inspection_request.dart';
 import '../../repository/model/request/vechicle_get_inspection_request.dart';
 import '../../repository/model/response/vehicle_get_inspection_resposne.dart';

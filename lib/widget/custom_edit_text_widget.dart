@@ -1,54 +1,85 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../custom_style/colors.dart';
 
-class CustomEditTextWidget extends StatelessWidget {
-final String? text;
-final bool isPasswordField;
-final double size;
-final FontWeight fontWeight;
-final Color color;
-final VoidCallback? onClick;
-final TextEditingController? controller;
+class CustomEditTextWidget extends StatefulWidget {
+  final String? text;
+  bool isPasswordField;
+  final double size;
+  final FontWeight fontWeight;
+  final Color color;
+  final VoidCallback? onClick;
+  final bool isNumberField;
+  final TextEditingController? controller;
 
-const CustomEditTextWidget({
-@required this.text,
-  this.isPasswordField=false,
-this.size =14,
-this.fontWeight=FontWeight.normal,
-this.color=Colors.black,
-this.onClick=null,
-  this.controller = null
-});
+  CustomEditTextWidget({Key? key,
+    @required this.text,
+    this.isPasswordField = false,
+    this.size = 14,
+    this.fontWeight = FontWeight.normal,
+    this.color = Colors.black,
+    this.onClick = null,
+    this.isNumberField = false,
+    this.controller = null}) : super(key: key);
 
-@override
-Widget build(BuildContext context) {
-  return
-    controller == null ? TextField(
-      obscureText: isPasswordField,
-      decoration:boxContainer(text!) ,
-    ):TextField(
-     controller: controller,
-      obscureText: isPasswordField,
-      decoration:boxContainer(text!) ,
+  @override
+  _CustomEditTextWidget createState() => _CustomEditTextWidget();
+}
+
+class _CustomEditTextWidget extends State<CustomEditTextWidget> {
+bool showPass =true;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return TextField(
+      keyboardType: widget.isNumberField ? TextInputType.number : TextInputType.text,
+      controller: widget.controller,
+      obscureText:   widget.isPasswordField ? showPass : false,
+      decoration: boxContainer(widget.text!),
     );
-}
 
-InputDecoration boxContainer(String text)
-{
-  return InputDecoration(
-      filled: true,
-      fillColor:textFielBoxFillColor,
-      hintText: text,
-      focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-              color: textFielBoxBorderColor, width: 1.0)),
-      enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const  BorderSide(
-              color: textFielBoxBorderColor,
-              width: 1.0)));
-}
+  }
+
+
+  InputDecoration boxContainer(String text) {
+    return InputDecoration(
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        suffixIcon:
+        widget.isPasswordField?
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+          child: GestureDetector(
+            onTap: (){
+              setState(() {
+                showPass = !showPass;
+              });
+            },
+            child: Icon(
+              showPass
+                  ? Icons.visibility_rounded
+                  : Icons.visibility_off_rounded,
+              size: 24,
+            ),
+          ),)
+        :null,
+        filled: true,
+        fillColor: textFielBoxFillColor,
+        hintText: text,
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(
+                color: textFielBoxBorderColor, width: 1.0)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(
+                color: textFielBoxBorderColor,
+                width: 1.0)
+        )
+
+
+    )
+
+    ;
+  }
 }

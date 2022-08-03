@@ -10,6 +10,7 @@ import 'package:hnh_flutter/widget/navigation_drawer_new.dart';
 import '../../custom_style/text_style.dart';
 import '../../main.dart';
 import '../../notification/firebase_notification.dart';
+import '../../utils/controller.dart';
 import '../login/login.dart';
 
 class VehicleList extends StatefulWidget {
@@ -98,14 +99,7 @@ class VehicleListState extends State<VehicleList> {
             _isErrorInApi = checkErrorApiStatus;
           _errorMsg = _vehicleListViewModel.getErrorMsg();
           if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
-            Navigator.pushAndRemoveUntil<dynamic>(
-              context,
-              MaterialPageRoute<dynamic>(
-                builder: (BuildContext context) => LoginClass(),
-              ),
-              (route) =>
-                  false, //if you want to disable back feature set to false
-            );
+            Controller().logoutUser();
           }
         });
         }

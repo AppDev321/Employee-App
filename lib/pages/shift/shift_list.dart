@@ -78,16 +78,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
           _isErrorInApi = checkErrorApiStatus;
           _errorMsg = _shiftListViewModel.getErrorMsg();
           if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
-            Controller controller = Controller();
-           controller.setRememberLogin(false);
-            Navigator.pushAndRemoveUntil<dynamic>(
-              context,
-              MaterialPageRoute<dynamic>(
-                builder: (BuildContext context) => LoginClass(),
-              ),
-              (route) =>
-                  false, //if you want to disable back feature set to false
-            );
+            Controller().logoutUser();
           }
         });
       } else {
@@ -104,14 +95,10 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
       //Check claim Status
       var isClaimSuccessFul = _shiftListViewModel.claimResponseSuccess;
       if (isClaimSuccessFul) {
-        var snackBar = SnackBar(content:  CustomTextWidget(text:"Claim Successful",color: Colors.white,));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-        var now = new DateTime.now();
-        var formatter = new DateFormat('yyyy-'
-            'MM-dd');
-        String formattedDate = formatter.format(now);
-        _shiftListViewModel.getShiftList(formattedDate);
+        Controller().showToastMessage(context,"Claim Successful");
+
+        _shiftListViewModel.getShiftList(Controller().getConvertedDate(now));
         _shiftListViewModel.setClaimResponse(false);
       }
 
@@ -183,13 +170,13 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                                     _shiftList.length > 0
                                         ? showListData(
                                             context, _shiftList, false)
-                                        : Expanded(
+                                        : Container(
                                             child: ErrorMessageWidget(
                                                 label: "No Shift Found")),
                                     _openShiftList.length > 0
                                         ? showListData(
                                             context, _openShiftList, true)
-                                        : Expanded(
+                                        : Container(
                                             child: ErrorMessageWidget(
                                                 label: "No Open  Shift Found"))
                                   ],
@@ -209,39 +196,39 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
       BuildContext context, List<Shifts> shifts, bool openShiftData) {
 
 
-    return ListView.builder(
-      itemCount: shifts.length,
-      itemBuilder: (_, index) => Card(
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView.builder(
+        itemCount: shifts.length,
+        itemBuilder: (_, index) => Card(
+
+         color:
+        openShiftData? claimedShiftColor:
+         shifts[index].claimed  ==null  ? claimedShiftApprovedColor :
+          shifts[index].claimed  == true ? claimedShiftColor :
+          claimedShiftApprovedColor,
+          elevation: 5,
+          shadowColor: cardShadow,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child:
+          Container(
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(10),
+                    topRight: Radius.circular(10))),
+            margin: EdgeInsets.only(left: 10),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child:indexBuilder(context, index, shifts, openShiftData)
+          )
 
 
-
-
-        color:   shifts[index].claimed  ==null  ? claimedShiftApprovedColor :
-        shifts[index].claimed  == true ? claimedShiftColor :
-        claimedShiftApprovedColor,
-
-
-        elevation: 5,
-        shadowColor: cardShadow,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+            ,
         ),
-        clipBehavior: Clip.antiAlias,
-        child:
-        Container(
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(10),
-                  topRight: Radius.circular(10))),
-          margin: EdgeInsets.only(left: 10),
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child:indexBuilder(context, index, shifts, openShiftData)
-        )
-
-
-          ,
       ),
     );
   }

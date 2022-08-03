@@ -19,10 +19,11 @@ const String menuVehicle="Vehicle";
 const String menuShift="Shift";
 const String subMenuMyShift="Open Shift";
 const String subMenuOpenShift="Claimed History";
-
+const String overtime = "Overtime";
 const String menuAttandance="Attandence";
 const String subMenuToday="Today";
-const String subMenuMyLeave="My Leave";
+const String menuLeave="Leave";
+const String profile = "Profile";
 
 
 
@@ -53,7 +54,7 @@ List<DrawerItem> itemsFirst = [
     Icons.analytics_outlined,
   ),
   new DrawerItem(
-    "Leaves",
+    menuLeave,
     [],
     Icons.analytics_outlined,
   ),
@@ -73,11 +74,7 @@ List<DrawerItem> itemsFirst = [
     [],
     Icons.analytics_outlined,
   ),
-  new DrawerItem(
-    "Claims",
-    [],
-    Icons.analytics_outlined,
-  ),
+
   new DrawerItem(
     "Availablity",
     [],
@@ -85,12 +82,12 @@ List<DrawerItem> itemsFirst = [
   ),
 
   new DrawerItem(
-    "Overtime",
+    overtime,
     [],
     Icons.analytics_outlined,
   ),
   new DrawerItem(
-    "Profile",
+    profile,
     [],
     Icons.analytics_outlined,
   ),

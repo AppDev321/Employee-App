@@ -1,315 +1,223 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
+import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
+import 'package:hnh_flutter/repository/model/response/leave_list.dart';
+import 'package:hnh_flutter/widget/custom_text_widget.dart';
+import 'package:table_calendar/table_calendar.dart';
 
-class AddMyLeave extends StatelessWidget {
+import '../../widget/dialog_builder.dart';
+import '../../utils/controller.dart';
+import '../../view_models/leave_list_vm.dart';
+import '../../widget/custom_comment_box.dart';
+import '../../widget/custom_drop_down_widget.dart';
+import '../../widget/custom_edit_text_widget.dart';
+import '../../widget/date_picker_widget.dart';
+import '../login/login.dart';
+
+class AddLeave extends StatefulWidget {
+  final List<DropMenuItems>? leaveTypes;
+
+  const AddLeave({Key? key, @required this.leaveTypes}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: Text(ConstantData.attendence),
-      ),
-      body: Column(
-        children: [
-          Container(
-              alignment: Alignment.centerRight,
-              padding: EdgeInsets.only(right: 20, top: 10),
-              child: ElevatedButton.icon(
-                icon: Icon(Icons.add),
-                onPressed: () {},
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.blueAccent),
-                    textStyle:
-                        MaterialStateProperty.all(TextStyle(fontSize: 12))),
-                label: Text('Add Leave'),
-              )),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: _containerLeave(context),
-          )
-        ],
-      ));
+  State<AddLeave> createState() => AddLeaveStateful();
+}
 
-  Widget _containerLeave(BuildContext context) {
-    return Column(children: [
-      Text(
-        "Details",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 16,
-          fontFamily: "Roboto",
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      Text(
-        "Create checkIn/checkOut",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 16,
-          fontFamily: "Roboto",
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      Text(
-        "Select Leave Type",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-        ),
-      ),
-      Text(
-        "From Date",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-        ),
-      ),
-      Text(
-        "To Date",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-        ),
-      ),
-      Text(
-        "Subject",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-        ),
-      ),
-      Text(
-        "Is Delay?:",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-        ),
-      ),
-      Text(
-        "Total hour:",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-        ),
-      ),
-      Text(
-        "Total checks:",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-        ),
-      ),
-      Container(
-        width: 348,
-        height: 1,
-      ),
-      Container(
-        width: 317,
-        height: 47,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.black,
-            width: 1,
-          ),
-          color: Colors.white,
-        ),
-      ),
-      Container(
-        width: 317,
-        height: 47,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.black,
-            width: 1,
-          ),
-          color: Colors.white,
-        ),
-      ),
-      Container(
-        width: 317,
-        height: 47,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.black,
-            width: 1,
-          ),
-          color: Colors.white,
-        ),
-      ),
-      Container(
-        width: 317,
-        height: 47,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.black,
-            width: 1,
-          ),
-          color: Colors.white,
-        ),
-      ),
-      Text(
-        "Select leave type",
-        style: TextStyle(
-          color: Color(0x5e000000),
-          fontSize: 13,
-        ),
-      ),
-      Text(
-        "mm/dd/yy",
-        style: TextStyle(
-          color: Color(0x5e000000),
-          fontSize: 13,
-        ),
-      ),
-      Text(
-        "mm/dd/yy ",
-        style: TextStyle(
-          color: Color(0x5e000000),
-          fontSize: 13,
-        ),
-      ),
-      Text(
-        "Type Subject",
-        style: TextStyle(
-          color: Color(0x5e000000),
-          fontSize: 13,
-        ),
-      ),
-      Container(
-        width: 10,
-        height: 9.22,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: FlutterLogo(size: 9.21875),
-      ),
-      Container(
-        width: 10,
-        height: 9.22,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: FlutterLogo(size: 9.21875),
-      ),
-      Transform.rotate(
-        angle: 1.57,
-        child: Container(
-          width: 5,
-          height: 8,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: Colors.black,
-              width: 1,
-            ),
-            color: Color(0x7f7f3a44),
-          ),
-        ),
-      ),
-      Text(
-        "Description",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-        ),
-      ),
-      Container(
-        width: 317,
-        height: 94,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.black,
-            width: 1,
-          ),
-          color: Colors.white,
-        ),
-      ),
-      Text(
-        "Select name here",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-        ),
-      ),
-      Container(
-        width: 317,
-        height: 47,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.black,
-            width: 1,
-          ),
-          color: Colors.white,
-        ),
-      ),
-      Text(
-        "Select name here",
-        style: TextStyle(
-          color: Color(0x5e000000),
-          fontSize: 13,
-        ),
-      ),
-      Transform.rotate(
-        angle: 1.57,
-        child: Container(
-          width: 5,
-          height: 8,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: Colors.black,
-              width: 1,
-            ),
-            color: Color(0x7f7f3a44),
-          ),
-        ),
-      ),
-      Text(
-        "Backup/ Point of contact",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-        ),
-      ),
-      Container(
-        width: 317,
-        height: 47,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.black,
-            width: 1,
-          ),
-          color: Colors.white,
-        ),
-      ),
-      Text(
-        "Select name here",
-        style: TextStyle(
-          color: Color(0x5e000000),
-          fontSize: 13,
-        ),
-      ),
-      Transform.rotate(
-        angle: 1.57,
-        child: Container(
-          width: 5,
-          height: 8,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: Colors.black,
-              width: 1,
-            ),
-            color: Color(0x7f7f3a44),
-          ),
-        ),
-      ),
-    ]);
+class AddLeaveStateful extends State<AddLeave> {
+
+  String? _errorMsg = "";
+  CalendarController _controller = CalendarController();
+  TextEditingController descController = TextEditingController();
+  TextEditingController subjectController = TextEditingController();
+   DateTime startDate = DateTime.now(),endDate=DateTime.now();
+  late LeaveListViewModel _leaveListViewModel;
+  DialogBuilder? _progressDialog;
+  int leaveTypeId= 1;
+  BuildContext? _dialogContext;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+
+
+
+
+    _leaveListViewModel = LeaveListViewModel();
+
+    _leaveListViewModel.addListener(() {
+
+      _progressDialog?.hideOpenDialog();
+
+      var checkErrorApiStatus = _leaveListViewModel.getIsErrorRecevied();
+      if (checkErrorApiStatus) {
+        setState(() {
+          _errorMsg = _leaveListViewModel.getErrorMsg();
+          if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
+            Controller().logoutUser();
+          }
+          else
+            {
+
+              Controller().showToastMessage(context, _errorMsg!);
+            }
+        });
+      } else {
+        setState(() {
+          _errorMsg = "";
+        });
+
+      Controller().showToastMessage(context, "Leave Request submitted successfully");
+Navigator.pop(context);
+      }
+    });
+
+
+
   }
+
+  @override
+  Widget build(BuildContext context) {
+    _dialogContext = context;
+    if(_progressDialog == null)
+      {
+        _progressDialog =  DialogBuilder(_dialogContext!);
+        _progressDialog?.initiateLDialog('Please wait..');
+      }
+
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(ConstantData.leave),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(left: 10, top: 10, right: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomTextWidget(text: "Leave Request", size: 25),
+              SizedBox(
+                height: 20,
+              ),
+              CustomTextWidget(text: "Leave Type:",fontWeight: FontWeight.bold,),
+              CustomDropDownWidget(
+                spinnerItems: widget.leaveTypes!,
+                onClick: (data) {
+
+                  leaveTypeId = data.id!;
+
+                },
+              ),
+              DatePickerWidget(
+                selectedDate: DateTime.now(),
+                label: "From Date",
+                onDateChange: (value) {
+                  setState(() {
+                   startDate = value;
+                  });
+                },
+              ),
+              DatePickerWidget(
+                selectedDate: DateTime.now(),
+                label: "To Date",
+                onDateChange: (value) {
+                  setState(() {
+                  endDate  = value;
+                  });
+                },
+              ),
+              SizedBox(
+                height: 10,
+              ),
+
+              CustomCommentBox(label:"Subject" ,hintMessage: "Enter your subject",controller: subjectController),
+
+              SizedBox(
+                height: 10,
+              ),
+              CustomCommentBox(label:"Description" ,hintMessage: "Enter your description",controller: descController),
+
+              SizedBox(
+                height: 20,
+              ),
+
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                     Expanded(
+                       child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(Colors.grey),
+                              textStyle:
+                              MaterialStateProperty.all(TextStyle(fontSize: 12))),
+                          child: Text('Cancel'),
+                        ),
+                     ),
+
+                    SizedBox(
+                      width: 30,
+                    ),
+                        Expanded(
+
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if(_datesCheck())
+                            {
+
+                              _progressDialog?.showLoadingDialog();
+                              var request = LeaveRequest();
+                              request.dateTo = Controller().getConvertedDate(endDate);
+                              request.dateFrom =  Controller().getConvertedDate(startDate);
+                              request.leaveType =leaveTypeId.toString();
+                              request.description = descController.text;
+                              request.subject =subjectController.text;
+                              _leaveListViewModel.saveLeaveRequest(request);
+
+                            }
+                          else
+                            {
+                              Controller().showToastMessage(context, "End date must be greater than leave start date");
+                            }
+                        },
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(Colors.blue),
+                            textStyle:
+                            MaterialStateProperty.all(TextStyle(fontSize: 12))),
+                        child: Text('Save'),
+                      ),
+                    ),
+
+                  ]),
+
+
+
+
+
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  bool _datesCheck()
+  {
+    if(endDate.isAfter(startDate) || endDate== startDate)
+      {
+        return true;
+      }
+    else
+      {
+        return false;
+      }
+  }
+
 }

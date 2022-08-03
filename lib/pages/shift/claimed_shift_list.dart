@@ -8,10 +8,10 @@ import '../../custom_style/colors.dart';
 import '../../custom_style/strings.dart';
 import '../../data/drawer_items.dart';
 import '../../utils/controller.dart';
+import '../../widget/color_text_round_widget.dart';
 import '../../widget/custom_text_widget.dart';
 import '../../widget/date_range_widget.dart';
 import '../../widget/error_message.dart';
-import '../login/login.dart';
 
 class ClaimedShiftList extends StatefulWidget {
   @override
@@ -64,16 +64,7 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
           _isErrorInApi = checkErrorApiStatus;
           _errorMsg = _shiftListViewModel.getErrorMsg();
           if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
-            Controller controller = Controller();
-            controller.setRememberLogin(false);
-            Navigator.pushAndRemoveUntil<dynamic>(
-              context,
-              MaterialPageRoute<dynamic>(
-                builder: (BuildContext context) => LoginClass(),
-              ),
-                  (route) =>
-              false, //if you want to disable back feature set to false
-            );
+            Controller().logoutUser();
           }
         });
       } else {
@@ -117,8 +108,6 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
                 String startDate = Controller().getConvertedDate(date['start']);
                 String endDate = Controller().getConvertedDate(date['end']);
                 _dateFilterController.text = "$startDate To $endDate";
-
-
 
              //   var startDate = "${date['start'].year}-${date['start'].month}-${date['start'].day}";
              //   var endDate = "${date['end'].year}-${date['end'].month}-${date['end'].day}";
@@ -167,37 +156,39 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
 
   Widget showListData(
       BuildContext context, List<Claims> shifts, bool openShiftData) {
-
-
-    return ListView.builder(
-      itemCount: shifts.length,
-      itemBuilder: (_, index) => Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Card(
-          color:  shifts[index].status == "PENDING"  ? claimedShiftColor :
-          shifts[index].status == "APPROVED" ? claimedShiftApprovedColor :
-          claimedShiftRejectColor,
-          elevation: 5,
-          shadowColor: cardShadow,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child:  Container(
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(10),
-                      topRight: Radius.circular(10))),
-              margin: EdgeInsets.only(left: 10),
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child:indexBuilder(context,  shifts[index])
-          )
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView.builder(
+        itemCount: shifts.length,
+        itemBuilder: (_, index) => Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Card(
+              color: shifts[index].status == "PENDING"
+                  ? claimedShiftColor
+                  : shifts[index].status == "APPROVED"
+                      ? claimedShiftApprovedColor
+                      : claimedShiftRejectColor,
+              elevation: 5,
+              shadowColor: cardShadow,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(10),
+                          topRight: Radius.circular(10))),
+                  margin: EdgeInsets.only(left: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: indexBuilder(context, shifts[index]))),
         ),
       ),
     );
   }
+
   Widget indexBuilder(BuildContext context, Claims item) {
     return
       Theme(
@@ -212,16 +203,9 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
               },
             ),
 
-            children: <Widget>[
-
-          Center(
-          child: Container(
-              child:     itemShiftDetail(context,item)
-      ))
-
-            ]
-
-          ));
+              children: <Widget>[
+              Center(child: Container(child: itemShiftDetail(context, item)))
+            ]));
   }
 
   Widget itemClaimedHistory(BuildContext context, Claims item) {
@@ -236,24 +220,43 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
                   children: [
                     Icon(
                       Icons.location_on_outlined,
-                      color: primaryColor,
-                      size: 20.0,
+                    color: primaryColor,
+                    size: 20.0,
+                  ),
+                  CustomTextWidget(
+                      text: item.shift!.location == ''
+                          ? 'N/A'
+                          : item.shift!.location),
+                ],
+              ),
+              createRowDate("Designation:",
+                  "${item.shift!.designation == '' ? 'N/A' : item.shift!.designation}"),
+              createRowDate("Shift Date:", item.shift!.date),
+              createRowDate("Shift Time:", item.shift!.shiftTime),
+              createRowDate("Managed by:",
+                  "${item.managedBy == '' ? 'N/A' : item.managedBy}"),
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                child: Row(
+                  children: [
+                    CustomTextWidget(
+                      text: "Status:",
+                      fontWeight: FontWeight.bold,
                     ),
-                    CustomTextWidget(  text:item.shift!.location == '' ? 'N/A' : item.shift!.location),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    TextColorContainer(
+                        label: item.status!,
+                        color: item.status == "PENDING"
+                            ? claimedShiftColor
+                            : item.status == "APPROVED"
+                                ? claimedShiftApprovedColor
+                                : claimedShiftRejectColor),
                   ],
                 ),
-                createRowDate("Designation:","${item.shift!.designation == '' ? 'N/A' : item.shift!.designation}"),
-                createRowDate("Shift Date:",item.shift!.date),
-                createRowDate("Shift Time:",item.shift!.shiftTime),
-                createRowDate("Managed by:","${item.managedBy == '' ? 'N/A' : item.managedBy}"),
-                createRowDate("Status:","${item.status == '' ? 'N/A' : item.status}",
-                    color: item.status == "PENDING"  ? claimedShiftColor :
-                    item.status == "APPROVED" ? claimedShiftApprovedColor :
-                    claimedShiftRejectColor),
-
-
-
-              ],
+              ),
+            ],
 
 
 
