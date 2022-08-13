@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
@@ -6,14 +9,18 @@ import 'package:hnh_flutter/view_models/leave_list_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:hnh_flutter/widget/table_cell_padding.dart';
 import 'package:get/get.dart';
+import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
+import '../../data/drawer_items.dart';
 import '../../repository/model/request/claim_shift_history_request.dart';
 import '../../repository/model/response/leave_list.dart';
 import '../../utils/controller.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/date_range_widget.dart';
 import '../../widget/error_message.dart';
-import '../login/login.dart';
+import '../../widget/filter_tab_widget.dart';
+import '../../widget/internet_not_available.dart';
+
 
 class LeavePage extends StatefulWidget {
   @override
@@ -23,7 +30,7 @@ class LeavePage extends StatefulWidget {
   }
 }
 
-class _LeavePageState extends State<LeavePage> {
+class _LeavePageState extends State<LeavePage>   with SingleTickerProviderStateMixin {
   TextEditingController _dateFilterController = TextEditingController();
   bool _isFirstLoadRunning = false;
 
@@ -34,9 +41,16 @@ class _LeavePageState extends State<LeavePage> {
   late BuildContext contextBuild;
   late LeaveListViewModel _leaveListViewModel;
 
+  late TabController _tabController;
+
+
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: ConstantData.filterTabs.length, vsync: this);
+
+
 
     setState(() {
       _isFirstLoadRunning = true;
@@ -81,15 +95,31 @@ class _LeavePageState extends State<LeavePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
-        title: Text(ConstantData.leave),
+        title: Text(menuLeave),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
+
+            BlocBuilder<ConnectedBloc, ConnectedState>(
+                builder: (context, state) {
+                  if (state is ConnectedFailureState) {
+                    return InternetNotAvailable();
+                  }else
+                  {
+                    return Container();
+                  }
+                }
+            ),
+
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+
+
+
                 Container(
                   child: CustomTextWidget(
                     text: "Add Leave",
@@ -148,8 +178,16 @@ class _LeavePageState extends State<LeavePage> {
               controllerDate: _dateFilterController,
               isSearchButtonShow: false,
             ),
+
             SizedBox(
-              height: 10,
+              height: 15,
+            ),
+            CustomFilterTab(controller: _tabController, tabs: ConstantData.filterTabs,),
+
+
+
+            SizedBox(
+              height: 15,
             ),
             _isFirstLoadRunning
                 ? Expanded(child: Center(child: CircularProgressIndicator()))
@@ -157,16 +195,46 @@ class _LeavePageState extends State<LeavePage> {
                     ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                     : Expanded(
                         child: _leaveHistoryList.length > 0
-                            ? ListView.builder(
-                                itemCount: _leaveHistoryList.length,
-                                itemBuilder: (_, index) => Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: containerListItems(
-                                        _leaveHistoryList[index])))
-                            : ErrorMessageWidget(label: "No Leaves Found"))
+                            ?
+                        TabBarView(
+                          controller: _tabController,
+                          children: [
+                            //All
+
+                            listContainer(_leaveHistoryList),
+
+                            listContainer(getFilterList(_leaveHistoryList,"APPROVED")),
+
+                            listContainer(getFilterList(_leaveHistoryList,"PENDING")),
+                            listContainer(getFilterList(_leaveHistoryList,"REJECTED")),
+
+                          ],
+                        )
+                : ErrorMessageWidget(label: "No Leaves Found"))
           ],
         ),
       ));
+
+
+
+  List<Leaves> getFilterList(List<Leaves> inputlist,String status) {
+    List<Leaves> outputList = inputlist.where((o) => o.status == status).toList();
+    return outputList;
+  }
+
+  Widget listContainer(List<Leaves> _leaveHistoryList)
+  {
+
+   return  ListView.builder(
+        itemCount: _leaveHistoryList.length,
+        itemBuilder: (_, index) => Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: containerListItems(
+                _leaveHistoryList[index])));
+  }
+
+
+
 
   Widget containerListItems(Leaves item) {
     return Card(
@@ -189,7 +257,7 @@ class _LeavePageState extends State<LeavePage> {
                     topRight: Radius.circular(10))
 
             ),
-            margin: EdgeInsets.only(left:10),
+            margin: EdgeInsets.only(left:Controller.leftCardColorMargin),
 
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Column(
@@ -201,8 +269,8 @@ class _LeavePageState extends State<LeavePage> {
                     children: [
                       CustomTextWidget(
                         text: item.leaveType,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                        color:  Colors.primaries[Random().nextInt(Colors.primaries.length)],
+                        fontWeight: FontWeight.w500,
                       ),
                       TextColorContainer(
                       label: item.status!,

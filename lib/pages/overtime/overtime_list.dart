@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
@@ -6,7 +7,9 @@ import 'package:hnh_flutter/view_models/leave_list_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:hnh_flutter/widget/table_cell_padding.dart';
 import 'package:get/get.dart';
+import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
+import '../../data/drawer_items.dart';
 import '../../repository/model/request/claim_shift_history_request.dart';
 import '../../repository/model/response/leave_list.dart';
 import '../../repository/model/response/overtime_list.dart';
@@ -15,6 +18,8 @@ import '../../view_models/overtime_vm.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/date_range_widget.dart';
 import '../../widget/error_message.dart';
+import '../../widget/filter_tab_widget.dart';
+import '../../widget/internet_not_available.dart';
 import '../login/login.dart';
 import 'add_overtime.dart';
 
@@ -26,10 +31,10 @@ class OverTimePage extends StatefulWidget {
   }
 }
 
-class _OverTimePageState extends State<OverTimePage> {
+class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderStateMixin{
   TextEditingController _dateFilterController = TextEditingController();
   bool _isFirstLoadRunning = false;
-
+  late TabController _tabController;
   bool _isErrorInApi = false;
   String? _errorMsg = "";
   List<OvertimeHistory> _overtimeHistoryList = [];
@@ -40,6 +45,8 @@ class _OverTimePageState extends State<OverTimePage> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: ConstantData.filterTabs.length, vsync: this);
+
 
     setState(() {
       _isFirstLoadRunning = true;
@@ -84,12 +91,24 @@ class _OverTimePageState extends State<OverTimePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
-        title: Text(ConstantData.overTime),
+        title: Text(overtime),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
+
+            BlocBuilder<ConnectedBloc, ConnectedState>(
+                builder: (context, state) {
+                  if (state is ConnectedFailureState) {
+                    return InternetNotAvailable();
+                  }else
+                  {
+                    return Container();
+                  }
+                }
+            ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -144,8 +163,17 @@ class _OverTimePageState extends State<OverTimePage> {
               controllerDate: _dateFilterController,
               isSearchButtonShow: false,
             ),
+
+
             SizedBox(
-              height: 10,
+              height: 15,
+            ),
+            CustomFilterTab(controller: _tabController, tabs: ConstantData.filterTabs,),
+
+
+
+            SizedBox(
+              height: 15,
             ),
             _isFirstLoadRunning
                 ? Expanded(child: Center(child: CircularProgressIndicator()))
@@ -153,16 +181,45 @@ class _OverTimePageState extends State<OverTimePage> {
                     ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                     : Expanded(
                         child: _overtimeHistoryList.length > 0
-                            ? ListView.builder(
-                                itemCount: _overtimeHistoryList.length,
-                                itemBuilder: (_, index) => Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: containerListItems(
-                                        _overtimeHistoryList[index])))
-                            : ErrorMessageWidget(label: "No Overtime Found"))
+                            ?
+
+                        TabBarView(
+                            controller: _tabController,
+                            children: [
+                              //All
+
+                              listContainer(_overtimeHistoryList),
+
+                              listContainer(getFilterList(_overtimeHistoryList,"APPROVED")),
+
+                              listContainer(getFilterList(_overtimeHistoryList,"PENDING")),
+                              listContainer(getFilterList(_overtimeHistoryList,"REJECTED")),
+
+                            ])  : ErrorMessageWidget(label: "No Overtime Found"))
           ],
         ),
       ));
+
+
+
+  List<OvertimeHistory> getFilterList(List<OvertimeHistory> inputlist,String status) {
+    List<OvertimeHistory> outputList = inputlist.where((o) => o.status == status).toList();
+    return outputList;
+  }
+
+  Widget listContainer(List<OvertimeHistory> _leaveHistoryList)
+  {
+
+    return  ListView.builder(
+        itemCount: _leaveHistoryList.length,
+        itemBuilder: (_, index) => Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: containerListItems(
+                _leaveHistoryList[index])));
+  }
+
+
+
 
   Widget containerListItems(OvertimeHistory item) {
     return Card(
@@ -185,7 +242,7 @@ class _OverTimePageState extends State<OverTimePage> {
                     topRight: Radius.circular(10))
 
             ),
-            margin: EdgeInsets.only(left:10),
+            margin: EdgeInsets.only(left:Controller.leftCardColorMargin),
 
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Column(

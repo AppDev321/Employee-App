@@ -24,7 +24,14 @@ const String menuAttandance="Attandence";
 const String subMenuToday="Today";
 const String menuLeave="Leave";
 const String profile = "Profile";
+const String availability = "Availability";
 
+
+
+const String menuReport="Reports";
+const String subMenuReportAttandance="Attendance Report";
+const String subMenuReportLeave="Leave Report";
+const String subMenuReportLateness="Lateness Report";
 
 
 List<DrawerItem> itemsFirst = [
@@ -70,13 +77,15 @@ List<DrawerItem> itemsFirst = [
     Icons.analytics_outlined,
   ),
   new DrawerItem(
-    "Reports",
-    [],
+    menuReport,
+    [
+      subMenuReportAttandance,subMenuReportLeave,subMenuReportLateness
+    ],
     Icons.analytics_outlined,
   ),
 
   new DrawerItem(
-    "Availablity",
+    availability,
     [],
     Icons.analytics_outlined,
   ),

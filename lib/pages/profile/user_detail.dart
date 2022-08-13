@@ -1,15 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/response/user_profile.dart';
 import 'package:hnh_flutter/view_models/profile_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
+import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
 import '../../utils/controller.dart';
 import '../../widget/dialog_builder.dart';
 import '../../widget/error_message.dart';
+import '../../widget/internet_not_available.dart';
 
 class MyAccount extends StatefulWidget {
   @override
@@ -112,6 +115,19 @@ class _MyAccountState extends State<MyAccount> {
       ),
       body: Column(
         children: [
+          BlocBuilder<ConnectedBloc, ConnectedState>(
+              builder: (context, state) {
+                if (state is ConnectedFailureState) {
+                  return InternetNotAvailable();
+                }else
+                {
+                  return Container();
+                }
+              }
+          ),
+
+
+
           _isFirstLoadRunning
               ? Expanded(child: Center(child: CircularProgressIndicator()))
               : _isErrorInApi

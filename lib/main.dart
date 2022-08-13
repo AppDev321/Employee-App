@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/pages/login/login.dart';
@@ -17,6 +18,7 @@ import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:provider/provider.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 
+import 'bloc/connected_bloc.dart';
 import 'custom_style/strings.dart';
 import 'notification/firebase_notification.dart';
 import 'utils/controller.dart';
@@ -94,16 +96,25 @@ void main() async{
   );
 
 
-  runApp(MaterialApp(
+  runApp(
 
-    initialRoute: 'splash',
-    title: "Pick Image Camera",
-    debugShowCheckedModeBanner: false,
-    routes: {
-      'splash': (context) => MyApp(),
-      'login': (context) => LoginClass()
-    },
-  ));
+    //For internet connection states
+      BlocProvider(
+        create:(context)=> ConnectedBloc(),
+        child: MaterialApp(
+
+            initialRoute: 'splash',
+            title: ConstantData.appName,
+            debugShowCheckedModeBanner: false,
+            routes: {
+                'splash': (context) => MyApp(),
+                'login': (context) => LoginClass()
+            },
+          ),
+      )
+
+
+  );
 }
 Future<bool> checkPassPreference() async {
   Controller controller = Controller();

@@ -32,7 +32,11 @@ dependencies:
   overlay_support: ^2.0.1
   flutter_local_notifications: ^9.5.3+1
   get: ^4.6.5
-
+  flutter_bloc: ^8.0.1
+  connectivity_plus: ^2.3.6
+  animated_button_bar: ^0.0.2+1
+  fl_chart: ^0.55.1
+  syncfusion_flutter_charts: ^20.2.43
 
 
 

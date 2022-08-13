@@ -7,9 +7,11 @@ import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/data/drawer_item.dart';
+import 'package:hnh_flutter/pages/availability/add_my_availability.dart';
 import 'package:hnh_flutter/pages/leave/leave_page.dart';
 import 'package:hnh_flutter/pages/overtime/add_overtime.dart';
 import 'package:hnh_flutter/pages/profile/user_detail.dart';
+import 'package:hnh_flutter/pages/reports/leave_report.dart';
 import 'package:hnh_flutter/pages/shift/claimed_shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +21,8 @@ import '../main.dart';
 import '../pages/login/login.dart';
 import '../pages/overtime/overtime_list.dart';
 import '../pages/profile/profile_screen.dart';
+import '../pages/reports/attendance_report.dart';
+import '../pages/reports/lateness_report.dart';
 import '../pages/shift/shift_list.dart';
 import '../utils/controller.dart';
 
@@ -191,6 +195,19 @@ class NavigationDrawer extends StatelessWidget {
     Navigator.of(context).pop();
 
     switch (menuItem) {
+      case subMenuReportLateness:
+        Get.to(()=>LatenessReport());
+        break;
+      case subMenuReportLeave:
+        Get.to(()=>LeaveReport());
+        break;
+      case subMenuReportAttandance:
+        Get.to(()=>AttendanceReport());
+
+        break;
+      case availability:
+        Get.to(()=>AddAvailability());
+        break;
       case profile:
         Get.to(()=>ProfileScreen());
         break;

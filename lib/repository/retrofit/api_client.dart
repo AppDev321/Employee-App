@@ -23,13 +23,16 @@ import '../model/response/get_inspection_check_api_response.dart';
 import '../model/response/get_shift_list.dart';
 import '../model/response/login_api_response.dart';
 import '../model/response/overtime_list.dart';
+import '../model/response/report_attendance_response.dart';
+import '../model/response/report_lateness_response.dart';
+import '../model/response/report_leave_response.dart';
 import '../model/response/save_inspection_check_api_response.dart';
 import '../model/response/vehicle_get_inspection_resposne.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
-//@RestApi(baseUrl: 'http://192.168.1.21:8000/api') // Enter you base URL
+//@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
+@RestApi(baseUrl: 'http://192.168.1.21:8000/api') // Enter you base URL
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
@@ -90,6 +93,14 @@ abstract class ApiClient {
   @POST('/overtime-request-history')
   Future<OvertimeListResponse> getOvertimeHistory(@Body() ClaimShiftHistoryRequest body);
 
+
+
+  @POST('/report/my-leaves')
+  Future<LeaveReportResponse> getLeaveReport(@Body() ClaimShiftHistoryRequest body);
+  @POST('/report/my-attendance')
+  Future<AttendanceReportResponse> getAttandenceReport(@Body() ClaimShiftHistoryRequest body);
+  @POST('/report/lateness')
+  Future<LatenessReportResponse> getLatenessReport(@Body() ClaimShiftHistoryRequest body);
 
   @POST('/update-fcm-token')
   Future<String> postFcmToken(@Body() Map<String,String> body);

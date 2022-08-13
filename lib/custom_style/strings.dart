@@ -1,5 +1,7 @@
 //import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
+
 class ConstantData{
 
 static const String appName= "AFJ CRM";
@@ -9,12 +11,16 @@ static const String pref_user_token ="token";
 static const String vehicle_inspection ="Vehicle Inspection";
 static const String vehicle_detail ="Vehicle Detail";
 static const String inspection ="Inspection";
-static const String leave ="Leave";
-static const String overTime ="Overtime";
 static const String unauthenticatedMsg="Unauthenticated";
 static const  String logoIconPath = "assets/images/afj_logo.png";
 
 
+static const filterTabs = [
+            Tab(text: 'All'),
+            Tab(text: 'Approved'),
+            Tab(text: 'Pending'),
+            Tab(text: 'Rejected'),
+];
 
 
 }

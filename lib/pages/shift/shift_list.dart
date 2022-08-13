@@ -1,10 +1,14 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hnh_flutter/data/drawer_items.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/view_models/shift_list_vm.dart';
+import 'package:hnh_flutter/widget/internet_not_available.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
 import '../../custom_style/strings.dart';
 import '../../main.dart';
@@ -123,11 +127,23 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
     contextBuild = context;
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Weekly Shift'),
+        title: Text(menuShift),
       ),
       drawer: NavigationDrawer(),
       body: Column(
         children: [
+          BlocBuilder<ConnectedBloc, ConnectedState>(
+            builder: (context, state) {
+              if (state is ConnectedFailureState) {
+                return InternetNotAvailable();
+              }else
+                {
+                 return Container();
+                }
+            }
+          ),
+          
+
           CustomCalanderWidget(
             controller: _controller,
             onChanged: (String value) {
@@ -187,6 +203,8 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
+
+
         ],
       ),
     );
@@ -221,7 +239,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(10),
                     topRight: Radius.circular(10))),
-            margin: EdgeInsets.only(left: 10),
+            margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child:indexBuilder(context, index, shifts, openShiftData)
           )

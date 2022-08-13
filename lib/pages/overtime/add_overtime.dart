@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
@@ -7,6 +8,8 @@ import 'package:hnh_flutter/repository/model/response/leave_list.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../bloc/connected_bloc.dart';
+import '../../data/drawer_items.dart';
 import '../../utils/controller.dart';
 import '../../view_models/leave_list_vm.dart';
 import '../../view_models/overtime_vm.dart';
@@ -15,6 +18,7 @@ import '../../widget/custom_drop_down_widget.dart';
 import '../../widget/custom_edit_text_widget.dart';
 import '../../widget/date_picker_widget.dart';
 import '../../widget/dialog_builder.dart';
+import '../../widget/internet_not_available.dart';
 import '../login/login.dart';
 
 class AddOverTime extends StatefulWidget {
@@ -88,13 +92,25 @@ class AddLeaveStateful extends State<AddOverTime> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(ConstantData.overTime),
+        title: const Text(overtime),
       ),
       body: Padding(
         padding: EdgeInsets.only(left: 10, top: 10, right: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            BlocBuilder<ConnectedBloc, ConnectedState>(
+                builder: (context, state) {
+                  if (state is ConnectedFailureState) {
+                    return InternetNotAvailable();
+                  }else
+                  {
+                    return Container();
+                  }
+                }
+            ),
+
+
             CustomTextWidget(text: "Overtime Request", size: 25),
             SizedBox(
               height: 20,

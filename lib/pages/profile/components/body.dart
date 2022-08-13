@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/request/change_password_request.dart';
@@ -6,8 +7,10 @@ import 'package:hnh_flutter/view_models/profile_vm.dart';
 import 'package:hnh_flutter/widget/custom_edit_text_widget.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
+import '../../../bloc/connected_bloc.dart';
 import '../../../utils/controller.dart';
 import '../../../widget/dialog_builder.dart';
+import '../../../widget/internet_not_available.dart';
 import '../../login/login.dart';
 import '../user_detail.dart';
 import 'profile_menu.dart';
@@ -66,6 +69,18 @@ class _Body extends State<Body> {
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
+
+          BlocBuilder<ConnectedBloc, ConnectedState>(
+              builder: (context, state) {
+                if (state is ConnectedFailureState) {
+                  return InternetNotAvailable();
+                }else
+                {
+                  return Container();
+                }
+              }
+          ),
+          SizedBox(height: 5),
           ProfilePic(),
 
           SizedBox(height: 20),

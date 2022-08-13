@@ -10,6 +10,7 @@ import '../pages/login/login.dart';
 class Controller {
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
+  static const double leftCardColorMargin = 5;
 
   Future<void> setAuthToken(String auth_token) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -104,6 +105,11 @@ class Controller {
 
 
   }
+
+
+
+
+
 void logoutUser()
 {
   Controller controller = Controller();

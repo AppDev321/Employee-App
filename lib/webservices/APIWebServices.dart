@@ -21,6 +21,9 @@ import '../repository/model/response/create_inspection_api_response.dart';
 import '../repository/model/response/get_inspection_check_api_response.dart';
 import '../repository/model/response/leave_list.dart';
 import '../repository/model/response/overtime_list.dart';
+import '../repository/model/response/report_attendance_response.dart';
+import '../repository/model/response/report_lateness_response.dart';
+import '../repository/model/response/report_leave_response.dart';
 import '../repository/retrofit/client_header.dart';
 
 class APIWebService {
@@ -216,7 +219,41 @@ class APIWebService {
     }
   }
 
+  Future<LeaveReportResponse?> getLeaveReport(ClaimShiftHistoryRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getLeaveReport(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
 
+
+  Future<LatenessReportResponse?> getLatenessReport(ClaimShiftHistoryRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getLatenessReport(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+
+
+  Future<AttendanceReportResponse?> getAttendanceReport(ClaimShiftHistoryRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getAttandenceReport(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
 
 
   Future<String?> postTokenToServer(Map<String,String> request) async {

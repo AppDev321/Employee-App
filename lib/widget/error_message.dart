@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import '../custom_style/text_style.dart';
 
 class ErrorMessageWidget extends StatelessWidget {
@@ -13,11 +14,6 @@ class ErrorMessageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child:
-        Text(
-          '$label',
-          textAlign: TextAlign.center,
-          textScaleFactor: 1.3,
-          style: errorTextStyle,
-        ));
+            CustomTextWidget(text: label,size: 22,color: Colors.black54,fontWeight: FontWeight.w200,));
   }
 }

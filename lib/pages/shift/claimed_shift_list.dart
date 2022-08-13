@@ -1,9 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hnh_flutter/repository/model/request/claim_shift_history_request.dart';
 import 'package:hnh_flutter/repository/model/response/claimed_shift_list.dart';
 import 'package:hnh_flutter/view_models/shift_list_vm.dart';
 
+import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
 import '../../custom_style/strings.dart';
 import '../../data/drawer_items.dart';
@@ -12,6 +14,7 @@ import '../../widget/color_text_round_widget.dart';
 import '../../widget/custom_text_widget.dart';
 import '../../widget/date_range_widget.dart';
 import '../../widget/error_message.dart';
+import '../../widget/internet_not_available.dart';
 
 class ClaimedShiftList extends StatefulWidget {
   @override
@@ -99,6 +102,18 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
+            BlocBuilder<ConnectedBloc, ConnectedState>(
+                builder: (context, state) {
+                  if (state is ConnectedFailureState) {
+                    return InternetNotAvailable();
+                  }else
+                  {
+                    return Container();
+                  }
+                }
+            ),
+
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: CustomDateRangeWidget(labelText: "Select Date",
@@ -142,10 +157,9 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
                 : _isErrorInApi
                 ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                 : Expanded(
-
                     child:
                     _claimedHistoryList.length >0?
-                  showListData(context,_claimedHistoryList,false)
+                     showListData(context,_claimedHistoryList,false)
                         : ErrorMessageWidget(label: "No Shift Found")
                     )
           ],
@@ -181,7 +195,7 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
                       borderRadius: BorderRadius.only(
                           bottomRight: Radius.circular(10),
                           topRight: Radius.circular(10))),
-                  margin: EdgeInsets.only(left: 10),
+                  margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: indexBuilder(context, shifts[index]))),
         ),
