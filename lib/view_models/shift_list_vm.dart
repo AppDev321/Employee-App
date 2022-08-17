@@ -136,9 +136,20 @@ class ShiftListViewModel extends BaseViewModel {
       setIsErrorReceived(true);
     } else {
       if (results.code == 200) {
-        setClaimedHisotryList(results.data!.claims!);
-
         setIsErrorReceived(false);
+        if(results.data!.claims!.length >0)
+          {
+            setClaimedHisotryList(results.data!.claims!);
+          }
+        else
+          {
+            setIsErrorReceived(true);
+            setErrorMsg("No Shift found");
+            setClaimedHisotryList([]);
+          }
+
+
+
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {

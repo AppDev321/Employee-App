@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
 import '../custom_style/colors.dart';
+import '../utils/controller.dart';
 
 
 
@@ -47,7 +48,7 @@ class _HorizontalItemListState extends State<HorizontalItemList> {
                         width: MediaQuery.of(context).size.width / 6,
                         margin: const EdgeInsets.only(right: 15),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(Controller.roundCorner),
                           color: i == _currentIndex ? Colors.black : Colors.black12,
                         ),
                         child: CustomTextWidget(text:widget.itemList![i],color: i == _currentIndex ? Colors.white : Colors.black,),

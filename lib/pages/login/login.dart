@@ -159,7 +159,7 @@ class LoginClassStateful extends State<LoginClass> {
                                 primary: Colors.black54,
                                 padding:const EdgeInsets.all(10),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(32.0)),
+                                    borderRadius: BorderRadius.circular(Controller.roundCorner)),
                                 textStyle:const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.normal)),

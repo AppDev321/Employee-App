@@ -24,7 +24,7 @@ const String menuAttandance="Attandence";
 const String subMenuToday="Today";
 const String menuLeave="Leave";
 const String profile = "Profile";
-const String availability = "Availability";
+const String availability = "Availability"+" (In Progress)";
 
 
 
@@ -32,7 +32,7 @@ const String menuReport="Reports";
 const String subMenuReportAttandance="Attendance Report";
 const String subMenuReportLeave="Leave Report";
 const String subMenuReportLateness="Lateness Report";
-
+const String todo=" (To Do..)";
 
 List<DrawerItem> itemsFirst = [
   /*new DrawerItem(
@@ -56,7 +56,7 @@ List<DrawerItem> itemsFirst = [
   ),
 
   new DrawerItem(
-    "Attendance",
+    "Attendance$todo",
     [],
     Icons.analytics_outlined,
   ),
@@ -66,13 +66,13 @@ List<DrawerItem> itemsFirst = [
     Icons.analytics_outlined,
   ),
   new DrawerItem(
-    "Account",
+    "Account$todo",
     [],
     Icons.analytics_outlined,
   ),
 
   new DrawerItem(
-    "Payment",
+    "Payment$todo",
     [],
     Icons.analytics_outlined,
   ),

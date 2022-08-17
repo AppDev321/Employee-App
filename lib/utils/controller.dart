@@ -11,6 +11,10 @@ class Controller {
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
   static const double leftCardColorMargin = 5;
+  static const double roundCorner = 5;
+
+
+
 
   Future<void> setAuthToken(String auth_token) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

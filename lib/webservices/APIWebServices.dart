@@ -1,3 +1,4 @@
+import 'package:hnh_flutter/repository/model/request/availability_request.dart';
 import 'package:hnh_flutter/repository/model/request/change_password_request.dart';
 import 'package:hnh_flutter/repository/model/request/claim_shift_request.dart';
 import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
@@ -181,6 +182,19 @@ class APIWebService {
     }
   }
 
+  Future<LoginApiResponse?> saveAvailabilityRequest(AvailabilityRequest request) async
+  {
+
+    try{
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.saveAvailabilityRequest(request);
+      return response;
+    }
+        catch(e)
+    {
+      return null;
+    }
+  }
 
 
   Future<LoginApiResponse?> changePasswordRequest(ChangePasswordRequest request) async {

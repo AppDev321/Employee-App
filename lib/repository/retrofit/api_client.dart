@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:hnh_flutter/repository/model/request/availability_request.dart';
 import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
@@ -93,7 +94,8 @@ abstract class ApiClient {
   @POST('/overtime-request-history')
   Future<OvertimeListResponse> getOvertimeHistory(@Body() ClaimShiftHistoryRequest body);
 
-
+  @POST('/availability-request/store')
+  Future<LoginApiResponse> saveAvailabilityRequest(@Body() AvailabilityRequest body);
 
   @POST('/report/my-leaves')
   Future<LeaveReportResponse> getLeaveReport(@Body() ClaimShiftHistoryRequest body);

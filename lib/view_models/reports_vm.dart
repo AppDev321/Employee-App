@@ -72,7 +72,18 @@ class ReportsViewModel extends BaseViewModel {
     } else {
       if (results.code == 200) {
         setIsErrorReceived(false);
-        attandenceList= results.data!.attendance!;
+        if(results.data!.attendance!.length > 0)
+        {
+          attandenceList =results.data!.attendance!;
+        }
+        else
+        {
+          setIsErrorReceived(true);
+          attandenceList=[];
+          setErrorMsg("No Report found");
+        }
+
+
       }
       else {
         var errorString = "";
@@ -103,6 +114,9 @@ class ReportsViewModel extends BaseViewModel {
         if(results.data != null)
         {
           latenessData = results.data;
+
+
+
         }
         else
         {

@@ -127,24 +127,32 @@ Navigator.pop(context);
 
                 },
               ),
-              DatePickerWidget(
-                selectedDate: DateTime.now(),
-                label: "From Date",
-                onDateChange: (value) {
-                  setState(() {
-                   startDate = value;
-                  });
-                },
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DatePickerWidget(
+                    selectedDate: DateTime.now(),
+                    label: "From Date",
+                    onDateChange: (value) {
+                      setState(() {
+                       startDate = value;
+                      });
+                    },
+                  ),
+
+                  DatePickerWidget(
+                    selectedDate: DateTime.now(),
+                    label: "To Date",
+                    onDateChange: (value) {
+                      setState(() {
+                        endDate  = value;
+                      });
+                    },
+                  ),
+                ],
               ),
-              DatePickerWidget(
-                selectedDate: DateTime.now(),
-                label: "To Date",
-                onDateChange: (value) {
-                  setState(() {
-                  endDate  = value;
-                  });
-                },
-              ),
+
               SizedBox(
                 height: 10,
               ),

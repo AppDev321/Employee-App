@@ -17,11 +17,12 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.mobile ||
-          result == ConnectivityResult.wifi) {
+      if (result == ConnectivityResult.mobile || result == ConnectivityResult.wifi) {
         add(OnConnectedEvent());
+        print("onconnected to server");
       } else {
-        add(OnNotConnectedEvent());
+             add(OnNotConnectedEvent());
+             print("not connected to server");
       }
     });
   }

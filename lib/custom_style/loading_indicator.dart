@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/controller.dart';
+
 class LoadingIndicator extends StatelessWidget {
   LoadingIndicator({this.text = '', this.title = ''});
 
@@ -16,7 +18,7 @@ class LoadingIndicator extends StatelessWidget {
             border: Border.all(
               color: Colors.white,
             ),
-            borderRadius: BorderRadius.all(Radius.circular(8))),
+            borderRadius: BorderRadius.all(Radius.circular(Controller.roundCorner))),
         padding: EdgeInsets.all(8),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

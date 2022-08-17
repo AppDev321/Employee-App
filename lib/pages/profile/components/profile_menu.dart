@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
+import '../../../utils/controller.dart';
+
 
 class ProfileMenu extends StatelessWidget {
   const ProfileMenu({
@@ -24,7 +26,7 @@ class ProfileMenu extends StatelessWidget {
           primary: primaryColor,
           padding: EdgeInsets.all(20),
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(Controller.roundCorner)),
           backgroundColor: Color(0xFFF5F6F9),
         ),
         onPressed: press,

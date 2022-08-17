@@ -228,7 +228,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
           elevation: 5,
           shadowColor: cardShadow,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(Controller.roundCorner),
           ),
           clipBehavior: Clip.antiAlias,
           child:
@@ -237,8 +237,8 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(10),
-                    topRight: Radius.circular(10))),
+                    bottomRight: Radius.circular(Controller.roundCorner),
+                    topRight: Radius.circular(Controller.roundCorner))),
             margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child:indexBuilder(context, index, shifts, openShiftData)

@@ -1,8 +1,10 @@
 import 'package:animated_button_bar/animated_button_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
 
+import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
 import '../../data/drawer_items.dart';
 import '../../repository/model/request/claim_shift_history_request.dart';
@@ -11,6 +13,7 @@ import '../../view_models/reports_vm.dart';
 import '../../widget/custom_text_widget.dart';
 import '../../widget/date_range_widget.dart';
 import '../../widget/error_message.dart';
+import '../../widget/internet_not_available.dart';
 
 class AttendanceReport extends StatefulWidget {
   const AttendanceReport({Key? key}) : super(key: key);
@@ -90,6 +93,17 @@ class AttendanceReportStateful extends State<AttendanceReport> {
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
+            BlocBuilder<ConnectedBloc, ConnectedState>(
+                builder: (context, state) {
+                  if (state is ConnectedSucessState) {
+                    return Container();
+                  } else {
+                    return InternetNotAvailable();
+                  }
+                }
+
+            ),
+
             Padding(
               padding: const EdgeInsets.all(20),
               child: CustomTextWidget(
@@ -192,7 +206,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
         elevation: 5,
         shadowColor: cardShadow,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(Controller.roundCorner),
         ),
         clipBehavior: Clip.antiAlias,
         child: Container(
@@ -200,8 +214,8 @@ class AttendanceReportStateful extends State<AttendanceReport> {
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(10),
-                    topRight: Radius.circular(10))),
+                    bottomRight: Radius.circular(Controller.roundCorner),
+                    topRight: Radius.circular(Controller.roundCorner))),
             child: IntrinsicHeight(
               child: Row(
                 mainAxisSize: MainAxisSize.max,
@@ -216,14 +230,15 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CustomTextWidget(
-                                text: item.dayName,
+
+                                text: _reportsViewModel.convertStringDate(item.date.toString(),"day"),
                                 color: HexColor.fromHex("#7da36a"),
                               ),
                               SizedBox(
                                 height: 5,
                               ),
                               CustomTextWidget(
-                                text: item.dayNum,
+                                text:  _reportsViewModel.convertStringDate(item.date.toString(),"date"),
                                 fontWeight: FontWeight.bold,
                                 color: HexColor.fromHex("#99cc60"),
                                 size: 28,

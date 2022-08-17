@@ -244,7 +244,7 @@ class _LeavePageState extends State<LeavePage>   with SingleTickerProviderStateM
         elevation: 5,
         shadowColor: cardShadow,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(Controller.roundCorner),
         ),
         clipBehavior: Clip.antiAlias,
         child:
@@ -253,8 +253,8 @@ class _LeavePageState extends State<LeavePage>   with SingleTickerProviderStateM
             decoration: BoxDecoration(
                 color:  Colors.white,
                 borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(10),
-                    topRight: Radius.circular(10))
+                    bottomRight: Radius.circular(Controller.roundCorner),
+                    topRight: Radius.circular(Controller.roundCorner))
 
             ),
             margin: EdgeInsets.only(left:Controller.leftCardColorMargin),

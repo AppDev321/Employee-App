@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../custom_style/colors.dart';
+import '../utils/controller.dart';
 
 class CustomEditTextWidget extends StatefulWidget {
   final String? text;
@@ -64,14 +65,14 @@ bool showPass =true;
           ),)
         :null,
         filled: true,
-        fillColor: textFielBoxFillColor,
+        fillColor: Colors.transparent,
         hintText: text,
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(Controller.roundCorner),
             borderSide: const BorderSide(
                 color: textFielBoxBorderColor, width: 1.0)),
         enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(Controller.roundCorner),
             borderSide: const BorderSide(
                 color: textFielBoxBorderColor,
                 width: 1.0)

@@ -282,6 +282,22 @@ class _ApiClient implements ApiClient {
   }
 
   @override
+  Future<LoginApiResponse> saveAvailabilityRequest(body) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<LoginApiResponse>(
+            Options(method: 'POST', headers: <String, dynamic>{}, extra: _extra)
+                .compose(_dio.options, '/availability-request/store',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = LoginApiResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<LeaveReportResponse> getLeaveReport(body) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
