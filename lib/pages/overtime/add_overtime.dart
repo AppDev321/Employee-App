@@ -9,6 +9,7 @@ import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../bloc/connected_bloc.dart';
+import '../../custom_style/colors.dart';
 import '../../data/drawer_items.dart';
 import '../../utils/controller.dart';
 import '../../view_models/leave_list_vm.dart';
@@ -177,7 +178,7 @@ class AddLeaveStateful extends State<AddOverTime> {
                       },
                       style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.blue),
+                              MaterialStateProperty.all(primaryColor),
                           textStyle: MaterialStateProperty.all(
                               TextStyle(fontSize: 12))),
                       child: Text('Save'),

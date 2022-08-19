@@ -151,7 +151,35 @@ void logoutUser()
       },
     );
   }
+  String greeting() {
+    var hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good Morning';
+    }
+    if (hour < 17) {
+      return 'Good Afternoon';
+    }
+    return 'Good Evening';
 
+  }
+  String differenceFormattedString(int minute){
+    try{
 
+      DateTime now = DateTime.now();
+
+      Duration difference = Duration(minutes: minute);
+
+      final today = DateTime(now.year).add(difference).subtract(const Duration(days: 1));
+
+      //return '${today.day} Days ${today.hour} Hours ${today.minute} Min';
+
+     if( today.hour >0 )
+      return '${today.hour}h, ${today.minute}min';
+          else
+       return '${today.minute}min';
+    }catch(e){
+      return '';
+    }
+  }
 
 }

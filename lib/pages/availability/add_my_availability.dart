@@ -8,6 +8,7 @@ import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../bloc/connected_bloc.dart';
+import '../../custom_style/colors.dart';
 import '../../repository/model/request/availability_request.dart';
 import '../../utils/controller.dart';
 import '../../view_models/availability_vm.dart';
@@ -95,7 +96,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
 
   String startTime = "", start_hour = "00", start_minute = "00";
   String endTime = "", end_hour = "00", end_minute = "00";
-  String dayName = "Monday";
+  String dayName = "mon";
 
   @override
   void initState() {
@@ -276,7 +277,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                         },
                         style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all(Colors.blue),
+                                MaterialStateProperty.all(primaryColor),
                             textStyle: MaterialStateProperty.all(
                                 TextStyle(fontSize: 12))),
                         child: Text('Save'),
@@ -312,7 +313,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
         CustomDropDownWidget(
           spinnerItems: dropDays,
           onClick: (data) {
-            dayName = data.name.toString().substring(0,3);
+            dayName = data.name.toString().substring(0,3).toLowerCase();
           },
         ),
         SizedBox(
@@ -519,9 +520,22 @@ class AddAvailabilityStateful extends State<AddAvailability> {
       if (isAllDay) {
         timeAdd.isAllDay = true;
         timeList.add(timeAdd);
+
+        start_hour = "00";
+        start_minute ="00";
+        end_hour ="00";
+        end_minute="00";
+
       } else if (endHour == 0 && startHour == 0) {
         timeAdd.isAllDay = true;
         timeList.add(timeAdd);
+
+        start_hour = "00";
+        start_minute ="00";
+        end_hour ="00";
+        end_minute="00";
+
+
       } else if (endHour <= startHour) {
         Controller().showToastMessage(
             context, "Time must be at least one hour ");
@@ -572,11 +586,31 @@ class AddAvailabilityStateful extends State<AddAvailability> {
         if (isAllDay) {
           timeAdd.isAllDay = true;
           timeList.add(timeAdd);
+
+          start_hour = "00";
+          start_minute ="00";
+          end_hour ="00";
+          end_minute="00";
+
+
           timeList.remove(savedTimeSlot);
+
+
+
         } else if (endHour == 0 && startHour == 0) {
           timeAdd.isAllDay = true;
           timeList.add(timeAdd);
+
+          start_hour = "00";
+          start_minute ="00";
+          end_hour ="00";
+          end_minute="00";
+
           timeList.remove(savedTimeSlot);
+
+
+
+
         } else if (endHour <= startHour) {
           Controller().showToastMessage(
               context, "Time must be at least one hour ");
@@ -608,7 +642,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
         children: [
           item.isAllDay!
               ? CustomTextWidget(
-                  text: "${item.dayName} " + "${item.isAvailable!
+                  text: "${item.dayName.toString().toUpperCase()} " + "${item.isAvailable!
                       ? "All Day Available"
                       : "All Day Unavailable"}",
                   color: color,
@@ -617,7 +651,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
               : Row(
                   children: [
                     CustomTextWidget(
-                      text: "${item.dayName}",
+                      text: "${item.dayName.toString().toUpperCase()}",
                       color: color,
                       fontWeight: FontWeight.bold,
                     ),

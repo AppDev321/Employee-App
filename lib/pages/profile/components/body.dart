@@ -81,7 +81,7 @@ class _Body extends State<Body> {
               }
           ),
           SizedBox(height: 5),
-          ProfilePic(),
+          ProfilePic(name: "Admin",),
 
           SizedBox(height: 20),
           ProfileMenu(

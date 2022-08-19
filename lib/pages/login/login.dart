@@ -11,6 +11,7 @@ import '../../widget/dialog_builder.dart';
 import '../../custom_style/progress_hud.dart';
 import '../../view_models/login_view_model.dart';
 import '../../widget/custom_edit_text_widget.dart';
+import '../dashboard/dashboard.dart';
 
 
 
@@ -33,7 +34,7 @@ class LoginClassStateful extends State<LoginClass> {
   bool _passRemember= false;
   bool _isApiError=false;
   String _errorMsg= "";
-
+  BuildContext? _dialogContext;
 
    LoginViewModel _loginViewModel= LoginViewModel();
 
@@ -42,10 +43,12 @@ class LoginClassStateful extends State<LoginClass> {
   @override
   void initState() {
     super.initState();
-    _progressDialog =  DialogBuilder(context);
-    _progressDialog?.initiateLDialog('Please wait..');
+
 
     _loginViewModel.addListener(() {
+    _progressDialog?.hideOpenDialog();
+
+
       if(_loginViewModel.getResponseStatus()) {
         var checkErrorApiStatus = _loginViewModel.getIsErrorRecevied();
         if(checkErrorApiStatus){
@@ -64,7 +67,7 @@ class LoginClassStateful extends State<LoginClass> {
 
           });
         }
-        _progressDialog?.hideOpenDialog();
+
         _loginViewModel.setResponseStatus(false);
       }
 
@@ -74,6 +77,12 @@ class LoginClassStateful extends State<LoginClass> {
 
   @override
   Widget build(BuildContext context) {
+    _dialogContext = context;
+    if (_progressDialog == null) {
+      _progressDialog = DialogBuilder(_dialogContext!);
+      _progressDialog?.initiateLDialog('Please wait..');
+    }
+
 
     return ProgressHUD(
       child: _uiSetup(context),
@@ -199,7 +208,7 @@ class LoginClassStateful extends State<LoginClass> {
     await  controller.setRememberLogin(_passRemember);
     //Move to next location
 
-      Get.offAll(()=>ShiftList());
+      Get.offAll(()=>Dashboard());
 
 
 

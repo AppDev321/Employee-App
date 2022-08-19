@@ -101,6 +101,7 @@ class Shifts {
   String? date;
   String? vehicle;
   bool? claimed = false;
+  bool? todayShift;
 
   Shifts(
       {this.id,
@@ -126,6 +127,7 @@ class Shifts {
     date = json['date'];
     claimed = json['claimed'];
     vehicle = json['vehicle'];
+    todayShift = json['today_shift'];
   }
 
   Map<String, dynamic> toJson() {
@@ -140,6 +142,7 @@ class Shifts {
     data['date'] = this.date;
     data['claimed'] = this.claimed;
     data['vehicle']=     vehicle ;
+    data['today_shift'] = this.todayShift;
     return data;
   }
 }

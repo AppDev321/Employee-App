@@ -19,6 +19,7 @@ import '../repository/model/request/save_inspection_post_data.dart';
 import '../repository/model/request/vechicle_get_inspection_request.dart';
 import '../repository/model/response/claimed_shift_list.dart';
 import '../repository/model/response/create_inspection_api_response.dart';
+import '../repository/model/response/get_dashboard.dart';
 import '../repository/model/response/get_inspection_check_api_response.dart';
 import '../repository/model/response/leave_list.dart';
 import '../repository/model/response/overtime_list.dart';
@@ -262,6 +263,16 @@ class APIWebService {
     try {
       final client = await RetroClinetHeader.getClientWithAuth();
       var response = await client.getAttandenceReport(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+  Future<GetDashBoardResponse?> getDashBoardData() async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getDashboardData();
       return response;
     } catch (e) {
       print("$TAG$e");

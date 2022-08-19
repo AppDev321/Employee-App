@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:hnh_flutter/pages/dashboard/dashboard.dart';
 import 'package:hnh_flutter/pages/login/login.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
@@ -19,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 
 import 'bloc/connected_bloc.dart';
+import 'custom_style/colors.dart';
 import 'custom_style/strings.dart';
 import 'notification/firebase_notification.dart';
 import 'utils/controller.dart';
@@ -168,7 +170,7 @@ var api =APIWebService();
             if(snapshot.hasData){
               if(snapshot.data!)
               {
-                return ShiftList();
+                return Dashboard();
               }
               else
               {
@@ -190,6 +192,26 @@ var api =APIWebService();
       title:  ConstantData.appName,
       home: example5,
       debugShowCheckedModeBanner: false,
+      /*
+      theme: ThemeData(
+        fontFamily: 'Raleway',
+        primaryColor: primaryColor,
+    primarySwatch: primaryColorTheme,
+
+
+
+      ),*/
+
+
+      /* light theme settings */
+      theme: ThemeData(
+        fontFamily: 'Raleway',
+        primarySwatch: primaryColorTheme,
+        primaryColor: primaryColor,
+
+
+      ),
+      themeMode: ThemeMode.light,
     )
 );
     return re ;

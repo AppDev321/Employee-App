@@ -20,6 +20,7 @@ import '../model/request/save_inspection_request.dart';
 import '../model/request/vechicle_get_inspection_request.dart';
 import '../model/response/claimed_shift_list.dart';
 import '../model/response/create_inspection_api_response.dart';
+import '../model/response/get_dashboard.dart';
 import '../model/response/get_inspection_check_api_response.dart';
 import '../model/response/get_shift_list.dart';
 import '../model/response/login_api_response.dart';
@@ -106,6 +107,10 @@ abstract class ApiClient {
 
   @POST('/update-fcm-token')
   Future<String> postFcmToken(@Body() Map<String,String> body);
+
+
+  @GET('/employee-dashboard')
+  Future<GetDashBoardResponse> getDashboardData();
 
 
 /*

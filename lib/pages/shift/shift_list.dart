@@ -128,8 +128,9 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text(menuShift),
+
       ),
-      drawer: NavigationDrawer(),
+
       body: Column(
         children: [
           BlocBuilder<ConnectedBloc, ConnectedState>(

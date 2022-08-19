@@ -8,6 +8,7 @@ import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../bloc/connected_bloc.dart';
+import '../../custom_style/colors.dart';
 import '../../data/drawer_items.dart';
 import '../../widget/dialog_builder.dart';
 import '../../utils/controller.dart';
@@ -74,7 +75,7 @@ class AddLeaveStateful extends State<AddLeave> {
         });
 
       Controller().showToastMessage(context, "Leave Request submitted successfully");
-Navigator.pop(context);
+      Navigator.pop(context);
       }
     });
 
@@ -211,7 +212,7 @@ Navigator.pop(context);
                             }
                         },
                         style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Colors.blue),
+                            backgroundColor: MaterialStateProperty.all(primaryColor),
                             textStyle:
                             MaterialStateProperty.all(TextStyle(fontSize: 12))),
                         child: Text('Save'),

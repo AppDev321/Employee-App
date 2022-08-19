@@ -22,6 +22,7 @@ class CustomTextWidget extends StatelessWidget {
           ? Text(
         text!,
         style: TextStyle(
+
           fontSize: size,
           fontWeight: fontWeight,
           color: color

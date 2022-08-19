@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const Color primaryColor =  Colors.blue;
+Color primaryColor = HexColor.fromHex("#0047AB");
 const Color primaryColorOpacity = Color(0xFFFF7F50);
 const Color hintTextColor = Color(0xFFE4E0E8);
 const Color primaryTextColor = Color(0xFF1A1316);
@@ -17,9 +17,21 @@ const Color claimedShiftApprovedColor = Color(0xFF0692C9);
 const Color claimedShiftRejectColor = Color(0xFFD92C3C);
 const Color cardShadow= Color(0x33959BA5);
 
+MaterialColor primaryColorTheme = MaterialColor(primaryColor.value, <int, Color>{
+  50: primaryColor,
+  100:primaryColor,
+  200: primaryColor,
+  300: primaryColor,
+  400: primaryColor,
+  500: primaryColor,
+  600: primaryColor,
+  700: primaryColor,
+  800: primaryColor,
+  900: primaryColor,
+},
+);
 
-
- List<Color> colorArray = [
+List<Color> colorArray = [
 
    HexColor.fromHex("#9b19f5"),
 

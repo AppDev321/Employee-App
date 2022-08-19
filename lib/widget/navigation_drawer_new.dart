@@ -2,6 +2,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import 'package:hnh_flutter/custom_style/colors.dart';
@@ -14,6 +15,7 @@ import 'package:hnh_flutter/pages/profile/user_detail.dart';
 import 'package:hnh_flutter/pages/reports/leave_report.dart';
 import 'package:hnh_flutter/pages/shift/claimed_shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
+import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../data/drawer_items.dart';
@@ -53,6 +55,7 @@ class NavigationDrawer extends StatelessWidget {
             children: [
 
               UserAccountsDrawerHeader(
+
                 accountName: Text(ConstantData.appName),
                 accountEmail: Text(ConstantData.appVersion),
                 currentAccountPicture: CircleAvatar(
@@ -137,20 +140,32 @@ class NavigationDrawer extends StatelessWidget {
     required VoidCallback onClicked
   }) {
     final color = Colors.black87;
-    final leading = Icon(icon, color: color);
+    final leading =
+    SvgPicture.asset(
+      item.svgPath,
+      width: 15,
+      color: Colors.black,
+
+    );
+
+    // Icon(icon, color: color);
 
     return Material(
       color: Colors.transparent,
       child: isCollapsed
           ? ListTile(
+
+
         title: leading,
         onTap: onClicked,
       ) :
       item.contents.length > 0 ?
 
       ExpansionTile(
-        title: new Text(text, style: new TextStyle(fontSize: 16,color: color),),
+
+        title: CustomTextWidget(text:text),//new Text(text, style: new TextStyle(fontSize: 16,color: color),),
         leading: leading,
+
         children: <Widget>[
           new Column(
             children: _buildExpandableContent( item,context ),
@@ -158,7 +173,8 @@ class NavigationDrawer extends StatelessWidget {
         ],
       ):
       ListTile(
-        title: new Text(text, style: new TextStyle(fontSize: 16,color: color),),
+
+        title: CustomTextWidget(text:text),//new Text(text, style: new TextStyle(fontSize: 16,color: color),),
         leading: leading,
         onTap: onClicked,
       )
@@ -178,7 +194,7 @@ class NavigationDrawer extends StatelessWidget {
     for (String content in vehicle.contents)
       columnContent.add(
         new ListTile(
-          title: new Text(content, style: new TextStyle(fontSize: 14.0),),
+          title: CustomTextWidget(text:content),//new Text(content, style: new TextStyle(fontSize: 14.0),),
           onTap:()
             {
               selectItem(context,0,content);
@@ -217,7 +233,9 @@ class NavigationDrawer extends StatelessWidget {
       case menuLeave:
         Get.to(()=>LeavePage());
         break;
-
+      case subMenuMyShift:
+        Get.to (()=>ShiftList());
+        break;
       case subMenuOpenShift:
         Get.to(()=>ClaimedShiftList());
         break;

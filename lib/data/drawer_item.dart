@@ -11,6 +11,6 @@ class DrawerItem {
   final String title;
   List<String> contents = [];
   final IconData icon;
-
-  DrawerItem(this.title, this.contents, this.icon);
+  final String svgPath;
+  DrawerItem(this.title, this.contents, this.icon,this.svgPath);
 }
