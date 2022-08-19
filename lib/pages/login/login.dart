@@ -6,6 +6,7 @@ import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/utils/controller.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
+import 'package:hnh_flutter/widget/error_message.dart';
 
 import '../../widget/dialog_builder.dart';
 import '../../custom_style/progress_hud.dart';
@@ -24,8 +25,8 @@ class LoginClass extends StatefulWidget {
 
 class LoginClassStateful extends State<LoginClass> {
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+ /* final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();*/
   final String _ambulaceSVG = "assets/images/afj_logo.png";
   DialogBuilder? _progressDialog;
 
@@ -38,7 +39,10 @@ class LoginClassStateful extends State<LoginClass> {
 
    LoginViewModel _loginViewModel= LoginViewModel();
 
+  TextEditingController _emailController =
+  TextEditingController();
 
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -92,101 +96,132 @@ class LoginClassStateful extends State<LoginClass> {
   }
 
   Widget _uiSetup(BuildContext context) {
+
+    Widget welcomeBack = Text(
+      'Welcome Back',
+      style: TextStyle(
+          color: Colors.black,
+          fontSize: 34.0,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.15),
+              offset: Offset(0, 5),
+              blurRadius: 10.0,
+            )
+          ]),
+    );
+
+    Widget subTitle = Padding(
+        padding: const EdgeInsets.only(right: 56.0),
+        child: Text(
+          'Login to your account',
+          style: TextStyle(
+            color:Colors.black,
+            fontSize: 16.0,
+          ),
+        ));
+
+
+
     return Container(
       decoration:const BoxDecoration(color: whiteColor),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(
           children: [
-            Positioned(
-              top:  100,
-              left: 0,
-              child: Center(
-                child: Container(
-                  height: 250.0,
-                  width: MediaQuery.of(context).size.width,
-                    child: Image(image: AssetImage("assets/images/afj_logo.png")
-                    ),
-                ),
-              ),
-            ),
+            Container(decoration: BoxDecoration(
+              image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: NetworkImage(
+                    "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?w=2000",
+                  )
+              ))),
             SingleChildScrollView(
               child: Container(
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.5,
-                      right: 35,
-                      left: 35),
-                  child: Column(
-                    children: [
-                     CustomTextWidget(
-                         text: 'Login to start your session',
-                         fontWeight: FontWeight.bold
-                     ),
+              margin: EdgeInsets.only(top:  MediaQuery.of(context).size.width/2,left: 25,right: 25),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
 
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      CustomEditTextWidget(text:"Email",controller:  _emailController,),
-                      const SizedBox(height: 20),
-                      CustomEditTextWidget(text:"Password",controller:  _passwordController,isPasswordField: true),
+                        welcomeBack,
 
-                      const SizedBox(height: 10),
-                      Container(
-                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            child: ElevatedButton(
-                              child: const Text(_loginText),
-                            onPressed: () {
-                              if(_emailController.text.isEmpty)
-                                {
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        subTitle,
+
+                        const SizedBox(
+                          height:20,
+                        ),
+                        CustomEditTextWidget(text:"Email",controller:  _emailController,),
+                        const SizedBox(height: 20),
+                        CustomEditTextWidget(text:"Password",controller:  _passwordController,isPasswordField: true),
+                        CheckboxListTile(
+                          contentPadding: EdgeInsets.zero,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          title: const Text('Remember Me'),
+                          value: _passRemember,
+                          onChanged: (value) {
+                            setState(() {
+                              _passRemember = value!;
+                            });
+                          },
+                        ),
+
+                        // _pressed ? _buildBody(context) : SizedBox(),
+                        _isApiError?  Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ErrorMessageWidget(label:_errorMsg),
+                        ):const SizedBox(),
+
+                        Container(
+                          alignment: Alignment.center,
+                              padding: const EdgeInsets.all(10),
+                              child: ElevatedButton(
+                                child: const Text(_loginText),
+                              onPressed: () {
+                                if(_emailController.text.isEmpty)
+                                  {
+                                    setState(() {
+                                      _isApiError = true;
+                                      _errorMsg ="Please enter email";
+                                    });
+                                  }else if (!RegExp(r'\S+@\S+\.\S+').hasMatch(_emailController.text)) {
                                   setState(() {
                                     _isApiError = true;
-                                    _errorMsg ="Please enter email";
-                                  });
-                                }else if (!RegExp(r'\S+@\S+\.\S+').hasMatch(_emailController.text)) {
-                                setState(() {
-                                  _isApiError = true;
-                                  _errorMsg ="Enter valid Email address";
-                                });
-                              }
-                              else if(_passwordController.text.isEmpty)
-                                {
-                                  setState(() {
-                                    _isApiError = true;
-                                    _errorMsg ="Please enter password";
+                                    _errorMsg ="Enter valid Email address";
                                   });
                                 }
-                              else {
-                                setState(() {
-                                  _isApiError = false;
-                                  _errorMsg ="";
-                                });
-                                _onLoginButtonPress(context);
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                                minimumSize:const Size(300, 50),
-                                primary: Colors.black54,
-                                padding:const EdgeInsets.all(10),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(Controller.roundCorner)),
-                                textStyle:const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.normal)),
-                          )),
-                     // _pressed ? _buildBody(context) : SizedBox(),
-                      _isApiError?  Text("$_errorMsg" , style: TextStyle(fontSize: 16,color: Colors.red),):const SizedBox(),
-                      CheckboxListTile(
-                        controlAffinity: ListTileControlAffinity.leading,
-                        title: const Text('Remember Me'),
-                        value: _passRemember,
-                        onChanged: (value) {
-                          setState(() {
-                            _passRemember = value!;
-                          });
-                        },
-                      )
-                    ],
-                  )),
+                                else if(_passwordController.text.isEmpty)
+                                  {
+                                    setState(() {
+                                      _isApiError = true;
+                                      _errorMsg ="Please enter password";
+                                    });
+                                  }
+                                else {
+                                  setState(() {
+                                    _isApiError = false;
+                                    _errorMsg ="";
+                                  });
+                                  _onLoginButtonPress(context);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  minimumSize:const Size(300, 50),
+                                  primary: primaryColor,
+                                  padding:const EdgeInsets.all(10),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(Controller.roundCorner)),
+                                  textStyle:const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.normal)),
+                            )),
+
+                      ],
+                    ),
+              ),
             )
           ],
         ),
@@ -213,8 +248,6 @@ class LoginClassStateful extends State<LoginClass> {
 
 
   }
-
-
 
 
 }

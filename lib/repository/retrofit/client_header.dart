@@ -12,7 +12,9 @@ class RetroClinetHeader
     String? userToken = await controller.getAuthToken();
 
     final client =
-    ApiClient(Dio(BaseOptions(contentType: "application/json", headers: {
+    ApiClient(Dio(BaseOptions(
+        connectTimeout:30000,
+        contentType: "application/json", headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${userToken}',
       'Accept': 'application/json'
@@ -21,7 +23,10 @@ class RetroClinetHeader
   }
  static ApiClient getClientWithoutAuth() {
    final client =
-   ApiClient(Dio(BaseOptions(contentType: "application/json", headers: {
+   ApiClient(Dio(BaseOptions(
+
+     connectTimeout:30000,
+       contentType: "application/json", headers: {
      'Content-Type': 'application/json',
      'Accept': 'application/json'
    })));
