@@ -5,6 +5,7 @@ import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
 
 class Controller {
@@ -65,14 +66,18 @@ class Controller {
   }
 
   void showToastMessage(BuildContext context, String text) {
-    final scaffold = ScaffoldMessenger.of(context);
+/*    final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(
       SnackBar(
         content: Text(text),
         action: SnackBarAction(
             label: 'OK', onPressed: scaffold.hideCurrentSnackBar),
       ),
+    );*/
+
+    Get.snackbar('Alert',text,snackPosition:SnackPosition.TOP, backgroundColor: Colors.black,colorText:Colors.white,
     );
+
   }
   bool validatePassword(String value) {
     RegExp regex =
@@ -151,6 +156,8 @@ void logoutUser()
       },
     );
   }
+
+
   String greeting() {
     var hour = DateTime.now().hour;
     if (hour < 12) {
@@ -182,4 +189,83 @@ void logoutUser()
     }
   }
 
+
+
+
+  String convertStringDate(String jsonDate , String parsingType)
+  {
+
+    DateTime parseDate = new DateFormat("dd-MMM-yyyy").parse(jsonDate);
+    var dateFormat =  DateFormat('E MMM dd yyyy');
+
+    switch(parsingType)
+    {
+      case "month":
+        dateFormat =  DateFormat('MMM');
+        break;
+      case "date":
+        dateFormat =  DateFormat('dd');
+        break;
+      case "year":
+        dateFormat =  DateFormat('yyyy');
+        break;
+      case "day":
+        dateFormat =  DateFormat('E');
+        break;
+
+    }
+
+
+    var inputDate = DateTime.parse(parseDate.toString());
+    var outputFormat = dateFormat;
+    var outputDate = outputFormat.format(inputDate);
+    return outputDate;
+
+  }
+
+
+  showConfirmationMsgDialog(
+      BuildContext context,
+      String title,
+      String msg,
+      String positiveButtonLabel,
+      ValueChanged<bool> OnPostiveButtonClick)
+  {
+    return showDialog<void>(
+
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+
+          title: CustomTextWidget(text:title,fontWeight: FontWeight.bold,color: primaryColor,),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                CustomTextWidget(text:msg)
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: CustomTextWidget(text:positiveButtonLabel,color: primaryColor,),
+
+              onPressed: () {
+                OnPostiveButtonClick(true);
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: CustomTextWidget(text:"Cancel"),
+              onPressed: () {
+                OnPostiveButtonClick(false);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

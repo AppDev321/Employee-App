@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -39,7 +40,7 @@ class CustomCalanderWidget extends StatelessWidget {
             margin: const EdgeInsets.all(5.0),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: Colors.grey, borderRadius: BorderRadius.circular(Controller.roundCorner)),
+                color: primaryColor, borderRadius: BorderRadius.circular(Controller.roundCorner)),
             child: Text(
               date.day.toString(),
               style: TextStyle(color: Colors.white),
@@ -48,7 +49,7 @@ class CustomCalanderWidget extends StatelessWidget {
             margin: const EdgeInsets.all(5.0),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: Colors.black, borderRadius: BorderRadius.circular(Controller.roundCorner)),
+                color: primaryColor.withOpacity(0.4), borderRadius: BorderRadius.circular(Controller.roundCorner)),
             child: Text(
               date.day.toString(),
               style: TextStyle(color: Colors.white),

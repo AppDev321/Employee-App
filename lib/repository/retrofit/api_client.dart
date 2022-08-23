@@ -3,6 +3,7 @@ import 'package:hnh_flutter/repository/model/request/availability_request.dart';
 import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
+import 'package:hnh_flutter/repository/model/response/availability_list.dart';
 import 'package:hnh_flutter/repository/model/response/leave_list.dart';
 import 'package:hnh_flutter/repository/model/response/user_profile.dart';
 import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
@@ -50,21 +51,6 @@ abstract class ApiClient {
   @POST('/logout')
   Future<void> logout();
 
-  @GET('/vehicles')
-  Future<GetVehicleListResponse> getVehiclesList();
-
-  @POST('/vehicles/inspections')
-  Future<VehicleGetInspectionResponse> getVehiclesInspectionList(@Body() VechicleInspectionRequest body);
-
-  @POST('/vehicles/inspection/create')
-  Future<CreateInspectionResponse> createVehicleInspection(@Body() CreateInspectionRequest body);
-
-  @POST('/vehicles/inspection/check')
-  Future<GetInspectionCheckResponse> getInspectionCheck(@Body() CheckInspectionRequest body);
-
-  @POST('/vehicles/inspection/check/save')
-  Future<SaveInspectionCheckResponse> saveInspectionCheck(@Body() PostInspectionData body);
-
   @GET('/my-shifts?date={date}')
   Future<GetShiftListResponse> getShiftDataList(@Path("date") String weeklyShiftDate);
 
@@ -97,6 +83,12 @@ abstract class ApiClient {
 
   @POST('/availability-request/store')
   Future<LoginApiResponse> saveAvailabilityRequest(@Body() AvailabilityRequest body);
+  @POST('/availability-request/index')
+  Future<AvailabilityListResponse> getAvailabilityList(@Body() ClaimShiftHistoryRequest body);
+  @POST('/availability-request/delete?code={code}')
+  Future<LoginApiResponse> deleteAvailabilityRequest(@Path("code") String code);
+
+
 
   @POST('/report/my-leaves')
   Future<LeaveReportResponse> getLeaveReport(@Body() ClaimShiftHistoryRequest body);

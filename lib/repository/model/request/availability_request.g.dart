@@ -14,7 +14,9 @@ AvailabilityRequest _$AvailabilityRequestFromJson(Map<String, dynamic> json) {
     timeSlot: (json['timeSlot'] as List<dynamic>?)
         ?.map((e) => TimeSlot.fromJson(e as Map<String, dynamic>))
         .toList(),
-  );
+    code: json['code'] as String?,
+    requestDate: json['requestDate'] as String?,
+  )..status = json['status'] as String?;
 }
 
 Map<String, dynamic> _$AvailabilityRequestToJson(
@@ -23,5 +25,8 @@ Map<String, dynamic> _$AvailabilityRequestToJson(
       'startDate': instance.startDate,
       'endDate': instance.endDate,
       'title': instance.title,
+      'status': instance.status,
       'timeSlot': instance.timeSlot,
+      'code': instance.code,
+      'requestDate': instance.requestDate,
     };

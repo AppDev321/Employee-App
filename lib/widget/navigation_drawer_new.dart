@@ -9,7 +9,7 @@ import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/data/drawer_item.dart';
 import 'package:hnh_flutter/pages/availability/add_my_availability.dart';
-import 'package:hnh_flutter/pages/leave/leave_page.dart';
+import 'package:hnh_flutter/pages/leave/leave_listing.dart';
 import 'package:hnh_flutter/pages/overtime/add_overtime.dart';
 import 'package:hnh_flutter/pages/profile/user_detail.dart';
 import 'package:hnh_flutter/pages/reports/leave_report.dart';
@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 
 import '../data/drawer_items.dart';
 import '../main.dart';
+import '../pages/availability/availability_listing.dart';
 import '../pages/login/login.dart';
 import '../pages/overtime/overtime_list.dart';
 import '../pages/profile/profile_screen.dart';
@@ -208,7 +209,7 @@ class NavigationDrawer extends StatelessWidget {
 
   void selectItem(BuildContext context, int index,String menuItem) {
 
-    Navigator.of(context).pop();
+   // Navigator.of(context).pop();
 
     switch (menuItem) {
       case subMenuReportLateness:
@@ -222,7 +223,7 @@ class NavigationDrawer extends StatelessWidget {
 
         break;
       case availability:
-        Get.to(()=>AddAvailability());
+        Get.to(()=>AvailabilityList());
         break;
       case profile:
         Get.to(()=>ProfileScreen());

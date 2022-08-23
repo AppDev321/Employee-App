@@ -31,7 +31,6 @@ class AddAvailability extends StatefulWidget {
 
 class AddAvailabilityStateful extends State<AddAvailability> {
   String? _errorMsg = "";
-  CalendarController _controller = CalendarController();
 
   TextEditingController subjectController = TextEditingController();
   DateTime startDate = DateTime.now(), endDate = DateTime.now();
@@ -98,7 +97,11 @@ class AddAvailabilityStateful extends State<AddAvailability> {
   String endTime = "", end_hour = "00", end_minute = "00";
   String dayName = "mon";
 
-  @override
+
+
+
+
+   @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -140,6 +143,11 @@ class AddAvailabilityStateful extends State<AddAvailability> {
           }
       }
     });
+
+
+
+
+
   }
 
   @override
@@ -150,146 +158,164 @@ class AddAvailabilityStateful extends State<AddAvailability> {
       _progressDialog?.initiateLDialog('Please wait..');
     }
 
+
+
+
+
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(availability),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(left: 20, top: 20, right: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              BlocBuilder<ConnectedBloc, ConnectedState>(
-                  builder: (context, state) {
+      body:
+
+      Column(
+        children: [
+          BlocBuilder<ConnectedBloc, ConnectedState>(
+              builder: (context, state) {
                 if (state is ConnectedFailureState) {
                   return InternetNotAvailable();
                 } else {
                   return Container();
                 }
               }),
-              SizedBox(
-                height: 20,
-              ),
-              CustomTextWidget(text: "Availability Request", size: 25),
-              SizedBox(
-                height: 20,
-              ),
-              CustomCommentBox(
-                  label: "Title",
-                  hintMessage: "E.g Summer Holiday Availability",
-                  controller: subjectController),
-              SizedBox(
-                height: 20,
-              ),
-              CustomTextWidget(
-                text: "Effective Dates:",
-                fontWeight: FontWeight.bold,
-              ),
-              CustomDropDownWidget(
-                spinnerItems: dropMenuItem,
-                onClick: (data) {
-                  if (data.id == 1) {
-                    setState(() {
-                      isEffectiveDate = true;
-                    });
-                  } else {
-                    setState(() {
-                      isEffectiveDate = false;
-                    });
-                  }
-                },
-              ),
-              isEffectiveDate
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DatePickerWidget(
-                          selectedDate: DateTime.now(),
-                          label: "From Date",
-                          onDateChange: (value) {
-                            setState(() {
-                              startDate = value;
-                            });
-                          },
-                        ),
-                        DatePickerWidget(
-                          selectedDate: DateTime.now(),
-                          label: "To Date",
-                          onDateChange: (value) {
-                            setState(() {
-                              endDate = value;
-                            });
-                          },
-                        ),
-                      ],
-                    )
-                  : Container(),
-              SizedBox(
-                height: 20,
-              ),
-              showAvailabilityBox(),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(left: 20, top: 20, right: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.grey),
-                            textStyle: MaterialStateProperty.all(
-                                TextStyle(fontSize: 12))),
-                        child: Text('Cancel'),
-                      ),
-                    ),
+
                     SizedBox(
-                      width: 30,
+                      height: 20,
                     ),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_datesCheck()) {
-                            _progressDialog?.showLoadingDialog();
-                            var request = AvailabilityRequest();
-                            request.startDate = Controller().getConvertedDate(startDate);
-                            if(!isEffectiveDate)
-                              {
-                                request.endDate = "";
-                              }
-                            else
-                              {
-                                request.endDate = Controller().getConvertedDate(endDate);
-                              }
-                            request.title = subjectController.text;
-                            request.timeSlot = timeList;
-                            _availabilityViewModel.saveAvailabilityRequest(request);
-                          } else {
-                            Controller().showToastMessage(context,
-                                "End date must be greater than leave start date");
-                          }
-                        },
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(primaryColor),
-                            textStyle: MaterialStateProperty.all(
-                                TextStyle(fontSize: 12))),
-                        child: Text('Save'),
-                      ),
+                    CustomTextWidget(text: "Availability Request", size: 25),
+                    SizedBox(
+                      height: 20,
                     ),
-                  ]),
-              SizedBox(
-                height: 30,
+                    CustomCommentBox(
+                        label: "Title",
+                        hintMessage: "E.g Summer Holiday Availability",
+                        controller: subjectController),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    CustomTextWidget(
+                      text: "Effective Dates:",
+                      fontWeight: FontWeight.bold,
+                    ),
+
+
+                    CustomDropDownWidget(
+                      spinnerItems: dropMenuItem,
+                      onClick: (data) {
+                        if (data.id == 1) {
+                          setState(() {
+                            isEffectiveDate = true;
+                          });
+                        } else {
+                          setState(() {
+                            isEffectiveDate = false;
+                          });
+                        }
+                      },
+                    ),
+                    isEffectiveDate
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              DatePickerWidget(
+                                selectedDate: DateTime.now(),
+                                label: "From Date",
+                                onDateChange: (value) {
+                                  setState(() {
+                                    startDate = value;
+                                  });
+                                },
+                              ),
+                              DatePickerWidget(
+                                selectedDate: DateTime.now(),
+                                label: "To Date",
+                                onDateChange: (value) {
+                                  setState(() {
+                                    endDate = value;
+                                  });
+                                },
+                              ),
+                            ],
+                          )
+                        : Container(),
+
+
+                    SizedBox(
+                      height: 20,
+                    ),
+                    showAvailabilityBox(),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.grey),
+                                  textStyle: MaterialStateProperty.all(
+                                      TextStyle(fontSize: 12))),
+                              child: Text('Cancel'),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (_datesCheck()) {
+                                  _progressDialog?.showLoadingDialog();
+                                  var request = AvailabilityRequest();
+                                  request.startDate = Controller().getConvertedDate(startDate);
+                                  if(!isEffectiveDate)
+                                    {
+                                      request.endDate = "";
+                                    }
+                                  else
+                                    {
+                                      request.endDate = Controller().getConvertedDate(endDate);
+                                    }
+                                  request.title = subjectController.text;
+                                  request.timeSlot = timeList;
+                                  _availabilityViewModel.saveAvailabilityRequest(request);
+                                } else {
+                                  Controller().showToastMessage(context,
+                                      "End date must be greater than leave start date");
+                                }
+                              },
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all(primaryColor),
+                                  textStyle: MaterialStateProperty.all(
+                                      TextStyle(fontSize: 12))),
+                              child: Text('Save'),
+                            ),
+                          ),
+                        ]),
+                    SizedBox(
+                      height: 30,
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

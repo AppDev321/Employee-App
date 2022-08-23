@@ -8,11 +8,13 @@ import 'custom_text_widget.dart';
 class TextColorContainer extends StatelessWidget {
   String label;
   Color color;
+  IconData? icon;
 
   TextColorContainer({
     Key? key,
     required this.label,
-    required this.color
+    required this.color,
+    this.icon,
 
   }) : super(key: key);
 
@@ -26,10 +28,13 @@ class TextColorContainer extends StatelessWidget {
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(Controller.roundCorner),
         ),
-        child: CustomTextWidget(
-          text: label,
-          color: color,
-        ),
+        child:  icon == null ?
+            CustomTextWidget(
+                text: label,
+                color: color,
+              ):
+        Icon(icon, size: 20,color: color)
+
       );
   }
 }

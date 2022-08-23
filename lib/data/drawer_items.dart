@@ -24,7 +24,7 @@ const String menuAttandance="Attandence";
 const String subMenuToday="Today";
 const String menuLeave="Leave";
 const String profile = "Profile";
-const String availability = "Availability"+" (In Progress)";
+const String availability = "Availability";
 
 
 
@@ -60,31 +60,31 @@ List<DrawerItem> itemsFirst = [
     iconPath+"shifts_icon.svg"
   ),
 
-  new DrawerItem(
+  /*new DrawerItem(
     "Attendance$todo",
     [],
     Icons.analytics_outlined,
       iconPath+"shifts_icon.svg"
-  ),
+  ),*/
   new DrawerItem(
     menuLeave,
     [],
     Icons.analytics_outlined,
       iconPath+"shifts_icon.svg"
   ),
-  new DrawerItem(
+  /*new DrawerItem(
     "Account$todo",
     [],
     Icons.analytics_outlined,
       iconPath+"shifts_icon.svg"
-  ),
+  ),*/
 
-  new DrawerItem(
+  /*new DrawerItem(
     "Payment$todo",
     [],
     Icons.analytics_outlined,
       iconPath+"Cash.svg"
-  ),
+  ),*/
   new DrawerItem(
     menuReport,
     [

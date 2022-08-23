@@ -17,6 +17,7 @@ import '../repository/model/request/inspection_check_request.dart';
 import '../repository/model/request/login_data.dart';
 import '../repository/model/request/save_inspection_post_data.dart';
 import '../repository/model/request/vechicle_get_inspection_request.dart';
+import '../repository/model/response/availability_list.dart';
 import '../repository/model/response/claimed_shift_list.dart';
 import '../repository/model/response/create_inspection_api_response.dart';
 import '../repository/model/response/get_dashboard.dart';
@@ -38,62 +39,6 @@ class APIWebService {
       final client = await RetroClinetHeader.getClientWithoutAuth();
       var response = await client.login(body);
      return response;
-    } catch (e) {
-      print("$TAG$e");
-      return null;
-    }
-  }
-
-  Future<GetVehicleListResponse?> getVehicleList() async {
-    try {
-      final client = await RetroClinetHeader.getClientWithAuth();
-      var response = await client.getVehiclesList();
-      return response;
-    } catch (e) {
-      print("$TAG$e");
-      return null;
-    }
-  }
-
-  Future<VehicleGetInspectionResponse?> getVehicleInspectionData(VechicleInspectionRequest body) async {
-    try {
-      final client = await RetroClinetHeader.getClientWithAuth();
-      var response = await client.getVehiclesInspectionList(body);
-      return response;
-    } catch (e) {
-      print("$TAG$e");
-      return null;
-    }
-  }
-  Future<CreateInspectionResponse?> createVehicleInspection(CreateInspectionRequest body) async {
-    try {
-      final client = await RetroClinetHeader.getClientWithAuth();
-      var response = await client.createVehicleInspection(body);
-      return response;
-    } catch (e) {
-      print("$TAG$e");
-      return null;
-    }
-  }
-
-  Future<GetInspectionCheckResponse?> getInspectionCheck(CheckInspectionRequest body) async {
-    try {
-      final client = await RetroClinetHeader.getClientWithAuth();
-      var response = await client.getInspectionCheck(body);
-      return response;
-    } catch (e) {
-      print("$TAG$e");
-
-      return null;
-    }
-  }
-
-
-  Future<SaveInspectionCheckResponse?> saveInspection(PostInspectionData body) async {
-    try {
-      final client = await RetroClinetHeader.getClientWithAuth();
-      var response = await client.saveInspectionCheck(body);
-      return response;
     } catch (e) {
       print("$TAG$e");
       return null;
@@ -192,6 +137,36 @@ class APIWebService {
       return response;
     }
         catch(e)
+    {
+      return null;
+    }
+  }
+
+
+  Future<AvailabilityListResponse?> getAvailabilityList(ClaimShiftHistoryRequest request) async
+  {
+
+    try{
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getAvailabilityList(request);
+      return response;
+    }
+    catch(e)
+    {
+      return null;
+    }
+  }
+
+
+  Future<LoginApiResponse?> deleteAvailabilityRequest(String code) async
+  {
+
+    try{
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.deleteAvailabilityRequest(code);
+      return response;
+    }
+    catch(e)
     {
       return null;
     }

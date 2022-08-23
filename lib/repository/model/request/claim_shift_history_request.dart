@@ -6,6 +6,10 @@ part 'claim_shift_history_request.g.dart';
 class ClaimShiftHistoryRequest{
   String? start_date;
   String? end_date;
+
+
+
+
   ClaimShiftHistoryRequest({this.start_date,this.end_date});
 
   ClaimShiftHistoryRequest.fromJson(Map<String, dynamic> json) {
