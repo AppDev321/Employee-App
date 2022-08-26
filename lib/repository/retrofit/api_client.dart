@@ -6,7 +6,7 @@ import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart'
 import 'package:hnh_flutter/repository/model/response/availability_list.dart';
 import 'package:hnh_flutter/repository/model/response/leave_list.dart';
 import 'package:hnh_flutter/repository/model/response/user_profile.dart';
-import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
+
 import 'package:hnh_flutter/repository/retrofit/logging.dart';
 
 import 'package:retrofit/http.dart';
@@ -14,23 +14,18 @@ import 'package:retrofit/http.dart';
 import '../model/request/change_password_request.dart';
 import '../model/request/claim_shift_history_request.dart';
 import '../model/request/claim_shift_request.dart';
-import '../model/request/create_inspection_request.dart';
-import '../model/request/inspection_check_request.dart';
-import '../model/request/save_inspection_post_data.dart';
-import '../model/request/save_inspection_request.dart';
-import '../model/request/vechicle_get_inspection_request.dart';
+
 import '../model/response/claimed_shift_list.dart';
-import '../model/response/create_inspection_api_response.dart';
+
 import '../model/response/get_dashboard.dart';
-import '../model/response/get_inspection_check_api_response.dart';
+
 import '../model/response/get_shift_list.dart';
 import '../model/response/login_api_response.dart';
 import '../model/response/overtime_list.dart';
 import '../model/response/report_attendance_response.dart';
 import '../model/response/report_lateness_response.dart';
 import '../model/response/report_leave_response.dart';
-import '../model/response/save_inspection_check_api_response.dart';
-import '../model/response/vehicle_get_inspection_resposne.dart';
+
 
 part 'api_client.g.dart';
 
@@ -41,6 +36,7 @@ abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
 
     dio.interceptors.add(Logging());
+
     return _ApiClient(dio, baseUrl: baseUrl);
   }
 

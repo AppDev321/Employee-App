@@ -97,137 +97,144 @@ class AddLeaveStateful extends State<AddLeave> {
       appBar: AppBar(
         title: const Text(menuLeave),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(left: 10, top: 10, right: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      body: Column(
+        children: [
+          BlocBuilder<ConnectedBloc, ConnectedState>(
+              builder: (context, state) {
+                if (state is ConnectedFailureState) {
+                  return InternetNotAvailable();
+                }else
+                {
+                  return Container();
+                }
+              }
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(left: 10, top: 10, right: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
 
-              BlocBuilder<ConnectedBloc, ConnectedState>(
-                  builder: (context, state) {
-                    if (state is ConnectedFailureState) {
-                      return InternetNotAvailable();
-                    }else
-                    {
-                      return Container();
-                    }
-                  }
-              ),
 
-              CustomTextWidget(text: "Leave Request", size: 25),
-              SizedBox(
-                height: 20,
-              ),
-              CustomTextWidget(text: "Leave Type:",fontWeight: FontWeight.bold,),
-              CustomDropDownWidget(
-                spinnerItems: widget.leaveTypes!,
-                onClick: (data) {
 
-                  leaveTypeId = data.id!;
+                    CustomTextWidget(text: "Leave Request", size: 25),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    CustomTextWidget(text: "Leave Type:",fontWeight: FontWeight.bold,),
+                    CustomDropDownWidget(
+                      spinnerItems: widget.leaveTypes!,
+                      onClick: (data) {
 
-                },
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  DatePickerWidget(
-                    selectedDate: DateTime.now(),
-                    label: "From Date",
-                    onDateChange: (value) {
-                      setState(() {
-                       startDate = value;
-                      });
-                    },
-                  ),
+                        leaveTypeId = data.id!;
 
-                  DatePickerWidget(
-                    selectedDate: DateTime.now(),
-                    label: "To Date",
-                    onDateChange: (value) {
-                      setState(() {
-                        endDate  = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-
-              SizedBox(
-                height: 10,
-              ),
-
-              CustomCommentBox(label:"Subject" ,hintMessage: "Enter your subject",controller: subjectController),
-
-              SizedBox(
-                height: 10,
-              ),
-              CustomCommentBox(label:"Description" ,hintMessage: "Enter your description",controller: descController),
-
-              SizedBox(
-                height: 20,
-              ),
-
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      },
+                    ),
+                    Row(
                       mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                     Expanded(
-                       child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
+                        DatePickerWidget(
+                          selectedDate: DateTime.now(),
+                          label: "From Date",
+                          onDateChange: (value) {
+                            setState(() {
+                             startDate = value;
+                            });
                           },
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(Colors.grey),
-                              textStyle:
-                              MaterialStateProperty.all(TextStyle(fontSize: 12))),
-                          child: Text('Cancel'),
                         ),
-                     ),
+
+                        DatePickerWidget(
+                          selectedDate: DateTime.now(),
+                          label: "To Date",
+                          onDateChange: (value) {
+                            setState(() {
+                              endDate  = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
 
                     SizedBox(
-                      width: 30,
-                    ),
-                        Expanded(
-
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if(_datesCheck())
-                            {
-
-                              _progressDialog?.showLoadingDialog();
-                              var request = LeaveRequest();
-                              request.dateTo = Controller().getConvertedDate(endDate);
-                              request.dateFrom =  Controller().getConvertedDate(startDate);
-                              request.leaveType =leaveTypeId.toString();
-                              request.description = descController.text;
-                              request.subject =subjectController.text;
-                              _leaveListViewModel.saveLeaveRequest(request);
-
-                            }
-                          else
-                            {
-                              Controller().showToastMessage(context, "End date must be greater than leave start date");
-                            }
-                        },
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(primaryColor),
-                            textStyle:
-                            MaterialStateProperty.all(TextStyle(fontSize: 12))),
-                        child: Text('Save'),
-                      ),
+                      height: 10,
                     ),
 
-                  ]),
+                    CustomCommentBox(label:"Subject" ,hintMessage: "Enter your subject",controller: subjectController),
+
+                    SizedBox(
+                      height: 10,
+                    ),
+                    CustomCommentBox(label:"Description" ,hintMessage: "Enter your description",controller: descController),
+
+                    SizedBox(
+                      height: 20,
+                    ),
+
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                           Expanded(
+                             child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(Colors.grey),
+                                    textStyle:
+                                    MaterialStateProperty.all(TextStyle(fontSize: 12))),
+                                child: Text('Cancel'),
+                              ),
+                           ),
+
+                          SizedBox(
+                            width: 30,
+                          ),
+                              Expanded(
+
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if(_datesCheck())
+                                  {
+
+                                    _progressDialog?.showLoadingDialog();
+                                    var request = LeaveRequest();
+                                    request.dateTo = Controller().getConvertedDate(endDate);
+                                    request.dateFrom =  Controller().getConvertedDate(startDate);
+                                    request.leaveType =leaveTypeId.toString();
+                                    request.description = descController.text;
+                                    request.subject =subjectController.text;
+                                    _leaveListViewModel.saveLeaveRequest(request);
+
+                                  }
+                                else
+                                  {
+                                    Controller().showToastMessage(context, "End date must be greater than leave start date");
+                                  }
+                              },
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(primaryColor),
+                                  textStyle:
+                                  MaterialStateProperty.all(TextStyle(fontSize: 12))),
+                              child: Text('Save'),
+                            ),
+                          ),
+
+                        ]),
 
 
 
 
 
-            ],
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

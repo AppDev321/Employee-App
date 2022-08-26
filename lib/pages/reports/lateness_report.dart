@@ -1,10 +1,12 @@
 import 'package:animated_button_bar/animated_button_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/response/report_lateness_response.dart';
 import 'package:hnh_flutter/widget/pie_chart.dart';
 
+import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
 import '../../data/drawer_items.dart';
 import '../../repository/model/request/claim_shift_history_request.dart';
@@ -15,6 +17,7 @@ import '../../widget/custom_text_widget.dart';
 import '../../widget/date_range_widget.dart';
 import '../../widget/dongout_chart.dart';
 import '../../widget/error_message.dart';
+import '../../widget/internet_not_available.dart';
 
 class  LatenessReport extends StatefulWidget {
   const LatenessReport({Key? key}) : super(key: key);
@@ -38,7 +41,7 @@ class LatenessReportStateful extends State<LatenessReport> {
   LatenessData? latenessData = null;
 
   List<ChartData> chartData= [];
-
+  var request = ClaimShiftHistoryRequest();
   @override
   void initState() {
     // TODO: implement initState
@@ -57,7 +60,7 @@ class LatenessReportStateful extends State<LatenessReport> {
     var endDate =
         new DateTime(now.year, now.month + 1, 0); //this month last date
 
-    var request = ClaimShiftHistoryRequest();
+ request = ClaimShiftHistoryRequest();
     request.start_date = Controller().getConvertedDate(startDate);
     request.end_date = Controller().getConvertedDate(endDate);
 
@@ -101,7 +104,20 @@ class LatenessReportStateful extends State<LatenessReport> {
       appBar: AppBar(
         title: const Text(menuReport),
       ),
-      body: Container(
+      body:
+      Column(children:[
+        BlocBuilder<ConnectedBloc, ConnectedState>(
+            builder: (context, state) {
+              if (state is ConnectedSucessState) {
+                return Container();
+              } else {
+                return InternetNotAvailable();
+              }
+            }
+
+        ),
+
+        Expanded(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -167,7 +183,7 @@ class LatenessReportStateful extends State<LatenessReport> {
                           String endDate =
                               Controller().getConvertedDate(date['end']);
 
-                          var request = ClaimShiftHistoryRequest();
+                         request = ClaimShiftHistoryRequest();
                           request.start_date = startDate;
                           request.end_date = endDate;
                           _reportsViewModel.getLatenessResports(request);
@@ -222,7 +238,7 @@ class LatenessReportStateful extends State<LatenessReport> {
 
           ],
         ),
-      ),
+      ),])
     );
   }
 
@@ -279,7 +295,7 @@ class LatenessReportStateful extends State<LatenessReport> {
       buttonState = status;
     });
 
-    var request = ClaimShiftHistoryRequest();
+    request = ClaimShiftHistoryRequest();
     DateTime now = DateTime.now();
     if (status == 0)
     {

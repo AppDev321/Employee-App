@@ -65,58 +65,63 @@ class _Body extends State<Body> {
       _progressDialog?.initiateLDialog('Please wait..');
     }
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      child: Column(
-        children: [
-
-          BlocBuilder<ConnectedBloc, ConnectedState>(
-              builder: (context, state) {
-                if (state is ConnectedFailureState) {
-                  return InternetNotAvailable();
-                }else
-                {
-                  return Container();
-                }
+    return Column(
+      children: [
+        BlocBuilder<ConnectedBloc, ConnectedState>(
+            builder: (context, state) {
+              if (state is ConnectedFailureState) {
+                return InternetNotAvailable();
+              }else
+              {
+                return Container();
               }
-          ),
-          SizedBox(height: 5),
-          ProfilePic(name: "Admin",),
+            }
+        ),
+        SingleChildScrollView(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            children: [
 
-          SizedBox(height: 20),
-          ProfileMenu(
-            text: "My Account",
-            icon: "assets/icons/User Icon.svg",
-            press: () => {
-              Get.to(()=>MyAccount())
-            },
+
+              SizedBox(height: 5),
+              ProfilePic(name: "Admin",),
+
+              SizedBox(height: 20),
+              ProfileMenu(
+                text: "My Account",
+                icon: "assets/icons/User Icon.svg",
+                press: () => {
+                  Get.to(()=>MyAccount())
+                },
+              ),
+              ProfileMenu(
+                text: "Notifications",
+                icon: "assets/icons/Bell.svg",
+                press: () {},
+              ),
+              ProfileMenu(
+                text: "Settings",
+                icon: "assets/icons/Settings.svg",
+                press: () {},
+              ),
+              ProfileMenu(
+                text: "Change Password",
+                icon: "assets/icons/ic_password.svg",
+                press: () {
+                  _showChangePassword(context);
+                },
+              ),
+              ProfileMenu(
+                text: "Log Out",
+                icon: "assets/icons/Log out.svg",
+                press: () {
+                  Controller().logoutUser();
+                },
+              ),
+            ],
           ),
-          ProfileMenu(
-            text: "Notifications",
-            icon: "assets/icons/Bell.svg",
-            press: () {},
-          ),
-          ProfileMenu(
-            text: "Settings",
-            icon: "assets/icons/Settings.svg",
-            press: () {},
-          ),
-          ProfileMenu(
-            text: "Change Password",
-            icon: "assets/icons/ic_password.svg",
-            press: () {
-              _showChangePassword(context);
-            },
-          ),
-          ProfileMenu(
-            text: "Log Out",
-            icon: "assets/icons/Log out.svg",
-            press: () {
-              Controller().logoutUser();
-            },
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

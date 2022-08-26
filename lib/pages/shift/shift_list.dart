@@ -46,22 +46,18 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
 
 
 
-  Map<String,String> map = {
-    'device_type': platFormType!,
-    'fcm_token':fcmToken!
-  };
 
 
   @override
   void initState() {
     super.initState();
-    firebaseMessaging(context);
+
     setState(() {
       _isFirstLoadRunning = true;
       _isErrorInApi = false;
     });
 
-    APIWebService().postTokenToServer(map);
+
 
     _shiftListViewModel = ShiftListViewModel();
 
@@ -137,7 +133,23 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
             builder: (context, state) {
               if (state is ConnectedFailureState) {
                 return InternetNotAvailable();
-              }else
+              }
+
+              else if(state is FirebaseMsgReceived)
+              {
+                if(state.screenName == Screen.SHIFT)
+                {
+                  print("updating Shift Screen");
+                  var now = new DateTime.now();
+                  String formattedDate = Controller().getConvertedDate(now);
+                  _shiftListViewModel.getShiftList(formattedDate);
+
+                  state.screenName=Screen.NULL;
+
+                }
+                return Container();
+              }
+              else
                 {
                  return Container();
                 }
@@ -215,38 +227,46 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
       BuildContext context, List<Shifts> shifts, bool openShiftData) {
 
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListView.builder(
-        itemCount: shifts.length,
-        itemBuilder: (_, index) => Card(
+    return RefreshIndicator(
+      onRefresh: () {
+        var now = new DateTime.now();
+        String formattedDate = Controller().getConvertedDate(now);
+        return _shiftListViewModel.getShiftList(formattedDate);
+      }
+     ,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView.builder(
+          itemCount: shifts.length,
+          itemBuilder: (_, index) => Card(
 
-         color:
-        openShiftData? claimedShiftColor:
-         shifts[index].claimed  ==null  ? claimedShiftApprovedColor :
-          shifts[index].claimed  == true ? claimedShiftColor :
-          claimedShiftApprovedColor,
-          elevation: 5,
-          shadowColor: cardShadow,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Controller.roundCorner),
+           color:
+          openShiftData? claimedShiftColor:
+           shifts[index].claimed  ==null  ? claimedShiftApprovedColor :
+            shifts[index].claimed  == true ? claimedShiftColor :
+            claimedShiftApprovedColor,
+            elevation: 5,
+            shadowColor: cardShadow,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Controller.roundCorner),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child:
+            Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(Controller.roundCorner),
+                      topRight: Radius.circular(Controller.roundCorner))),
+              margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child:indexBuilder(context, index, shifts, openShiftData)
+            )
+
+
+              ,
           ),
-          clipBehavior: Clip.antiAlias,
-          child:
-          Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(Controller.roundCorner),
-                    topRight: Radius.circular(Controller.roundCorner))),
-            margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child:indexBuilder(context, index, shifts, openShiftData)
-          )
-
-
-            ,
         ),
       ),
     );
@@ -426,47 +446,6 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
     ;
   }
 
-  //Notificaiton
-  void firebaseMessaging(BuildContext context) {
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-
-        if (message.notification != null) {
-          print(message.notification!.title);
-          print(message.notification!.body);
-          print("message.data22 ${message.data['title']}");
-          print("message.data22 ${message.data['body']}");
-        }
-
-        LocalNotificationService.createandDisplayNotification(message);
-      }
-    });
-
-
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        showDialog(
-            context: context,
-            builder: (_) {
-              return AlertDialog(
-                title: Text(notification.title!),
-                content: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [Text(notification.body!)],
-                  ),
-                ),
-              );
-            });
-      }
-    });
-  }
 
 }

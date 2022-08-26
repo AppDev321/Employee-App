@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/pages/dashboard/dashboard.dart';
+import 'package:hnh_flutter/pages/leave/leave_listing.dart';
 import 'package:hnh_flutter/pages/login/login.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
@@ -31,52 +32,57 @@ import 'utils/controller.dart';
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel',
     'High Importance Notifications',
-
     importance: Importance.high,
     playSound: true
 );
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FirebaseMessaging fm = FirebaseMessaging.instance;
+
+
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print('Notification Message :  ${message.messageId}');
- // LocalNotificationService.createandDisplayNotification(message);
+  print('Notification Message :  ${message.data.toString()}');
+
+
+
+
+ //LocalNotificationService.createandDisplayNotification(message);
+ var screenName = message.data['activity'];
+  if(screenName != null)
+  {
+    var screens = screenName.toLowerCase();
+    if(screens.contains(Screen.SHIFT.displayTitle.toLowerCase()))
+    {
+      print('shift ma aya');
+      //  Get.offAll(()=>Dashboard()); //to remove all activities from bback stack
+      Get.to(()=>ShiftList());
+    }
+    else if (screens.contains(Screen.LEAVE.displayTitle.toLowerCase()))
+    {
+      Get.to(()=>LeavePage());
+    }
+
+  }
 }
 
 
 
-Future<String> storeFCMTokenOnServer(String url, Map jsonMap) async {
-print("url $jsonMap");
-  Controller controller = Controller();
-  String? userToken = await controller.getAuthToken();
-
-  HttpClient httpClient = new HttpClient();
-  HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
-  request.headers.set('content-type', 'application/json');
-  request.headers.set('Accept', 'application/json');
-  request.headers.set('Authorization', 'Bearer ${userToken}');
-  request.add(utf8.encode(json.encode(jsonMap)));
-  HttpClientResponse response = await request.close();
-  String reply = await response.transform(utf8.decoder).join();
-  print("url -response: $reply");
-  httpClient.close();
-  return reply;
-}
-
- String? fcmToken ="";
+String? fcmToken ="";
 String? platFormType ="android";
 
 
 
 void main() async{
-  //runApp(CameraWidget());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   //when app is in backgorund
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler
+
+  );
   fcmToken = await FirebaseMessaging.instance.getToken();
+
   if (Platform.isIOS) {
     platFormType = "IOS";
   } else {
@@ -85,8 +91,7 @@ void main() async{
 
   LocalNotificationService.initializeNotification();
 
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+  await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
 
@@ -216,6 +221,14 @@ var api =APIWebService();
 );
     return re ;
   }
+
+
+
+
+
+
+
+
 
 
 

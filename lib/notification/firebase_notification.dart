@@ -1,6 +1,13 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:hnh_flutter/pages/dashboard/dashboard.dart';
+import 'package:hnh_flutter/pages/leave/leave_listing.dart';
+import 'package:hnh_flutter/pages/shift/shift_list.dart';
+
+import '../utils/controller.dart';
 
 class LocalNotificationService
 {
@@ -16,21 +23,25 @@ class LocalNotificationService
 
     _notificationsPlugin.initialize(
       initializationSettings,
-      onSelectNotification: (String? id) async {
-        print("onSelectNotification");
-        if (id!.isNotEmpty) {
-          print("Router Value1234 $id");
-
-          // Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //     builder: (context) => DemoScreen(
-          //       id: id,
-          //     ),
-          //   ),
-          // );
+      onSelectNotification: (String? screenName) async {
+        print("onSelectNotification == ${screenName}");
 
 
-        }
+        if(screenName != null)
+          {
+            var screens = screenName.toLowerCase();
+            if(screens.contains(Screen.SHIFT.displayTitle.toLowerCase()))
+              {
+            //  Get.offAll(()=>Dashboard()); //to remove all activities from bback stack
+                Get.to(()=>ShiftList());
+              }
+            else if (screens.contains(Screen.LEAVE.displayTitle.toLowerCase()))
+              {
+                Get.to(()=>LeavePage());
+              }
+
+          }
+
       },
     );
   }
@@ -54,7 +65,8 @@ class LocalNotificationService
         message.notification!.title,
         message.notification!.body,
         notificationDetails,
-        payload: message.data['body'],
+        payload: message.data['activity'],
+
       );
     } on Exception catch (e) {
       print(e);

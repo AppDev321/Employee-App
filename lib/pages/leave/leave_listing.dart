@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,40 +14,42 @@ import '../../custom_style/colors.dart';
 import '../../data/drawer_items.dart';
 import '../../repository/model/request/claim_shift_history_request.dart';
 import '../../repository/model/response/leave_list.dart';
-import '../../repository/model/response/overtime_list.dart';
 import '../../utils/controller.dart';
-import '../../view_models/overtime_vm.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/date_range_widget.dart';
 import '../../widget/error_message.dart';
 import '../../widget/filter_tab_widget.dart';
 import '../../widget/internet_not_available.dart';
-import '../login/login.dart';
-import 'add_overtime.dart';
 
-class OverTimePage extends StatefulWidget {
+
+class LeavePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _OverTimePageState();
+    return _LeavePageState();
   }
 }
 
-class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderStateMixin{
+class _LeavePageState extends State<LeavePage>   with SingleTickerProviderStateMixin {
   TextEditingController _dateFilterController = TextEditingController();
   bool _isFirstLoadRunning = false;
-  late TabController _tabController;
+
   bool _isErrorInApi = false;
   String? _errorMsg = "";
-  List<OvertimeHistory> _overtimeHistoryList = [];
+  List<Leaves> _leaveHistoryList = [];
 
   late BuildContext contextBuild;
-  late OvertimeViewModel _overtimeViewModel;
- var request = ClaimShiftHistoryRequest();
+  late LeaveListViewModel _leaveListViewModel;
+
+  late TabController _tabController;
+
+  var request =ClaimShiftHistoryRequest() ;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: ConstantData.filterTabs.length, vsync: this);
+
 
 
     setState(() {
@@ -53,24 +57,25 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
       _isErrorInApi = false;
     });
 
-    _overtimeViewModel = OvertimeViewModel();
+    _leaveListViewModel = LeaveListViewModel();
     var now = new DateTime.now();
     String formattedDate = Controller().getConvertedDate(now);
 
-  request = ClaimShiftHistoryRequest();
+  //  var request = ClaimShiftHistoryRequest();
+    request = ClaimShiftHistoryRequest();
     request.start_date = formattedDate;
     request.end_date = formattedDate;
 
-    _overtimeViewModel.getOverTimeList(request);
-    _overtimeViewModel.addListener(() {
-      _overtimeHistoryList.clear();
+    _leaveListViewModel.getLeaveHistoryList(request);
+    _leaveListViewModel.addListener(() {
+      _leaveHistoryList.clear();
 
-      var checkErrorApiStatus = _overtimeViewModel.getIsErrorRecevied();
+      var checkErrorApiStatus = _leaveListViewModel.getIsErrorRecevied();
       if (checkErrorApiStatus) {
         setState(() {
           _isFirstLoadRunning = false;
           _isErrorInApi = checkErrorApiStatus;
-          _errorMsg = _overtimeViewModel.getErrorMsg();
+          _errorMsg = _leaveListViewModel.getErrorMsg();
           if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
             Controller().logoutUser();
           }
@@ -78,7 +83,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
       } else {
         _isFirstLoadRunning = false;
 
-        _overtimeHistoryList = _overtimeViewModel.getOvertimeHistoryList();
+        _leaveHistoryList = _leaveListViewModel.getLeaveList();
 
         setState(() {
           _isErrorInApi = checkErrorApiStatus;
@@ -91,7 +96,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
-        title: Text(overtime),
+        title: Text(menuLeave),
       ),
       body: Column(
         children: [
@@ -105,13 +110,14 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                 {
                   if(state.screenName == Screen.OVERTIME)
                   {
-                    _overtimeViewModel.getOverTimeList(request);
+                    _leaveListViewModel.getLeaveHistoryList(request);
                     print("updating overtime Screen");
                     state.screenName=Screen.NULL;
 
                   }
                   return Container();
                 }
+
                 else
                 {
                   return Container();
@@ -120,24 +126,35 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(6.0),
               child: Column(
                 children: [
+
 
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+
+
+
                       Container(
                         child: CustomTextWidget(
-                          text: "Add Request",
+                          text: "Add Leave",
                           size: 20,
                         ),
                       ),
                       ElevatedButton(
                         onPressed: () {
+                    var leavesType = _leaveListViewModel.getLeaveTypes();
+                    if(leavesType.length > 0) {
 
-                      Get.to(()=> AddOverTime());
+                      Get.to(()=> AddLeave(leaveTypes: leavesType));
+                    }
+                    else
+                      {
+                        Controller().showToastMessage(context,"No leave types found");
+                      }
 
 
                         },
@@ -165,13 +182,14 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                       String endDate = Controller().getConvertedDate(date['end']);
                       setState(() {
 
-                      request = ClaimShiftHistoryRequest();
+                      //  var request = ClaimShiftHistoryRequest();
+                        request = ClaimShiftHistoryRequest();
                         request.start_date = startDate;
                         request.end_date = endDate;
-                        _overtimeHistoryList.clear();
+                        _leaveHistoryList.clear();
                         _isFirstLoadRunning = true;
                         _isErrorInApi = false;
-                        _overtimeViewModel.getOverTimeList(request);
+                        _leaveListViewModel.getLeaveHistoryList(request);
 
 
                       });
@@ -179,7 +197,6 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                     controllerDate: _dateFilterController,
                     isSearchButtonShow: false,
                   ),
-
 
                   SizedBox(
                     height: 15,
@@ -196,22 +213,23 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                       : _isErrorInApi
                           ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                           : Expanded(
-                              child: _overtimeHistoryList.length > 0
+                              child: _leaveHistoryList.length > 0
                                   ?
-
                               TabBarView(
-                                  controller: _tabController,
-                                  children: [
-                                    //All
+                                controller: _tabController,
+                                children: [
+                                  //All
 
-                                    listContainer(_overtimeHistoryList),
+                                  listContainer(_leaveHistoryList),
 
-                                    listContainer(getFilterList(_overtimeHistoryList,"APPROVED")),
+                                  listContainer(getFilterList(_leaveHistoryList,"APPROVED")),
 
-                                    listContainer(getFilterList(_overtimeHistoryList,"PENDING")),
-                                    listContainer(getFilterList(_overtimeHistoryList,"REJECTED")),
+                                  listContainer(getFilterList(_leaveHistoryList,"PENDING")),
+                                  listContainer(getFilterList(_leaveHistoryList,"REJECTED")),
 
-                                  ])  : ErrorMessageWidget(label: "No Overtime Found"))
+                                ],
+                              )
+                      : ErrorMessageWidget(label: "No Leaves Found"))
                 ],
               ),
             ),
@@ -221,29 +239,29 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
 
 
 
-  List<OvertimeHistory> getFilterList(List<OvertimeHistory> inputlist,String status) {
-    List<OvertimeHistory> outputList = inputlist.where((o) => o.status == status).toList();
+  List<Leaves> getFilterList(List<Leaves> inputlist,String status) {
+    List<Leaves> outputList = inputlist.where((o) => o.status == status).toList();
     return outputList;
   }
 
-  Widget listContainer(List<OvertimeHistory> _leaveHistoryList)
+  Widget listContainer(List<Leaves> _leaveHistoryList)
   {
 
-    return  RefreshIndicator(
-      onRefresh:()=> _overtimeViewModel.getOverTimeList(request),
-      child: ListView.builder(
+   return  RefreshIndicator(
+     onRefresh:  ()=>_leaveListViewModel.getLeaveHistoryList(request),
+     child: ListView.builder(
           itemCount: _leaveHistoryList.length,
           itemBuilder: (_, index) => Padding(
               padding: const EdgeInsets.all(5.0),
               child: containerListItems(
                   _leaveHistoryList[index]))),
-    );
+   );
   }
 
 
 
 
-  Widget containerListItems(OvertimeHistory item) {
+  Widget containerListItems(Leaves item) {
     return Card(
         color:   item.status == "PENDING"  ? claimedShiftColor :
         item.status == "APPROVED" ? claimedShiftApprovedColor :
@@ -258,7 +276,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
 
         Container(
             decoration: BoxDecoration(
-              color:  Colors.white,
+                color:  Colors.white,
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))
@@ -272,9 +290,13 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-
+                      CustomTextWidget(
+                        text: item.leaveType,
+                        color:  Colors.primaries[Random().nextInt(Colors.primaries.length)],
+                        fontWeight: FontWeight.w500,
+                      ),
                       TextColorContainer(
                       label: item.status!,
                       color:
@@ -285,7 +307,6 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                     ],
                   ),
                 ),
-
                 SizedBox(
                   height: 6,
                 ),
@@ -297,25 +318,29 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Column(
                     children: [
-                      
-                      createRowDate("Date:",item.date),
+                      containerCard(item),
                       SizedBox(
-                        height: 5,
+                        height: 15,
                       ),
-                      createRowDate("Hours:",item.hour),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      createRowDate("Reason:",item.reason),
-                      SizedBox(
-                        height: 5,
-                      ),
-                       item.status == "APPROVED" || item.status == "REJECTED" ?
-                      Padding(
-                        padding: const EdgeInsets.all(0),
-                        child:
-                        createRowDate("Managed By:",item.managedBy),
 
+                      item.status == "APPROVED" || item.status == "REJECTED" ?
+                      Padding(
+                        padding: const EdgeInsets.all(7),
+                        child:
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            CustomTextWidget(
+                              text: "Managed By:",
+                              fontWeight: FontWeight.bold,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5),
+                              child: CustomTextWidget(text: item.managedBy),
+                            ),
+                          ],
+                        ),
                       ):
                       Container(),
                     ],
@@ -325,32 +350,48 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
             )));
   }
 
+  Widget containerCard(Leaves item) {
+    return Table(
 
-  Widget createRowDate(String title,String? value)
-  {
-
-    return Column(
-      children: [
-        SizedBox(
-          height: 5,
-        ),
-
-        Row(
-          children: [
-            CustomTextWidget(  text:title,fontWeight: FontWeight.bold),
-            Expanded(
-              child: Padding(
-                  padding: EdgeInsets.only(left: 5),
-                  child:
-                  CustomTextWidget(  text:value)),
-            )
-
-          ],
-        )
-      ],
-    )
-    ;
+        children: [
+      TableRow(
+        children: [
+          TableCellPadded(
+              child: CustomTextWidget(
+            text: "From Date",
+            fontWeight: FontWeight.bold,
+          )),
+          TableCellPadded(
+              child: CustomTextWidget(
+            text: "To Date",
+            fontWeight: FontWeight.bold,
+          )),
+          TableCellPadded(
+              child: CustomTextWidget(
+            text: "Days",
+            fontWeight: FontWeight.bold,
+          )),
+        ],
+      ),
+      TableRow(
+        children: [
+          TableCellPadded(
+              child: CustomTextWidget(
+            text: item.dateFrom,
+          )),
+          TableCellPadded(
+              child: CustomTextWidget(
+            text: item.dateTo,
+          )),
+          TableCellPadded(
+              child: CustomTextWidget(
+            text: "${item.days} days",
+          )),
+        ],
+      ),
+    ]);
   }
+
 
 
 

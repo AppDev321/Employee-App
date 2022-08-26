@@ -35,7 +35,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
 
   late ReportsViewModel _reportsViewModel;
   List<Attendance> attendanceList = [];
-
+  var request = ClaimShiftHistoryRequest();
   @override
   void initState() {
     // TODO: implement initState
@@ -54,7 +54,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
     var endDate =
         new DateTime(now.year, now.month + 1, 0); //this month last date
 
-    var request = ClaimShiftHistoryRequest();
+   request = ClaimShiftHistoryRequest();
     request.start_date = Controller().getConvertedDate(startDate);
     request.end_date = Controller().getConvertedDate(endDate);
 
@@ -162,7 +162,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                           String endDate =
                               Controller().getConvertedDate(date['end']);
 
-                          var request = ClaimShiftHistoryRequest();
+                          request = ClaimShiftHistoryRequest();
                           request.start_date = startDate;
                           request.end_date = endDate;
                           _reportsViewModel.getAttendanceReport(request);
@@ -181,12 +181,15 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                     ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                     : Expanded(
                         flex: 1,
-                        child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListView.builder(
-                                  itemCount: attendanceList.length,
-                                  itemBuilder: (context, index) =>
-                                      listItem(attendanceList[index]))),
+                        child: RefreshIndicator(
+                          onRefresh:  ()=>_reportsViewModel.getAttendanceReport(request),
+                          child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ListView.builder(
+                                    itemCount: attendanceList.length,
+                                    itemBuilder: (context, index) =>
+                                        listItem(attendanceList[index]))),
+                        ),
                         ),
 
           ],
@@ -377,7 +380,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
       buttonState = status;
     });
 
-    var request = ClaimShiftHistoryRequest();
+     request = ClaimShiftHistoryRequest();
     DateTime now = DateTime.now();
     if (status == 0)
     {

@@ -1,9 +1,11 @@
 import 'package:animated_button_bar/animated_button_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/widget/pie_chart.dart';
 
+import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
 import '../../data/drawer_items.dart';
 import '../../repository/model/request/claim_shift_history_request.dart';
@@ -13,6 +15,7 @@ import '../../view_models/reports_vm.dart';
 import '../../widget/custom_text_widget.dart';
 import '../../widget/date_range_widget.dart';
 import '../../widget/error_message.dart';
+import '../../widget/internet_not_available.dart';
 
 class LeaveReport extends StatefulWidget {
   const LeaveReport({Key? key}) : super(key: key);
@@ -34,7 +37,7 @@ class LeaveReportStateful extends State<LeaveReport> {
 
   late ReportsViewModel _reportsViewModel;
   List<ChartData> leaveData = [];
-
+  var request = ClaimShiftHistoryRequest();
   @override
   void initState() {
     // TODO: implement initState
@@ -53,7 +56,7 @@ class LeaveReportStateful extends State<LeaveReport> {
     var endDate =
         new DateTime(now.year, now.month + 1, 0); //this month last date
 
-    var request = ClaimShiftHistoryRequest();
+  request = ClaimShiftHistoryRequest();
     request.start_date = Controller().getConvertedDate(startDate);
     request.end_date = Controller().getConvertedDate(endDate);
 
@@ -87,171 +90,186 @@ class LeaveReportStateful extends State<LeaveReport> {
       appBar: AppBar(
         title: const Text(menuReport),
       ),
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: CustomTextWidget(
-                text: subMenuReportLeave,
-                size: 20,
-              ),
-            ),
-            AnimatedButtonBar(
-              padding: EdgeInsets.all(9),
-              backgroundColor: Colors.grey.shade200,
-              radius: 20,
-              invertedSelection: true,
+      body: Column(
+        children: [
+          BlocBuilder<ConnectedBloc, ConnectedState>(
+              builder: (context, state) {
+                if (state is ConnectedSucessState) {
+                  return Container();
+                } else {
+                  return InternetNotAvailable();
+                }
+              }
+
+          ),
+
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: CustomTextWidget(
+                    text: subMenuReportLeave,
+                    size: 20,
+                  ),
+                ),
+                AnimatedButtonBar(
+                  padding: EdgeInsets.all(9),
+                  backgroundColor: Colors.grey.shade200,
+                  radius: 20,
+                  invertedSelection: true,
+                  children: [
 
-                ButtonBarEntry(
-                    onTap: () {
-                      changeButtonState(0);
-                    },
-                    child: Text('This Month')),
-                ButtonBarEntry(
-                    onTap: () {
-                      changeButtonState(1);
-                    },
-                    child: Text('Last Month')),
-                ButtonBarEntry(
-                    onTap: () {
-                      changeButtonState(2);
-                    },
-                    child: Text('This Year')),
-                ButtonBarEntry(
-                    onTap: () {
-                      changeButtonState(3);
-                    },
-                    child: Text('Custom'))
-              ],
-            ),
-            Padding(
-                padding: const EdgeInsets.all(10),
-                child: buttonState == 3
-                    ? CustomDateRangeWidget(
-                        labelText: "Select Date",
-                        onDateChanged: (date) {
-                          String startDate =
-                              Controller().getConvertedDate(date['start']);
-                          String endDate =
-                              Controller().getConvertedDate(date['end']);
-                          _dateFilterController.text = "$startDate To $endDate";
+                    ButtonBarEntry(
+                        onTap: () {
+                          changeButtonState(0);
                         },
-                        onFetchDates: (date) {
-                          setState(() {
-                            _isFirstLoadRunning = true;
-                            _isErrorInApi = false;
-                          });
-
-                          String startDate =
-                              Controller().getConvertedDate(date['start']);
-                          String endDate =
-                              Controller().getConvertedDate(date['end']);
-
-                          var request = ClaimShiftHistoryRequest();
-                          request.start_date = startDate;
-                          request.end_date = endDate;
-                          _reportsViewModel.getLeaveResports(request);
+                        child: Text('This Month')),
+                    ButtonBarEntry(
+                        onTap: () {
+                          changeButtonState(1);
                         },
-                        controllerDate: _dateFilterController,
-                        isSearchButtonShow: false,
-                      )
-                    : buttonState == 1
-                        ? Center()
-                        : buttonState == 2
+                        child: Text('Last Month')),
+                    ButtonBarEntry(
+                        onTap: () {
+                          changeButtonState(2);
+                        },
+                        child: Text('This Year')),
+                    ButtonBarEntry(
+                        onTap: () {
+                          changeButtonState(3);
+                        },
+                        child: Text('Custom'))
+                  ],
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: buttonState == 3
+                        ? CustomDateRangeWidget(
+                            labelText: "Select Date",
+                            onDateChanged: (date) {
+                              String startDate =
+                                  Controller().getConvertedDate(date['start']);
+                              String endDate =
+                                  Controller().getConvertedDate(date['end']);
+                              _dateFilterController.text = "$startDate To $endDate";
+                            },
+                            onFetchDates: (date) {
+                              setState(() {
+                                _isFirstLoadRunning = true;
+                                _isErrorInApi = false;
+                              });
+
+                              String startDate =
+                                  Controller().getConvertedDate(date['start']);
+                              String endDate =
+                                  Controller().getConvertedDate(date['end']);
+
+                            request = ClaimShiftHistoryRequest();
+                              request.start_date = startDate;
+                              request.end_date = endDate;
+                              _reportsViewModel.getLeaveResports(request);
+                            },
+                            controllerDate: _dateFilterController,
+                            isSearchButtonShow: false,
+                          )
+                        : buttonState == 1
                             ? Center()
-                            : Center()),
-            _isFirstLoadRunning
-                ? Expanded(child: Center(child: CircularProgressIndicator()))
-                : _isErrorInApi
-                    ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
-                    : Expanded(
-                      flex: 1,
+                            : buttonState == 2
+                                ? Center()
+                                : Center()),
+                _isFirstLoadRunning
+                    ? Expanded(child: Center(child: CircularProgressIndicator()))
+                    : _isErrorInApi
+                        ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
+                        : Expanded(
+                          flex: 1,
 
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                                children: [
-                                  Container(
-                                      child: PieChartWidget(
-                                    chartData: leaveData,
-                                  )),
-                                 SizedBox(height:10),
-                                 GridView.builder(
-                                          physics: ScrollPhysics(),
-                                          shrinkWrap: true,
-                                          gridDelegate:
-                                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                                                  maxCrossAxisExtent: 200,
-                                                  childAspectRatio: 3 / 2,
-                                                  crossAxisSpacing: 10,
-                                                  mainAxisSpacing: 10),
-                                          itemCount: leaveData.length,
-                                          itemBuilder: (BuildContext ctx, index) {
-                                            return   Card(
-                                              color:  colorArray[index],
-                                                elevation: 5,
-                                                shadowColor: cardShadow,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(Controller.roundCorner),
-                                                ),
-                                                clipBehavior: Clip.antiAlias,
-                                                child:
-                                                Container(
-                                                    width: MediaQuery.of(context).size.width,
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius: BorderRadius.only(
-                                                            bottomRight: Radius.circular(Controller.roundCorner),
-                                                            topRight: Radius.circular(Controller.roundCorner))),
-                                                    margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
-                                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                                    child:Column(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                      children: [
-                                                        CustomTextWidget(
-                                                          text: leaveData[index]
-                                                              .count
-                                                              .toString(),
-                                                          color: Colors.black,
-                                                          size: 18,
-                                                          fontWeight: FontWeight.bold,
-                                                        ),
-                                                        SizedBox(height: 5),
-                                                        CustomTextWidget(
-                                                          text: leaveData[index]
-                                                              .name
-                                                              .toString(),
-                                                          color: Colors.black,
-                                                        ),
-                                                      ],
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                    children: [
+                                      Container(
+                                          child: PieChartWidget(
+                                        chartData: leaveData,
+                                      )),
+                                     SizedBox(height:10),
+                                     GridView.builder(
+                                              physics: ScrollPhysics(),
+                                              shrinkWrap: true,
+                                              gridDelegate:
+                                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                                      maxCrossAxisExtent: 200,
+                                                      childAspectRatio: 3 / 2,
+                                                      crossAxisSpacing: 10,
+                                                      mainAxisSpacing: 10),
+                                              itemCount: leaveData.length,
+                                              itemBuilder: (BuildContext ctx, index) {
+                                                return   Card(
+                                                  color:  colorArray[index],
+                                                    elevation: 5,
+                                                    shadowColor: cardShadow,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(Controller.roundCorner),
                                                     ),
-                                                )
+                                                    clipBehavior: Clip.antiAlias,
+                                                    child:
+                                                    Container(
+                                                        width: MediaQuery.of(context).size.width,
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius: BorderRadius.only(
+                                                                bottomRight: Radius.circular(Controller.roundCorner),
+                                                                topRight: Radius.circular(Controller.roundCorner))),
+                                                        margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
+                                                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                                        child:Column(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.center,
+                                                          children: [
+                                                            CustomTextWidget(
+                                                              text: leaveData[index]
+                                                                  .count
+                                                                  .toString(),
+                                                              color: Colors.black,
+                                                              size: 18,
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                            SizedBox(height: 5),
+                                                            CustomTextWidget(
+                                                              text: leaveData[index]
+                                                                  .name
+                                                                  .toString(),
+                                                              color: Colors.black,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                    )
 
 
-                                                ,
-                                              );
+                                                    ,
+                                                  );
 
 
 
 
 
-                                          }),
+                                              }),
 
 
-                                ],
+                                    ],
+                                  ),
+                            ),
                               ),
                         ),
-                          ),
-                    ),
 
-          ],
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -262,7 +280,7 @@ class LeaveReportStateful extends State<LeaveReport> {
       buttonState = status;
     });
 
-    var request = ClaimShiftHistoryRequest();
+     request = ClaimShiftHistoryRequest();
     DateTime now = DateTime.now();
     if (status == 0)
     {

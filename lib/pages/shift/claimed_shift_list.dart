@@ -96,74 +96,81 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
         title: Text(subMenuOpenShift),
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
+      body: Column(
+        children: [
 
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            BlocBuilder<ConnectedBloc, ConnectedState>(
-                builder: (context, state) {
-                  if (state is ConnectedFailureState) {
-                    return InternetNotAvailable();
-                  }else
-                  {
-                    return Container();
-                  }
-                }
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: CustomDateRangeWidget(labelText: "Select Date",
-                onDateChanged: (date)
-              {
-
-                String startDate = Controller().getConvertedDate(date['start']);
-                String endDate = Controller().getConvertedDate(date['end']);
-                _dateFilterController.text = "$startDate To $endDate";
-
-             //   var startDate = "${date['start'].year}-${date['start'].month}-${date['start'].day}";
-             //   var endDate = "${date['end'].year}-${date['end'].month}-${date['end'].day}";
-             //   _dateFilterController.text = "$startDate To $endDate";
-
-              },
-                onFetchDates: (date)
+          BlocBuilder<ConnectedBloc, ConnectedState>(
+              builder: (context, state) {
+                if (state is ConnectedFailureState) {
+                  return InternetNotAvailable();
+                }else
                 {
-                   String startDate = Controller().getConvertedDate(date['start']);
-                  String endDate = Controller().getConvertedDate(date['end']);
+                  return Container();
+                }
+              }
+          ),
+
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: CustomDateRangeWidget(labelText: "Select Date",
+                      onDateChanged: (date)
+                    {
+
+                      String startDate = Controller().getConvertedDate(date['start']);
+                      String endDate = Controller().getConvertedDate(date['end']);
+                      _dateFilterController.text = "$startDate To $endDate";
+
+                   //   var startDate = "${date['start'].year}-${date['start'].month}-${date['start'].day}";
+                   //   var endDate = "${date['end'].year}-${date['end'].month}-${date['end'].day}";
+                   //   _dateFilterController.text = "$startDate To $endDate";
+
+                    },
+                      onFetchDates: (date)
+                      {
+                         String startDate = Controller().getConvertedDate(date['start']);
+                        String endDate = Controller().getConvertedDate(date['end']);
 
 
 
-                   setState(() {
-                     var request = ClaimShiftHistoryRequest();
-                     request.start_date = startDate;
-                     request.end_date = endDate;
-                     _claimedHistoryList.clear();
-                     _isFirstLoadRunning = true;
-                     _isErrorInApi = false;
-                     _shiftListViewModel.getClaimedShiftHistoryList(request);
-                   });
+                         setState(() {
+                           var request = ClaimShiftHistoryRequest();
+                           request.start_date = startDate;
+                           request.end_date = endDate;
+                           _claimedHistoryList.clear();
+                           _isFirstLoadRunning = true;
+                           _isErrorInApi = false;
+                           _shiftListViewModel.getClaimedShiftHistoryList(request);
+                         });
 
 
-                },
-                  controllerDate: _dateFilterController,
-                isSearchButtonShow: false,
+                      },
+                        controllerDate: _dateFilterController,
+                      isSearchButtonShow: false,
+                    ),
+                  ),
+                  _isFirstLoadRunning
+                      ? Expanded(child: Center(child: CircularProgressIndicator()))
+                      : _isErrorInApi
+                      ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
+                      : Expanded(
+                          child:
+                          _claimedHistoryList.length >0?
+                           showListData(context,_claimedHistoryList,false)
+                              : ErrorMessageWidget(label: "No Shift Found")
+                          )
+                ],
               ),
             ),
-            _isFirstLoadRunning
-                ? Expanded(child: Center(child: CircularProgressIndicator()))
-                : _isErrorInApi
-                ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
-                : Expanded(
-                    child:
-                    _claimedHistoryList.length >0?
-                     showListData(context,_claimedHistoryList,false)
-                        : ErrorMessageWidget(label: "No Shift Found")
-                    )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

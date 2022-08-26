@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
@@ -13,7 +14,6 @@ class Controller {
   final String loginRemember = "login_remember";
   static const double leftCardColorMargin = 5;
   static const double roundCorner = 5;
-
 
 
 
@@ -66,17 +66,7 @@ class Controller {
   }
 
   void showToastMessage(BuildContext context, String text) {
-/*    final scaffold = ScaffoldMessenger.of(context);
-    scaffold.showSnackBar(
-      SnackBar(
-        content: Text(text),
-        action: SnackBarAction(
-            label: 'OK', onPressed: scaffold.hideCurrentSnackBar),
-      ),
-    );*/
-
-    Get.snackbar('Alert',text,snackPosition:SnackPosition.TOP, backgroundColor: Colors.black,colorText:Colors.white,
-    );
+    Get.snackbar('Alert',text,snackPosition:SnackPosition.TOP, backgroundColor: Colors.black,colorText:Colors.white);
 
   }
   bool validatePassword(String value) {
@@ -224,6 +214,9 @@ void logoutUser()
   }
 
 
+
+
+
   showConfirmationMsgDialog(
       BuildContext context,
       String title,
@@ -267,5 +260,44 @@ void logoutUser()
         );
       },
     );
+  }
+
+}
+
+
+enum Screen{
+  PROFILE,
+  SHIFT,
+  OVERTIME,
+  LEAVE,
+  REPORT,
+  AVAILABILITY,
+  DASHBOARD,
+  NULL
+
+}
+
+extension ScreenNameExtention on Screen {
+  String get name => describeEnum(this);
+
+  String get displayTitle {
+    switch (this) {
+      case Screen.PROFILE:
+        return 'Profile';
+      case Screen.REPORT:
+        return 'Report';
+      case Screen.SHIFT:
+        return 'Shift';
+      case Screen.LEAVE:
+        return 'Leave';
+      case Screen.OVERTIME:
+        return 'Overtime';
+      case Screen.AVAILABILITY:
+        return 'Availability';
+      case Screen.DASHBOARD:
+        return 'Dashboard';
+      default:
+        return '';
+    }
   }
 }
