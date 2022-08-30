@@ -2,203 +2,236 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:hnh_flutter/view_models/notification_vm.dart';
 
 import '../../bloc/connected_bloc.dart';
+import '../../custom_style/strings.dart';
+import '../../notification/firebase_notification.dart';
+import '../../repository/model/response/get_notification.dart';
+import '../../utils/controller.dart';
+import '../../view_models/leave_list_vm.dart';
 import '../../widget/custom_text_widget.dart';
+import '../../widget/error_message.dart';
 import '../../widget/internet_not_available.dart';
 import '../../widget/name_icon_badge.dart';
 
 class NotificationList extends StatefulWidget {
-  const NotificationList({ Key? key }) : super(key: key);
+  const NotificationList({Key? key}) : super(key: key);
 
   @override
   _NotificationListState createState() => _NotificationListState();
 }
 
 class _NotificationListState extends State<NotificationList> {
-  List<dynamic> notifications = [];
+  late NotificationViewModel _notificationViewModel;
+  List<NotificationData> notificationList = [];
+  bool _isFirstLoadRunning = false;
 
- readJson(){
-
-
-    setState(() {
-      notifications.add("1");
-      notifications.add(1);
-      notifications.add(1231);
-      notifications.add("1323");
-    });
-  }
+  bool _isErrorInApi = false;
+  String? _errorMsg = "";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    readJson();
+    setState(() {
+      _isFirstLoadRunning = true;
+      _isErrorInApi = false;
+    });
+    _notificationViewModel = NotificationViewModel();
+    _notificationViewModel.getNotification();
+    _notificationViewModel.addListener(() {
+      notificationList.clear();
+
+      var checkErrorApiStatus = _notificationViewModel.getIsErrorRecevied();
+      if (checkErrorApiStatus) {
+        setState(() {
+          _isFirstLoadRunning = false;
+          _isErrorInApi = checkErrorApiStatus;
+          _errorMsg = _notificationViewModel.getErrorMsg();
+          if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
+            Controller().logoutUser();
+          }
+        });
+      } else {
+        _isFirstLoadRunning = false;
+
+        notificationList = _notificationViewModel.notifications!;
+
+        setState(() {
+          _isErrorInApi = checkErrorApiStatus;
+          _errorMsg = "";
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
-
-
-    final makeListTile = ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        leading: Container(
-          padding: EdgeInsets.zero,
-        /*  decoration: new BoxDecoration(
-              border: new Border(
-                  right: new BorderSide(width: 1.0, color: Colors.grey))),*/
-          child:  new Stack(
-            children: <Widget>[
-              new Icon(Icons.notifications_rounded,size: 30,),
-             /* new Positioned(
-                top: 0,
-                right:3 ,
-                child: new Container(
-                  padding: EdgeInsets.all(2),
-                  decoration: new BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  constraints: BoxConstraints(
-                    minWidth: 10,
-                    minHeight:10,
-                  ),
-                  child: new Text(
-                    '',
-                    style: new TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )*/
-            ],
-          ),
-
-        ),
-
-
-
-        title: Text(
-          "Introduction to Driving",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
-        subtitle: Row(
-          children: <Widget>[
-
-            Text(" Intermediate", style: TextStyle(color: Colors.grey))
-          ],
-        ),
-        trailing:
-        Icon(Icons.keyboard_arrow_right, color: Colors.grey, size: 30.0));
-
-
-    final makeCard = Card(
-      elevation: 8.0,
-      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: Container(
-        decoration: BoxDecoration(color: Colors.white),
-        child:
-
-        new Stack(
-          children: <Widget>[
-            Positioned(
-              top: 0,
-              left:0 ,
-              child: Container(
-                padding: EdgeInsets.all(4),
-                color:Colors.red,child: CustomTextWidget(text:"New",color: Colors.white,size: 10,),),
-            ),
-
-
-                 makeListTile,])
-      ),
-    );
-    final makeBody =
-
-
-    Container(
-      child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: 1,
-        itemBuilder: (BuildContext context, int index) {
-          return makeCard;
-        },
-      ),
-    );
-
-
-
-
     return Scaffold(
         appBar: AppBar(
           title: Text("Notification"),
-
         ),
-
         body: Column(
           children: [
-
             BlocBuilder<ConnectedBloc, ConnectedState>(
                 builder: (context, state) {
-                  if (state is ConnectedFailureState) {
-                    return InternetNotAvailable();
-                  }
-                  else if(state is FirebaseMsgReceived)
-                  {
-                    return Container();
-                  }
-                  else
-                  {
-                    return Container();
+              if (state is ConnectedFailureState) {
+                return InternetNotAvailable();
+              } else if (state is FirebaseMsgReceived) {
+                return Container();
+              } else {
+                return Container();
+              }
+            }),
+            _isFirstLoadRunning
+                ? Expanded(child: Center(child: CircularProgressIndicator()))
+                : _isErrorInApi
+                    ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
+                    : Expanded(
+                        child: notificationList.length > 0
+                            ? RefreshIndicator(
+                                onRefresh:
+                                    _notificationViewModel.getNotification,
+                                child: ListView.builder(
+                                    itemCount: notificationList.length,
+                                    itemBuilder: (context, index) {
+                                      return Slidable(
+                                        key: const ValueKey(0),
+                                        endActionPane: ActionPane(
+                                          motion: const ScrollMotion(),
+                                          //dismissible: DismissiblePane(onDismissed: () {}),
+                                          children: [
+                                            SlidableAction(
+                                              onPressed: (value) {
+                                                print(value);
+                                                setState(() {
+                                                  _notificationViewModel.deleteNotificationStatus(notificationList[index].id.toString());
+                                                  notificationList.remove(notificationList[index]);
+
+                                                });
+                                              },
+                                              backgroundColor:
+                                                  Color(0xFFFE4A49),
+                                              foregroundColor: Colors.white,
+                                              icon: Icons.delete,
+                                              label: 'Delete',
+                                            ),
+                                          ],
+                                        ),
+                                        child: itemNotificationList(index),
+                                      );
+                                    }),
+                              )
+                            : ErrorMessageWidget(
+                                label: "No Notification Found"),
+                      )
+          ],
+        ));
+  }
+
+  Widget makeListTile(NotificationData notificationData, int index) {
+    var item = notificationData.notificationData!;
+
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      leading: Container(
+        padding: EdgeInsets.zero,
+        /*  decoration: new BoxDecoration(
+              border: new Border(
+                  right: new BorderSide(width: 1.0, color: Colors.grey))),*/
+
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.notifications_rounded,
+                size: 30,
+              ),
+            ]),
+      ),
+      title: CustomTextWidget(
+          text: item.title.toString(), fontWeight: FontWeight.bold),
+      subtitle: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          CustomTextWidget(
+            text: Controller()
+                .getServerDateFormated(notificationData.createdAt.toString()),
+            color: Colors.grey,
+            size: 10,
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          CustomTextWidget(
+            text: item.body.toString(),
+            color: Colors.grey,
+            size: 12,
+          ),
+        ],
+      ),
+      trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            InkWell(
+              child: Icon(
+                Icons.keyboard_arrow_right,
+                color: Colors.grey,
+                size: 30.0,
+              ),
+              onTap: () {
+                setState(() {
+                  _notificationViewModel.updateNotificationStatus(notificationData.id.toString());
+                  notificationData.isRead = 1;
+                  notificationList[index] = notificationData;
+                });
+
+                if (notificationData.type.toString() == 'TEXT') {
+                  var screenName = item.activity ?? 'N/A';
+                  if (screenName != null) {
+                    if (!screenName
+                        .toString()
+                        .toLowerCase()
+                        .contains("dashboard"))
+                      LocalNotificationService().navigateFCMScreen(screenName);
                   }
                 }
-            ),
-
-            Expanded(
-              child: ListView.builder(
-                  itemCount: notifications.length,
-                  itemBuilder: (context, index) {
-                    return Slidable(
-
-                      // Specify a key if the Slidable is dismissible.
-                      key: const ValueKey(0),
-
-                      // The start action pane is the one at the left or the top side.
-                      endActionPane: ActionPane(
-                         motion: const ScrollMotion(),
-                        dismissible: DismissiblePane(onDismissed: () {}),
-                        children: const [
-                          // A SlidableAction can have an icon and/or a label.
-                          SlidableAction(
-                            onPressed: deleteItemClick,
-                            backgroundColor: Color(0xFFFE4A49),
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Delete',
-                          ),
-
-                        ],
-                      ),
-
-                      child: makeCard,
-
-                    );
-                  }
-              ),
-            ),
-          ],
-        )
+              },
+            )
+          ]),
     );
   }
 
-
-
+  Widget itemNotificationList(int index) {
+    var item = notificationList[index];
+    return Card(
+      elevation: 8.0,
+      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      child: Container(
+          decoration: BoxDecoration(color: Colors.white),
+          child: Stack(children: <Widget>[
+            item.isRead == 0
+                ? Positioned(
+                    top: 0,
+                    left: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      color: Colors.red,
+                      child: CustomTextWidget(
+                        text: "New",
+                        color: Colors.white,
+                        size: 10,
+                      ),
+                    ),
+                  )
+                : Container(),
+            makeListTile(item, index)
+          ])),
+    );
+  }
 }
-void deleteItemClick(BuildContext context)
-{}

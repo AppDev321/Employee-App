@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,12 +12,14 @@ import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
 import '../../main.dart';
+import '../../notification/firebase_notification.dart';
 import '../../repository/model/response/get_dashboard.dart';
 import '../../repository/model/response/get_shift_list.dart';
 import '../../utils/controller.dart';
 import '../../webservices/APIWebServices.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/internet_not_available.dart';
+import '../../widget/name_icon_badge.dart';
 import '../../widget/navigation_drawer_new.dart';
 import '../notification_history/notification_list.dart';
 import '../overtime/add_overtime.dart';
@@ -56,13 +59,14 @@ class _DashboardState extends State<Dashboard> {
 
     APIWebService().postTokenToServer(map);
 
-
     _dashBoardViewModel = DashBoardViewModel();
     _dashBoardViewModel.getDashBoardData();
-  //  _dashBoardViewModel.firebaseMessaging(context);
+
+
+    _dashBoardViewModel.getBackgroundFCMNotificaiton();
+
     _dashBoardViewModel.addListener(() {
-
-
+     notificationCount= _dashBoardViewModel.notificationCount;
       var checkErrorApiStatus = _dashBoardViewModel.getIsErrorRecevied();
       if (checkErrorApiStatus) {
         setState(() {
@@ -132,46 +136,16 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         actions: <Widget>[
-          FlatButton(
-            onPressed: () {
-              Get.to(()=>NotificationList());
-            },
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  width: 50,
-                  child: Icon(
-                    Icons.notifications,
-                    color: primaryColor,
-                    size: 35,
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  width: 20,
-                  height: 20,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25),
-                      color: Colors.red,
-                    ),
-                    width: 20,
-                    height: 20,
-                    child: Center(
-                      child: Text(
-                        notificationCount.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
+            Container(
+              padding: EdgeInsets.only(right: 20),
+              child: NamedIcon(
+                onTap:()=>  Get.to(()=>NotificationList()),
+                notificationCount: notificationCount,
+                iconData:
+                  Icons.notifications,
+                color: primaryColor,
+              ),
+            )
         ],
       ),
       body: Column(
@@ -183,15 +157,12 @@ class _DashboardState extends State<Dashboard> {
                 }
                 else if(state is FirebaseMsgReceived)
                   {
-                    notificationCount ++;
                      if(state.screenName == Screen.DASHBOARD)
                     {
                       _dashBoardViewModel.getDashBoardData();
                       state.screenName=Screen.NULL;
-                      print("updating Dashboard Screen");
-
                     }
-                    return Container( );
+                    return Container();
                   }
                 else
                 {

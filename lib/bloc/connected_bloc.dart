@@ -36,13 +36,9 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
-
         if (message.notification != null) {
-          print(message.notification!.title);
-          print(message.notification!.body);
-          print("data['titel']=${message.data['title']}");
-          print("data['body']=${message.data['body']}");
-          print("data['activity']=${message.data['activity']}");
+          print("NotificationData=${message.data.toString()}");
+
           var screenName=message.data['activity'];
           if(screenName != null)
           {
@@ -77,16 +73,11 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
             }
 
           }
-
-
-
-
         }
 
         LocalNotificationService.createandDisplayNotification(message);
       }
     });
-
 
   }
   @override
@@ -120,7 +111,7 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
 
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
+      print('BLoc Msg:${message.data.toString()}');
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {

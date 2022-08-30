@@ -7,11 +7,10 @@ part of 'vechicle_get_inspection_request.dart';
 // **************************************************************************
 
 VechicleInspectionRequest _$VechicleInspectionRequestFromJson(
-    Map<String, dynamic> json) {
-  return VechicleInspectionRequest(
-    vehicleId: json['vehicleId'] as String?,
-  );
-}
+        Map<String, dynamic> json) =>
+    VechicleInspectionRequest(
+      vehicleId: json['vehicleId'] as String?,
+    );
 
 Map<String, dynamic> _$VechicleInspectionRequestToJson(
         VechicleInspectionRequest instance) =>

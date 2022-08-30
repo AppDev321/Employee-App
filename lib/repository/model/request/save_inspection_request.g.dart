@@ -7,13 +7,12 @@ part of 'save_inspection_request.dart';
 // **************************************************************************
 
 SaveInspectionCheckRequest _$SaveInspectionCheckRequestFromJson(
-    Map<String, dynamic> json) {
-  return SaveInspectionCheckRequest(
-    checks: (json['checks'] as List<dynamic>?)
-        ?.map((e) => SolvedChecked.fromJson(e as Map<String, dynamic>))
-        .toList(),
-  );
-}
+        Map<String, dynamic> json) =>
+    SaveInspectionCheckRequest(
+      checks: (json['checks'] as List<dynamic>?)
+          ?.map((e) => SolvedChecked.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
 Map<String, dynamic> _$SaveInspectionCheckRequestToJson(
         SaveInspectionCheckRequest instance) =>

@@ -19,6 +19,7 @@ import '../model/response/claimed_shift_list.dart';
 
 import '../model/response/get_dashboard.dart';
 
+import '../model/response/get_notification.dart';
 import '../model/response/get_shift_list.dart';
 import '../model/response/login_api_response.dart';
 import '../model/response/overtime_list.dart';
@@ -29,8 +30,8 @@ import '../model/response/report_leave_response.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
-//@RestApi(baseUrl: 'http://192.168.1.21:8000/api') // Enter you base URL
+//@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
+@RestApi(baseUrl: 'http://192.168.1.21:8000/api') // Enter you base URL
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
@@ -101,33 +102,13 @@ abstract class ApiClient {
   Future<GetDashBoardResponse> getDashboardData();
 
 
-/*
-  @GET(Api.users)
-  Future<Res> getUsers();
-  
-   // ===== POST ===== //
-  //   const key =
-  //    'Bearer ff4fd8240cf758b51b2971c3d96556bba5f3b5838be52828a778f60246b4d935';
-  @POST("users")
-  @http.Headers(<String, dynamic>{
-    HttpHeaders.authorizationHeader: key,
-  })
-  Future<GetUserResponse> createUser(@Body() User user);
-
-  // ===== PUT / PATCH ===== //
-  @PUT("users/{id}")
-  @http.Headers(<String, dynamic>{
-    HttpHeaders.authorizationHeader: key,
-  })
-  Future<GetUserResponse> updateUser(@Path() String id, @Body() User user);
-
-  // ===== DELETE ===== //
-  @DELETE('users/{id}')
-  @http.Headers(<String, dynamic>{
-    HttpHeaders.authorizationHeader: key,
-  })
-  Future<void> deleteUser(@Path("id") int id);
-  */
-
+  @POST('/notification/my-notifications')
+  Future<GetNotificationResponse> getNotificationList();
+  @POST('/notification/delete-notification?notification_id={id}')
+  Future<LoginApiResponse> deleteNotification(@Path("id") String notificaitonID);
+  @POST('/notification/change-read-status?notification_id={id}')
+  Future<LoginApiResponse> updateNotificationStatus(@Path("id") String notificaitonID);
+  @GET('/notification/get-notification-count')
+  Future<LoginApiResponse> getNotificationCount();
 
 }

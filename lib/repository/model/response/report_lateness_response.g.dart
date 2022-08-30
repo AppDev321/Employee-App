@@ -7,18 +7,17 @@ part of 'report_lateness_response.dart';
 // **************************************************************************
 
 LatenessReportResponse _$LatenessReportResponseFromJson(
-    Map<String, dynamic> json) {
-  return LatenessReportResponse(
-    code: json['code'] as int?,
-    message: json['message'] as String?,
-    data: json['data'] == null
-        ? null
-        : LatenessData.fromJson(json['data'] as Map<String, dynamic>),
-    errors: (json['errors'] as List<dynamic>?)
-        ?.map((e) => Errors.fromJson(e as Map<String, dynamic>))
-        .toList(),
-  );
-}
+        Map<String, dynamic> json) =>
+    LatenessReportResponse(
+      code: json['code'] as int?,
+      message: json['message'] as String?,
+      data: json['data'] == null
+          ? null
+          : LatenessData.fromJson(json['data'] as Map<String, dynamic>),
+      errors: (json['errors'] as List<dynamic>?)
+          ?.map((e) => Errors.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
 Map<String, dynamic> _$LatenessReportResponseToJson(
         LatenessReportResponse instance) =>

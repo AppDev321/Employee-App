@@ -7,12 +7,11 @@ part of 'claim_shift_history_request.dart';
 // **************************************************************************
 
 ClaimShiftHistoryRequest _$ClaimShiftHistoryRequestFromJson(
-    Map<String, dynamic> json) {
-  return ClaimShiftHistoryRequest(
-    start_date: json['start_date'] as String?,
-    end_date: json['end_date'] as String?,
-  );
-}
+        Map<String, dynamic> json) =>
+    ClaimShiftHistoryRequest(
+      start_date: json['start_date'] as String?,
+      end_date: json['end_date'] as String?,
+    );
 
 Map<String, dynamic> _$ClaimShiftHistoryRequestToJson(
         ClaimShiftHistoryRequest instance) =>

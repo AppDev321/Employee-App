@@ -167,14 +167,13 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
       _progressDialog?.initiateLDialog('Please wait..');
     }
 
-    DateTime requestDateFormate = new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(availabilityRequest.startDate!);
-    var dateFormat =  DateFormat('dd-MMM-yyyy');
-    var startEffectDate = dateFormat.format(DateTime.parse(requestDateFormate.toString()));
+
+    var startEffectDate =Controller().getServerDateFormated(availabilityRequest.startDate!) ;
+
     var endEffectDate = "";
     if(availabilityRequest.endDate != null)
     {
-      requestDateFormate = new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(availabilityRequest.endDate!);
-      endEffectDate= dateFormat.format(DateTime.parse(requestDateFormate.toString()));
+      endEffectDate=Controller().getServerDateFormated(availabilityRequest.endDate!);
     }
 
 

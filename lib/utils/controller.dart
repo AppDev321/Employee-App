@@ -14,7 +14,21 @@ class Controller {
   final String loginRemember = "login_remember";
   static const double leftCardColorMargin = 5;
   static const double roundCorner = 5;
+  final String fcm_screen = "fcm_screen";
 
+
+
+  Future<void> setFCMScreen(String screenName) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(this.fcm_screen, screenName.toLowerCase());
+  }
+
+  Future<String> getFCMScreen() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String screenName;
+    screenName = pref.getString(this.fcm_screen) ?? '';
+    return screenName;
+  }
 
 
   Future<void> setAuthToken(String auth_token) async {
@@ -150,6 +164,7 @@ void logoutUser()
 
   String greeting() {
     var hour = DateTime.now().hour;
+    print("current hour:$hour");
     if (hour < 12) {
       return 'Good Morning';
     }
@@ -180,7 +195,12 @@ void logoutUser()
   }
 
 
-
+  String getServerDateFormated(String serverDate){
+  DateTime requestDateFormate = new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
+  var dateFormat =  DateFormat('dd-MMM-yyyy');
+  var startDate = dateFormat.format(DateTime.parse(requestDateFormate.toString()));
+  return startDate;
+  }
 
   String convertStringDate(String jsonDate , String parsingType)
   {

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/pages/shift/claimed_shift_list.dart';
 import 'package:hnh_flutter/repository/model/request/availability_request.dart';
@@ -10,86 +11,51 @@ import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:intl/intl.dart';
 
+import '../notification/firebase_notification.dart';
 import '../repository/model/request/claim_shift_history_request.dart';
 import '../repository/model/response/claimed_shift_list.dart';
+import '../repository/model/response/get_dashboard.dart';
+import '../repository/model/response/get_notification.dart';
 import '../repository/model/response/leave_list.dart';
 import '../repository/model/response/overtime_list.dart';
 
-class AvailabilityViewModel extends BaseViewModel {
-
-  List<AvailabilityRequest>? availabilities;
-  bool requestStatus=false;
-  bool getRequestStatus() => requestStatus;
-
-  setAvailabilityRequestStatus(bool error) async {
-    requestStatus = error;
-
-  }
+class NotificationViewModel extends BaseViewModel {
 
 
-  Future<void> saveAvailabilityRequest(AvailabilityRequest request) async {
+  List<NotificationData>? notifications=[];
+
+
+  Future<void> getNotification() async {
     setLoading(true);
-    final results = await APIWebService().saveAvailabilityRequest(request);
-
-    if (results == null) {
-      var errorString = "Check your internet connection";
-      setErrorMsg(errorString);
-      setAvailabilityRequestStatus(false);
-     // setIsErrorReceived(true);
-    } else {
-      if (results.code == 200) {
-        setAvailabilityRequestStatus(true);
-       // setIsErrorReceived(false);
-      } else {
-        var errorString = "";
-        for (int i = 0; i < results.errors!.length; i++) {
-          errorString += results.errors![i].message! + "\n";
-        }
-        setErrorMsg(errorString);
-        setAvailabilityRequestStatus(false);
-      //  setIsErrorReceived(true);
-      }
-    }
-
-    setResponseStatus(true);
-    setLoading(false);
-    notifyListeners();
-  }
-
-
-
-  Future<void> getAvailabilityList(ClaimShiftHistoryRequest request) async {
-    setLoading(true);
-    setAvailabilityRequestStatus(false);
-    final results = await APIWebService().getAvailabilityList(request);
+    final results = await APIWebService().getNotification();
 
     if (results == null) {
       var errorString = "Check your internet connection";
       setErrorMsg(errorString);
 
-    setIsErrorReceived(true);
-    } else {
 
+    } else {
       if (results.code == 200) {
+
         setIsErrorReceived(false);
-        if(results.data!.availabilities!.length > 0)
+        if(results.data!.notifications!.length > 0)
         {
-          availabilities = results.data!.availabilities!;
+          notifications =results.data!.notifications!;
         }
         else
         {
           setIsErrorReceived(true);
-          availabilities=[];
-          setErrorMsg("No Data found");
+          notifications=[];
+          setErrorMsg("No Report found");
         }
-
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
           errorString += results.errors![i].message! + "\n";
         }
         setErrorMsg(errorString);
-         setIsErrorReceived(true);
+
+        setIsErrorReceived(true);
       }
     }
 
@@ -99,36 +65,57 @@ class AvailabilityViewModel extends BaseViewModel {
   }
 
 
-  Future<void> deleteAvailabilityRequest(String requestCode) async {
+
+  Future<void> updateNotificationStatus(String id) async {
     setLoading(true);
-    final results = await APIWebService().deleteAvailabilityRequest(requestCode);
+    final results = await APIWebService().updateNotificationStatus(id);
 
     if (results == null) {
       var errorString = "Check your internet connection";
       setErrorMsg(errorString);
-      setAvailabilityRequestStatus(false);
-      // setIsErrorReceived(true);
     } else {
       if (results.code == 200) {
-        setAvailabilityRequestStatus(true);
-        // setIsErrorReceived(false);
+        setIsErrorReceived(false);
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
           errorString += results.errors![i].message! + "\n";
         }
         setErrorMsg(errorString);
-        setAvailabilityRequestStatus(false);
-        //  setIsErrorReceived(true);
+
+        //setIsErrorReceived(true);
       }
     }
-
     setResponseStatus(true);
     setLoading(false);
     notifyListeners();
   }
 
 
+  Future<void> deleteNotificationStatus(String id) async {
+    setLoading(true);
+    final results = await APIWebService().deleteNotification(id);
+
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+    } else {
+      if (results.code == 200) {
+        setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += results.errors![i].message! + "\n";
+        }
+        setErrorMsg(errorString);
+
+        //setIsErrorReceived(true);
+      }
+    }
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+  }
 
 
 

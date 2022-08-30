@@ -7,14 +7,13 @@ part of 'create_inspection_request.dart';
 // **************************************************************************
 
 CreateInspectionRequest _$CreateInspectionRequestFromJson(
-    Map<String, dynamic> json) {
-  return CreateInspectionRequest(
-    vehicleId: json['vehicleId'] as String?,
-    type: json['type'] as String?,
-    date: json['date'] as String?,
-    odometerReading: json['odometerReading'] as String?,
-  );
-}
+        Map<String, dynamic> json) =>
+    CreateInspectionRequest(
+      vehicleId: json['vehicleId'] as String?,
+      type: json['type'] as String?,
+      date: json['date'] as String?,
+      odometerReading: json['odometerReading'] as String?,
+    );
 
 Map<String, dynamic> _$CreateInspectionRequestToJson(
         CreateInspectionRequest instance) =>

@@ -4,6 +4,7 @@ import 'package:hnh_flutter/repository/model/request/claim_shift_request.dart';
 import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/save_inspection_request.dart';
+import 'package:hnh_flutter/repository/model/response/get_notification.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/repository/model/response/login_api_response.dart';
 import 'package:hnh_flutter/repository/model/response/save_inspection_check_api_response.dart';
@@ -254,6 +255,50 @@ class APIWebService {
       return null;
     }
   }
+  Future<GetNotificationResponse?> getNotification() async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getNotificationList();
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+  Future<LoginApiResponse?> updateNotificationStatus(String id) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.updateNotificationStatus(id);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+  Future<LoginApiResponse?> deleteNotification(String id) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.deleteNotification(id);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
+
+  Future<LoginApiResponse?> getNotificationCount() async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getNotificationCount();
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
 
 
   Future<String?> postTokenToServer(Map<String,String> request) async {

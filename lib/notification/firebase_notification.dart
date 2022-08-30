@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:hnh_flutter/pages/availability/availability_listing.dart';
 import 'package:hnh_flutter/pages/dashboard/dashboard.dart';
 import 'package:hnh_flutter/pages/leave/leave_listing.dart';
+import 'package:hnh_flutter/pages/overtime/overtime_list.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
 
 import '../utils/controller.dart';
@@ -24,27 +26,50 @@ class LocalNotificationService
     _notificationsPlugin.initialize(
       initializationSettings,
       onSelectNotification: (String? screenName) async {
-        print("onSelectNotification == ${screenName}");
+        print("FlutterLocalNotificationsPlugin == ${screenName}");
 
-
-        if(screenName != null)
-          {
-            var screens = screenName.toLowerCase();
-            if(screens.contains(Screen.SHIFT.displayTitle.toLowerCase()))
-              {
-            //  Get.offAll(()=>Dashboard()); //to remove all activities from bback stack
-                Get.to(()=>ShiftList());
-              }
-            else if (screens.contains(Screen.LEAVE.displayTitle.toLowerCase()))
-              {
-                Get.to(()=>LeavePage());
-              }
-
-          }
+        LocalNotificationService().navigateFCMScreen(screenName);
 
       },
     );
   }
+
+
+
+   void navigateFCMScreen(String? screenName)
+   {
+     if(screenName != null)
+     {
+       var screens = screenName.toLowerCase();
+       if(screens.contains(Screen.SHIFT.displayTitle.toLowerCase()))
+       {
+         //  Get.offAll(()=>Dashboard()); //to remove all activities from bback stack
+         Get.to(()=>ShiftList());
+       }
+       else if (screens.contains(Screen.LEAVE.displayTitle.toLowerCase()))
+       {
+         Get.to(()=>LeavePage());
+       }
+       else if(screens.contains(Screen.OVERTIME.displayTitle.toLowerCase()))
+       {
+         Get.to(()=>OverTimePage());
+
+       }
+       else if(screens.contains(Screen.AVAILABILITY.displayTitle.toLowerCase()))
+       {
+         Get.to(()=>AvailabilityList());
+
+       }
+       else if(screens.contains(Screen.DASHBOARD.displayTitle.toLowerCase()))
+       {
+         Get.to(()=>Dashboard());
+
+       }
+
+
+     }
+   }
+
 
 
 

@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'create_inspection_api_response.dart';
+part of 'get_notification.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-CreateInspectionResponse _$CreateInspectionResponseFromJson(
+GetNotificationResponse _$GetNotificationResponseFromJson(
         Map<String, dynamic> json) =>
-    CreateInspectionResponse(
+    GetNotificationResponse(
       code: json['code'] as int?,
       message: json['message'] as String?,
       data: json['data'] == null
@@ -19,8 +19,8 @@ CreateInspectionResponse _$CreateInspectionResponseFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$CreateInspectionResponseToJson(
-        CreateInspectionResponse instance) =>
+Map<String, dynamic> _$GetNotificationResponseToJson(
+        GetNotificationResponse instance) =>
     <String, dynamic>{
       'code': instance.code,
       'message': instance.message,

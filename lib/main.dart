@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -26,62 +25,33 @@ import 'custom_style/strings.dart';
 import 'notification/firebase_notification.dart';
 import 'utils/controller.dart';
 
-
 //Global app initialization
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'high_importance_channel',
-    'High Importance Notifications',
-    importance: Importance.high,
-    playSound: true
-);
+    'high_importance_channel', 'High Importance Notifications',
+    importance: Importance.high, playSound: true);
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 final FirebaseMessaging fm = FirebaseMessaging.instance;
 
-
-
+/*
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('Notification Message :  ${message.data.toString()}');
-
-
-
-
- //LocalNotificationService.createandDisplayNotification(message);
- var screenName = message.data['activity'];
-  if(screenName != null)
-  {
-    var screens = screenName.toLowerCase();
-    if(screens.contains(Screen.SHIFT.displayTitle.toLowerCase()))
-    {
-      print('shift ma aya');
-      //  Get.offAll(()=>Dashboard()); //to remove all activities from bback stack
-      Get.to(()=>ShiftList());
-    }
-    else if (screens.contains(Screen.LEAVE.displayTitle.toLowerCase()))
-    {
-      Get.to(()=>LeavePage());
-    }
-
-  }
 }
+*/
 
+String? fcmToken = "";
+String? platFormType = "android";
 
-
-String? fcmToken ="";
-String? platFormType ="android";
-
-
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  //when app is in backgorund
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler
 
-  );
+
   fcmToken = await FirebaseMessaging.instance.getToken();
+
 
   if (Platform.isIOS) {
     platFormType = "IOS";
@@ -91,9 +61,10 @@ void main() async{
 
   LocalNotificationService.initializeNotification();
 
-  await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
-
 
   //For IOS
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -103,26 +74,27 @@ void main() async{
   );
 
 
+
+
+
+
   runApp(
 
-    //For internet connection states
+      //For internet connection states
       BlocProvider(
-        create:(context)=> ConnectedBloc(),
-        child: MaterialApp(
-
-            initialRoute: 'splash',
-            title: ConstantData.appName,
-            debugShowCheckedModeBanner: false,
-            routes: {
-                'splash': (context) => MyApp(),
-                'login': (context) => LoginClass()
-            },
-          ),
-      )
-
-
-  );
+    create: (context) => ConnectedBloc(),
+    child: MaterialApp(
+      initialRoute: 'splash',
+      title: ConstantData.appName,
+      debugShowCheckedModeBanner: false,
+      routes: {
+        'splash': (context) => MyApp(),
+        'login': (context) => LoginClass()
+      },
+    ),
+  ));
 }
+
 Future<bool> checkPassPreference() async {
   Controller controller = Controller();
   bool isRememmber = await controller.getRememberLogin();
@@ -139,13 +111,9 @@ Future<bool> checkPassPreference() async {
 }
 
 class MyApp extends StatelessWidget {
+  Map<String, String> map = {'device_type': 'android', 'fcm_token': fcmToken!};
 
-  Map<String,String> map = {
-    'device_type': 'android',
-    'fcm_token':fcmToken!
-  };
-
-var api =APIWebService();
+  var api = APIWebService();
   late Widget routeClass;
 
   Future<bool> checkPassPreference() async {
@@ -165,20 +133,14 @@ var api =APIWebService();
 
   @override
   Widget build(BuildContext context) {
-
     Widget example5 = SplashScreenView(
-      navigateRoute:
-      FutureBuilder<bool>(
+      navigateRoute: FutureBuilder<bool>(
           future: checkPassPreference(),
-          builder: (context, snapshot)
-          {
-            if(snapshot.hasData){
-              if(snapshot.data!)
-              {
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!) {
                 return Dashboard();
-              }
-              else
-              {
+              } else {
                 return LoginClass();
               }
             }
@@ -189,15 +151,15 @@ var api =APIWebService();
       imageSrc: ConstantData.logoIconPath,
       backgroundColor: Colors.white,
     );
-      var re =  MultiProvider(providers: [
-        ChangeNotifierProvider(create: (context) => NavigationProvider()),
-      ],
-    child:
-    GetMaterialApp(
-      title:  ConstantData.appName,
-      home: example5,
-      debugShowCheckedModeBanner: false,
-      /*
+    var re = MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => NavigationProvider()),
+        ],
+        child: GetMaterialApp(
+          title: ConstantData.appName,
+          home: example5,
+          debugShowCheckedModeBanner: false,
+          /*
       theme: ThemeData(
         fontFamily: 'Raleway',
         primaryColor: primaryColor,
@@ -207,32 +169,14 @@ var api =APIWebService();
 
       ),*/
 
-
-      /* light theme settings */
-      theme: ThemeData(
-        fontFamily: 'Raleway',
-        primarySwatch: primaryColorTheme,
-        primaryColor: primaryColor,
-
-
-      ),
-      themeMode: ThemeMode.light,
-    )
-);
-    return re ;
+          /* light theme settings */
+          theme: ThemeData(
+            fontFamily: 'Raleway',
+            primarySwatch: primaryColorTheme,
+            primaryColor: primaryColor,
+          ),
+          themeMode: ThemeMode.light,
+        ));
+    return re;
   }
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-

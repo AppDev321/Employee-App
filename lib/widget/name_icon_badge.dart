@@ -7,6 +7,7 @@ class NamedIcon extends StatelessWidget {
   final String? text;
   final VoidCallback? onTap;
   final int notificationCount;
+  final Color color;
 
   const NamedIcon({
     Key? key,
@@ -14,6 +15,7 @@ class NamedIcon extends StatelessWidget {
     this.text,
     required this.iconData,
     this.notificationCount = 0,
+    this.color = Colors.grey,
   }) : super(key: key);
 
   @override
@@ -29,20 +31,23 @@ class NamedIcon extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(iconData,size: 35,),
+                Icon(iconData,size: 35,color: color,),
               text !=null?  Text(text.toString(), overflow: TextOverflow.ellipsis):Container(),
               ],
             ),
+            notificationCount >0 ?
             Positioned(
-              top: 0,
-              right:10,
+              top: 5,
+              right:5,
+
+
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical:6),
                 decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red),
                 alignment: Alignment.center,
                 child: CustomTextWidget(text:'$notificationCount',color:Colors.white,size: 8,),
               ),
-            )
+            ):Center()
           ],
         ),
       ),

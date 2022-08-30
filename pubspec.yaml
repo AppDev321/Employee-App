@@ -39,6 +39,7 @@ dependencies:
   syncfusion_flutter_charts: ^20.2.43
   image_picker: ^0.8.5+3
   flutter_slidable: ^2.0.0
+  barcode_scan2: ^4.2.1
 
 
 

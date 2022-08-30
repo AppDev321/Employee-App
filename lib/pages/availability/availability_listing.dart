@@ -321,14 +321,11 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList>  
   }
   listItem(AvailabilityRequest item)
   {
-    DateTime requestDateFormate = new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(item.startDate!);
-    var dateFormat =  DateFormat('dd-MMM-yyyy');
-    var startDate = dateFormat.format(DateTime.parse(requestDateFormate.toString()));
+    var startDate =Controller().getServerDateFormated(item.startDate!);
     var endDate = "";
     if(item.endDate != null)
       {
-       requestDateFormate = new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(item.endDate!);
-        endDate= dateFormat.format(DateTime.parse(requestDateFormate.toString()));
+        endDate =Controller().getServerDateFormated(item.endDate!);
       }
 
     return

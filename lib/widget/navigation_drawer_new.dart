@@ -212,6 +212,9 @@ class NavigationDrawer extends StatelessWidget {
    // Navigator.of(context).pop();
 
     switch (menuItem) {
+      case menuAttandance:
+
+        break;
       case subMenuReportLateness:
         Get.to(()=>LatenessReport());
         break;

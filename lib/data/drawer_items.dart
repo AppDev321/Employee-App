@@ -60,12 +60,12 @@ List<DrawerItem> itemsFirst = [
     iconPath+"shifts_icon.svg"
   ),
 
-  /*new DrawerItem(
-    "Attendance$todo",
+  new DrawerItem(
+      menuAttandance,
     [],
     Icons.analytics_outlined,
       iconPath+"shifts_icon.svg"
-  ),*/
+  ),
   new DrawerItem(
     menuLeave,
     [],

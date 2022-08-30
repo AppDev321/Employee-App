@@ -7,12 +7,11 @@ part of 'inspection_check_request.dart';
 // **************************************************************************
 
 CheckInspectionRequest _$CheckInspectionRequestFromJson(
-    Map<String, dynamic> json) {
-  return CheckInspectionRequest(
-    vehicleInspectionId: json['vehicleInspectionId'] as String?,
-    checkNo: json['checkNo'] as int?,
-  );
-}
+        Map<String, dynamic> json) =>
+    CheckInspectionRequest(
+      vehicleInspectionId: json['vehicleInspectionId'] as String?,
+      checkNo: json['checkNo'] as int?,
+    );
 
 Map<String, dynamic> _$CheckInspectionRequestToJson(
         CheckInspectionRequest instance) =>

@@ -48,6 +48,9 @@ class DashBoardViewModel extends BaseViewModel {
     DropMenuItems(id:11,name:"Furlough"),
   ];
 
+  int notificationCount = 0;
+
+
 
   Future<void> getDashBoardData() async {
     setLoading(true);
@@ -79,9 +82,58 @@ class DashBoardViewModel extends BaseViewModel {
     setResponseStatus(true);
     setLoading(false);
     notifyListeners();
+
+    getNotificationCount();
   }
 
+
+
+  Future<void> getNotificationCount() async {
+    setLoading(true);
+    final results = await APIWebService().getNotificationCount();
+
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+    } else {
+      if (results.code == 200) {
+        setIsErrorReceived(false);
+        notificationCount = results.data!.count;
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += results.errors![i].message! + "\n";
+        }
+        setErrorMsg(errorString);
+
+        //setIsErrorReceived(true);
+      }
+    }
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+  }
+
+
+
 //Notificaiton
+
+  Future<void> getBackgroundFCMNotificaiton() async
+  {
+    //Check is FCM has Screen Name
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) async {
+      print("DashBoardFirebase");
+      var screenName = message!.data['activity'];
+      if (screenName != null) {
+        if(!screenName.toString().toLowerCase().contains("dashboard"))
+          LocalNotificationService().navigateFCMScreen(screenName);
+      }
+    });
+    //*************************************
+  }
+
   void firebaseMessaging(BuildContext context) {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
