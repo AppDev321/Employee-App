@@ -5,18 +5,24 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
 import '../../../custom_style/colors.dart';
+import '../../../utils/controller.dart';
 
 class ProfilePic extends StatelessWidget {
    ProfilePic({
     Key? key,
-    required this.name,
+
+     required this.profileImageUrl
   }) : super(key: key);
 
-  final String name;
 
+   final   profileImageUrl ;
 
   @override
   Widget build(BuildContext context) {
+
+
+
+
     return SizedBox(
       height: 115,
       width: 115,
@@ -42,25 +48,16 @@ class ProfilePic extends StatelessWidget {
                       offset: Offset(0, 10))
                 ],
                 shape: BoxShape.circle,
-              /*  image: DecorationImage(
+                image: DecorationImage(
                     fit: BoxFit.cover,
                     image: NetworkImage(
-                      "https://images.pexels.com/photos/3307758/pexels-photo-3307758.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=250",
-                    )
+                      profileImageUrl.isEmpty ? Controller().defaultPic : profileImageUrl,
+                     )
 
-                )*/
+                )
             ),
 
-            child: ClipOval( // make sure we apply clip it properly
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  alignment: Alignment.center,
-                  color: primaryColor.withOpacity(0.1),
-                  child: CustomTextWidget(text:name.toString().substring(0,1),size: 30,color: primaryColor,),
-                ),
-              ),
-            ),
+            child: Container(   ),
 
 
           ),

@@ -33,6 +33,7 @@ class ProfileViewModel extends BaseViewModel {
    }
 
 
+   String userProfileImage="";
 
   Future<void> changePasswordRequest(ChangePasswordRequest request) async {
     setLoading(true);
@@ -61,7 +62,11 @@ class ProfileViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+Future<void> getUserImageURLPreferecne() async{
+  userProfileImage = await Controller().getUserProfilePic();
+  notifyListeners();
 
+}
 
   Future<void> getProfileDetail() async {
     setLoading(true);
@@ -149,9 +154,9 @@ class ProfileViewModel extends BaseViewModel {
                      leading: new Icon(Icons.photo_camera),
                      title:  CustomTextWidget(text:'Camera'),
                      onTap: () {
-                   pickImageFile(ImageSource.camera,(value){
-                        imageFile(value);
-                    }
+                       pickImageFile(ImageSource.camera,(value){
+                            imageFile(value);
+                        }
                         );
 
                        Navigator.of(context).pop();
@@ -172,24 +177,21 @@ class ProfileViewModel extends BaseViewModel {
      final XFile? pickedImage =  await ImagePicker().pickImage(source: type);
 
      if (pickedImage != null) {
-
          File imageFile = File(pickedImage.path);
-
          imageFiles(imageFile);
-
 
      }
    }
 
 
-   uploadProfileImage(File imageFile,ValueChanged<bool> isUpload) async {
+   uploadProfileImage(File imageFile,ValueChanged<bool> isUpload,ValueChanged<String> imageURL) async {
      // open a bytestream
      var stream = new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
      // get file length
      var length = await imageFile.length();
      // string to uri
-     var uri = Uri.parse("http://vmi808920.contaboserver.net/api/upload");
-
+     //var uri = Uri.parse("http://vmi808920.contaboserver.net/api/upload");
+      var uri = Uri.parse("http://192.168.1.21:8000/api/upload");
      Controller controller = Controller();
      String? userToken = await controller.getAuthToken();
 
@@ -208,11 +210,19 @@ class ProfileViewModel extends BaseViewModel {
 
      var response = await request.send();
 
-     print("reponse=${response.statusCode}");
      response.stream.transform(utf8.decoder).listen((value) {
-       print("value=${value}");
-
+       print("response = $value");
+       final parsedJson = jsonDecode(value);
        isUpload(true);
+       if(parsedJson['code'].toString()=="200")
+         {
+           var data =parsedJson['data'];
+           if(data != null){
+             var convertedURL = data['complete_url'];
+             imageURL(convertedURL) ;
+           }
+
+         }
 
      });
    }

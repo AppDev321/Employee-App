@@ -106,7 +106,6 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                   if(state.screenName == Screen.OVERTIME)
                   {
                     _overtimeViewModel.getOverTimeList(request);
-                    print("updating overtime Screen");
                     state.screenName=Screen.NULL;
 
                   }

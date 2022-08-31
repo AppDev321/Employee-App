@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,10 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
       if (notification != null && android != null) {
         if (message.notification != null) {
           print("NotificationData=${message.data.toString()}");
+
+          /// send msg
+          FBroadcast.instance().broadcast(Controller().notificationBroadCast, value: Controller().fcmMsgValue);
+
 
           var screenName=message.data['activity'];
           if(screenName != null)

@@ -15,7 +15,10 @@ class Controller {
   static const double leftCardColorMargin = 5;
   static const double roundCorner = 5;
   final String fcm_screen = "fcm_screen";
-
+  final String notificationBroadCast = "notificationBroadCast";
+  final String fcmMsgValue = "fcm_msg_key";
+  final String userKey = "user_key";
+  final defaultPic= "http://simpleicon.com/wp-content/uploads/account.png";
 
 
   Future<void> setFCMScreen(String screenName) async {
@@ -30,6 +33,18 @@ class Controller {
     return screenName;
   }
 
+  Future<void> setUserProfilePic(String userPicUrl) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(this.userKey, userPicUrl);
+  }
+
+
+  Future<String> getUserProfilePic() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String screenName;
+    screenName = pref.getString(this.userKey) ?? '';
+    return screenName;
+  }
 
   Future<void> setAuthToken(String auth_token) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

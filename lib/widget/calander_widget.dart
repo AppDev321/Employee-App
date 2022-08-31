@@ -18,6 +18,8 @@ class CustomCalanderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return TableCalendar(
       initialCalendarFormat: CalendarFormat.week,
+
+
       headerStyle: HeaderStyle(
         centerHeaderTitle: true,
         formatButtonDecoration: BoxDecoration(
@@ -29,6 +31,7 @@ class CustomCalanderWidget extends StatelessWidget {
         formatButtonVisible: false,
       ),
       startingDayOfWeek: StartingDayOfWeek.monday,
+
       onDaySelected: (date, events, holidays) {
         var formatter = new DateFormat('yyyy-MM-dd');
 

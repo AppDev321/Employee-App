@@ -20,27 +20,20 @@ import '../repository/model/response/leave_list.dart';
 import '../repository/model/response/overtime_list.dart';
 
 class NotificationViewModel extends BaseViewModel {
-
-
   List<NotificationData>? notifications=[];
-
 
   Future<void> getNotification() async {
     setLoading(true);
     final results = await APIWebService().getNotification();
-
     if (results == null) {
       var errorString = "Check your internet connection";
       setErrorMsg(errorString);
-
-
     } else {
       if (results.code == 200) {
-
         setIsErrorReceived(false);
         if(results.data!.notifications!.length > 0)
         {
-          notifications =results.data!.notifications!;
+          notifications = results.data!.notifications!;
         }
         else
         {
@@ -54,17 +47,13 @@ class NotificationViewModel extends BaseViewModel {
           errorString += results.errors![i].message! + "\n";
         }
         setErrorMsg(errorString);
-
         setIsErrorReceived(true);
       }
     }
-
     setResponseStatus(true);
     setLoading(false);
     notifyListeners();
   }
-
-
 
   Future<void> updateNotificationStatus(String id) async {
     setLoading(true);
@@ -82,7 +71,6 @@ class NotificationViewModel extends BaseViewModel {
           errorString += results.errors![i].message! + "\n";
         }
         setErrorMsg(errorString);
-
         //setIsErrorReceived(true);
       }
     }
@@ -95,7 +83,6 @@ class NotificationViewModel extends BaseViewModel {
   Future<void> deleteNotificationStatus(String id) async {
     setLoading(true);
     final results = await APIWebService().deleteNotification(id);
-
     if (results == null) {
       var errorString = "Check your internet connection";
       setErrorMsg(errorString);
@@ -108,7 +95,6 @@ class NotificationViewModel extends BaseViewModel {
           errorString += results.errors![i].message! + "\n";
         }
         setErrorMsg(errorString);
-
         //setIsErrorReceived(true);
       }
     }

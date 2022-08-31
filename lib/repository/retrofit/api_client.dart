@@ -87,6 +87,11 @@ abstract class ApiClient {
 
 
 
+  @POST('/attendance/mark-attendance?code={code}')
+  Future<LoginApiResponse> markAttendance(@Path("code") String code);
+
+
+
   @POST('/report/my-leaves')
   Future<LeaveReportResponse> getLeaveReport(@Body() ClaimShiftHistoryRequest body);
   @POST('/report/my-attendance')
@@ -110,5 +115,6 @@ abstract class ApiClient {
   Future<LoginApiResponse> updateNotificationStatus(@Path("id") String notificaitonID);
   @GET('/notification/get-notification-count')
   Future<LoginApiResponse> getNotificationCount();
+
 
 }

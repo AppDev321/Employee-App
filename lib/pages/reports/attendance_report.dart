@@ -97,7 +97,12 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                 builder: (context, state) {
                   if (state is ConnectedSucessState) {
                     return Container();
-                  } else {
+                  }
+                  else if(state is FirebaseMsgReceived)
+                  {
+
+                    return Container();
+                  }else {
                     return InternetNotAvailable();
                   }
                 }

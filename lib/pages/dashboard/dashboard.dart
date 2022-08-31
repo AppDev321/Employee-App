@@ -1,3 +1,5 @@
+import 'package:fbroadcast/fbroadcast.dart';
+import 'package:fbroadcast/stateful.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +8,9 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
+import 'package:hnh_flutter/pages/overtime/overtime_list.dart';
+import 'package:hnh_flutter/pages/profile/setting_screen.dart';
+import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
@@ -25,6 +30,7 @@ import '../notification_history/notification_list.dart';
 import '../overtime/add_overtime.dart';
 import '../profile/components/profile_pic.dart';
 import '../reports/attendance_report.dart';
+import '../reports/leave_report.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -42,8 +48,8 @@ class _DashboardState extends State<Dashboard> {
 
   Shifts? dashBoardShift = null;
   Stats? dashboardStat = null;
-  User? userDashboard= null;
-
+  User userDashboard= User();
+  String profileImageUrl="";
 
   Map<String,String> map = {
     'device_type': platFormType!,
@@ -51,6 +57,7 @@ class _DashboardState extends State<Dashboard> {
   };
 
   int notificationCount =0;
+
 
   @override
   void initState() {
@@ -84,7 +91,16 @@ class _DashboardState extends State<Dashboard> {
           _errorMsg = "";
           dashBoardShift = _dashBoardViewModel.getDashBoardShift();
           dashboardStat = _dashBoardViewModel.getDashboardStat();
-          userDashboard = _dashBoardViewModel.getUserObject();
+          userDashboard = _dashBoardViewModel.getUserObject()!;
+          if(userDashboard.profileURL == null)
+            {
+              userDashboard.profileURL ="";
+
+            }
+
+          profileImageUrl = userDashboard.profileURL.toString();
+          Controller().setUserProfilePic(profileImageUrl);
+
           if(dashboardStat != null)
             {
               listStats.clear();
@@ -114,6 +130,27 @@ class _DashboardState extends State<Dashboard> {
       listQuickAccess.add(DashBoardGrid("3", "Attendance Report","assets/icons/reports_icon.svg",Colors.blueGrey));
       listQuickAccess.add(DashBoardGrid("4", "Settings","assets/icons/Settings.svg",greenColor));
     });
+
+
+    FBroadcast.instance().register(
+        Controller().notificationBroadCast,   (value, callback) {
+      setState(() {
+
+        if(value ==Controller().fcmMsgValue)
+          {
+            _dashBoardViewModel.getNotificationCount();
+          }
+      });
+    },
+      more: {
+        /// register Key_User reviver
+        Controller().userKey: (value, callback) => setState(() {
+         profileImageUrl = value;
+        Controller().setUserProfilePic(value);
+        }),
+      },
+
+    );
 
   }
 
@@ -202,7 +239,7 @@ class _DashboardState extends State<Dashboard> {
                                   height: 5,
                                 ),
                                 CustomTextWidget(
-                                  text: userDashboard?.name ??  'Employee',
+                                  text: userDashboard.name ??  'Employee',
                                   size: 30,
                                   fontWeight: FontWeight.bold,
                                   color: primaryColor,
@@ -232,9 +269,10 @@ class _DashboardState extends State<Dashboard> {
                                     shape: BoxShape.circle,
                                       image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage(
-                              "https://images.pexels.com/photos/3307758/pexels-photo-3307758.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=250",
-                            )
+                            image:
+                           NetworkImage(
+                               profileImageUrl.isEmpty  ? Controller().defaultPic  :profileImageUrl
+                              )
 
                         ))))
                                   ,
@@ -458,57 +496,73 @@ class _DashboardState extends State<Dashboard> {
   {
     return
 
-      Card(
+      InkWell(
+        onTap: (){
+          if( item.label.toString().contains("Shift"))
+            {
+              Get.to(()=>ShiftList());
+            }
+         else if(item.label.toString().contains("Leaves"))
+           {
+             Get.to(()=>LeaveReport());
+           }
+         else
+           {
+             Get.to(()=>OverTimePage());
+           }
+        },
+        child: Card(
 
-          elevation: 5,
-          shadowColor: cardShadow,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Controller.roundCorner),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child:
-          Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(Controller.roundCorner),
-                    topRight: Radius.circular(Controller.roundCorner))),
-            margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child:
-            Column(
-              mainAxisAlignment:
-              MainAxisAlignment.center,
-              children: [
-
-                SvgPicture.asset(
-                  item.imgPath.toString(),
-                  color: item.color,
-                  width: 22,
-                  height: 22,
-
-                ),
-                SizedBox(height: 10),
-                Expanded(
-                  child: CustomTextWidget(
-                    text: item.id.toString(),
-                    color:item.color!,
-                    size: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Expanded(
-                  child: CustomTextWidget(
-                    text: item.label.toString(),
-                    size: 10,
-                    color: item.color!,
-                  ),
-                ),
-              ],
+            elevation: 5,
+            shadowColor: cardShadow,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Controller.roundCorner),
             ),
-          ));
+            clipBehavior: Clip.antiAlias,
+            child:
+            Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(Controller.roundCorner),
+                      topRight: Radius.circular(Controller.roundCorner))),
+              margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child:
+              Column(
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+                children: [
+
+                  SvgPicture.asset(
+                    item.imgPath.toString(),
+                    color: item.color,
+                    width: 22,
+                    height: 22,
+
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: CustomTextWidget(
+                      text: item.id.toString(),
+                      color:item.color!,
+                      size: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: CustomTextWidget(
+                      text: item.label.toString(),
+                      size: 10,
+                      color: item.color!,
+                    ),
+                  ),
+                ],
+              ),
+            )),
+      );
   }
 
 
@@ -531,7 +585,7 @@ InkWell(
         Get.to(()=>AttendanceReport());
         break;
       case 4:
-        Controller().showToastMessage(context,"In Progress");
+        Get.to(()=>SettingScreen());
         break;
 
     }

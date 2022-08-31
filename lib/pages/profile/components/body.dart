@@ -1,7 +1,10 @@
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
+import 'package:hnh_flutter/pages/dashboard/dashboard.dart';
+import 'package:hnh_flutter/pages/notification_history/notification_list.dart';
 import 'package:hnh_flutter/repository/model/request/change_password_request.dart';
 import 'package:hnh_flutter/view_models/profile_vm.dart';
 import 'package:hnh_flutter/widget/custom_edit_text_widget.dart';
@@ -12,7 +15,7 @@ import '../../../utils/controller.dart';
 import '../../../widget/dialog_builder.dart';
 import '../../../widget/internet_not_available.dart';
 import '../../login/login.dart';
-import '../user_detail.dart';
+import '../profile_screen.dart';
 import 'profile_menu.dart';
 import 'profile_pic.dart';
 
@@ -35,27 +38,60 @@ class _Body extends State<Body> {
 
   late ProfileViewModel _profileViewModel;
 
+String imageLinkUser ="";
+
+bool isPasswordUpdateCalled = false;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _profileViewModel = ProfileViewModel();
+    _profileViewModel.getUserImageURLPreferecne();
     _profileViewModel.addListener(() {
       _progressDialog?.hideOpenDialog();
-      
-      var isError =
-      _profileViewModel.getIsErrorRecevied();
-      if (isError) {
-        String msg = _profileViewModel.getErrorMsg();
-        Controller().showMessageDialog( msg,"Error");
-      } else {
-        Controller().showMessageDialog( "Your password has been updated successfully","Hey");
-         Navigator.pop(context);
+        setState(() {
+          imageLinkUser = _profileViewModel.userProfileImage;
 
+        });
+
+
+      if(isPasswordUpdateCalled) {
+        var isError =
+        _profileViewModel.getIsErrorRecevied();
+        if (isError) {
+          String msg = _profileViewModel.getErrorMsg();
+          Controller().showToastMessage(context, msg);
+        } else {
+          Navigator.pop(context);
+          Controller().showToastMessage(
+              context, "Your password has been updated successfully");
+        }
+        isPasswordUpdateCalled = false;
       }
+
     });
 
+
+    FBroadcast.instance().register(
+      Controller().userKey,   (value, callback) {
+      setState(() {
+        setState(() {
+          Controller().setUserProfilePic(value);
+          imageLinkUser =value;
+
+        });
+
+      });
+    }
+
+    );
+
+
   }
+
+
+
   @override
   Widget build(BuildContext context) {
     _dialogContext = context;
@@ -84,34 +120,36 @@ class _Body extends State<Body> {
 
 
               SizedBox(height: 5),
-              ProfilePic(name: "Admin",),
+              ProfilePic(profileImageUrl: imageLinkUser),
 
               SizedBox(height: 20),
-              ProfileMenu(
+              SettingMenu(
                 text: "My Account",
                 icon: "assets/icons/User Icon.svg",
                 press: () => {
                   Get.to(()=>MyAccount())
                 },
               ),
-              ProfileMenu(
+              SettingMenu(
                 text: "Notifications",
                 icon: "assets/icons/Bell.svg",
-                press: () {},
+                press: () {
+                 Get.to(()=>NotificationList());
+                },
               ),
-              ProfileMenu(
+             /* ProfileMenu(
                 text: "Settings",
                 icon: "assets/icons/Settings.svg",
                 press: () {},
-              ),
-              ProfileMenu(
+              ),*/
+              SettingMenu(
                 text: "Change Password",
                 icon: "assets/icons/ic_password.svg",
                 press: () {
                   _showChangePassword(context);
                 },
               ),
-              ProfileMenu(
+              SettingMenu(
                 text: "Log Out",
                 icon: "assets/icons/Log out.svg",
                 press: () {
@@ -210,7 +248,7 @@ class _Body extends State<Body> {
                                 request.newPassword = _newPassword.text;
                                 request.newConfirmPassword =  _confirmPassword.text;
                                 _profileViewModel.changePasswordRequest(request);
-
+                                isPasswordUpdateCalled = true;
                      /*  } else {
 
                        Controller().showMessageDialog(

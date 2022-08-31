@@ -73,6 +73,7 @@ class Profile {
   String? emergencyContact;
   String? emergencyAddress;
   String? emergencyContactRelation;
+  String? profileURL;
 
   Profile(
       {this.firstName,
@@ -85,7 +86,8 @@ class Profile {
       this.city,
       this.emergencyContact,
       this.emergencyAddress,
-      this.emergencyContactRelation});
+      this.emergencyContactRelation,
+      this.profileURL});
 
   Profile.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
@@ -99,6 +101,7 @@ class Profile {
     emergencyContact = json['emergency_contact'];
     emergencyAddress = json['emergency_address'];
     emergencyContactRelation = json['emergency_contact_relation'];
+    profileURL =json['profile_url'];
   }
 
   Map<String, dynamic> toJson() {
@@ -114,6 +117,7 @@ class Profile {
     data['emergency_contact'] = this.emergencyContact;
     data['emergency_address'] = this.emergencyAddress;
     data['emergency_contact_relation'] = this.emergencyContactRelation;
+    data['profile_url']=this.profileURL;
     return data;
   }
 }

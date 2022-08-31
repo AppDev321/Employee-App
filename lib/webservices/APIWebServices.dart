@@ -286,7 +286,16 @@ class APIWebService {
       return null;
     }
   }
-
+  Future<LoginApiResponse?> markAttendance(String code) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.markAttendance(code);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
 
   Future<LoginApiResponse?> getNotificationCount() async {
     try {

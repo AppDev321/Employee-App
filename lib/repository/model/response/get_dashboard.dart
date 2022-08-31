@@ -72,16 +72,20 @@ class Data {
 
 class User {
   String? name;
+  String? profileURL;
 
-  User({this.name});
+
+  User({this.name,this.profileURL});
 
   User.fromJson(Map<String, dynamic> json) {
     name = json['name'];
+    profileURL =json['profile_url'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
+    data['profile_url']=this.profileURL;
     return data;
   }
 }

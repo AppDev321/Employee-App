@@ -139,13 +139,10 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
               {
                 if(state.screenName == Screen.SHIFT)
                 {
-                  print("updating Shift Screen");
                   var now = new DateTime.now();
                   String formattedDate = Controller().getConvertedDate(now);
                   _shiftListViewModel.getShiftList(formattedDate);
-
                   state.screenName=Screen.NULL;
-
                 }
                 return Container();
               }

@@ -1,3 +1,4 @@
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +25,7 @@ class NotificationList extends StatefulWidget {
 
 class _NotificationListState extends State<NotificationList> {
   late NotificationViewModel _notificationViewModel;
-  List<NotificationData> notificationList = [];
+ late List<NotificationData> notificationList=[] ;
   bool _isFirstLoadRunning = false;
 
   bool _isErrorInApi = false;
@@ -41,7 +42,7 @@ class _NotificationListState extends State<NotificationList> {
     _notificationViewModel = NotificationViewModel();
     _notificationViewModel.getNotification();
     _notificationViewModel.addListener(() {
-      notificationList.clear();
+   //  notificationList.clear();
 
       var checkErrorApiStatus = _notificationViewModel.getIsErrorRecevied();
       if (checkErrorApiStatus) {
@@ -55,12 +56,13 @@ class _NotificationListState extends State<NotificationList> {
         });
       } else {
         _isFirstLoadRunning = false;
-
-        notificationList = _notificationViewModel.notifications!;
-
         setState(() {
           _isErrorInApi = checkErrorApiStatus;
           _errorMsg = "";
+
+
+          notificationList = _notificationViewModel.notifications!;
+
         });
       }
     });
@@ -109,10 +111,11 @@ class _NotificationListState extends State<NotificationList> {
                                                   _notificationViewModel.deleteNotificationStatus(notificationList[index].id.toString());
                                                   notificationList.remove(notificationList[index]);
 
+                                                  FBroadcast.instance().broadcast(Controller().notificationBroadCast, value: Controller().fcmMsgValue);
+
                                                 });
                                               },
-                                              backgroundColor:
-                                                  Color(0xFFFE4A49),
+                                              backgroundColor:  Color(0xFFFE4A49),
                                               foregroundColor: Colors.white,
                                               icon: Icons.delete,
                                               label: 'Delete',
@@ -189,6 +192,12 @@ class _NotificationListState extends State<NotificationList> {
                   _notificationViewModel.updateNotificationStatus(notificationData.id.toString());
                   notificationData.isRead = 1;
                   notificationList[index] = notificationData;
+                  FBroadcast
+                      .instance()
+                      .broadcast(
+                      Controller().notificationBroadCast,
+                      value: Controller().fcmMsgValue);
+
                 });
 
                 if (notificationData.type.toString() == 'TEXT') {

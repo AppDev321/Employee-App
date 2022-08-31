@@ -110,6 +110,10 @@ class LatenessReportStateful extends State<LatenessReport> {
             builder: (context, state) {
               if (state is ConnectedSucessState) {
                 return Container();
+              } else if(state is FirebaseMsgReceived)
+              {
+
+                return Container();
               } else {
                 return InternetNotAvailable();
               }

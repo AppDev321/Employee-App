@@ -6,8 +6,8 @@ import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import '../../../utils/controller.dart';
 
 
-class ProfileMenu extends StatelessWidget {
-  const ProfileMenu({
+class SettingMenu extends StatelessWidget {
+  const SettingMenu({
     Key? key,
     required this.text,
     required this.icon,
