@@ -30,8 +30,8 @@ import '../model/response/report_leave_response.dart';
 
 part 'api_client.g.dart';
 
-//@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
-@RestApi(baseUrl: 'http://192.168.1.21:8000/api') // Enter you base URL
+@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
+//@RestApi(baseUrl: 'http://192.168.1.21:8000/api') // Enter you base URL
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {

@@ -190,8 +190,8 @@ Future<void> getUserImageURLPreferecne() async{
      // get file length
      var length = await imageFile.length();
      // string to uri
-     //var uri = Uri.parse("http://vmi808920.contaboserver.net/api/upload");
-      var uri = Uri.parse("http://192.168.1.21:8000/api/upload");
+     var uri = Uri.parse("http://vmi808920.contaboserver.net/api/upload");
+     // var uri = Uri.parse("http://192.168.1.21:8000/api/upload");
      Controller controller = Controller();
      String? userToken = await controller.getAuthToken();
 
