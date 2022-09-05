@@ -34,6 +34,7 @@ bool showPass =true;
   Widget build(BuildContext context) {
 
     return TextField(
+      autofocus:false,
       keyboardType: widget.isNumberField ? TextInputType.number : TextInputType.text,
       controller: widget.controller,
       obscureText:   widget.isPasswordField ? showPass : false,

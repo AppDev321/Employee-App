@@ -14,8 +14,6 @@ import '../../view_models/login_view_model.dart';
 import '../../widget/custom_edit_text_widget.dart';
 import '../dashboard/dashboard.dart';
 
-
-
 class LoginClass extends StatefulWidget {
   const LoginClass({Key? key}) : super(key: key);
 
@@ -24,23 +22,21 @@ class LoginClass extends StatefulWidget {
 }
 
 class LoginClassStateful extends State<LoginClass> {
-
- /* final TextEditingController _emailController = TextEditingController();
+  /* final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();*/
   final String _ambulaceSVG = "assets/images/afj_logo.png";
   DialogBuilder? _progressDialog;
 
   static const String _loginText = 'Login';
   final bool _isApiCallProcess = false;
-  bool _passRemember= false;
-  bool _isApiError=false;
-  String _errorMsg= "";
+  bool _passRemember = false;
+  bool _isApiError = false;
+  String _errorMsg = "";
   BuildContext? _dialogContext;
 
-   LoginViewModel _loginViewModel= LoginViewModel();
+  LoginViewModel _loginViewModel = LoginViewModel();
 
-  TextEditingController _emailController =
-  TextEditingController();
+  TextEditingController _emailController = TextEditingController();
 
   TextEditingController _passwordController = TextEditingController();
 
@@ -48,36 +44,28 @@ class LoginClassStateful extends State<LoginClass> {
   void initState() {
     super.initState();
 
-
     _loginViewModel.addListener(() {
-    _progressDialog?.hideOpenDialog();
-
-
-      if(_loginViewModel.getResponseStatus()) {
+      _progressDialog?.hideOpenDialog();
+      if (_loginViewModel.getResponseStatus()) {
         var checkErrorApiStatus = _loginViewModel.getIsErrorRecevied();
-        if(checkErrorApiStatus){
+        if (checkErrorApiStatus) {
           setState(() {
             _isApiError = checkErrorApiStatus;
-            _errorMsg =_loginViewModel.getErrorMsg();
+            _errorMsg = _loginViewModel.getErrorMsg();
           });
-        }
-        else
-        {
+        } else {
           var auth = _loginViewModel.getUserToken();
           saveUserToken(auth);
           setState(() {
             _isApiError = checkErrorApiStatus;
             _errorMsg = "";
-
           });
         }
 
         _loginViewModel.setResponseStatus(false);
       }
-
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +75,6 @@ class LoginClassStateful extends State<LoginClass> {
       _progressDialog?.initiateLDialog('Please wait..');
     }
 
-
     return ProgressHUD(
       child: _uiSetup(context),
       inAsyncCall: _isApiCallProcess,
@@ -96,7 +83,6 @@ class LoginClassStateful extends State<LoginClass> {
   }
 
   Widget _uiSetup(BuildContext context) {
-
     Widget welcomeBack = Text(
       'Welcome Back',
       style: TextStyle(
@@ -117,33 +103,38 @@ class LoginClassStateful extends State<LoginClass> {
         child: Text(
           'Login to your account',
           style: TextStyle(
-            color:Colors.black,
+            color: Colors.black,
             fontSize: 16.0,
           ),
         ));
 
-
-
     return Container(
-      decoration:const BoxDecoration(color: whiteColor),
+      decoration: const BoxDecoration(color: whiteColor),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
-        body: Stack(
-          children: [
-            Container(decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(
-                    "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?w=2000",
-                  )
-              ))),
-            SingleChildScrollView(
-              child: Container(
-              margin: EdgeInsets.only(top:  MediaQuery.of(context).size.width/2,left: 25,right: 25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        body: SingleChildScrollView(
+          child: Container(
+            height: Get.mediaQuery.size.height,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?w=2000",
+                            )))),
+                SingleChildScrollView(
+                  child: Container(
+                    margin: EdgeInsets.only(
+                        top: Get.mediaQuery.size.width / 2,
+                        left: 25,
+                        right: 25),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         welcomeBack,
 
                         const SizedBox(
@@ -152,11 +143,17 @@ class LoginClassStateful extends State<LoginClass> {
                         subTitle,
 
                         const SizedBox(
-                          height:20,
+                          height: 20,
                         ),
-                        CustomEditTextWidget(text:"Email",controller:  _emailController,),
+                        CustomEditTextWidget(
+                          text: "Email",
+                          controller: _emailController,
+                        ),
                         const SizedBox(height: 20),
-                        CustomEditTextWidget(text:"Password",controller:  _passwordController,isPasswordField: true),
+                        CustomEditTextWidget(
+                            text: "Password",
+                            controller: _passwordController,
+                            isPasswordField: true),
                         CheckboxListTile(
                           contentPadding: EdgeInsets.zero,
                           controlAffinity: ListTileControlAffinity.leading,
@@ -170,60 +167,67 @@ class LoginClassStateful extends State<LoginClass> {
                         ),
 
                         // _pressed ? _buildBody(context) : SizedBox(),
-                        _isApiError?  Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ErrorMessageWidget(label:_errorMsg),
-                        ):const SizedBox(),
+                        _isApiError
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ErrorMessageWidget(
+                                  label: _errorMsg,
+                                  color: Colors.redAccent,
+                                ),
+                              )
+                            : const SizedBox(),
 
                         Container(
-                          alignment: Alignment.center,
-                              padding: const EdgeInsets.all(10),
-                              child: ElevatedButton(
-                                child: const Text(_loginText),
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(10),
+                            child: ElevatedButton(
+                              child: const Text(_loginText),
                               onPressed: () {
-                                if(_emailController.text.isEmpty)
-                                  {
-                                    setState(() {
-                                      _isApiError = true;
-                                      _errorMsg ="Please enter email";
-                                    });
-                                  }else if (!RegExp(r'\S+@\S+\.\S+').hasMatch(_emailController.text)) {
+                                if (_emailController.text.isEmpty) {
                                   setState(() {
                                     _isApiError = true;
-                                    _errorMsg ="Enter valid Email address";
+                                    _errorMsg = "Please enter email";
                                   });
-                                }
-                                else if(_passwordController.text.isEmpty)
-                                  {
-                                    setState(() {
-                                      _isApiError = true;
-                                      _errorMsg ="Please enter password";
-                                    });
-                                  }
-                                else {
+                                } else if (!RegExp(r'\S+@\S+\.\S+')
+                                    .hasMatch(_emailController.text)) {
+                                  setState(() {
+                                    _isApiError = true;
+                                    _errorMsg = "Enter valid Email address";
+                                  });
+                                } else if (_passwordController.text.isEmpty) {
+                                  setState(() {
+                                    _isApiError = true;
+                                    _errorMsg = "Please enter password";
+                                  });
+                                } else {
                                   setState(() {
                                     _isApiError = false;
-                                    _errorMsg ="";
+                                    _errorMsg = "";
                                   });
+
+                                  FocusScope.of(context).requestFocus(
+                                      new FocusNode()); //remove focus
                                   _onLoginButtonPress(context);
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                  minimumSize:const Size(300, 50),
+                                  minimumSize: const Size(300, 50),
                                   primary: primaryColor,
-                                  padding:const EdgeInsets.all(10),
+                                  padding: const EdgeInsets.all(10),
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(Controller.roundCorner)),
-                                  textStyle:const TextStyle(
+                                      borderRadius: BorderRadius.circular(
+                                          Controller.roundCorner)),
+                                  textStyle: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.normal)),
                             )),
-
                       ],
                     ),
-              ),
-            )
-          ],
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -231,23 +235,18 @@ class LoginClassStateful extends State<LoginClass> {
 
   void _onLoginButtonPress(BuildContext context) async {
     _progressDialog?.showLoadingDialog();
-    LoginRequestBody
-    _requestBody = LoginRequestBody( email: _emailController.text, password: _passwordController.text);
-   // LoginRequestBody(email: "mohsin121@afj.com", password: "123456");
+    LoginRequestBody _requestBody = LoginRequestBody(
+        email: _emailController.text, password: _passwordController.text);
+    // LoginRequestBody(email: "mohsin121@afj.com", password: "123456");
     _loginViewModel.getUserLogin(_requestBody);
   }
 
   saveUserToken(String? token) async {
     Controller controller = Controller();
     await controller.setAuthToken(token!);
-    await  controller.setRememberLogin(_passRemember);
+    await controller.setRememberLogin(_passRemember);
     //Move to next location
 
-      Get.offAll(()=>Dashboard());
-
-
-
+    Get.offAll(() => Dashboard());
   }
-
-
 }
