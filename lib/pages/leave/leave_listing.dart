@@ -222,10 +222,10 @@ class _LeavePageState extends State<LeavePage>   with SingleTickerProviderStateM
 
                                   listContainer(_leaveHistoryList),
 
-                                  listContainer(getFilterList(_leaveHistoryList,"APPROVED")),
+                                  listContainer(getFilterList(_leaveHistoryList,ConstantData.approved)),
 
-                                  listContainer(getFilterList(_leaveHistoryList,"PENDING")),
-                                  listContainer(getFilterList(_leaveHistoryList,"REJECTED")),
+                                  listContainer(getFilterList(_leaveHistoryList,ConstantData.pending)),
+                                  listContainer(getFilterList(_leaveHistoryList,ConstantData.rejected)),
 
                                 ],
                               )
@@ -263,8 +263,8 @@ class _LeavePageState extends State<LeavePage>   with SingleTickerProviderStateM
 
   Widget containerListItems(Leaves item) {
     return Card(
-        color:   item.status == "PENDING"  ? claimedShiftColor :
-        item.status == "APPROVED" ? claimedShiftApprovedColor :
+        color:   item.status == ConstantData.pending  ? claimedShiftColor :
+        item.status == ConstantData.approved ? claimedShiftApprovedColor :
         claimedShiftRejectColor,
         elevation: 5,
         shadowColor: cardShadow,
@@ -300,8 +300,8 @@ class _LeavePageState extends State<LeavePage>   with SingleTickerProviderStateM
                       TextColorContainer(
                       label: item.status!,
                       color:
-                      item.status == "PENDING"  ? claimedShiftColor:
-                      item.status == "APPROVED" ? claimedShiftApprovedColor :
+                      item.status == ConstantData.pending  ? claimedShiftColor:
+                      item.status == ConstantData.approved ? claimedShiftApprovedColor :
                       claimedShiftRejectColor),
 
                     ],
@@ -323,7 +323,7 @@ class _LeavePageState extends State<LeavePage>   with SingleTickerProviderStateM
                         height: 15,
                       ),
 
-                      item.status == "APPROVED" || item.status == "REJECTED" ?
+                      item.status == ConstantData.approved || item.status == ConstantData.rejected ?
                       Padding(
                         padding: const EdgeInsets.all(7),
                         child:

@@ -205,10 +205,10 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
 
                                     listContainer(_overtimeHistoryList),
 
-                                    listContainer(getFilterList(_overtimeHistoryList,"APPROVED")),
+                                    listContainer(getFilterList(_overtimeHistoryList,ConstantData.approved)),
 
-                                    listContainer(getFilterList(_overtimeHistoryList,"PENDING")),
-                                    listContainer(getFilterList(_overtimeHistoryList,"REJECTED")),
+                                    listContainer(getFilterList(_overtimeHistoryList,ConstantData.pending)),
+                                    listContainer(getFilterList(_overtimeHistoryList,ConstantData.rejected)),
 
                                   ])  : ErrorMessageWidget(label: "No Overtime Found"))
                 ],
@@ -244,8 +244,8 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
 
   Widget containerListItems(OvertimeHistory item) {
     return Card(
-        color:   item.status == "PENDING"  ? claimedShiftColor :
-        item.status == "APPROVED" ? claimedShiftApprovedColor :
+        color:   item.status == ConstantData.pending  ? claimedShiftColor :
+        item.status == ConstantData.approved ? claimedShiftApprovedColor :
         claimedShiftRejectColor,
         elevation: 5,
         shadowColor: cardShadow,
@@ -277,8 +277,8 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                       TextColorContainer(
                       label: item.status!,
                       color:
-                      item.status == "PENDING"  ? claimedShiftColor:
-                      item.status == "APPROVED" ? claimedShiftApprovedColor :
+                      item.status == ConstantData.pending  ? claimedShiftColor:
+                      item.status == ConstantData.approved ? claimedShiftApprovedColor :
                       claimedShiftRejectColor),
 
                     ],
@@ -309,7 +309,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                       SizedBox(
                         height: 5,
                       ),
-                       item.status == "APPROVED" || item.status == "REJECTED" ?
+                       item.status == ConstantData.approved || item.status == ConstantData.rejected ?
                       Padding(
                         padding: const EdgeInsets.all(0),
                         child:

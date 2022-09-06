@@ -354,9 +354,9 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList>  
                       Expanded(
                         flex: 1,
                           child: Container(
-                            color: item.status == "PENDING"
+                            color: item.status == ConstantData.pending
                                 ? claimedShiftColor.withOpacity(0.1)
-                                : item.status == "APPROVED"
+                                : item.status == ConstantData.approved
                                 ? claimedShiftApprovedColor.withOpacity(0.1)
                                 : claimedShiftRejectColor.withOpacity(0.1),
                               child: Column(
@@ -366,9 +366,9 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList>  
                                   CustomTextWidget(
 
                                     text: Controller().convertStringDate(item.requestDate.toString(),"day"),
-                                   color: item.status == "PENDING"
+                                   color: item.status == ConstantData.pending
                                         ? claimedShiftColor
-                                        : item.status == "APPROVED"
+                                        : item.status == ConstantData.approved
                                         ? claimedShiftApprovedColor
                                         : claimedShiftRejectColor,
                                   ),
@@ -378,9 +378,9 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList>  
                                   CustomTextWidget(
                                     text:   Controller().convertStringDate(item.requestDate.toString(),"date"),
                                     fontWeight: FontWeight.bold,
-                                    color: item.status == "PENDING"
+                                    color: item.status == ConstantData.pending
                                         ? claimedShiftColor
-                                        : item.status == "APPROVED"
+                                        : item.status == ConstantData.approved
                                         ? claimedShiftApprovedColor
                                         : claimedShiftRejectColor,
                                     size: 28,
@@ -392,9 +392,9 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList>  
 
                                   CustomTextWidget(
                                     text:     Controller().convertStringDate(item.requestDate.toString(),"month") +", "+ Controller().convertStringDate(item.requestDate.toString(),"year"),
-                                    color: item.status == "PENDING"
+                                    color: item.status == ConstantData.pending
                                         ? claimedShiftColor
-                                        : item.status == "APPROVED"
+                                        : item.status == ConstantData.approved
                                         ? claimedShiftApprovedColor
                                         : claimedShiftRejectColor,
                                     fontWeight: FontWeight.w400,

@@ -48,7 +48,7 @@ class _AddAttandenceState extends State<AddAttandence> {
     );
     try {
       var qrResult = await BarcodeScanner.scan();
-        print("scanning== ${qrResult.rawContent}");
+
       _progressDialog?.showLoadingDialog();
       attendanceViewModel.markAttendanceRequest(qrResult.rawContent);
 

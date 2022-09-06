@@ -288,8 +288,11 @@ class APIWebService {
   }
   Future<LoginApiResponse?> markAttendance(String code) async {
     try {
+      Map<String,String> request = {
+        'code': code
+      };
       final client = await RetroClinetHeader.getClientWithAuth();
-      var response = await client.markAttendance(code);
+      var response = await client.markAttendance(request);
       return response;
     } catch (e) {
       print("$TAG$e");

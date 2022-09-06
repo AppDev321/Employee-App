@@ -184,9 +184,9 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
         itemBuilder: (_, index) => Padding(
           padding: const EdgeInsets.all(5.0),
           child: Card(
-              color: shifts[index].status == "PENDING"
+              color: shifts[index].status == ConstantData.pending
                   ? claimedShiftColor
-                  : shifts[index].status == "APPROVED"
+                  : shifts[index].status == ConstantData.approved
                       ? claimedShiftApprovedColor
                       : claimedShiftRejectColor,
               elevation: 5,
@@ -269,9 +269,9 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
                     ),
                     TextColorContainer(
                         label: item.status!,
-                        color: item.status == "PENDING"
+                        color: item.status == ConstantData.pending
                             ? claimedShiftColor
-                            : item.status == "APPROVED"
+                            : item.status == ConstantData.approved
                                 ? claimedShiftApprovedColor
                                 : claimedShiftRejectColor),
                   ],

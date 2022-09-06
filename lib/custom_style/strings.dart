@@ -13,6 +13,10 @@ static const String vehicle_detail ="Vehicle Detail";
 static const String inspection ="Inspection";
 static const String unauthenticatedMsg="Unauthenticated";
 static const  String logoIconPath = "assets/images/afj_logo.png";
+static const String approved= "APPROVED";
+static const String rejected= "REJECTED";
+static const String pending= "PENDING";
+
 
 
 static const filterTabs = [
