@@ -58,5 +58,35 @@ class AttendanceViewModel extends BaseViewModel {
 
 
 
+  Future<void> verifyVehicleTab(String code) async {
+    setLoading(true);
+    final results = await APIWebService().validateVehicleTab(code);
+
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+      setAttendanceRequestStatus(false);
+      // setIsErrorReceived(true);
+    } else {
+      if (results.code == 200) {
+        setAttendanceRequestStatus(true);
+        // setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += results.errors![i].message! + "\n";
+        }
+        setErrorMsg(errorString);
+        setAttendanceRequestStatus(false);
+        //  setIsErrorReceived(true);
+      }
+    }
+
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+  }
+
+
 
 }

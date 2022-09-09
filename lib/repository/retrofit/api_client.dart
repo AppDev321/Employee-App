@@ -30,8 +30,8 @@ import '../model/response/report_leave_response.dart';
 
 part 'api_client.g.dart';
 
-//@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
-@RestApi(baseUrl: 'http://192.168.1.21:8000/api') // Enter you base URL
+@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
+//@RestApi(baseUrl: 'http://192.168.1.21:8000/api') // Enter you base URL
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
@@ -87,14 +87,15 @@ abstract class ApiClient {
 
 
 
-  /*@POST('/attendance/mark-attendance?code={code}')
-  Future<LoginApiResponse> markAttendance(@Path("code") String code);*/
+  @POST('/attendance/mark-attendance')
+  Future<LoginApiResponse> markAttendance(@Body() Map<String,String> body);
+
   @POST('/validate-qr-code')
-  Future<LoginApiResponse> markAttendance(@Body() Map<String,String> body );
+  Future<LoginApiResponse> validateVehicleTab(@Body() Map<String,String> body );
 
 
 
-  @POST('/report/my-leaves')
+  @POST('/report/leaves')
   Future<LeaveReportResponse> getLeaveReport(@Body() ClaimShiftHistoryRequest body);
   @POST('/report/my-attendance')
   Future<AttendanceReportResponse> getAttandenceReport(@Body() ClaimShiftHistoryRequest body);

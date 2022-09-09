@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/pages/availability/view_availability.dart';
 import 'package:intl/intl.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
@@ -55,7 +56,7 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList>  
   bool isUpdateClick=false;
 
  late AvailabilityRequest deletedItemRequest;
-
+  var request = ClaimShiftHistoryRequest();
 
   @override
   void onDetached() {
@@ -100,10 +101,12 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList>  
     var endDate =
     new DateTime(now.year, now.month + 1, 0); //this month last date
 
-    var request = ClaimShiftHistoryRequest();
+    request = ClaimShiftHistoryRequest();
     request.start_date = Controller().getConvertedDate(startDate);
     request.end_date = Controller().getConvertedDate(endDate);
 
+
+  //  _availabilityViewModel.getAvailabilityList(request);
 
 
     _availabilityViewModel.addListener(() {
@@ -181,142 +184,158 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList>  
     }
 
 
-    return Scaffold(
-        appBar: AppBar(
-        title:  Text(availability),
-    ),
-    body: Padding(
-        padding: const EdgeInsets.all(0.0),
-    child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-    children: [
+    return VisibilityDetector(
 
-      BlocBuilder<ConnectedBloc, ConnectedState>(
-          builder: (context, state) {
-            if (state is ConnectedFailureState) {
-              return InternetNotAvailable();
-            }else
-            {
-              return Container();
-            }
-          }
+      key: Key('leave-widget'),
+      onVisibilityChanged: (VisibilityInfo info) {
+        var isVisibleScreen = info.visibleFraction == 1.0 ? true :false;
+
+        if(isVisibleScreen) {
+          setState(() {
+            _isFirstLoadRunning = true;
+            _isErrorInApi = false;
+            _availabilityViewModel.getAvailabilityList(request);
+          });
+        }
+
+      },
+      child: Scaffold(
+          appBar: AppBar(
+          title:  Text(availability),
       ),
+      body: Padding(
+          padding: const EdgeInsets.all(0.0),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+      children: [
 
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        BlocBuilder<ConnectedBloc, ConnectedState>(
+            builder: (context, state) {
+              if (state is ConnectedFailureState) {
+                return InternetNotAvailable();
+              }else
+              {
+                return Container();
+              }
+            }
+        ),
+
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+
+              Container(
+                child: CustomTextWidget(
+                  text: "Add Request",
+                  size: 20,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                    Get.to(()=> AddAvailability());
+                },
+                child: Icon(Icons.add, color: Colors.white),
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  primary: primaryColor,
+                  onPrimary: Colors.black,
+                ),
+              )
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        AnimatedButtonBar(
+          padding: EdgeInsets.all(9),
+          backgroundColor: Colors.grey.shade200,
+          radius: 20,
+          invertedSelection: true,
           children: [
-
-            Container(
-              child: CustomTextWidget(
-                text: "Add Request",
-                size: 20,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                  Get.to(()=> AddAvailability());
-              },
-              child: Icon(Icons.add, color: Colors.white),
-              style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
-                primary: primaryColor,
-                onPrimary: Colors.black,
-              ),
-            )
+            ButtonBarEntry(
+                onTap: () {
+                  changeButtonState(0);
+                },
+                child: Text('This Month')),
+            ButtonBarEntry(
+                onTap: () {
+                  changeButtonState(1);
+                },
+                child: Text('Last Month')),
+            ButtonBarEntry(
+                onTap: () {
+                  changeButtonState(2);
+                },
+                child: Text('This Year')),
+            ButtonBarEntry(
+                onTap: () {
+                  changeButtonState(3);
+                },
+                child: Text('Custom'))
           ],
         ),
-      ),
-      SizedBox(
-        height: 10,
-      ),
-      AnimatedButtonBar(
-        padding: EdgeInsets.all(9),
-        backgroundColor: Colors.grey.shade200,
-        radius: 20,
-        invertedSelection: true,
-        children: [
-          ButtonBarEntry(
-              onTap: () {
-                changeButtonState(0);
+        Padding(
+            padding: const EdgeInsets.all(10),
+            child: buttonState == 3
+                ? CustomDateRangeWidget(
+              labelText: "Select Date",
+              onDateChanged: (date) {
+                String startDate =
+                Controller().getConvertedDate(date['start']);
+                String endDate =
+                Controller().getConvertedDate(date['end']);
+                _dateFilterController.text = "$startDate To $endDate";
               },
-              child: Text('This Month')),
-          ButtonBarEntry(
-              onTap: () {
-                changeButtonState(1);
-              },
-              child: Text('Last Month')),
-          ButtonBarEntry(
-              onTap: () {
-                changeButtonState(2);
-              },
-              child: Text('This Year')),
-          ButtonBarEntry(
-              onTap: () {
-                changeButtonState(3);
-              },
-              child: Text('Custom'))
-        ],
-      ),
-      Padding(
-          padding: const EdgeInsets.all(10),
-          child: buttonState == 3
-              ? CustomDateRangeWidget(
-            labelText: "Select Date",
-            onDateChanged: (date) {
-              String startDate =
-              Controller().getConvertedDate(date['start']);
-              String endDate =
-              Controller().getConvertedDate(date['end']);
-              _dateFilterController.text = "$startDate To $endDate";
-            },
-            onFetchDates: (date) {
-              setState(() {
-                _isFirstLoadRunning = true;
-                _isErrorInApi = false;
-              });
+              onFetchDates: (date) {
+                setState(() {
+                  _isFirstLoadRunning = true;
+                  _isErrorInApi = false;
+                });
 
-              String startDate =
-              Controller().getConvertedDate(date['start']);
-              String endDate =
-              Controller().getConvertedDate(date['end']);
+                String startDate =
+                Controller().getConvertedDate(date['start']);
+                String endDate =
+                Controller().getConvertedDate(date['end']);
 
-              var request = ClaimShiftHistoryRequest();
-              request.start_date = startDate;
-              request.end_date = endDate;
-             // _availabilityViewModel.getAttendanceReport(request);
-            },
-            controllerDate: _dateFilterController,
-            isSearchButtonShow: false,
+                 request = ClaimShiftHistoryRequest();
+                request.start_date = startDate;
+                request.end_date = endDate;
+               // _availabilityViewModel.getAttendanceReport(request);
+              },
+              controllerDate: _dateFilterController,
+              isSearchButtonShow: false,
+            )
+                : buttonState == 1
+                ? Center()
+                : buttonState == 2
+                ? Center()
+                : Center()),
+
+        _isFirstLoadRunning
+            ? Expanded(child: Center(child: CircularProgressIndicator()))
+            : _isErrorInApi
+            ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
+            : Expanded(
+                flex: 1,
+                child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                      itemCount: availabilities.length,
+                        itemBuilder: (context, index) =>
+                        listItem(availabilities[index]),
+            )
           )
-              : buttonState == 1
-              ? Center()
-              : buttonState == 2
-              ? Center()
-              : Center()),
+        ),
 
-      _isFirstLoadRunning
-          ? Expanded(child: Center(child: CircularProgressIndicator()))
-          : _isErrorInApi
-          ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
-          : Expanded(
-              flex: 1,
-              child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                    itemCount: availabilities.length,
-                      itemBuilder: (context, index) =>
-                      listItem(availabilities[index]),
-          )
-        )
+
+
+
+      ]))
       ),
-
-
-
-
-    ]))
     );
   }
   listItem(AvailabilityRequest item)
@@ -527,7 +546,7 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList>  
       buttonState = status;
     });
 
-    var request = ClaimShiftHistoryRequest();
+   request = ClaimShiftHistoryRequest();
     DateTime now = DateTime.now();
     if (status == 0)
     {

@@ -4,6 +4,8 @@ import 'package:hnh_flutter/repository/model/response/report_leave_response.dart
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
+import '../utils/controller.dart';
+
 class  DoughnutChart extends StatefulWidget {
   DoughnutChart({
     Key? key,
@@ -43,12 +45,18 @@ class DoughnutChartState extends State<DoughnutChart> {
           explodeIndex: 0,
           explodeOffset: '10%',
           dataSource: chartData,
-          xValueMapper: (ChartData data, _) => data.name.toString() as String,
+          legendIconType: LegendIconType.rectangle,
+          xValueMapper: (ChartData data, _) => Controller().capitalize(data.name.toString().toLowerCase()) ,
           yValueMapper: (ChartData data, _) => data.count,
-          dataLabelMapper: (ChartData data, _) => data.name,
+          dataLabelMapper: (ChartData data, _) =>   Controller().capitalize(data.name.toString().toLowerCase()) +"\n"+data.count.toString(),
           startAngle: 90,
           endAngle: 90,
-          dataLabelSettings: const DataLabelSettings(isVisible: false)),
+          dataLabelSettings: const DataLabelSettings(
+              isVisible: true,
+
+              labelPosition:ChartDataLabelPosition.outside
+          )
+      ),
     ];
   }
 

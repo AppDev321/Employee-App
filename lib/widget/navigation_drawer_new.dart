@@ -14,6 +14,7 @@ import 'package:hnh_flutter/pages/overtime/add_overtime.dart';
 import 'package:hnh_flutter/pages/profile/profile_screen.dart';
 import 'package:hnh_flutter/pages/reports/leave_report.dart';
 import 'package:hnh_flutter/pages/shift/claimed_shift_list.dart';
+import 'package:hnh_flutter/pages/vehicletab/scan_vehicle_tab.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:provider/provider.dart';
@@ -213,6 +214,11 @@ class NavigationDrawer extends StatelessWidget {
    // Navigator.of(context).pop();
 
     switch (menuItem) {
+
+      case menuScanVehicleTab:
+        Get.to(()=>VehicleTabScan());
+        break;
+
       case menuAttandance:
         Get.to(()=>AddAttandence());
         break;
@@ -224,7 +230,6 @@ class NavigationDrawer extends StatelessWidget {
         break;
       case subMenuReportAttandance:
         Get.to(()=>AttendanceReport());
-
         break;
       case availability:
         Get.to(()=>AvailabilityList());

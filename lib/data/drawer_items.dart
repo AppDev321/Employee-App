@@ -25,7 +25,7 @@ const String subMenuToday="Today";
 const String menuLeave="Leave";
 const String profile = "Profile";
 const String availability = "Availability";
-
+const String menuScanVehicleTab="Scan Vehicle Device";
 
 
 const String menuReport="Reports";
@@ -107,6 +107,15 @@ List<DrawerItem> itemsFirst = [
     Icons.analytics_outlined,
       iconPath+"overtime_icon.svg"
   ),
+
+  new DrawerItem(
+      menuScanVehicleTab,
+      [],
+      Icons.analytics_outlined,
+      iconPath+"Phone.svg"
+  ),
+
+
   new DrawerItem(
     profile,
     [],

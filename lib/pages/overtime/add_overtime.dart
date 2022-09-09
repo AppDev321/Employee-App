@@ -2,25 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
-import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
-import 'package:hnh_flutter/repository/model/response/leave_list.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
 import '../../data/drawer_items.dart';
 import '../../utils/controller.dart';
-import '../../view_models/leave_list_vm.dart';
 import '../../view_models/overtime_vm.dart';
 import '../../widget/custom_comment_box.dart';
-import '../../widget/custom_drop_down_widget.dart';
 import '../../widget/custom_edit_text_widget.dart';
 import '../../widget/date_picker_widget.dart';
 import '../../widget/dialog_builder.dart';
 import '../../widget/internet_not_available.dart';
-import '../login/login.dart';
 
 class AddOverTime extends StatefulWidget {
 
@@ -65,20 +59,19 @@ class AddLeaveStateful extends State<AddOverTime> {
         setState(() {
           _errorMsg = "";
         });
-
-
       }
 
       var overTimeRequestStatus = _overtimeViewModel.getOverTimeStatus();
-      if(!overTimeRequestStatus)
-      {
+      if (overTimeRequestStatus) {
+        print("value true0");
+        Get.back();
+        Controller().showToastMessage( context, "Request submitted successfully");
+
+      }
+
+      else {
         _errorMsg = _overtimeViewModel.getErrorMsg();
         Controller().showToastMessage(context, _errorMsg!);
-      }
-      else {
-        Controller().showToastMessage(
-            context, "Request submitted successfully");
-        Get.back();
       }
     });
   }
@@ -101,8 +94,7 @@ class AddLeaveStateful extends State<AddOverTime> {
               builder: (context, state) {
                 if (state is ConnectedFailureState) {
                   return InternetNotAvailable();
-                }else
-                {
+                } else {
                   return Container();
                 }
               }
@@ -131,11 +123,13 @@ class AddLeaveStateful extends State<AddOverTime> {
                 SizedBox(
                   height: 10,
                 ),
-                CustomTextWidget(text: "Hour:",fontWeight: FontWeight.bold),
+                CustomTextWidget(text: "Hour:", fontWeight: FontWeight.bold),
                 SizedBox(
                   height: 10,
                 ),
-                CustomEditTextWidget(text: "Enter your hour",controller:hourController ,isNumberField: true),
+                CustomEditTextWidget(text: "Enter your hour",
+                    controller: hourController,
+                    isNumberField: true),
                 SizedBox(
                   height: 10,
                 ),
@@ -157,7 +151,7 @@ class AddLeaveStateful extends State<AddOverTime> {
                           },
                           style: ButtonStyle(
                               backgroundColor:
-                                  MaterialStateProperty.all(Colors.grey),
+                              MaterialStateProperty.all(Colors.grey),
                               textStyle: MaterialStateProperty.all(
                                   TextStyle(fontSize: 12))),
                           child: Text('Cancel'),
@@ -169,19 +163,18 @@ class AddLeaveStateful extends State<AddOverTime> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
+                            _progressDialog?.showLoadingDialog();
+                            var request = OvertimeRequest();
+                            request.date =
+                                Controller().getConvertedDate(overtimeDate);
+                            request.hour = leaveTypeId.toString();
+                            request.reason = reasonController.text;
 
-                              _progressDialog?.showLoadingDialog();
-                              var request = OvertimeRequest();
-                              request.date = Controller().getConvertedDate(overtimeDate);
-                              request.hour = leaveTypeId.toString();
-                              request.reason = reasonController.text;
-
-                              _overtimeViewModel.saveOverTimeRequest(request);
-
+                            _overtimeViewModel.saveOverTimeRequest(request);
                           },
                           style: ButtonStyle(
                               backgroundColor:
-                                  MaterialStateProperty.all(primaryColor),
+                              MaterialStateProperty.all(primaryColor),
                               textStyle: MaterialStateProperty.all(
                                   TextStyle(fontSize: 12))),
                           child: Text('Save'),

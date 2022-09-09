@@ -7,16 +7,19 @@ import 'package:hnh_flutter/view_models/leave_list_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:hnh_flutter/widget/table_cell_padding.dart';
 import 'package:get/get.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
 import '../../data/drawer_items.dart';
 import '../../repository/model/request/claim_shift_history_request.dart';
 import '../../repository/model/response/leave_list.dart';
 import '../../repository/model/response/overtime_list.dart';
+import '../../repository/model/response/report_leave_response.dart';
 import '../../utils/controller.dart';
 import '../../view_models/overtime_vm.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/date_range_widget.dart';
+import '../../widget/dongout_chart.dart';
 import '../../widget/error_message.dart';
 import '../../widget/filter_tab_widget.dart';
 import '../../widget/internet_not_available.dart';
@@ -42,6 +45,9 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
   late BuildContext contextBuild;
   late OvertimeViewModel _overtimeViewModel;
  var request = ClaimShiftHistoryRequest();
+  List<ChartData> chartData= [];
+
+
   @override
   void initState() {
     super.initState();
@@ -61,7 +67,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
     request.start_date = formattedDate;
     request.end_date = formattedDate;
 
-    _overtimeViewModel.getOverTimeList(request);
+   // _overtimeViewModel.getOverTimeList(request);
     _overtimeViewModel.addListener(() {
       _overtimeHistoryList.clear();
 
@@ -79,6 +85,11 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
         _isFirstLoadRunning = false;
 
         _overtimeHistoryList = _overtimeViewModel.getOvertimeHistoryList();
+        chartData.clear();
+        chartData.add(  ChartData(name:ConstantData.approved,count:getCountDataList( _overtimeHistoryList,ConstantData.approved)) );
+        chartData.add(  ChartData(name:ConstantData.pending,count:getCountDataList( _overtimeHistoryList,ConstantData.pending)));
+        chartData.add(  ChartData(name:ConstantData.rejected,count:getCountDataList( _overtimeHistoryList,ConstantData.rejected)));
+
 
         setState(() {
           _isErrorInApi = checkErrorApiStatus;
@@ -89,137 +100,165 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: Text(overtime),
-      ),
-      body: Column(
-        children: [
+  Widget build(BuildContext context) => VisibilityDetector(
+    key: Key('overtime-widget'),
+    onVisibilityChanged: (VisibilityInfo info) {
+      var isVisibleScreen = info.visibleFraction == 1.0 ? true :false;
 
-          BlocBuilder<ConnectedBloc, ConnectedState>(
-              builder: (context, state) {
-                if (state is ConnectedFailureState) {
-                  return InternetNotAvailable();
-                }
-                else if(state is FirebaseMsgReceived)
-                {
-                  if(state.screenName == Screen.OVERTIME)
-                  {
-                    _overtimeViewModel.getOverTimeList(request);
-                    state.screenName=Screen.NULL;
+      if(isVisibleScreen) {
+            setState(() {
+              _overtimeHistoryList.clear();
+              _isFirstLoadRunning = true;
+              _isErrorInApi = false;
+              _overtimeViewModel.getOverTimeList(request);
+            });
+        }
+    },
+    child: Scaffold(
+        appBar: AppBar(
+          title: Text(overtime),
+        ),
+        body: Column(
+          children: [
 
+            BlocBuilder<ConnectedBloc, ConnectedState>(
+                builder: (context, state) {
+                  if (state is ConnectedFailureState) {
+                    return InternetNotAvailable();
                   }
-                  return Container();
+                  else if(state is FirebaseMsgReceived)
+                  {
+                    if(state.screenName == Screen.OVERTIME)
+                    {
+                      _overtimeViewModel.getOverTimeList(request);
+                      state.screenName=Screen.NULL;
+
+                    }
+                    return Container();
+                  }
+                  else
+                  {
+                    return Container();
+                  }
                 }
-                else
-                {
-                  return Container();
-                }
-              }
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
 
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        child: CustomTextWidget(
-                          text: "Add Request",
-                          size: 20,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: CustomTextWidget(
+                            text: "Add Request",
+                            size: 20,
+                          ),
                         ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
+                        ElevatedButton(
+                          onPressed: () {
 
-                      Get.to(()=> AddOverTime());
+                        Get.to(()=> AddOverTime());
 
 
-                        },
-                        child: Icon(Icons.add, color: Colors.white),
-                        style: ElevatedButton.styleFrom(
-                          shape: CircleBorder(),
-                          primary: primaryColor,
-                          onPrimary: Colors.black,
+                          },
+                          child: Icon(Icons.add, color: Colors.white),
+                          style: ElevatedButton.styleFrom(
+                            shape: CircleBorder(),
+                            primary: primaryColor,
+                            onPrimary: Colors.black,
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    CustomDateRangeWidget(
+                      labelText: "Select Date",
+                      onDateChanged: (date) {
+                        String startDate = Controller().getConvertedDate(date['start']);
+                        String endDate = Controller().getConvertedDate(date['end']);
+                        _dateFilterController.text = "$startDate To $endDate";
+                      },
+                      onFetchDates: (date) {
+                        String startDate = Controller().getConvertedDate(date['start']);
+                        String endDate = Controller().getConvertedDate(date['end']);
+                        setState(() {
+
+                        request = ClaimShiftHistoryRequest();
+                          request.start_date = startDate;
+                          request.end_date = endDate;
+                          _overtimeHistoryList.clear();
+                          _isFirstLoadRunning = true;
+                          _isErrorInApi = false;
+                          _overtimeViewModel.getOverTimeList(request);
+
+
+                        });
+                      },
+                      controllerDate: _dateFilterController,
+                      isSearchButtonShow: false,
+                    ),
+
+
+
+                    _overtimeHistoryList.length > 0 ?
+                    Column(
+                      children: [
+                        Container(
+                            height: Get.mediaQuery.size.width/3,
+                            child:
+                            DoughnutChart(chartData: chartData)
                         ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  CustomDateRangeWidget(
-                    labelText: "Select Date",
-                    onDateChanged: (date) {
-                      String startDate = Controller().getConvertedDate(date['start']);
-                      String endDate = Controller().getConvertedDate(date['end']);
-                      _dateFilterController.text = "$startDate To $endDate";
-                    },
-                    onFetchDates: (date) {
-                      String startDate = Controller().getConvertedDate(date['start']);
-                      String endDate = Controller().getConvertedDate(date['end']);
-                      setState(() {
+                        SizedBox(height:5)
+                      ],
+                    ) : SizedBox(height:10),
 
-                      request = ClaimShiftHistoryRequest();
-                        request.start_date = startDate;
-                        request.end_date = endDate;
-                        _overtimeHistoryList.clear();
-                        _isFirstLoadRunning = true;
-                        _isErrorInApi = false;
-                        _overtimeViewModel.getOverTimeList(request);
-
-
-                      });
-                    },
-                    controllerDate: _dateFilterController,
-                    isSearchButtonShow: false,
-                  ),
-
-
-                  SizedBox(
-                    height: 15,
-                  ),
-                  CustomFilterTab(controller: _tabController, tabs: ConstantData.filterTabs,),
+                    CustomFilterTab(controller: _tabController, tabs: ConstantData.filterTabs,),
 
 
 
-                  SizedBox(
-                    height: 15,
-                  ),
-                  _isFirstLoadRunning
-                      ? Expanded(child: Center(child: CircularProgressIndicator()))
-                      : _isErrorInApi
-                          ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
-                          : Expanded(
-                              child: _overtimeHistoryList.length > 0
-                                  ?
+                    SizedBox(
+                      height: 15,
+                    ),
+                    _isFirstLoadRunning
+                        ? Expanded(child: Center(child: CircularProgressIndicator()))
+                        : _isErrorInApi
+                            ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
+                            : Expanded(
+                                child: _overtimeHistoryList.length > 0
+                                    ?
 
-                              TabBarView(
-                                  controller: _tabController,
-                                  children: [
-                                    //All
+                                TabBarView(
+                                    controller: _tabController,
+                                    children: [
+                                      //All
 
-                                    listContainer(_overtimeHistoryList),
+                                      listContainer(_overtimeHistoryList),
 
-                                    listContainer(getFilterList(_overtimeHistoryList,ConstantData.approved)),
+                                      listContainer(getFilterList(_overtimeHistoryList,ConstantData.approved)),
 
-                                    listContainer(getFilterList(_overtimeHistoryList,ConstantData.pending)),
-                                    listContainer(getFilterList(_overtimeHistoryList,ConstantData.rejected)),
+                                      listContainer(getFilterList(_overtimeHistoryList,ConstantData.pending)),
+                                      listContainer(getFilterList(_overtimeHistoryList,ConstantData.rejected)),
 
-                                  ])  : ErrorMessageWidget(label: "No Overtime Found"))
-                ],
+                                    ])  : ErrorMessageWidget(label: "No Overtime Found"))
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ));
+          ],
+        )),
+  );
 
 
-
+  int getCountDataList(List<OvertimeHistory> inputlist,String status) {
+    List<OvertimeHistory> outputList = inputlist.where((o) => o.status == status).toList();
+    return outputList.length;
+  }
   List<OvertimeHistory> getFilterList(List<OvertimeHistory> inputlist,String status) {
     List<OvertimeHistory> outputList = inputlist.where((o) => o.status == status).toList();
     return outputList;
@@ -234,8 +273,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
           itemCount: _leaveHistoryList.length,
           itemBuilder: (_, index) => Padding(
               padding: const EdgeInsets.all(5.0),
-              child: containerListItems(
-                  _leaveHistoryList[index]))),
+              child: containerListItems( _leaveHistoryList[index]))),
     );
   }
 
