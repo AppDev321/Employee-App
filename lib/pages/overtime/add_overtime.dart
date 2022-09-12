@@ -63,8 +63,7 @@ class AddLeaveStateful extends State<AddOverTime> {
 
       var overTimeRequestStatus = _overtimeViewModel.getOverTimeStatus();
       if (overTimeRequestStatus) {
-        print("value true0");
-        Get.back();
+          Get.back();
         Controller().showToastMessage( context, "Request submitted successfully");
 
       }

@@ -18,8 +18,7 @@ class Controller {
   final String notificationBroadCast = "notificationBroadCast";
   final String fcmMsgValue = "fcm_msg_key";
   final String userKey = "user_key";
-  final defaultPic= "http://simpleicon.com/wp-content/uploads/account.png";
-
+  final defaultPic = "http://simpleicon.com/wp-content/uploads/account.png";
 
   Future<void> setFCMScreen(String screenName) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,7 +36,6 @@ class Controller {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(this.userKey, userPicUrl);
   }
-
 
   Future<String> getUserProfilePic() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
@@ -63,21 +61,21 @@ class Controller {
     return auth_token;
   }
 
-
   Future<void> setEmail(String emaiID) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(this.auth_token, auth_token);
   }
+
   Future<void> setPassword(String emaiID) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(this.auth_token, auth_token);
   }
 
-
   Future<void> setRememberLogin(bool isRemember) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool(this.loginRemember, isRemember);
   }
+
   Future<bool> getRememberLogin() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     bool isRemember;
@@ -85,9 +83,7 @@ class Controller {
     return isRemember;
   }
 
-
-  String getConvertedDate(DateTime now)
-  {
+  String getConvertedDate(DateTime now) {
     //var now = new DateTime.now();
     var formatter = new DateFormat('yyyy-MM-dd');
     String formattedDate = formatter.format(now);
@@ -95,12 +91,15 @@ class Controller {
   }
 
   void showToastMessage(BuildContext context, String text) {
-    Get.snackbar('Alert',text,snackPosition:SnackPosition.TOP, backgroundColor: Colors.black,colorText:Colors.white);
-
+    Get.snackbar('Alert', text,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.black,
+        colorText: Colors.white);
   }
+
   bool validatePassword(String value) {
     RegExp regex =
-    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
     if (value.isEmpty) {
       return false;
     } else {
@@ -112,13 +111,16 @@ class Controller {
     }
   }
 
-  void showMessageDialog(String msg,String title) {
- Get.dialog(
+  void showMessageDialog(String msg, String title) {
+    Get.dialog(
       AlertDialog(
-        title: CustomTextWidget(text:title,fontWeight: FontWeight.bold,),
-        content: CustomTextWidget(text:msg),
+        title: CustomTextWidget(
+          text: title,
+          fontWeight: FontWeight.bold,
+        ),
+        content: CustomTextWidget(text: msg),
 
-       /* actions: [
+        /* actions: [
           TextButton(
             child: const Text("Close"),
             onPressed: () {
@@ -130,28 +132,17 @@ class Controller {
         ],*/
       ),
     );
-
-
   }
 
-
-
-
-
-void logoutUser()
-{
-  Controller controller = Controller();
-  controller.setRememberLogin(false);
-  Get.offAll(()=> LoginClass());
-
-}
-
-
-
+  void logoutUser() {
+    Controller controller = Controller();
+    controller.setRememberLogin(false);
+    Get.offAll(() => LoginClass());
+  }
 
   showAlertDialog(BuildContext context) {
     // Create button
-    Widget okButton = FlatButton(
+    Widget okButton = ElevatedButton(
       child: Text("OK"),
       onPressed: () {
         Navigator.of(context).pop();
@@ -176,10 +167,8 @@ void logoutUser()
     );
   }
 
-
   String greeting() {
     var hour = DateTime.now().hour;
-    print("current hour:$hour");
     if (hour < 12) {
       return 'Good Morning';
     }
@@ -187,105 +176,95 @@ void logoutUser()
       return 'Good Afternoon';
     }
     return 'Good Evening';
-
   }
-  String differenceFormattedString(int minute){
-    try{
 
+  String differenceFormattedString(int minute) {
+    try {
       DateTime now = DateTime.now();
 
       Duration difference = Duration(minutes: minute);
 
-      final today = DateTime(now.year).add(difference).subtract(const Duration(days: 1));
+      final today =
+          DateTime(now.year).add(difference).subtract(const Duration(days: 1));
 
       //return '${today.day} Days ${today.hour} Hours ${today.minute} Min';
 
-     if( today.hour >0 )
-      return '${today.hour}h, ${today.minute}min';
-          else
-       return '${today.minute}min';
-    }catch(e){
+      if (today.hour > 0)
+        return '${today.hour}h, ${today.minute}min';
+      else
+        return '${today.minute}min';
+    } catch (e) {
       return '';
     }
   }
 
-
-  String getServerDateFormated(String serverDate){
-  DateTime requestDateFormate = new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
-  var dateFormat =  DateFormat('dd-MMM-yyyy');
-  var startDate = dateFormat.format(DateTime.parse(requestDateFormate.toString()));
-  return startDate;
+  String getServerDateFormated(String serverDate) {
+    DateTime requestDateFormate =
+        new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
+    var dateFormat = DateFormat('dd-MMM-yyyy');
+    var startDate =
+        dateFormat.format(DateTime.parse(requestDateFormate.toString()));
+    return startDate;
   }
 
-  String convertStringDate(String jsonDate , String parsingType)
-  {
-
+  String convertStringDate(String jsonDate, String parsingType) {
     DateTime parseDate = new DateFormat("dd-MMM-yyyy").parse(jsonDate);
-    var dateFormat =  DateFormat('E MMM dd yyyy');
+    var dateFormat = DateFormat('E MMM dd yyyy');
 
-    switch(parsingType)
-    {
+    switch (parsingType) {
       case "month":
-        dateFormat =  DateFormat('MMM');
+        dateFormat = DateFormat('MMM');
         break;
       case "date":
-        dateFormat =  DateFormat('dd');
+        dateFormat = DateFormat('dd');
         break;
       case "year":
-        dateFormat =  DateFormat('yyyy');
+        dateFormat = DateFormat('yyyy');
         break;
       case "day":
-        dateFormat =  DateFormat('E');
+        dateFormat = DateFormat('E');
         break;
-
     }
-
 
     var inputDate = DateTime.parse(parseDate.toString());
     var outputFormat = dateFormat;
     var outputDate = outputFormat.format(inputDate);
     return outputDate;
-
   }
 
   String capitalize(String str) => str[0].toUpperCase() + str.substring(1);
 
-
-
-  showConfirmationMsgDialog(
-      BuildContext context,
-      String title,
-      String msg,
-      String positiveButtonLabel,
-      ValueChanged<bool> OnPostiveButtonClick)
-  {
+  showConfirmationMsgDialog(BuildContext context, String title, String msg,
+      String positiveButtonLabel, ValueChanged<bool> OnPostiveButtonClick) {
     return showDialog<void>(
-
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-
-          title: CustomTextWidget(text:title,fontWeight: FontWeight.bold,color: primaryColor,),
+          title: CustomTextWidget(
+            text: title,
+            fontWeight: FontWeight.bold,
+            color: primaryColor,
+          ),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                CustomTextWidget(text:msg)
-              ],
+              children: <Widget>[CustomTextWidget(text: msg)],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: CustomTextWidget(text:positiveButtonLabel,color: primaryColor,),
-
+              child: CustomTextWidget(
+                text: positiveButtonLabel,
+                color: primaryColor,
+              ),
               onPressed: () {
                 OnPostiveButtonClick(true);
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: CustomTextWidget(text:"Cancel"),
+              child: CustomTextWidget(text: "Cancel"),
               onPressed: () {
                 OnPostiveButtonClick(false);
                 Navigator.of(context).pop();
@@ -296,11 +275,9 @@ void logoutUser()
       },
     );
   }
-
 }
 
-
-enum Screen{
+enum Screen {
   PROFILE,
   SHIFT,
   OVERTIME,
@@ -309,7 +286,6 @@ enum Screen{
   AVAILABILITY,
   DASHBOARD,
   NULL
-
 }
 
 extension ScreenNameExtention on Screen {

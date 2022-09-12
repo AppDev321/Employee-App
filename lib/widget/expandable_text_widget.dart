@@ -30,9 +30,9 @@ class _ExpandableTextState extends State<ExpandableText>
               ))),
       widget.isExpanded
           ? new ConstrainedBox(constraints: new BoxConstraints())
-          : new FlatButton(
-          child: const Text('...'),
-          onPressed: () => setState(() => widget.isExpanded = true))
+          : new ElevatedButton(
+              child: const Text('...'),
+              onPressed: () => setState(() => widget.isExpanded = true))
     ]);
   }
 }

@@ -38,10 +38,13 @@ dependencies:
   fl_chart: ^0.55.1
   syncfusion_flutter_charts: ^20.2.43
   image_picker: ^0.8.5+3
-  flutter_slidable: ^2.0.0
+  flutter_slidable: any
   barcode_scan2: ^4.2.1
   fbroadcast: ^2.0.0
   visibility_detector: ^0.3.3
+  firebase_remote_config: ^2.0.17
+  package_info_plus: ^1.4.2
+  url_launcher: ^6.1.5
 
 
 

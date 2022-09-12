@@ -1,37 +1,32 @@
+import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 
-import 'dart:async';
-
-import 'package:hnh_flutter/data/drawer_items.dart';
-import 'package:hnh_flutter/pages/reports/attendance_report.dart';
-
 import '../../custom_style/strings.dart';
+import '../../data/drawer_items.dart';
 import '../../utils/controller.dart';
 import '../../view_models/attendance_vm.dart';
 import '../../widget/dialog_builder.dart';
+import '../../widget/error_message.dart';
 
 class VehicleTabScan extends StatefulWidget {
   const VehicleTabScan({Key? key}) : super(key: key);
-
 
   @override
   State<VehicleTabScan> createState() => _VehicleTabScanState();
 }
 
 class _VehicleTabScanState extends State<VehicleTabScan> {
-
   String? _errorMsg = "";
   DialogBuilder? _progressDialog;
-  late  AttendanceViewModel attendanceViewModel;
+  late AttendanceViewModel attendanceViewModel;
   BuildContext? _dialogContext;
 
-
-
-
+  bool c = false;
+  bool _isErrorInApi = false;
 
   Future<void> scanAttendanceCode() async {
     AppBar(
@@ -39,10 +34,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
       title: const Text(
         'Scanning Code',
         style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20.0,
-          color: Colors.white
-        ),
+            fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.white),
       ),
       centerTitle: true,
     );
@@ -51,8 +43,6 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
 
       _progressDialog?.showLoadingDialog();
       attendanceViewModel.verifyVehicleTab(qrResult.rawContent);
-
-
     } on FormatException catch (ex) {
       print('Pressed the Back Button before Scanning');
     } catch (ex) {
@@ -60,12 +50,10 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
     }
   }
 
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
 
     attendanceViewModel = AttendanceViewModel();
 
@@ -86,37 +74,36 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
         if (attendanceViewModel.getRequestStatus()) {
           setState(() {
             _errorMsg = "";
+            _isErrorInApi = false;
           });
 
           Controller()
-              .showToastMessage(
-              context, "Request submitted successfully");
-         // Navigator.pop(context);
+              .showToastMessage(context, "Request submitted successfully");
+          // Navigator.pop(context);
           Get.back();
-        }
-        else
-        {
+        } else {
           _errorMsg = attendanceViewModel.getErrorMsg();
+
           if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
             Controller().logoutUser();
           } else {
             Controller().showToastMessage(context, _errorMsg!);
+            setState(() {
+              _isErrorInApi = true;
+            });
           }
         }
       }
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     _dialogContext = context;
     if (_progressDialog == null) {
       _progressDialog = DialogBuilder(_dialogContext!);
       _progressDialog?.initiateLDialog('Please wait..');
     }
-
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -126,15 +113,15 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
       body: Center(
         child: Column(
           children: [
-           SizedBox(height: 50,),
+            SizedBox(
+              height: 50,
+            ),
             Container(
               padding: const EdgeInsets.all(20.0),
-              child:  Text(
-
+              child: Text(
                 'Scan QR-Code',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-
                     fontWeight: FontWeight.bold,
                     fontSize: 26.0,
                     color: Color(0xFF1E1E1E)),
@@ -151,6 +138,24 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
                 ),
               ),
             ),
+            _isErrorInApi
+                ? Column(
+                    children: [
+                      SizedBox(
+                        height: 80,
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                          child: Container(
+
+                              margin: EdgeInsets.all(20),
+                              child: ErrorMessageWidget(
+                                label: _errorMsg!,
+                                color: Colors.red,
+                              )))
+                    ],
+                  )
+                : Center(),
           ],
         ),
       ),
@@ -164,10 +169,9 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             backgroundColor: primaryColor,
-            label:  Text(
+            label: Text(
               "Scan QR Code",
               style: TextStyle(
-
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
                 fontSize: 18.0,

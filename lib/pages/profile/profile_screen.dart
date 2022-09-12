@@ -46,6 +46,10 @@ class _MyAccountState extends State<MyAccount> {
   DialogBuilder? _progressDialog;
   BuildContext? _dialogContext;
 
+  late ImageProvider profileImageView;
+
+  bool tryToUploadImage=false;
+
 
   @override
   void initState() {
@@ -84,6 +88,12 @@ class _MyAccountState extends State<MyAccount> {
         profileDetail = _profileViewModel.getUserProfile();
         if(profileDetail.profileURL != null)
         userImageURL = profileDetail.profileURL.toString();
+
+        setState(() {
+          profileImageView=NetworkImage(
+            userImageURL.isEmpty?Controller().defaultPic:userImageURL,
+          );
+        });
       }
 
 
@@ -160,7 +170,25 @@ class _MyAccountState extends State<MyAccount> {
                                 Center(
                                   child: Stack(
                                     children: [
-                                      Container(
+                                     tryToUploadImage?Container(
+                                       width: 130,
+                                       height: 130,
+                                       decoration: BoxDecoration(
+                                           border: Border.all(
+                                               width: 4, color: primaryColor),
+                                           boxShadow: [
+                                             BoxShadow(
+                                                 spreadRadius: 2,
+                                                 blurRadius: 10,
+                                                 color: Colors.black
+                                                     .withOpacity(0.1),
+                                                 offset: Offset(0, 10))
+                                           ],
+                                           shape: BoxShape.circle,
+
+                                       ),
+                                       child: CircularProgressIndicator(color: Colors.white,),
+                                     ): Container(
                                         width: 130,
                                         height: 130,
                                         decoration: BoxDecoration(
@@ -177,9 +205,8 @@ class _MyAccountState extends State<MyAccount> {
                                             shape: BoxShape.circle,
                                             image: DecorationImage(
                                                 fit: BoxFit.cover,
-                                                image: NetworkImage(
-                                                  userImageURL.isEmpty?Controller().defaultPic:userImageURL,
-                                                ))),
+                                                image:profileImageView)
+                                        ),
                                       ),
                                       Positioned(
                                           bottom: 0,
@@ -196,12 +223,19 @@ class _MyAccountState extends State<MyAccount> {
                                             child: InkWell(
                                               onTap: (){
                                   _profileViewModel.showPicker(context,(value){
+                                    setState(() {
+
+                                      profileImageView = FileImage( value);
+                                      tryToUploadImage = true;
+                                    });
+
                                     _profileViewModel.uploadProfileImage(value,(isUploaded){
                                     //File path
                                     },(imageUrl){
                                         print(imageUrl);
                                         setState(() {
                                           userImageURL = imageUrl;
+                                          tryToUploadImage = false;
                                         });
 
                                     });

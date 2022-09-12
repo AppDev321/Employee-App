@@ -174,7 +174,7 @@ Future<void> getUserImageURLPreferecne() async{
 
    pickImageFile(ImageSource type,ValueChanged<File> imageFiles) async {
 
-     final XFile? pickedImage =  await ImagePicker().pickImage(source: type);
+     final XFile? pickedImage =  await ImagePicker().pickImage(source: type,imageQuality: 60);
 
      if (pickedImage != null) {
          File imageFile = File(pickedImage.path);

@@ -120,7 +120,7 @@ bool isPasswordUpdateCalled = false;
 
 
               SizedBox(height: 5),
-              ProfilePic(profileImageUrl: imageLinkUser),
+              ProfilePic(profileImageUrl: imageLinkUser,isEditable:false),
 
               SizedBox(height: 20),
               SettingMenu(
@@ -227,11 +227,17 @@ bool isPasswordUpdateCalled = false;
                       Container(
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 20),
-                          child: RaisedButton(
-                            padding: EdgeInsets.symmetric(vertical: 15.0),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0)),
-                            color: Colors.red,
+                          child:
+
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                onPrimary: Colors.red,
+                                primary: Colors.red,
+                                padding: EdgeInsets.symmetric(vertical: 15.0),
+                                shape:const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                                )),
+
                             onPressed: () {
 
                               var oldPass = Controller()

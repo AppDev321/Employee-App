@@ -76,8 +76,6 @@ void main() async {
 
 
 
-
-
   runApp(
 
       //For internet connection states

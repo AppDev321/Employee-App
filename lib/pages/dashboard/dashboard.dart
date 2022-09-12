@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:fbroadcast/stateful.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -13,6 +17,7 @@ import 'package:hnh_flutter/pages/profile/setting_screen.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
@@ -59,6 +64,8 @@ class _DashboardState extends State<Dashboard> {
   int notificationCount =0;
 
 
+  bool isAppUpdateRequired= false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -66,8 +73,18 @@ class _DashboardState extends State<Dashboard> {
 
     APIWebService().postTokenToServer(map);
 
+
     _dashBoardViewModel = DashBoardViewModel();
+    _dashBoardViewModel.initFireBaseConfig();
     _dashBoardViewModel.getDashBoardData();
+    _dashBoardViewModel.isAppUpdated().then((value) {
+      if (value != null) {
+        _dashBoardViewModel.showVersionDialog(
+            context, value.downloadUrl.toString());
+      }
+    }) ;
+
+
 
 
     _dashBoardViewModel.getBackgroundFCMNotificaiton();
@@ -113,7 +130,7 @@ class _DashboardState extends State<Dashboard> {
       }
     });
 
-    
+
     setState(() {
       listStats.add(DashBoardGrid("0", "Total Shifts","assets/icons/shifts_icon.svg",claimedShiftApprovedColor));
       listStats.add(DashBoardGrid("0", "Total Leaves","assets/icons/leave_icon.svg",Colors.red));
@@ -249,33 +266,11 @@ class _DashboardState extends State<Dashboard> {
 
 
 
-                            Container(
 
-                                child: Container(
-                                  width: 80,
-                                  height: 80,
+                              ProfilePic(profileImageUrl: profileImageUrl ,width: 80,height: 80,isEditable: false,),
 
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 2,
-                                        color: primaryColor),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          spreadRadius: 2,
-                                          blurRadius: 10,
-                                          color: primaryColor.withOpacity(0.1),
-                                          offset: Offset(0, 10))
-                                    ],
-                                    shape: BoxShape.circle,
-                                      image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image:
-                           NetworkImage(
-                               profileImageUrl.isEmpty  ? Controller().defaultPic  :profileImageUrl
-                              )
 
-                        ))))
-                                  ,
+
                           ],
                         ),
 
@@ -635,8 +630,6 @@ InkWell(
           )))
     ;
   }
-
-
 
 
 }
