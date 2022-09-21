@@ -36,6 +36,7 @@ import '../overtime/add_overtime.dart';
 import '../profile/components/profile_pic.dart';
 import '../reports/attendance_report.dart';
 import '../reports/leave_report.dart';
+import '../vehicletab/scan_vehicle_tab.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -57,7 +58,7 @@ class _DashboardState extends State<Dashboard> {
   String profileImageUrl="";
 
   Map<String,String> map = {
-    'device_type': platFormType!,
+    'device_type': platFormType!.toLowerCase(),
     'fcm_token':fcmToken!
   };
 
@@ -190,15 +191,26 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         actions: <Widget>[
-            Container(
-              padding: EdgeInsets.only(right: 20),
-              child: NamedIcon(
-                onTap:()=>  Get.to(()=>NotificationList()),
-                notificationCount: notificationCount,
-                iconData:
-                  Icons.notifications,
-                color: primaryColor,
-              ),
+            Row(
+              children: [
+
+                InkWell(
+                    onTap: ()=> {
+                    Get.to(()=>VehicleTabScan())
+                    },
+                    child: Icon(Icons.qr_code,size: 30,color: primaryColor,)
+                ),
+                Container(
+                  padding: EdgeInsets.only(right: 20),
+                  child: NamedIcon(
+                    onTap:()=>  Get.to(()=>NotificationList()),
+                    notificationCount: notificationCount,
+                    iconData:
+                    Icons.notifications,
+                    color: primaryColor,
+                  ),
+                ),
+              ],
             )
         ],
       ),

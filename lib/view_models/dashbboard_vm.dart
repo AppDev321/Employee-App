@@ -132,7 +132,6 @@ class DashBoardViewModel extends BaseViewModel {
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage? message) async {
-      print("DashBoardFirebase");
       var screenName = message?.data['activity'];
       if (screenName != null) {
         if (!screenName.toString().toLowerCase().contains("dashboard"))

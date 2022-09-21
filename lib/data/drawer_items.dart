@@ -64,7 +64,7 @@ List<DrawerItem> itemsFirst = [
       menuAttandance,
     [],
     Icons.analytics_outlined,
-      iconPath+"shifts_icon.svg"
+      iconPath+"calendar_icon.svg"
   ),
   new DrawerItem(
     menuLeave,
@@ -112,7 +112,7 @@ List<DrawerItem> itemsFirst = [
       menuScanVehicleTab,
       [],
       Icons.analytics_outlined,
-      iconPath+"Phone.svg"
+      iconPath+"ic_qr_code.svg"
   ),
 
 

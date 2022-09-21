@@ -35,12 +35,9 @@ part 'api_client.g.dart';
 
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
-
     dio.interceptors.add(Logging());
-
     return _ApiClient(dio, baseUrl: baseUrl);
   }
-
 
   @POST('/login')
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);
