@@ -1,6 +1,8 @@
 import 'package:animated_button_bar/animated_button_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
 
@@ -118,11 +120,12 @@ class AttendanceReportStateful extends State<AttendanceReport> {
             ),
             AnimatedButtonBar(
               padding: EdgeInsets.all(9),
-              backgroundColor: Colors.grey.shade200,
+              backgroundColor: cardThemeBaseColor,
               radius: 20,
               invertedSelection: true,
               children: [
                 ButtonBarEntry(
+
                     onTap: () {
                       changeButtonState(0);
                     },
@@ -220,7 +223,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
         child: Container(
             // width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: cardThemeBaseColor,
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))),
@@ -232,7 +235,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                   Expanded(
                       flex: 1,
                       child: Container(
-                          color: HexColor.fromHex("#dff4d8"),
+                          color: !Get.isDarkMode?primaryColor:HexColor.fromHex("#dff4d8"),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,

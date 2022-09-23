@@ -45,7 +45,7 @@ dependencies:
   firebase_remote_config: ^2.0.17
   package_info_plus: ^1.4.2
   url_launcher: ^6.1.5
-
+  carousel_slider: ^4.0.0
 
 
 

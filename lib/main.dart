@@ -13,6 +13,7 @@ import 'package:hnh_flutter/pages/leave/leave_listing.dart';
 import 'package:hnh_flutter/pages/login/login.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
+import 'package:hnh_flutter/provider/theme_provider.dart';
 import 'package:hnh_flutter/view_models/login_view_model.dart';
 import 'package:hnh_flutter/view_models/shift_list_vm.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
@@ -32,15 +33,9 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
     importance: Importance.high, playSound: true);
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin();
 final FirebaseMessaging fm = FirebaseMessaging.instance;
 
-/*
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print('Notification Message :  ${message.data.toString()}');
-}
-*/
 
 String? fcmToken = "";
 String? platFormType = "android";
@@ -63,7 +58,7 @@ void main() async {
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+      AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
   //For IOS
@@ -73,30 +68,26 @@ void main() async {
     sound: true,
   );
 
-
-
-
   runApp(
-
-      //For internet connection states
+    //For internet connection states
       BlocProvider(
-    create: (context) => ConnectedBloc(),
-    child: MaterialApp(
-      initialRoute: 'splash',
-      title: ConstantData.appName,
-      debugShowCheckedModeBanner: false,
-      routes: {
-        'splash': (context) => MyApp(),
-        'login': (context) => LoginClass()
-      },
-    ),
-  ));
+        create: (context) => ConnectedBloc(),
+        child: MaterialApp(
+          initialRoute: 'splash',
+          title: ConstantData.appName,
+          debugShowCheckedModeBanner: false, //for tablet desing
+          routes: {
+            'splash': (context) => MyApp(),
+            'login': (context) => LoginClass()
+          },
+        ),
+      ));
 }
 
 Future<bool> checkPassPreference() async {
   Controller controller = Controller();
-  bool isRememmber = await controller.getRememberLogin();
-  if (isRememmber) {
+  bool isRemember = await controller.getRememberLogin();
+  if (isRemember) {
     String? isAuth = await controller.getAuthToken();
     if (isAuth != null) {
       return true;
@@ -131,6 +122,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
+
+
     Widget example5 = SplashScreenView(
       navigateRoute: FutureBuilder<bool>(
           future: checkPassPreference(),
@@ -147,34 +142,44 @@ class MyApp extends StatelessWidget {
       duration: 3000,
       imageSize: 300,
       imageSrc: ConstantData.logoIconPath,
-      backgroundColor: Colors.white,
+      backgroundColor: cardThemeBaseColor,
     );
-    var re = MultiProvider(
+    var multiProvider = MultiProvider(
+
         providers: [
           ChangeNotifierProvider(create: (context) => NavigationProvider()),
+          ChangeNotifierProvider(create: (context) => ThemeModel()),
         ],
-        child: GetMaterialApp(
-          title: ConstantData.appName,
-          home: example5,
-          debugShowCheckedModeBanner: false,
-          /*
-      theme: ThemeData(
-        fontFamily: 'Raleway',
-        primaryColor: primaryColor,
+        child:  Consumer<ThemeModel>(
+                builder: (context, ThemeModel themeNotifier, child) {
+                  return GetMaterialApp(
+
+                    title: ConstantData.appName,
+                    home: example5,
+                    debugShowCheckedModeBanner: false,
+                   theme: themeNotifier.isDark ? _darkTheme: _lightTheme
+                  );
+                }));
+    return multiProvider;
+  }
+
+
+  ThemeData _darkTheme = ThemeData(
+    fontFamily: 'Raleway',
+    accentColor: primaryDarkColor,
+    brightness: Brightness.dark,
+    primaryColor: primaryDarkColor,
+    primarySwatch: primaryColorDarkTheme,
+
+
+  );
+
+  ThemeData _lightTheme = ThemeData(
+    fontFamily: 'Raleway',
+    accentColor: primaryColor,
+    brightness: Brightness.light,
+    primaryColor: primaryColor,
     primarySwatch: primaryColorTheme,
 
-
-
-      ),*/
-
-          /* light theme settings */
-          theme: ThemeData(
-            fontFamily: 'Raleway',
-            primarySwatch: primaryColorTheme,
-            primaryColor: primaryColor,
-          ),
-          themeMode: ThemeMode.light,
-        ));
-    return re;
-  }
+  );
 }

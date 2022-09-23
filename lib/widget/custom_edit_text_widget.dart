@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../custom_style/colors.dart';
 import '../utils/controller.dart';
@@ -32,7 +34,6 @@ bool showPass =true;
 
   @override
   Widget build(BuildContext context) {
-
     return TextField(
       autofocus:false,
       keyboardType: widget.isNumberField ? TextInputType.number : TextInputType.text,
@@ -45,6 +46,8 @@ bool showPass =true;
 
 
   InputDecoration boxContainer(String text) {
+    var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
+
     return InputDecoration(
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon:
@@ -70,12 +73,12 @@ bool showPass =true;
         hintText: text,
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(Controller.roundCorner),
-            borderSide: const BorderSide(
-                color: textFielBoxBorderColor, width: 1.0)),
+            borderSide:  BorderSide(
+                color: colorText, width: 1.0)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(Controller.roundCorner),
-            borderSide: const BorderSide(
-                color: textFielBoxBorderColor,
+            borderSide:  BorderSide(
+                color: colorText,
                 width: 1.0)
         )
 

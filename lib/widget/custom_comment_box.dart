@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
@@ -22,9 +23,8 @@ class CustomCommentBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-
-      Column(
+   var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
+    return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomTextWidget(text: label,fontWeight: FontWeight.bold,),
@@ -37,13 +37,13 @@ class CustomCommentBox extends StatelessWidget {
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
                       hintText: hintMessage,
-                      hintStyle: TextStyle(color: Colors.black26),
+                      hintStyle: TextStyle(color: colorText),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(width: 1, color: textFielBoxBorderColor),
+                        borderSide:  BorderSide(width: 1, color: colorText),
                         borderRadius: BorderRadius.circular(Controller.roundCorner),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(width: 1, color: textFielBoxBorderColor),
+                        borderSide:  BorderSide(width: 1, color: colorText),
                         borderRadius: BorderRadius.circular(Controller.roundCorner),
                       )),
 

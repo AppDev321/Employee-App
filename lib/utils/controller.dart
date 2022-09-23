@@ -20,6 +20,20 @@ class Controller {
   final String userKey = "user_key";
   final defaultPic = "http://simpleicon.com/wp-content/uploads/account.png";
 
+
+  static const PREF_KEY_THEME = "pref_key_theme";
+
+  setTheme(bool value) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setBool(PREF_KEY_THEME, value);
+  }
+
+  getTheme() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    return sharedPreferences.getBool(PREF_KEY_THEME) ?? false;
+  }
+
+
   Future<void> setFCMScreen(String screenName) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(this.fcm_screen, screenName.toLowerCase());

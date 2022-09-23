@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
@@ -27,19 +29,19 @@ class SettingMenu extends StatelessWidget {
           padding: EdgeInsets.all(20),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(Controller.roundCorner)),
-          backgroundColor: Color(0xFFF5F6F9),
+          backgroundColor: !Get.isDarkMode?cardThemeBaseColor:Color(0xFFF5F6F9),
         ),
         onPressed: press,
         child: Row(
           children: [
             SvgPicture.asset(
               icon,
-              color: Colors.black54,
+              color: !Get.isDarkMode?blackThemeTextColor:Colors.black54,
               width: 22,
             ),
             SizedBox(width: 20),
             Expanded(child: CustomTextWidget(text:text)),
-            Icon(Icons.arrow_forward_ios ,color: Colors.black54,),
+            Icon(Icons.arrow_forward_ios ,color: !Get.isDarkMode?blackThemeTextColor:Colors.black54,),
           ],
         ),
       ),

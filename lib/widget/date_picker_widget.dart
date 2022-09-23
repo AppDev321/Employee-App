@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
 import '../custom_style/colors.dart';
@@ -29,6 +31,8 @@ class _DateWidget extends State<DatePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
+
     return  Padding(
         padding: const EdgeInsets.only(top: 10),
         child: Column(
@@ -47,7 +51,7 @@ class _DateWidget extends State<DatePickerWidget> {
                 padding: EdgeInsets.only(
                     left: 5, right: 5),
                 decoration: BoxDecoration(
-                    border: Border.all(color: textFielBoxBorderColor, width: 1),
+                    border: Border.all(color: colorText, width: 1),
                     borderRadius: BorderRadius.circular(Controller.roundCorner)),
                 child: new InkWell(
 

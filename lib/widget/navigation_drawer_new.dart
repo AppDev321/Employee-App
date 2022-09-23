@@ -52,15 +52,13 @@ class NavigationDrawer extends StatelessWidget {
       width: isCollapsed ? MediaQuery.of(context).size.width * 0.2 : null,
       child: Drawer(
         child: Container(
-
-          color:whiteColor,
           child: Column(
             children: [
 
               UserAccountsDrawerHeader(
 
-                accountName: Text(ConstantData.appName),
-                accountEmail: Text(ConstantData.appVersion),
+                accountName: CustomTextWidget(text:ConstantData.appName),
+                accountEmail: CustomTextWidget(text:ConstantData.appVersion),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.white,
                   child: SizedBox(height: 50,width: 50,child:   Image.asset(ConstantData.logoIconPath) ),
@@ -135,6 +133,7 @@ class NavigationDrawer extends StatelessWidget {
 
   Widget buildMenuItem(
       {
+
         required BuildContext context,
     required bool isCollapsed,
     required String text,
@@ -142,12 +141,14 @@ class NavigationDrawer extends StatelessWidget {
     required DrawerItem item,
     required VoidCallback onClicked
   }) {
-    final color = Colors.black87;
+    var colorText = !Get.isDarkMode?blackThemeTextColor :Colors.black;
+
+
     final leading =
     SvgPicture.asset(
       item.svgPath,
       width: 15,
-      color: Colors.black,
+      color:colorText ,
 
     );
 

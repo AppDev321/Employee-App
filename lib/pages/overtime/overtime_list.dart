@@ -295,7 +295,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
 
         Container(
             decoration: BoxDecoration(
-              color:  Colors.white,
+              color: cardThemeBaseColor,
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))
@@ -328,7 +328,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cardThemeBaseColor,
                     borderRadius: BorderRadius.circular(0),
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),

@@ -120,7 +120,7 @@ class LeaveReportStateful extends State<LeaveReport> {
                 ),
                 AnimatedButtonBar(
                   padding: EdgeInsets.all(9),
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: cardThemeBaseColor,
                   radius: 20,
                   invertedSelection: true,
                   children: [
@@ -223,7 +223,7 @@ class LeaveReportStateful extends State<LeaveReport> {
                                                     Container(
                                                         width: MediaQuery.of(context).size.width,
                                                         decoration: BoxDecoration(
-                                                            color: Colors.white,
+                                                            color:cardThemeBaseColor,
                                                             borderRadius: BorderRadius.only(
                                                                 bottomRight: Radius.circular(Controller.roundCorner),
                                                                 topRight: Radius.circular(Controller.roundCorner))),

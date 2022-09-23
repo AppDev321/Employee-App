@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/repository/model/request/claim_shift_history_request.dart';
 import 'package:hnh_flutter/repository/model/response/claimed_shift_list.dart';
 import 'package:hnh_flutter/view_models/shift_list_vm.dart';
@@ -198,7 +200,7 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
               child: Container(
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color:  cardThemeBaseColor,
                       borderRadius: BorderRadius.only(
                           bottomRight: Radius.circular(Controller.roundCorner),
                           topRight: Radius.circular(Controller.roundCorner))),

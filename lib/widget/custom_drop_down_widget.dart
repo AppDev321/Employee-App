@@ -29,6 +29,7 @@ class CustomDropDownWidget extends StatefulWidget {
 class _CustomDropMenuWidget extends State<CustomDropDownWidget> {
   bool isFullWidth =true;
   DropMenuItems? dropdownValue ;
+  var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
 
 
   @override
@@ -43,6 +44,7 @@ class _CustomDropMenuWidget extends State<CustomDropDownWidget> {
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Row(
@@ -58,7 +60,7 @@ class _CustomDropMenuWidget extends State<CustomDropDownWidget> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.only(left: 5, right: 5),
             decoration: BoxDecoration(
-                border: Border.all(color:textFielBoxBorderColor, width: 1),
+                border: Border.all(color:colorText, width: 1),
                 borderRadius: BorderRadius.circular(Controller.roundCorner)),
             child:
             DropdownButton<DropMenuItems>(
@@ -92,7 +94,7 @@ class _CustomDropMenuWidget extends State<CustomDropDownWidget> {
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.only(left: 5, right: 5),
                 decoration: BoxDecoration(
-                    border: Border.all(color:textFielBoxBorderColor, width: 1),
+                    border: Border.all(color:colorText, width: 1),
                     borderRadius: BorderRadius.circular(Controller.roundCorner)),
                 child:
                 DropdownButton<DropMenuItems>(

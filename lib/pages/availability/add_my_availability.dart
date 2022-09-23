@@ -362,6 +362,8 @@ class AddAvailabilityStateful extends State<AddAvailability> {
           child: Column(
             children: [
               CheckboxListTile(
+                checkColor: Colors.white,
+                activeColor:primaryColor,
                 contentPadding: EdgeInsets.zero,
                 controlAffinity: ListTileControlAffinity.leading,
                 title: const Text('All Day'),

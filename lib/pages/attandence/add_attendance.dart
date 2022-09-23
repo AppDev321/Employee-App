@@ -41,7 +41,7 @@ class _AddAttandenceState extends State<AddAttandence> {
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 20.0,
-          color: Colors.white
+
         ),
       ),
       centerTitle: true,
@@ -117,9 +117,7 @@ class _AddAttandenceState extends State<AddAttandence> {
       _progressDialog?.initiateLDialog('Please wait..');
     }
 
-
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(menuAttandance),
       ),
@@ -137,17 +135,17 @@ class _AddAttandenceState extends State<AddAttandence> {
 
                     fontWeight: FontWeight.bold,
                     fontSize: 26.0,
-                    color: Color(0xFF1E1E1E)),
+                 ),
               ),
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(50.0, 5.0, 50.0, 20.0),
-              child: const Text(
+              child:  Text(
                 'Please give access to your Camera so that\n we can scan and provide you what is\n inside the code',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.4,
-                  color: Color(0xFFA0A0A0),
+
                 ),
               ),
             ),

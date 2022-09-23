@@ -83,10 +83,12 @@ class LoginClassStateful extends State<LoginClass> {
   }
 
   Widget _uiSetup(BuildContext context) {
+    var colorText = !Get.isDarkMode?blackThemeTextColor:cardDarkThemeBg;
+
     Widget welcomeBack = Text(
       'Welcome Back',
       style: TextStyle(
-          color: Colors.black,
+          color: colorText,
           fontSize: 34.0,
           fontWeight: FontWeight.bold,
           shadows: [
@@ -103,23 +105,25 @@ class LoginClassStateful extends State<LoginClass> {
         child: Text(
           'Login to your account',
           style: TextStyle(
-            color: Colors.black,
+            color:colorText,
             fontSize: 16.0,
           ),
         ));
 
     return Container(
-      decoration: const BoxDecoration(color: whiteColor),
+
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.transparent,
+
         body: SingleChildScrollView(
           child: Container(
             height: Get.mediaQuery.size.height,
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Container(
+
+                !Get.isDarkMode? Container(color: cardThemeBaseColor)
+                    :  Container(
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             fit: BoxFit.cover,
@@ -155,6 +159,8 @@ class LoginClassStateful extends State<LoginClass> {
                             controller: _passwordController,
                             isPasswordField: true),
                         CheckboxListTile(
+                          checkColor: Colors.white,
+                          activeColor:primaryColor,
                           contentPadding: EdgeInsets.zero,
                           controlAffinity: ListTileControlAffinity.leading,
                           title: const Text('Remember Me'),

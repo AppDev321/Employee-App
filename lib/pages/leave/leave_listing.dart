@@ -325,7 +325,7 @@ class _LeavePageState extends State<LeavePage>
         clipBehavior: Clip.antiAlias,
         child: Container(
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: cardThemeBaseColor,
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))),
@@ -359,7 +359,7 @@ class _LeavePageState extends State<LeavePage>
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cardThemeBaseColor,
                     borderRadius: BorderRadius.circular(0),
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),

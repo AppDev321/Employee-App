@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -16,6 +18,7 @@ class CustomCalanderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
     return TableCalendar(
       initialCalendarFormat: CalendarFormat.week,
 

@@ -222,7 +222,7 @@ class _NotificationListState extends State<NotificationList> {
       elevation: 8.0,
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Container(
-          decoration: BoxDecoration(color: Colors.white),
+
           child: Stack(children: <Widget>[
             item.isRead == 0
                 ? Positioned(

@@ -168,7 +168,7 @@ bool isPasswordUpdateCalled = false;
 
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: cardThemeBaseColor,
       // set this when inner content overflows, making RoundedRectangleBorder not working as expected
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(

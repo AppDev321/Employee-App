@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/response/user_profile.dart';
 import 'package:hnh_flutter/view_models/profile_vm.dart';
-import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
@@ -36,8 +35,7 @@ class _MyAccountState extends State<MyAccount> {
   TextEditingController cityController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
-
-  String userImageURL="";
+  String userImageURL = "";
 
   bool _isFirstLoadRunning = false;
   bool _isErrorInApi = false;
@@ -48,8 +46,7 @@ class _MyAccountState extends State<MyAccount> {
 
   late ImageProvider profileImageView;
 
-  bool tryToUploadImage=false;
-
+  bool tryToUploadImage = false;
 
   @override
   void initState() {
@@ -65,9 +62,7 @@ class _MyAccountState extends State<MyAccount> {
     _profileViewModel.getProfileDetail();
 
     _profileViewModel.addListener(() {
-
       _progressDialog?.hideOpenDialog();
-
 
       var checkErrorApiStatus = _profileViewModel.getIsErrorRecevied();
       if (checkErrorApiStatus) {
@@ -86,41 +81,34 @@ class _MyAccountState extends State<MyAccount> {
           _errorMsg = "";
         });
         profileDetail = _profileViewModel.getUserProfile();
-        if(profileDetail.profileURL != null)
-        userImageURL = profileDetail.profileURL.toString();
+        if (profileDetail.profileURL != null)
+          userImageURL = profileDetail.profileURL.toString();
 
         setState(() {
-          profileImageView=NetworkImage(
-            userImageURL.isEmpty?Controller().defaultPic:userImageURL,
+          profileImageView = NetworkImage(
+            userImageURL.isEmpty ? Controller().defaultPic : userImageURL,
           );
         });
       }
 
-
       var isProfileUpdated = _profileViewModel.getProileUpdateStatus();
-      if(isProfileUpdated)
-        {
-          /// send msg
-      //    FBroadcast.instance().broadcast(Controller().notificationBroadCast, value: userImageURL);
-          FBroadcast.instance().broadcast(
-            Controller().userKey,
-            value:userImageURL,
-            persistence: true,
-          );
+      if (isProfileUpdated) {
+        /// send msg
+        //    FBroadcast.instance().broadcast(Controller().notificationBroadCast, value: userImageURL);
+        FBroadcast.instance().broadcast(
+          Controller().userKey,
+          value: userImageURL,
+          persistence: true,
+        );
 
-
-          Navigator.pop(context);
-         Controller().showToastMessage(context,"Profile Updated Successfully");
-        }
-      else
-        {
-          if(_profileViewModel.getErrorMsg().isNotEmpty)
-          Controller().showToastMessage(context, _profileViewModel.getErrorMsg());
-        }
-
+        Navigator.pop(context);
+        Controller().showToastMessage(context, "Profile Updated Successfully");
+      } else {
+        if (_profileViewModel.getErrorMsg().isNotEmpty)
+          Controller()
+              .showToastMessage(context, _profileViewModel.getErrorMsg());
+      }
     });
-
-
   }
 
   @override
@@ -131,255 +119,275 @@ class _MyAccountState extends State<MyAccount> {
       _progressDialog?.initiateLDialog('Please wait..');
     }
 
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile"),
       ),
       body: Column(
         children: [
-          BlocBuilder<ConnectedBloc, ConnectedState>(
-              builder: (context, state) {
-                if (state is ConnectedFailureState) {
-                  return InternetNotAvailable();
-                }else
-                {
-
-
-                  return Container();
-                }
-              }
-          ),
-
-
-
+          BlocBuilder<ConnectedBloc, ConnectedState>(builder: (context, state) {
+            if (state is ConnectedFailureState) {
+              return InternetNotAvailable();
+            } else {
+              return Container();
+            }
+          }),
           _isFirstLoadRunning
               ? Expanded(child: Center(child: CircularProgressIndicator()))
               : _isErrorInApi
                   ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                   : Expanded(
                       child: RefreshIndicator(
-                        onRefresh:  _profileViewModel.getProfileDetail ,
+                        onRefresh: _profileViewModel.getProfileDetail,
                         child: Container(
                           padding: EdgeInsets.only(left: 16, top: 0, right: 16),
-                          child:  ListView(
-                              children: [
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                Center(
-                                  child: Stack(
-                                    children: [
-                                     tryToUploadImage?Container(
-                                       width: 130,
-                                       height: 130,
-                                       decoration: BoxDecoration(
-                                           border: Border.all(
-                                               width: 4, color: primaryColor),
-                                           boxShadow: [
-                                             BoxShadow(
-                                                 spreadRadius: 2,
-                                                 blurRadius: 10,
-                                                 color: Colors.black
-                                                     .withOpacity(0.1),
-                                                 offset: Offset(0, 10))
-                                           ],
-                                           shape: BoxShape.circle,
-
-                                       ),
-                                       child: CircularProgressIndicator(color: Colors.white,),
-                                     ): Container(
-                                        width: 130,
-                                        height: 130,
-                                        decoration: BoxDecoration(
+                          child: ListView(
+                            children: [
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Center(
+                                child: Stack(
+                                  children: [
+                                    tryToUploadImage
+                                        ? Container(
+                                            width: 130,
+                                            height: 130,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width: 4,
+                                                  color: primaryColor),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    spreadRadius: 2,
+                                                    blurRadius: 10,
+                                                    color: Colors.black
+                                                        .withOpacity(0.1),
+                                                    offset: Offset(0, 10))
+                                              ],
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : Container(
+                                            width: 130,
+                                            height: 130,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    width: 4,
+                                                    color: primaryColor),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      spreadRadius: 2,
+                                                      blurRadius: 10,
+                                                      color: Colors.black
+                                                          .withOpacity(0.1),
+                                                      offset: Offset(0, 10))
+                                                ],
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image: profileImageView)),
+                                          ),
+                                    Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Container(
+                                          height: 40,
+                                          width: 40,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
                                             border: Border.all(
                                                 width: 4, color: primaryColor),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  spreadRadius: 2,
-                                                  blurRadius: 10,
-                                                  color: Colors.black
-                                                      .withOpacity(0.1),
-                                                  offset: Offset(0, 10))
-                                            ],
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image:profileImageView)
-                                        ),
-                                      ),
-                                      Positioned(
-                                          bottom: 0,
-                                          right: 0,
-                                          child: Container(
-                                            height: 40,
-                                            width: 40,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                  width: 4, color: primaryColor),
-                                              color: primaryColor,
+                                            color: primaryColor,
+                                          ),
+                                          child: InkWell(
+                                            onTap: () {
+                                              _profileViewModel
+                                                  .showPicker(context, (value) {
+                                                setState(() {
+                                                  profileImageView =
+                                                      FileImage(value);
+                                                  tryToUploadImage = true;
+                                                });
+
+                                                _profileViewModel
+                                                    .uploadProfileImage(value,
+                                                        (isUploaded) {
+                                                  //File path
+                                                }, (imageUrl) {
+                                                  print(imageUrl);
+                                                  setState(() {
+                                                    userImageURL = imageUrl;
+                                                    tryToUploadImage = false;
+                                                  });
+                                                });
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.edit,
+                                              color: Colors.white,
                                             ),
-                                            child: InkWell(
-                                              onTap: (){
-                                  _profileViewModel.showPicker(context,(value){
-                                    setState(() {
-
-                                      profileImageView = FileImage( value);
-                                      tryToUploadImage = true;
-                                    });
-
-                                    _profileViewModel.uploadProfileImage(value,(isUploaded){
-                                    //File path
-                                    },(imageUrl){
-                                        print(imageUrl);
-                                        setState(() {
-                                          userImageURL = imageUrl;
-                                          tryToUploadImage = false;
-                                        });
-
-                                    });
-
-
-
-                                  });
-                                              },
-                                              child: Icon(
-                                                Icons.edit,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 35,
-                                ),
-                                buildTextField(
-                                    firstNameController,
-                                    "First Name",
-                                    profileDetail.firstName ?? "N/A",
-                                    false,
-                                    false),
-                                buildTextField(
-                                    lastNameController,
-                                    "Last Name",
-                                    profileDetail.lastName ?? "N/A",
-                                    false,
-                                    false),
-                                buildTextField(
-                                    emailController,
-                                    "Personal Email",
-                                    profileDetail.personalEmail ?? "N/A",
-                                    false,
-                                    false),
-                                buildTextField(
-                                    currentAddressController,
-                                    "Current Address",
-                                    profileDetail.currentAddress ?? "N/A",
-                                    false,
-                                    false),
-                                buildTextField(
-                                    permanentAddressController,
-                                    "Permanent Address",
-                                    profileDetail.permanentAddress ?? "N/A",
-                                    false,
-                                    false),
-                                buildTextField(cityController, "City",
-                                    profileDetail.city ?? "N/A", false, false),
-                                buildTextField(
-                                    phoneController,
-                                    "Contact Number",
-                                    profileDetail.contactNumber ?? "N/A",
-                                    false,
-                                    true),
-                                buildTextField(
-                                    emergencyController,
-                                    "Emergency Number",
-                                    profileDetail.emergencyContact ?? "N/A",
-                                    false,
-                                    true),
-                                buildTextField(
-                                    emergencyAddressController,
-                                    "Emergency Address",
-                                    profileDetail.emergencyAddress ?? "N/A",
-                                    false,
-                                    false),
-                                buildTextField(
-                                    emergencyRelationController,
-                                    "Emergency Contact Relation",
-                                    profileDetail.emergencyContactRelation ?? "N/A",
-                                    false,
-                                    false),
-
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                      width:120,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Get.back();
-                                        },
-                                        style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.grey),
-                                            textStyle:
-                                            MaterialStateProperty.all(TextStyle(fontSize: 12))),
-                                        child: Text('Cancel'),
-                                      ),
-                                    ),
-
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Container(
-                                      width:120,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          _progressDialog?.showLoadingDialog();
-
-                                          var request = profileDetail;
-                                          request.firstName = getStringValue(firstNameController,request.firstName ?? 'N/A');
-                                          request.lastName = getStringValue(lastNameController,request.lastName ?? 'N/A');
-                                          request.city = getStringValue(cityController,request.city ?? 'N/A');
-                                          request.contactNumber = getStringValue(phoneController,request.contactNumber ?? 'N/A');
-                                          request.emergencyContact = getStringValue(emergencyController,request.emergencyContact ??   'N/A');
-                                          request.permanentAddress = getStringValue(permanentAddressController,request.permanentAddress ?? 'N/A');
-                                          request.currentAddress = getStringValue(currentAddressController,request.currentAddress ?? 'N/A');
-                                          request.personalEmail = getStringValue(emailController,request.personalEmail ?? 'N/A');
-                                          request.emergencyAddress = getStringValue(emergencyAddressController,request.emergencyAddress ?? 'N/A');
-                                          request.emergencyContactRelation = getStringValue(emergencyRelationController,request.emergencyContactRelation ?? 'N/A');
-                                          request.profileURL = userImageURL;
-
-                                          _profileViewModel.updateUserProfile(request);
-                                        },
-                                        style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(primaryColor),
-                                            textStyle:
-                                            MaterialStateProperty.all(TextStyle(fontSize: 12))),
-                                        child: Text('Save'),
-                                      ),
-                                    ),
-
-
-
+                                          ),
+                                        )),
                                   ],
                                 ),
+                              ),
+                              SizedBox(
+                                height: 35,
+                              ),
+                              buildTextField(
+                                  firstNameController,
+                                  "First Name",
+                                  profileDetail.firstName ?? "N/A",
+                                  false,
+                                  false),
+                              buildTextField(
+                                  lastNameController,
+                                  "Last Name",
+                                  profileDetail.lastName ?? "N/A",
+                                  false,
+                                  false),
+                              buildTextField(
+                                  emailController,
+                                  "Personal Email",
+                                  profileDetail.personalEmail ?? "N/A",
+                                  false,
+                                  false),
+                              buildTextField(
+                                  currentAddressController,
+                                  "Current Address",
+                                  profileDetail.currentAddress ?? "N/A",
+                                  false,
+                                  false),
+                              buildTextField(
+                                  permanentAddressController,
+                                  "Permanent Address",
+                                  profileDetail.permanentAddress ?? "N/A",
+                                  false,
+                                  false),
+                              buildTextField(cityController, "City",
+                                  profileDetail.city ?? "N/A", false, false),
+                              buildTextField(
+                                  phoneController,
+                                  "Contact Number",
+                                  profileDetail.contactNumber ?? "N/A",
+                                  false,
+                                  true),
+                              buildTextField(
+                                  emergencyController,
+                                  "Emergency Number",
+                                  profileDetail.emergencyContact ?? "N/A",
+                                  false,
+                                  true),
+                              buildTextField(
+                                  emergencyAddressController,
+                                  "Emergency Address",
+                                  profileDetail.emergencyAddress ?? "N/A",
+                                  false,
+                                  false),
+                              buildTextField(
+                                  emergencyRelationController,
+                                  "Emergency Contact Relation",
+                                  profileDetail.emergencyContactRelation ??
+                                      "N/A",
+                                  false,
+                                  false),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    width: 120,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.grey),
+                                          textStyle: MaterialStateProperty.all(
+                                              TextStyle(fontSize: 12))),
+                                      child: Text('Cancel'),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Container(
+                                    width: 120,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        _progressDialog?.showLoadingDialog();
 
-                                SizedBox(
-                                  height: 50,
-                                ),
-                              ],
-                            ),
+                                        var request = profileDetail;
+                                        request.firstName = getStringValue(
+                                            firstNameController,
+                                            request.firstName ?? 'N/A');
+                                        request.lastName = getStringValue(
+                                            lastNameController,
+                                            request.lastName ?? 'N/A');
+                                        request.city = getStringValue(
+                                            cityController,
+                                            request.city ?? 'N/A');
+                                        request.contactNumber = getStringValue(
+                                            phoneController,
+                                            request.contactNumber ?? 'N/A');
+                                        request.emergencyContact =
+                                            getStringValue(
+                                                emergencyController,
+                                                request.emergencyContact ??
+                                                    'N/A');
+                                        request.permanentAddress =
+                                            getStringValue(
+                                                permanentAddressController,
+                                                request.permanentAddress ??
+                                                    'N/A');
+                                        request.currentAddress = getStringValue(
+                                            currentAddressController,
+                                            request.currentAddress ?? 'N/A');
+                                        request.personalEmail = getStringValue(
+                                            emailController,
+                                            request.personalEmail ?? 'N/A');
+                                        request.emergencyAddress =
+                                            getStringValue(
+                                                emergencyAddressController,
+                                                request.emergencyAddress ??
+                                                    'N/A');
+                                        request.emergencyContactRelation =
+                                            getStringValue(
+                                                emergencyRelationController,
+                                                request.emergencyContactRelation ??
+                                                    'N/A');
+                                        request.profileURL = userImageURL;
+
+                                        _profileViewModel
+                                            .updateUserProfile(request);
+                                      },
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  primaryColor),
+                                          textStyle: MaterialStateProperty.all(
+                                              TextStyle(fontSize: 12))),
+                                      child: Text('Save'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 50,
+                              ),
+                            ],
                           ),
+                        ),
                       ),
-                      ),
-
+                    ),
         ],
       ),
     );
@@ -387,6 +395,7 @@ class _MyAccountState extends State<MyAccount> {
 
   Widget buildTextField(TextEditingController controller, String labelText,
       String placeholder, bool isPasswordTextField, bool isNumber) {
+    var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
     return Padding(
       padding: const EdgeInsets.only(bottom: 35.0),
       child: TextField(
@@ -411,18 +420,14 @@ class _MyAccountState extends State<MyAccount> {
             labelText: labelText,
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: placeholder,
-            hintStyle: TextStyle(fontSize: 14, color: Colors.black)),
+            hintStyle: TextStyle(
+                fontSize: 14,
+                color: colorText)),
       ),
     );
   }
 
-
-
-  String getStringValue(TextEditingController value,String defaultValue)
-  {
-    return value.text.toString().isEmpty ?  defaultValue : value.text.toString();
-
+  String getStringValue(TextEditingController value, String defaultValue) {
+    return value.text.toString().isEmpty ? defaultValue : value.text.toString();
   }
 }
-
-

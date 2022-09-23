@@ -5,6 +5,7 @@ import 'package:hnh_flutter/repository/model/request/change_password_request.dar
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:image_picker/image_picker.dart';
+import '../custom_style/colors.dart';
 import '../repository/model/response/user_profile.dart';
 import '../utils/controller.dart';
 import '../widget/custom_text_widget.dart';
@@ -128,7 +129,7 @@ Future<void> getUserImageURLPreferecne() async{
    void showPicker(context,ValueChanged<File> imageFile) {
      showModalBottomSheet(
          context: context,
-         backgroundColor: Colors.white,
+         backgroundColor: cardThemeBaseColor,
          // set this when inner content overflows, making RoundedRectangleBorder not working as expected
          clipBehavior: Clip.antiAlias,
          shape: RoundedRectangleBorder(
