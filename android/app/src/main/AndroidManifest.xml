@@ -19,7 +19,7 @@
     <application
         android:label="AFJ CRM"
         android:name="${applicationName}"
-        android:icon="@drawable/afj_logo">
+        android:icon="@drawable/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"

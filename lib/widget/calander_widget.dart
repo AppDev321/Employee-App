@@ -18,7 +18,7 @@ class CustomCalanderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
+    var colorText =borderColor;
     return TableCalendar(
       initialCalendarFormat: CalendarFormat.week,
 

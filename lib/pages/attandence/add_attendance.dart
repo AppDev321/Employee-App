@@ -116,7 +116,7 @@ class _AddAttandenceState extends State<AddAttandence> {
       _progressDialog = DialogBuilder(_dialogContext!);
       _progressDialog?.initiateLDialog('Please wait..');
     }
-
+    var colorText = Get.isDarkMode ? blackThemeTextColor : Colors.black;
     return Scaffold(
       appBar: AppBar(
         title: Text(menuAttandance),
@@ -132,7 +132,7 @@ class _AddAttandenceState extends State<AddAttandence> {
                 'Scan QR-Code for Attendance',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-
+                  color:colorText,
                     fontWeight: FontWeight.bold,
                     fontSize: 26.0,
                  ),
@@ -141,11 +141,12 @@ class _AddAttandenceState extends State<AddAttandence> {
             Container(
               padding: const EdgeInsets.fromLTRB(50.0, 5.0, 50.0, 20.0),
               child:  Text(
+
                 'Please give access to your Camera so that\n we can scan and provide you what is\n inside the code',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.4,
-
+                  color:colorText,
                 ),
               ),
             ),
@@ -163,6 +164,7 @@ class _AddAttandenceState extends State<AddAttandence> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             backgroundColor: primaryColor,
             label:  Text(
+
               "Scan QR Code",
               style: TextStyle(
 

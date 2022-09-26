@@ -29,7 +29,7 @@ class CustomDropDownWidget extends StatefulWidget {
 class _CustomDropMenuWidget extends State<CustomDropDownWidget> {
   bool isFullWidth =true;
   DropMenuItems? dropdownValue ;
-  var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
+  var colorText =borderColor;
 
 
   @override

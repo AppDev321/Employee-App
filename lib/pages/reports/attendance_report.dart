@@ -235,7 +235,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                   Expanded(
                       flex: 1,
                       child: Container(
-                          color: !Get.isDarkMode?primaryColor:HexColor.fromHex("#dff4d8"),
+                          color: Get.isDarkMode?primaryColor:HexColor.fromHex("#dff4d8"),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,

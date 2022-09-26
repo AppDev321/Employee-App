@@ -129,6 +129,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                                 fontWeight: FontWeight.bold,
                                 size: 18,
                                 maxLines: 2,
+                                color:Colors.white
                               ),
                               SizedBox(
                                 height: 10,
@@ -139,6 +140,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                                 fontWeight: FontWeight.bold,
                                 size: 12,
                                 maxLines: item.isEmpty ? 3 : 2,
+                                  color:Colors.white
                               ),
                               SizedBox(
                                 height: 10,

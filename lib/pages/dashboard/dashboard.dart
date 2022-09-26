@@ -43,7 +43,8 @@ class _DashboardState extends State<Dashboard> {
   List<DashBoardGrid> listStats = [];
   List<DashBoardGrid> listQuickAccess = [];
   bool _isFirstLoadRunning = false;
-
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  new GlobalKey<RefreshIndicatorState>();
   bool _isErrorInApi = false;
   String? _errorMsg = "";
   late DashBoardViewModel _dashBoardViewModel;
@@ -169,26 +170,26 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    var colorText = !Get.isDarkMode ? blackThemeTextColor : primaryColor;
+
 
 
     return Consumer<ThemeModel>(
         builder: (context, ThemeModel themeNotifier, child) {
-      return Scaffold(
-        drawer: NavigationDrawer(),
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: colorText),
-          elevation: 0,
-          titleSpacing: 10,
-          backgroundColor:
-              !Get.isDarkMode ? textFielBoxBorderColor : Colors.white,
-          title: Align(
-            alignment: Alignment.centerLeft,
-            child: CustomTextWidget(
-              text: Controller().greeting(),
-              size: 22,
-              color: colorText,
-            ),
+          var colorText = themeNotifier.isDark ? blackThemeTextColor : primaryColor;
+          return Scaffold(
+          drawer: NavigationDrawer(),
+          appBar: AppBar(
+            iconTheme: IconThemeData(color: colorText),
+            elevation: 0,
+            titleSpacing: 10,
+            backgroundColor:  themeNotifier.isDark ? Colors.black : Colors.white,
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: CustomTextWidget(
+                text: Controller().greeting(),
+                size: 22,
+                color: colorText,
+              ),
           ),
           actions: <Widget>[
             Row(
@@ -218,7 +219,8 @@ class _DashboardState extends State<Dashboard> {
                           themeNotifier.isDark
                               ? themeNotifier.isDark = false
                               : themeNotifier.isDark = true;
-                          build(context);
+                        _refreshIndicatorKey.currentState?.show();
+
                         })),
               ],
             )
@@ -242,6 +244,7 @@ class _DashboardState extends State<Dashboard> {
             }),
             Expanded(
               child: RefreshIndicator(
+                key:_refreshIndicatorKey,
                 onRefresh: _dashBoardViewModel.getDashBoardData,
                 child: SingleChildScrollView(
                   child: Padding(

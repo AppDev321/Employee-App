@@ -23,7 +23,7 @@ class CustomCommentBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
+   var colorText =borderColor;
     return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -104,9 +104,9 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
       _progressDialog = DialogBuilder(_dialogContext!);
       _progressDialog?.initiateLDialog('Please wait..');
     }
+    var colorText = Get.isDarkMode ? blackThemeTextColor : Colors.black;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(menuScanVehicleTab),
       ),
@@ -124,17 +124,18 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 26.0,
-                    color: Color(0xFF1E1E1E)),
+                    color: colorText),
               ),
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(50.0, 5.0, 50.0, 20.0),
-              child: const Text(
+              child:  Text(
                 'Please give access to your Camera so that\n we can scan and provide you what is\n inside the code',
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  color: colorText,
                   height: 1.4,
-                  color: Color(0xFFA0A0A0),
+
                 ),
               ),
             ),

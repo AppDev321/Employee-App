@@ -24,7 +24,7 @@ class CustomTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var colorText =!Get.isDarkMode?blackThemeTextColor:color;
+    var colorText = Get.isDarkMode ? blackThemeTextColor : color;
 
     return Container(
       child: onClick == null

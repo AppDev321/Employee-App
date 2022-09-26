@@ -5,7 +5,7 @@ import '../custom_style/colors.dart';
 import '../utils/controller.dart';
 
 class ThemeModel extends ChangeNotifier {
-  late bool _isDark;
+  late bool _isDark ;
   late Controller _preferences;
   bool get isDark => _isDark;
 
@@ -15,7 +15,7 @@ class ThemeModel extends ChangeNotifier {
     getPreferences();
   }
 
-//Switching themes in the flutter apps - Flutterant
+
   set isDark(bool value) {
     _isDark = value;
     _preferences.setTheme(value);

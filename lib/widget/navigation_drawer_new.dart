@@ -57,8 +57,8 @@ class NavigationDrawer extends StatelessWidget {
 
               UserAccountsDrawerHeader(
 
-                accountName: CustomTextWidget(text:ConstantData.appName),
-                accountEmail: CustomTextWidget(text:ConstantData.appVersion),
+                accountName: CustomTextWidget(text:ConstantData.appName,color: Colors.white,),
+                accountEmail: CustomTextWidget(text:ConstantData.appVersion,color: Colors.white),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.white,
                   child: SizedBox(height: 50,width: 50,child:   Image.asset(ConstantData.logoIconPath) ),
@@ -141,7 +141,8 @@ class NavigationDrawer extends StatelessWidget {
     required DrawerItem item,
     required VoidCallback onClicked
   }) {
-    var colorText = !Get.isDarkMode ? blackThemeTextColor : Colors.black;
+
+    var colorText =  borderColor;
 
 
     final leading =

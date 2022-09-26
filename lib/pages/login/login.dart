@@ -83,7 +83,7 @@ class LoginClassStateful extends State<LoginClass> {
   }
 
   Widget _uiSetup(BuildContext context) {
-    var colorText = !Get.isDarkMode?blackThemeTextColor:cardDarkThemeBg;
+    var colorText = Get.isDarkMode?blackThemeTextColor:cardDarkThemeBg;
 
     Widget welcomeBack = Text(
       'Welcome Back',
@@ -121,15 +121,16 @@ class LoginClassStateful extends State<LoginClass> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-
-                !Get.isDarkMode? Container(color: cardThemeBaseColor)
-                    :  Container(
+                Get.isDarkMode?Container(color: cardThemeBaseColor)
+                    : Container(
                     decoration: BoxDecoration(
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                              "https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?w=2000",
-                            )))),
+                      image: DecorationImage(
+                        image: AssetImage("assets/images/login_bg.jpg"),
+                        fit: BoxFit.fitHeight,
+                        alignment: Alignment.topCenter,
+                      ),
+                    ))
+                    ,
                 SingleChildScrollView(
                   child: Container(
                     margin: EdgeInsets.only(

@@ -29,19 +29,19 @@ class SettingMenu extends StatelessWidget {
           padding: EdgeInsets.all(20),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(Controller.roundCorner)),
-          backgroundColor: !Get.isDarkMode?cardThemeBaseColor:Color(0xFFF5F6F9),
+          backgroundColor: Get.isDarkMode?cardThemeBaseColor:Color(0xFFF5F6F9),
         ),
         onPressed: press,
         child: Row(
           children: [
             SvgPicture.asset(
               icon,
-              color: !Get.isDarkMode?blackThemeTextColor:Colors.black54,
+              color: Get.isDarkMode?blackThemeTextColor:Colors.black54,
               width: 22,
             ),
             SizedBox(width: 20),
             Expanded(child: CustomTextWidget(text:text)),
-            Icon(Icons.arrow_forward_ios ,color: !Get.isDarkMode?blackThemeTextColor:Colors.black54,),
+            Icon(Icons.arrow_forward_ios ,color: Get.isDarkMode?blackThemeTextColor:Colors.black54,),
           ],
         ),
       ),

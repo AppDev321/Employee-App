@@ -137,7 +137,7 @@ class MyApp extends StatelessWidget {
       duration: 3000,
       imageSize: 300,
       imageSrc: ConstantData.logoIconPath,
-      backgroundColor: cardThemeBaseColor,
+
     );
     var multiProvider = MultiProvider(
 
@@ -147,11 +147,18 @@ class MyApp extends StatelessWidget {
         ],
         child:  Consumer<ThemeModel>(
                 builder: (context, ThemeModel themeNotifier, child) {
+
+                   primaryColor =  themeNotifier.isDark ? primaryDarkColor : primaryBlueColor;
+                   cardThemeBaseColor =  themeNotifier.isDark ? Colors.black : Colors.white;
+                   borderColor = themeNotifier.isDark ? blackThemeTextColor  : textFielBoxBorderColor;
+
+
                   return GetMaterialApp(
                     title: ConstantData.appName,
                     home: example5,
                     debugShowCheckedModeBanner: false,
-                    theme: themeNotifier.isDark ? _darkTheme: _lightTheme
+                    theme: themeNotifier.isDark ? _darkTheme: _lightTheme,
+                    themeMode: themeNotifier.isDark ? ThemeMode.dark: ThemeMode.light,
                   );
                 }));
     return multiProvider;

@@ -395,7 +395,7 @@ class _MyAccountState extends State<MyAccount> {
 
   Widget buildTextField(TextEditingController controller, String labelText,
       String placeholder, bool isPasswordTextField, bool isNumber) {
-    var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
+    var colorText = Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
     return Padding(
       padding: const EdgeInsets.only(bottom: 35.0),
       child: TextField(

@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 
 
-
+Color borderColor = textFielBoxBorderColor;
 const Color blackThemeTextColor = Color(0xECECECFF);
 Color cardDarkThemeBg =HexColor.fromHex("#333333");
 Color primaryDarkColor = HexColor.fromHex("#FFBF00");
+Color primaryBlueColor = HexColor.fromHex("#0047AB");
 Color cardThemeBaseColor = HexColor.fromHex("#FFBF00");
 
 Color primaryColor = HexColor.fromHex("#0047AB");
@@ -18,6 +19,10 @@ final Color greenColor = Colors.green.shade400;
 const Color blueColor = Colors.lightBlueAccent;
 const Color whiteColor = Colors.white;
 const Color textFielBoxBorderColor =Colors.black38;
+
+
+
+
 
 
 
@@ -62,8 +67,8 @@ MaterialColor primaryColorDarkTheme = MaterialColor(primaryDarkColor.value, <int
 
 List<List<Color>> gradientColorArray=[
   [ HexColor.fromHex("#6D80FE"), HexColor.fromHex("#23D2FD")], //blue
-  [ HexColor.fromHex("#FF998B"), HexColor.fromHex("#FF6D88")], //pink
-  [ HexColor.fromHex("#09AFE8"), HexColor.fromHex("#29F499")], //green
+  [ HexColor.fromHex("#eb3349"), HexColor.fromHex("#f45c43")], //Cherry
+  [ HexColor.fromHex("#42275a"), HexColor.fromHex("#734b6d")], //Mauve
 
   [ HexColor.fromHex("#707CFF"), HexColor.fromHex("#FA81E8")], //purple
   [ HexColor.fromHex("#ffafbd"), HexColor.fromHex("#ffc3a0")], //Roseanna
@@ -71,13 +76,14 @@ List<List<Color>> gradientColorArray=[
   [ HexColor.fromHex("#cc2b5e"), HexColor.fromHex("#753a88")], //Purple Love
 
   [ HexColor.fromHex("#ee9ca7"), HexColor.fromHex("#ffdde1")], //Piglet
-  [ HexColor.fromHex("#42275a"), HexColor.fromHex("#734b6d")], //Mauve
+
   [ HexColor.fromHex("#bdc3c7"), HexColor.fromHex("#2c3e50")], // 50 Shades of Grey
+  [ HexColor.fromHex("#09AFE8"), HexColor.fromHex("#29F499")], //green
+
 
   [ HexColor.fromHex("#de6262"), HexColor.fromHex("#ffb88c")], //A Lost Memory
   [ HexColor.fromHex("#06beb6"), HexColor.fromHex("#48b1bf")], //Socialive
-  [ HexColor.fromHex("#eb3349"), HexColor.fromHex("#f45c43")], //Cherry
-
+  [ HexColor.fromHex("#FF998B"), HexColor.fromHex("#FF6D88")],
 
   [ HexColor.fromHex("#dd5e89"), HexColor.fromHex("#f7bb97")], //Pinky
   [ HexColor.fromHex("#56ab2f"), HexColor.fromHex("#a8e063")], //Lush

@@ -289,6 +289,13 @@ class Controller {
       },
     );
   }
+
+
+ Color getThemeTextColor()
+  {
+    return (Get.isDarkMode ? primaryColor:blackThemeTextColor);
+  }
+
 }
 
 enum Screen {

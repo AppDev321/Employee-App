@@ -31,7 +31,7 @@ class _DateWidget extends State<DatePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
+    var colorText =borderColor;
 
     return  Padding(
         padding: const EdgeInsets.only(top: 10),

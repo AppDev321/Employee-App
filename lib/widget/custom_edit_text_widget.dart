@@ -46,7 +46,7 @@ bool showPass =true;
 
 
   InputDecoration boxContainer(String text) {
-    var colorText =!Get.isDarkMode?blackThemeTextColor:textFielBoxBorderColor;
+    var colorText =borderColor;
 
     return InputDecoration(
         floatingLabelBehavior: FloatingLabelBehavior.always,
