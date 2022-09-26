@@ -47,7 +47,6 @@ void main() async {
 
   fcmToken = await FirebaseMessaging.instance.getToken();
 
-
   if (Platform.isIOS) {
     platFormType = "IOS";
   } else {
@@ -122,10 +121,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-
-
     Widget example5 = SplashScreenView(
       navigateRoute: FutureBuilder<bool>(
           future: checkPassPreference(),
@@ -153,11 +148,10 @@ class MyApp extends StatelessWidget {
         child:  Consumer<ThemeModel>(
                 builder: (context, ThemeModel themeNotifier, child) {
                   return GetMaterialApp(
-
                     title: ConstantData.appName,
                     home: example5,
                     debugShowCheckedModeBanner: false,
-                   theme: themeNotifier.isDark ? _darkTheme: _lightTheme
+                    theme: themeNotifier.isDark ? _darkTheme: _lightTheme
                   );
                 }));
     return multiProvider;

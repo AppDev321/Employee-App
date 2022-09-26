@@ -445,7 +445,7 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList> {
                               });
                             },
                             child: TextColorContainer(
-                              label: "Del",
+                              label: "Delete",
                               color: claimedShiftRejectColor,
                               icon: Icons.delete,
                             ),

@@ -171,12 +171,6 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     var colorText = !Get.isDarkMode ? blackThemeTextColor : primaryColor;
 
-    print("is Dashbord created");
-
-    print("GetDark = ${!Get.isDarkMode}");
-
-    primaryColor = !Get.isDarkMode ? primaryDarkColor : primaryColor;
-    cardThemeBaseColor = !Get.isDarkMode ? cardDarkThemeBg : Colors.white;
 
     return Consumer<ThemeModel>(
         builder: (context, ThemeModel themeNotifier, child) {
@@ -191,7 +185,7 @@ class _DashboardState extends State<Dashboard> {
           title: Align(
             alignment: Alignment.centerLeft,
             child: CustomTextWidget(
-              text: Get.isDarkMode.toString(), //Controller().greeting(),
+              text: Controller().greeting(),
               size: 22,
               color: colorText,
             ),

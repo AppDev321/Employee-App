@@ -141,7 +141,7 @@ class NavigationDrawer extends StatelessWidget {
     required DrawerItem item,
     required VoidCallback onClicked
   }) {
-    var colorText = !Get.isDarkMode?blackThemeTextColor :Colors.black;
+    var colorText = !Get.isDarkMode ? blackThemeTextColor : Colors.black;
 
 
     final leading =

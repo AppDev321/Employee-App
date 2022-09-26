@@ -8,14 +8,12 @@ import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import '../custom_style/colors.dart';
 import 'color_text_round_widget.dart';
 
-
 class ImageSliderWidget extends StatefulWidget {
   final List<String> imagesList = [
     'https://scontent.fisb6-1.fna.fbcdn.net/v/t1.6435-9/164797247_291565822329729_7202526337027002463_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=cs__k59ABbIAX8AbVAM&_nc_ht=scontent.fisb6-1.fna&oh=00_AT_-DvXzYqw45AVb7Lh2Ek5c2dN2gDX3dL3fIr13psaccA&oe=63516E10',
     'https://images.unsplash.com/photo-1584339312444-6952d098e152?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8bXVzbGltJTIwZ2lybHxlbnwwfHwwfHw%3D&w=1000&q=80',
-'https://pbs.twimg.com/media/DwJz644X4AYS504.jpg',
-'https://c.wallhere.com/images/a5/5a/5b12ef0dd27a657915d3adeeb9b1-1920945.jpg!d'
-
+    'https://pbs.twimg.com/media/DwJz644X4AYS504.jpg',
+    'https://c.wallhere.com/images/a5/5a/5b12ef0dd27a657915d3adeeb9b1-1920945.jpg!d'
   ];
 
   ImageSliderWidget({
@@ -50,7 +48,6 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
               autoPlay: true,
               autoPlayCurve: Curves.fastOutSlowIn,
               autoPlayAnimationDuration: Duration(milliseconds: 800),
-
               viewportFraction: 1.0,
               onPageChanged: (index, reason) {
                 setState(
@@ -63,12 +60,10 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
             items: imagesList
                 .map(
                   (item) => Container(
-
-                    width: Get.mediaQuery.size.width,
+                      width: Get.mediaQuery.size.width,
                       margin: EdgeInsets.all(5),
-                      padding: EdgeInsets.symmetric(horizontal:2, vertical: 2),
+                      padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                       decoration: BoxDecoration(
-
                         gradient: new LinearGradient(
                             colors: gradientColorArray[_currentIndex],
                             begin: Alignment.topLeft,
@@ -89,65 +84,81 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-
-                          item.isEmpty ?Container():
-                         Container(
-                           constraints: BoxConstraints(minWidth: 150, maxWidth: 220),
-
-                                child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    item,
-                                    fit: BoxFit.fill,
-                                    loadingBuilder: (BuildContext context, Widget child,
-                                        ImageChunkEvent? loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value: loadingProgress.expectedTotalBytes != null
-                                              ? loadingProgress.cumulativeBytesLoaded /
-                                              loadingProgress.expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      );
-                                    },
+                          item.isEmpty
+                              ? Container()
+                              : Container(
+                                  constraints: BoxConstraints(
+                                      minWidth: 150, maxWidth: 220),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.network(
+                                      item,
+                                      fit: BoxFit.fill,
+                                      loadingBuilder: (BuildContext context,
+                                          Widget child,
+                                          ImageChunkEvent? loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            value: loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                        .cumulativeBytesLoaded /
+                                                    loadingProgress
+                                                        .expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-
-                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 10,
+                          ),
                           Expanded(
-
-                            child:Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                CustomTextWidget(text: "Title of WidgetTitle of WidgetTitle",fontWeight:FontWeight.bold,size:18,maxLines: 2,),
-                                SizedBox(height: 10,),
-                                CustomTextWidget(text: "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget",
-                                  fontWeight:FontWeight.bold,size:12,maxLines: item.isEmpty ?3:2,),
-                                SizedBox(height: 10,),
-                                InkWell(
-                                  onTap: (){
-                                    showEventDescriptionDialog(context,item);
-                                  },
-                                  child: TextColorContainer(
-                                      label: "Read More",
-                                      color:
-                                      Colors.white),
-                                ),
-
-                              ],
-                            )
-                          )
+                              child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              CustomTextWidget(
+                                text: "Title of WidgetTitle of WidgetTitle",
+                                fontWeight: FontWeight.bold,
+                                size: 18,
+                                maxLines: 2,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              CustomTextWidget(
+                                text:
+                                    "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget",
+                                fontWeight: FontWeight.bold,
+                                size: 12,
+                                maxLines: item.isEmpty ? 3 : 2,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  showEventDescriptionDialog(context, item);
+                                },
+                                child: TextColorContainer(
+                                    label: "Read More", color: Colors.white),
+                              ),
+                            ],
+                          ))
                         ],
                       )),
                 )
                 .toList(),
           ),
         ),
-       /* Row(
+        /* Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: imagesList.map((urlOfItem) {
             int index = imagesList.indexOf(urlOfItem);
@@ -168,10 +179,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
     );
   }
 
-
-
-
-  showEventDescriptionDialog(BuildContext context,String item) {
+  showEventDescriptionDialog(BuildContext context, String item) {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: cardThemeBaseColor,
@@ -179,10 +187,11 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
+
       builder: (BuildContext context) {
         return Container(
-          child: Center(
-            child: Column(
+
+          child: Column(
               children: [
                 Container(
                     padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -191,41 +200,55 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                       fontWeight: FontWeight.bold,
                       size: 18,
                     )),
-                item.isEmpty ?Container():
-                Expanded(
-                  child: Image.network(
-                    item,
-                    fit: BoxFit.fill,
-                    loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                              : null,
+                item.isEmpty
+                    ? Container()
+                    : Expanded(
+                        child: Container(
+                          margin: EdgeInsets.all(10),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(30.0),
+                            child: Image.network(
+                              item,
+                              fit: BoxFit.fill,
+                              loadingBuilder: (BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                      );
-                    },
+                      ),
+
+                Expanded(
+                  child:
+                  SingleChildScrollView(
+                    child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                        child: CustomTextWidget(
+                          text:
+                          "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget\n"
+                              "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget\n"
+                              "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget\n"
+                              "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget\n"
+                        )),
                   ),
-
                 ),
-
               ],
             ),
-          ),
+
         );
       },
     );
   }
-
-
-
-
-
-
-
-
-
 }
