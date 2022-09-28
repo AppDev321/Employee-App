@@ -33,6 +33,9 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
       }
     });
 
+
+
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;

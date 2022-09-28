@@ -13,7 +13,7 @@ import '../../data/drawer_items.dart';
 import '../../repository/model/request/availability_request.dart';
 import '../../repository/model/request/claim_shift_history_request.dart';
 import '../../utils/controller.dart';
-import '../../utils/life_cycle_page.dart';
+
 import '../../view_models/availability_vm.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/custom_text_widget.dart';
@@ -30,7 +30,7 @@ class AvailabilityList extends StatefulWidget {
   State<AvailabilityList> createState() => AvailabilityListStateful();
 }
 
-class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList> {
+class AvailabilityListStateful extends State<AvailabilityList> {
   int buttonState = 0;
   TextEditingController _dateFilterController = TextEditingController();
   bool _isFirstLoadRunning = false;
@@ -49,21 +49,6 @@ class AvailabilityListStateful extends LifecycleWatcherState<AvailabilityList> {
   late AvailabilityRequest deletedItemRequest;
   var request = ClaimShiftHistoryRequest();
 
-  @override
-  void onDetached() {
-    print("deteached()");
-  }
-
-  @override
-  void onInactive() {}
-
-  @override
-  void onPaused() {}
-
-  @override
-  void onResumed() {
-    print("resumse");
-  }
 
   @override
   void initState() {

@@ -10,10 +10,11 @@ import 'color_text_round_widget.dart';
 
 class ImageSliderWidget extends StatefulWidget {
   final List<String> imagesList = [
-    'https://scontent.fisb6-1.fna.fbcdn.net/v/t1.6435-9/164797247_291565822329729_7202526337027002463_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=cs__k59ABbIAX8AbVAM&_nc_ht=scontent.fisb6-1.fna&oh=00_AT_-DvXzYqw45AVb7Lh2Ek5c2dN2gDX3dL3fIr13psaccA&oe=63516E10',
-    'https://images.unsplash.com/photo-1584339312444-6952d098e152?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8bXVzbGltJTIwZ2lybHxlbnwwfHwwfHw%3D&w=1000&q=80',
-    'https://pbs.twimg.com/media/DwJz644X4AYS504.jpg',
-    'https://c.wallhere.com/images/a5/5a/5b12ef0dd27a657915d3adeeb9b1-1920945.jpg!d'
+    'https://events-feed.github.com/events/allthingsopen-2022/allthingsopen.png',
+     '',
+    'https://kenandersonalliance.org/wp-content/uploads/2021/07/Movie-Night.jpg',
+    'https://images.squarespace-cdn.com/content/v1/58d01c94db29d6778266d660/1601407069409-RSR5A5B44LY6X06YN2X7/DriveInMovieNight_WIDE.jpg',
+        '',
   ];
 
   ImageSliderWidget({
@@ -88,7 +89,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                               ? Container()
                               : Container(
                                   constraints: BoxConstraints(
-                                      minWidth: 150, maxWidth: 220),
+                                      minWidth: 150, maxWidth: 200),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
@@ -125,7 +126,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               CustomTextWidget(
-                                text: "Title of WidgetTitle of WidgetTitle",
+                                text: "Title of Notification",
                                 fontWeight: FontWeight.bold,
                                 size: 18,
                                 maxLines: 2,
@@ -136,8 +137,8 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                               ),
                               CustomTextWidget(
                                 text:
-                                    "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget",
-                                fontWeight: FontWeight.bold,
+                                "Description of notification will be displayed here.",
+                                  fontWeight: FontWeight.bold,
                                 size: 12,
                                 maxLines: item.isEmpty ? 3 : 2,
                                   color:Colors.white
@@ -239,11 +240,8 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                         child: CustomTextWidget(
                           text:
-                          "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget\n"
-                              "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget\n"
-                              "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget\n"
-                              "Title of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of WidgetTitle of Widget\n"
-                        )),
+                          "Description of notification will be displayed here."
+                                )),
                   ),
                 ),
               ],
