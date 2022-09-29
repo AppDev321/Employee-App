@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/repository/model/request/change_password_request.dart';
+import 'package:hnh_flutter/repository/retrofit/api_client.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:image_picker/image_picker.dart';
@@ -185,35 +186,31 @@ Future<void> getUserImageURLPreferecne() async{
    }
 
 
-   uploadProfileImage(File imageFile,ValueChanged<bool> isUpload,ValueChanged<String> imageURL) async {
-     // open a bytestream
+   uploadProfileImage(BuildContext context,File imageFile,ValueChanged<bool> isUpload,ValueChanged<String> imageURL) async {
+
      var stream = new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
-     // get file length
      var length = await imageFile.length();
-     // string to uri
-     var uri = Uri.parse("http://vmi808920.contaboserver.net/api/upload");
-     // var uri = Uri.parse("http://192.168.1.21:8000/api/upload");
+     var uri = Uri.parse(Controller.appBaseURL);
      Controller controller = Controller();
      String? userToken = await controller.getAuthToken();
 
      var request = new http.MultipartRequest("POST", uri);
      request.headers['Authorization'] = "Bearer $userToken";
-
+     request.headers['Content-Type']="application/json";
+     request.headers['Accept']="application/json";
      var multipartFile = new http.MultipartFile('file', stream, length,  filename: basename(imageFile.path));
-
      request.files.add(multipartFile);
-      request.fields['type']="profile";
+     request.fields['type']="profile";
      request.fields['filetype']="image/jpg";
      request.fields['field_name']="profile";
      request.fields['upload_id']="53346765475";
-
      print(request.fields.toString());
-
      var response = await request.send();
-
      response.stream.transform(utf8.decoder).listen((value) {
        print("response = $value");
        final parsedJson = jsonDecode(value);
+
+       print("parsedJson = $parsedJson");
        isUpload(true);
        if(parsedJson['code'].toString()=="200")
          {
@@ -223,6 +220,14 @@ Future<void> getUserImageURLPreferecne() async{
              imageURL(convertedURL) ;
            }
 
+         }
+       else
+         {
+           var error=parsedJson['errors'][0]['message'];
+           if(error != null)
+           Controller().showToastMessage(context, error);
+           else
+             Controller().showToastMessage(context, "There is some issue in uploading please try again later");
          }
 
      });

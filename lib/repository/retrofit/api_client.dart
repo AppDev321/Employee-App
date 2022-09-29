@@ -11,6 +11,7 @@ import 'package:hnh_flutter/repository/retrofit/logging.dart';
 
 import 'package:retrofit/http.dart';
 
+import '../../utils/controller.dart';
 import '../model/request/change_password_request.dart';
 import '../model/request/claim_shift_history_request.dart';
 import '../model/request/claim_shift_request.dart';
@@ -30,14 +31,16 @@ import '../model/response/report_leave_response.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: 'http://vmi808920.contaboserver.net/api') // Enter you base URL
-//@RestApi(baseUrl: 'http://192.168.1.21:8000/api') // Enter you base URL
 
+
+@RestApi(baseUrl: Controller.appBaseURL)
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
     dio.interceptors.add(Logging());
     return _ApiClient(dio, baseUrl: baseUrl);
   }
+
+
 
   @POST('/login')
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);

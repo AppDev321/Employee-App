@@ -10,6 +10,11 @@ import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
 
 class Controller {
+  static const String appBaseURL =
+      "http://vmi808920.contaboserver.net/api/upload";
+ // "http://192.168.1.21:8000/api";
+
+
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
   static const double leftCardColorMargin = 5;
@@ -19,7 +24,6 @@ class Controller {
   final String fcmMsgValue = "fcm_msg_key";
   final String userKey = "user_key";
   final defaultPic = "http://simpleicon.com/wp-content/uploads/account.png";
-
 
   static const PREF_KEY_THEME = "pref_key_theme";
 
@@ -32,7 +36,6 @@ class Controller {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     return sharedPreferences.getBool(PREF_KEY_THEME) ?? false;
   }
-
 
   Future<void> setFCMScreen(String screenName) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -290,12 +293,9 @@ class Controller {
     );
   }
 
-
- Color getThemeTextColor()
-  {
-    return (Get.isDarkMode ? primaryColor:blackThemeTextColor);
+  Color getThemeTextColor() {
+    return (Get.isDarkMode ? primaryColor : blackThemeTextColor);
   }
-
 }
 
 enum Screen {

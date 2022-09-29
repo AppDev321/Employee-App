@@ -213,11 +213,7 @@ class _MyAccountState extends State<MyAccount> {
                                                   tryToUploadImage = true;
                                                 });
 
-                                                _profileViewModel
-                                                    .uploadProfileImage(value,
-                                                        (isUploaded) {
-                                                  //File path
-                                                }, (imageUrl) {
+                                                _profileViewModel .uploadProfileImage(context,value,   (isUploaded) {  }, (imageUrl) {
                                                   print(imageUrl);
                                                   setState(() {
                                                     userImageURL = imageUrl;
