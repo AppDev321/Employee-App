@@ -193,14 +193,33 @@ class _DashboardState extends State<Dashboard> {
           ),
           actions: <Widget>[
             Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                InkWell(
-                    onTap: () => {Get.to(() => VehicleTabScan())},
-                    child: Icon(
-                      Icons.qr_code,
-                      size: 30,
-                      color: colorText,
-                    )),
+
+                Container(
+                    child: IconButton(
+                        icon: Icon(Icons.qr_code,
+                            color: colorText,
+                            size: 22),
+                        onPressed: () {
+                          Get.to(() => VehicleTabScan());
+                        })
+                ),
+                Container(
+                    child: IconButton(
+                        icon: Icon(themeNotifier.isDark
+                            ? Icons.nightlight_round
+                            : Icons.wb_sunny,
+                            size: 22),
+                        onPressed: () {
+                          themeNotifier.isDark
+                              ? themeNotifier.isDark = false
+                              : themeNotifier.isDark = true;
+                          _refreshIndicatorKey.currentState?.show();
+                        })
+                ),
                 Container(
                   child: NamedIcon(
                     onTap: () => Get.to(() => NotificationList()),
@@ -209,19 +228,7 @@ class _DashboardState extends State<Dashboard> {
                     color: colorText,
                   ),
                 ),
-                Container(
-                    padding: EdgeInsets.only(right: 10),
-                    child: IconButton(
-                        icon: Icon(themeNotifier.isDark
-                            ? Icons.nightlight_round
-                            : Icons.wb_sunny),
-                        onPressed: () {
-                          themeNotifier.isDark
-                              ? themeNotifier.isDark = false
-                              : themeNotifier.isDark = true;
-                        _refreshIndicatorKey.currentState?.show();
 
-                        })),
               ],
             )
           ],
@@ -323,7 +330,7 @@ class _DashboardState extends State<Dashboard> {
                             height: 10,
                           ),
                           ImageSliderWidget(
-                            height: 180,
+                            height: 135,
                           ),
                           SizedBox(
                             height: 20,

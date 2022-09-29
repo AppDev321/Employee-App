@@ -23,15 +23,15 @@ class NamedIcon extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: 72,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        width: 60,
+        padding: const EdgeInsets.symmetric(horizontal: 3),
         child: Stack(
           alignment: Alignment.center,
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(iconData,size: 35,color: color,),
+                Icon(iconData,size: 25,color: color,),
               text !=null?  Text(text.toString(), overflow: TextOverflow.ellipsis):Container(),
               ],
             ),
@@ -39,10 +39,8 @@ class NamedIcon extends StatelessWidget {
             Positioned(
               top: 5,
               right:5,
-
-
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical:6),
+                padding: EdgeInsets.all(6),
                 decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red),
                 alignment: Alignment.center,
                 child: CustomTextWidget(text:'$notificationCount',color:Colors.white,size: 8,),

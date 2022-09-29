@@ -149,6 +149,15 @@ bool isPasswordUpdateCalled = false;
                   _showChangePassword(context);
                 },
               ),
+              Visibility(
+                  visible: false,
+                  child:  SettingMenu(
+                text: "Theme",
+                icon: "assets/icons/ic_theme.svg",
+                press: () {
+                  _showChangePassword(context);
+                },
+              ))  ,
               SettingMenu(
                 text: "Log Out",
                 icon: "assets/icons/Log out.svg",

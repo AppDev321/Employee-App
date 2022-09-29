@@ -97,7 +97,8 @@ class AddLeaveStateful extends State<AddLeave> {
       appBar: AppBar(
         title: const Text(menuLeave),
       ),
-      body: Column(
+      body:
+      Column(
         children: [
           BlocBuilder<ConnectedBloc, ConnectedState>(
               builder: (context, state) {

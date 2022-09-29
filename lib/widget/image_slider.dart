@@ -10,15 +10,15 @@ import 'color_text_round_widget.dart';
 
 class ImageSliderWidget extends StatefulWidget {
   final List<String> imagesList = [
-    'https://events-feed.github.com/events/allthingsopen-2022/allthingsopen.png',
+    'https://www.wishesmsg.com/wp-content/uploads/Eid-Milad-Un-Nabi-Mubarak-Wishes-1280x720.jpg',
      '',
-    'https://kenandersonalliance.org/wp-content/uploads/2021/07/Movie-Night.jpg',
-    'https://images.squarespace-cdn.com/content/v1/58d01c94db29d6778266d660/1601407069409-RSR5A5B44LY6X06YN2X7/DriveInMovieNight_WIDE.jpg',
-        '',
+    'https://wallpapercave.com/wp/wp7813509.jpg',
+    'https://www.thefestivalwishes.com/pixlab/uploads/sample_uploads/webp/1601132419_create-eid-milad-un-nabi-card-with-name-online.webp',
+        'https://www.oyeyeah.com/wp-content/uploads/2019/11/eid-milad-un-nabi.jpg',
   ];
 
   ImageSliderWidget({
-    this.height = 100,
+    this.height = 80,
     Key? key,
     this.onClick = null,
   }) : super(key: key);
@@ -89,7 +89,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                               ? Container()
                               : Container(
                                   constraints: BoxConstraints(
-                                      minWidth: 150, maxWidth: 200),
+                                      minWidth: 150, maxWidth: 150),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
@@ -126,7 +126,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               CustomTextWidget(
-                                text: "Title of Notification",
+                                text: "Prophet's Birthday",
                                 fontWeight: FontWeight.bold,
                                 size: 18,
                                 maxLines: 2,
@@ -137,10 +137,10 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                               ),
                               CustomTextWidget(
                                 text:
-                                "Description of notification will be displayed here.",
+                                "Mawlid, Mawlid an-Nabi ash-Sharif or Eid Milad un Nabi is the observance of the birthday of the Islamic prophet Muhammad which is commemorated in Rabi' al-awwal, the third month in the Islamic calendar.",
                                   fontWeight: FontWeight.bold,
                                 size: 12,
-                                maxLines: item.isEmpty ? 3 : 2,
+                                maxLines: item.isEmpty ? 2 : 2,
                                   color:Colors.white
                               ),
                               SizedBox(
@@ -199,7 +199,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                 Container(
                     padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                     child: CustomTextWidget(
-                      text: "Title of Notification",
+                      text: "Prophet's Birthday",
                       fontWeight: FontWeight.bold,
                       size: 18,
                     )),
@@ -240,7 +240,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                         child: CustomTextWidget(
                           text:
-                          "Description of notification will be displayed here."
+                          "Mawlid, Mawlid an-Nabi ash-Sharif or Eid Milad un Nabi is the observance of the birthday of the Islamic prophet Muhammad which is commemorated in Rabi' al-awwal, the third month in the Islamic calendar."
                                 )),
                   ),
                 ),

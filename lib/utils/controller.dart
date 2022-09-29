@@ -10,9 +10,8 @@ import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
 
 class Controller {
-  static const String appBaseURL =
-      "http://vmi808920.contaboserver.net/api/upload";
- // "http://192.168.1.21:8000/api";
+  static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
+  "http://192.168.1.25:8000/api";
 
 
   final String auth_token = "auth_token";
