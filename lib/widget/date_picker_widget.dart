@@ -41,19 +41,19 @@ class _DateWidget extends State<DatePickerWidget> {
 
          children: [
           CustomTextWidget(text: widget.label,fontWeight: FontWeight.bold,),
-          SizedBox(height: 10,),
+          const SizedBox(height: 10,),
           Row(
          mainAxisSize: MainAxisSize.max,
             children:[
               Container(
                   width: MediaQuery.of(context).size.width/2.3,
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(
+                padding: const EdgeInsets.only(
                     left: 5, right: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorText, width: 1),
                     borderRadius: BorderRadius.circular(Controller.roundCorner)),
-                child: new InkWell(
+                child:  InkWell(
 
                     onTap: () {
                       _selectDate(context);
@@ -65,7 +65,7 @@ class _DateWidget extends State<DatePickerWidget> {
                         CustomTextWidget(text: selectedDate ==  null  ? 'No date was chosen!'  : Controller().getConvertedDate(selectedDate)),
 
                        IconButton(
-                            icon: Icon(Icons.calendar_today),
+                            icon:const Icon(Icons.calendar_today),
                             onPressed: () {
                               _selectDate(context);
                             },

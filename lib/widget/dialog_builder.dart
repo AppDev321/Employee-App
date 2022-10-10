@@ -10,8 +10,8 @@ class DialogBuilder {
   final BuildContext _dialogContext;
 
   void initiateLDialog(String text) {
-    _progressDialog = new ProgressDialog(_dialogContext,
-        isDismissible: false, customBody: new LoadingIndicator(title: text));
+    _progressDialog =  ProgressDialog(_dialogContext,
+        isDismissible: false, customBody:  LoadingIndicator(title: text));
 
   }
   ProgressDialog? getDiaog()

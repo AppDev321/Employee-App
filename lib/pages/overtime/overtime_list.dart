@@ -27,6 +27,8 @@ import '../login/login.dart';
 import 'add_overtime.dart';
 
 class OverTimePage extends StatefulWidget {
+  const OverTimePage({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -35,7 +37,7 @@ class OverTimePage extends StatefulWidget {
 }
 
 class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderStateMixin{
-  TextEditingController _dateFilterController = TextEditingController();
+  final TextEditingController _dateFilterController = TextEditingController();
   bool _isFirstLoadRunning = false;
   late TabController _tabController;
   bool _isErrorInApi = false;
@@ -60,7 +62,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
     });
 
     _overtimeViewModel = OvertimeViewModel();
-    var now = new DateTime.now();
+    var now =  DateTime.now();
     String formattedDate = Controller().getConvertedDate(now);
 
   request = ClaimShiftHistoryRequest();
@@ -152,29 +154,27 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          child: CustomTextWidget(
-                            text: "Add Request",
-                            size: 20,
-                          ),
+                        const CustomTextWidget(
+                          text: "Add Request",
+                          size: 20,
                         ),
                         ElevatedButton(
                           onPressed: () {
 
-                        Get.to(()=> AddOverTime());
+                        Get.to(()=> const AddOverTime());
 
 
                           },
-                          child: Icon(Icons.add, color: Colors.white),
                           style: ElevatedButton.styleFrom(
                             shape: CircleBorder(),
                             primary: primaryColor,
                             onPrimary: Colors.black,
                           ),
+                          child: const Icon(Icons.add, color: Colors.white),
                         )
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     CustomDateRangeWidget(
@@ -206,7 +206,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
 
 
 
-                    _overtimeHistoryList.length > 0 ?
+                    _overtimeHistoryList.isNotEmpty ?
                     Column(
                       children: [
                         Container(
@@ -214,23 +214,23 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                             child:
                             DoughnutChart(chartData: chartData)
                         ),
-                        SizedBox(height:5)
+                        const  SizedBox(height:5)
                       ],
-                    ) : SizedBox(height:10),
+                    ) : const SizedBox(height:10),
 
                     CustomFilterTab(controller: _tabController, tabs: ConstantData.filterTabs,),
 
 
 
-                    SizedBox(
+                    const   SizedBox(
                       height: 15,
                     ),
                     _isFirstLoadRunning
-                        ? Expanded(child: Center(child: CircularProgressIndicator()))
+                        ? const Expanded(child: Center(child: CircularProgressIndicator()))
                         : _isErrorInApi
                             ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                             : Expanded(
-                                child: _overtimeHistoryList.length > 0
+                                child: _overtimeHistoryList.isNotEmpty
                                     ?
 
                                 TabBarView(
@@ -245,7 +245,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                                       listContainer(getFilterList(_overtimeHistoryList,ConstantData.pending)),
                                       listContainer(getFilterList(_overtimeHistoryList,ConstantData.rejected)),
 
-                                    ])  : ErrorMessageWidget(label: "No Overtime Found"))
+                                    ])  :const ErrorMessageWidget(label: "No Overtime Found"))
                   ],
                 ),
               ),
@@ -296,14 +296,14 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
         Container(
             decoration: BoxDecoration(
               color: cardThemeBaseColor,
-                borderRadius: BorderRadius.only(
+                borderRadius:const BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))
 
             ),
-            margin: EdgeInsets.only(left:Controller.leftCardColorMargin),
+            margin:const EdgeInsets.only(left:Controller.leftCardColorMargin),
 
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding:const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Column(
               children: [
                 Padding(
@@ -319,11 +319,35 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                       item.status == ConstantData.approved ? claimedShiftApprovedColor :
                       claimedShiftRejectColor),
 
+                      item.status == ConstantData.pending ?
+                      InkWell(
+                        onTap: () {
+                          Controller().showConfirmationMsgDialog(
+                              context,
+                              "Confirm",
+                              "Are you sure you want to delete?",
+                              "Yes", (value) {
+                            if (value) {
+                              setState(() {
+                                _overtimeHistoryList.remove(item);
+                                _overtimeViewModel.deleteOverTimeRequest(item.id.toString());
+                              });
+
+                            }
+                          });
+                        },
+                        child: TextColorContainer(
+                          label: "Delete",
+                          color: claimedShiftRejectColor,
+                          icon: Icons.delete,
+                        ),
+                      )
+                          :const Center(),
                     ],
                   ),
                 ),
 
-                SizedBox(
+                const  SizedBox(
                   height: 6,
                 ),
                 Container(
@@ -331,20 +355,20 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                     color: cardThemeBaseColor,
                     borderRadius: BorderRadius.circular(0),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding:const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Column(
                     children: [
-                      
+
                       createRowDate("Date:",item.date),
-                      SizedBox(
+                      const   SizedBox(
                         height: 5,
                       ),
                       createRowDate("Hours:",item.hour),
-                      SizedBox(
+                      const   SizedBox(
                         height: 5,
                       ),
                       createRowDate("Reason:",item.reason),
-                      SizedBox(
+                      const   SizedBox(
                         height: 5,
                       ),
                        item.status == ConstantData.approved || item.status == ConstantData.rejected ?
@@ -368,7 +392,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
 
     return Column(
       children: [
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
 
@@ -377,7 +401,7 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
             CustomTextWidget(  text:title,fontWeight: FontWeight.bold),
             Expanded(
               child: Padding(
-                  padding: EdgeInsets.only(left: 5),
+                  padding:const EdgeInsets.only(left: 5),
                   child:
                   CustomTextWidget(  text:value)),
             )

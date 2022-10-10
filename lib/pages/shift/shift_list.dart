@@ -17,6 +17,8 @@ import '../../widget/custom_text_widget.dart';
 import '../../widget/error_message.dart';
 
 class ShiftList extends StatefulWidget {
+  const ShiftList({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -35,7 +37,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
   late BuildContext contextBuild;
   late ShiftListViewModel _shiftListViewModel;
 
-  CalendarController _controller = CalendarController();
+  final CalendarController _controller = CalendarController();
   late TabController _tabController;
 
   @override
@@ -49,7 +51,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
 
     _shiftListViewModel = ShiftListViewModel();
 
-    var now = new DateTime.now();
+    var now =  DateTime.now();
     String formattedDate = Controller().getConvertedDate(now);
     _shiftListViewModel.getShiftList(formattedDate);
 
@@ -108,16 +110,16 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
     contextBuild = context;
     return Scaffold(
       appBar: AppBar(
-        title: Text(menuShift),
+        title:const Text(menuShift),
       ),
       body: Column(
         children: [
           BlocBuilder<ConnectedBloc, ConnectedState>(builder: (context, state) {
             if (state is ConnectedFailureState) {
-              return InternetNotAvailable();
+              return const InternetNotAvailable();
             } else if (state is FirebaseMsgReceived) {
               if (state.screenName == Screen.SHIFT) {
-                var now = new DateTime.now();
+                var now =  DateTime.now();
                 String formattedDate = Controller().getConvertedDate(now);
                 _shiftListViewModel.getShiftList(formattedDate);
                 state.screenName = Screen.NULL;
@@ -140,7 +142,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
             },
           ),
           _isFirstLoadRunning
-              ? Expanded(child: Center(child: CircularProgressIndicator()))
+              ? const Expanded(child: Center(child: CircularProgressIndicator()))
               : _isErrorInApi
                   ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                   : Expanded(
@@ -155,7 +157,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                                 indicatorColor: Colors.white,
                                 labelColor: cardThemeBaseColor,
                                 unselectedLabelColor: Colors.white54,
-                                tabs: [
+                                tabs: const [
                                   Tab(text: 'My Shift'),
                                   Tab(text: 'Open Shift')
                                 ],
@@ -166,18 +168,16 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                                 child: TabBarView(
                                   controller: _tabController,
                                   children: [
-                                    _shiftList.length > 0
+                                    _shiftList.isNotEmpty
                                         ? showListData(
                                             context, _shiftList, false)
-                                        : Container(
-                                            child: ErrorMessageWidget(
-                                                label: "No Shift Found")),
-                                    _openShiftList.length > 0
+                                        : const ErrorMessageWidget(
+                                            label: "No Shift Found"),
+                                    _openShiftList.isNotEmpty
                                         ? showListData(
                                             context, _openShiftList, true)
-                                        : Container(
-                                            child: ErrorMessageWidget(
-                                                label: "No Open  Shift Found"))
+                                        : const ErrorMessageWidget(
+                                            label: "No Open  Shift Found")
                                   ],
                                 ),
                               ),
@@ -195,7 +195,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
       BuildContext context, List<Shifts> shifts, bool openShiftData) {
     return RefreshIndicator(
       onRefresh: () {
-        var now = new DateTime.now();
+        var now =  DateTime.now();
         String formattedDate = Controller().getConvertedDate(now);
         return _shiftListViewModel.getShiftList(formattedDate);
       },
@@ -221,7 +221,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                     color: cardThemeBaseColor,
-                    borderRadius: BorderRadius.only(
+                    borderRadius:const BorderRadius.only(
                         bottomRight: Radius.circular(Controller.roundCorner),
                         topRight: Radius.circular(Controller.roundCorner))),
                 margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
@@ -235,9 +235,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
 
   Widget indexBuilder(BuildContext context, int index, List<Shifts> shifts,
       bool openShiftData) {
-    final navigateTo = (page) => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => page,
-        ));
+
 
     final data = shifts[index];
     return Theme(
@@ -259,9 +257,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
 
   Widget itemShiftList(BuildContext context, Shifts item, bool openShift) {
     var isClaimed = item.claimed;
-    if (isClaimed == null) {
-      isClaimed = false;
-    }
+    isClaimed ??= false;
 
     return InkWell(
       onTap: () {},
@@ -278,7 +274,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                         text: item.empName ?? 'N/A',
                         fontWeight: FontWeight.bold),
                 CustomTextWidget(text: item.designation ?? 'N/A'),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Row(
@@ -291,7 +287,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                     CustomTextWidget(text: item.location ?? 'N/A'),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 createRowDate(
@@ -308,9 +304,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
 
   Widget itemShiftDetail(BuildContext context, Shifts item) {
     var isClaimed = item.claimed;
-    if (isClaimed == null) {
-      isClaimed = false;
-    }
+    isClaimed ??= false;
     return Center(
       child: Container(child: detailInfoItems(item)),
     );
@@ -318,9 +312,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
 
   Widget itemOpenShiftDetail(BuildContext context, Shifts item) {
     var isClaimed = item.claimed;
-    if (isClaimed == null) {
-      isClaimed = false;
-    }
+    isClaimed ??= false;
 
     return Column(children: [
       detailInfoItems(item),
@@ -342,7 +334,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                     _shiftListViewModel.claimOpenShift(request);
                   });
                 },
-                child: Text('Claim this Shift'),
+                child: const Text('Claim this Shift'),
               ),
             )
     ]);
@@ -373,7 +365,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
   Widget createRowDate(String title, String? value) {
     return Column(
       children: [
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         Row(
@@ -381,7 +373,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
             CustomTextWidget(text: title, fontWeight: FontWeight.bold),
             Expanded(
               child: Padding(
-                  padding: EdgeInsets.only(left: 5),
+                  padding: const EdgeInsets.only(left: 5),
                   child: CustomTextWidget(text: value)),
             )
           ],

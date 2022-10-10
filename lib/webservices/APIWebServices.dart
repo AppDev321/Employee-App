@@ -159,6 +159,36 @@ class APIWebService {
   }
 
 
+  Future<LoginApiResponse?> deleteLeaveRequest(String id) async
+  {
+
+    try{
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.deleteLeaveRequest(id);
+      return response;
+    }
+    catch(e)
+    {
+      return null;
+    }
+  }
+
+
+
+  Future<LoginApiResponse?> deleteOverTimeRequest(String id) async
+  {
+
+    try{
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.deleteOvertimeRequest(id);
+      return response;
+    }
+    catch(e)
+    {
+      return null;
+    }
+  }
+
   Future<LoginApiResponse?> deleteAvailabilityRequest(String code) async
   {
 

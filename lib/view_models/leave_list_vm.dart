@@ -113,5 +113,35 @@ class LeaveListViewModel extends BaseViewModel {
 
 
 
+  Future<void> deleteOverTimeRequest(String requestCode) async {
+    setLoading(true);
+    final results = await APIWebService().deleteOverTimeRequest(requestCode);
+
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+
+      // setIsErrorReceived(true);
+    } else {
+      if (results.code == 200) {
+
+
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += "${results.errors![i].message!}\n";
+        }
+        setErrorMsg(errorString);
+
+        //  setIsErrorReceived(true);
+      }
+    }
+
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+  }
+
+
 
 }

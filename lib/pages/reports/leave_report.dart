@@ -26,7 +26,7 @@ class LeaveReport extends StatefulWidget {
 
 class LeaveReportStateful extends State<LeaveReport> {
   int buttonState = 0;
-  TextEditingController _dateFilterController = TextEditingController();
+  final TextEditingController _dateFilterController = TextEditingController();
 
 // List<String> months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec"];
   //List<String> years = ["2018","2019","2020","2021","2022","2023","2024","2024"];
@@ -52,9 +52,9 @@ class LeaveReportStateful extends State<LeaveReport> {
 
     //Getting current month and date time
     DateTime now = DateTime.now();
-    var startDate = new DateTime(now.year, now.month, 1);
+    var startDate =  DateTime(now.year, now.month, 1);
     var endDate =
-        new DateTime(now.year, now.month + 1, 0); //this month last date
+         DateTime(now.year, now.month + 1, 0); //this month last date
 
   request = ClaimShiftHistoryRequest();
     request.start_date = Controller().getConvertedDate(startDate);
@@ -100,7 +100,7 @@ class LeaveReportStateful extends State<LeaveReport> {
                 {
                   return Container();
                 } else {
-                  return InternetNotAvailable();
+                  return const InternetNotAvailable();
                 }
               }
 
@@ -111,15 +111,15 @@ class LeaveReportStateful extends State<LeaveReport> {
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(20),
+                const Padding(
+                  padding: EdgeInsets.all(20),
                   child: CustomTextWidget(
                     text: subMenuReportLeave,
                     size: 20,
                   ),
                 ),
                 AnimatedButtonBar(
-                  padding: EdgeInsets.all(9),
+                  padding:const EdgeInsets.all(9),
                   backgroundColor: cardThemeBaseColor,
                   radius: 20,
                   invertedSelection: true,
@@ -129,22 +129,22 @@ class LeaveReportStateful extends State<LeaveReport> {
                         onTap: () {
                           changeButtonState(0);
                         },
-                        child: Text('This Month')),
+                        child:const Text('This Month')),
                     ButtonBarEntry(
                         onTap: () {
                           changeButtonState(1);
                         },
-                        child: Text('Last Month')),
+                        child:const Text('Last Month')),
                     ButtonBarEntry(
                         onTap: () {
                           changeButtonState(2);
                         },
-                        child: Text('This Year')),
+                        child:const Text('This Year')),
                     ButtonBarEntry(
                         onTap: () {
                           changeButtonState(3);
                         },
-                        child: Text('Custom'))
+                        child:const Text('Custom'))
                   ],
                 ),
                 Padding(
@@ -179,12 +179,12 @@ class LeaveReportStateful extends State<LeaveReport> {
                             isSearchButtonShow: false,
                           )
                         : buttonState == 1
-                            ? Center()
+                            ?const Center()
                             : buttonState == 2
-                                ? Center()
-                                : Center()),
+                                ?const Center()
+                                :const Center()),
                 _isFirstLoadRunning
-                    ? Expanded(child: Center(child: CircularProgressIndicator()))
+                    ? const Expanded(child: Center(child: CircularProgressIndicator()))
                     : _isErrorInApi
                         ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                         : Expanded(
@@ -199,9 +199,9 @@ class LeaveReportStateful extends State<LeaveReport> {
                                           child: PieChartWidget(
                                         chartData: leaveData,
                                       )),
-                                     SizedBox(height:10),
+                                      const SizedBox(height:10),
                                      GridView.builder(
-                                              physics: ScrollPhysics(),
+                                              physics:const ScrollPhysics(),
                                               shrinkWrap: true,
                                               gridDelegate:
                                                   const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -224,11 +224,11 @@ class LeaveReportStateful extends State<LeaveReport> {
                                                         width: MediaQuery.of(context).size.width,
                                                         decoration: BoxDecoration(
                                                             color:cardThemeBaseColor,
-                                                            borderRadius: BorderRadius.only(
+                                                            borderRadius:const BorderRadius.only(
                                                                 bottomRight: Radius.circular(Controller.roundCorner),
                                                                 topRight: Radius.circular(Controller.roundCorner))),
-                                                        margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
-                                                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                                        margin:const EdgeInsets.only(left: Controller.leftCardColorMargin),
+                                                        padding:const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                                         child:Column(
                                                           mainAxisAlignment:
                                                           MainAxisAlignment.center,
@@ -241,7 +241,7 @@ class LeaveReportStateful extends State<LeaveReport> {
                                                               size: 18,
                                                               fontWeight: FontWeight.bold,
                                                             ),
-                                                            SizedBox(height: 5),
+                                                            const SizedBox(height: 5),
                                                             CustomTextWidget(
                                                               text: leaveData[index]
                                                                   .name
@@ -287,20 +287,20 @@ class LeaveReportStateful extends State<LeaveReport> {
     DateTime now = DateTime.now();
     if (status == 0)
     {
-      var startDate = new DateTime(now.year, now.month, 1);
-      var endDate =new DateTime(now.year, now.month + 1, 0); //this month last date
+      var startDate =  DateTime(now.year, now.month, 1);
+      var endDate = DateTime(now.year, now.month + 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     }
     else if (status == 1) {
-      var startDate = new DateTime(now.year, now.month - 2, 1);
-      var endDate = new DateTime(now.year, now.month - 1, 0); //this month last date
+      var startDate =  DateTime(now.year, now.month - 2, 1);
+      var endDate =  DateTime(now.year, now.month - 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     }
     else if (status == 2) {
-      var startDate = new DateTime(now.year, 1, 1);
-      var endDate = new DateTime(now.year, now.month + 1, 0); //this month last date
+      var startDate =  DateTime(now.year, 1, 1);
+      var endDate =  DateTime(now.year, now.month + 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     }

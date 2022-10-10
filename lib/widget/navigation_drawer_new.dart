@@ -172,7 +172,7 @@ class NavigationDrawer extends StatelessWidget {
         leading: leading,
 
         children: <Widget>[
-          new Column(
+           Column(
             children: _buildExpandableContent( item,context ),
           ),
         ],
@@ -196,9 +196,9 @@ class NavigationDrawer extends StatelessWidget {
   _buildExpandableContent(  DrawerItem vehicle,BuildContext context) {
     List<Widget> columnContent = [];
 
-    for (String content in vehicle.contents)
+    for (String content in vehicle.contents) {
       columnContent.add(
-        new ListTile(
+         ListTile(
           title: CustomTextWidget(text:content),//new Text(content, style: new TextStyle(fontSize: 14.0),),
           onTap:()
             {
@@ -206,6 +206,7 @@ class NavigationDrawer extends StatelessWidget {
               },
         ),
       );
+    }
 
     return columnContent;
   }
@@ -301,7 +302,7 @@ class NavigationDrawer extends StatelessWidget {
             const SizedBox(width: 24),
             SizedBox(height: 48,width: 48,child:   Image.asset(ConstantData.logoIconPath) ),
             const SizedBox(width: 16),
-            Text(
+            const Text(
               ConstantData.appName,
               style: TextStyle(fontSize: 32, color: Colors.white),
             ),

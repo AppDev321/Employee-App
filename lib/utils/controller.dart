@@ -1,17 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
-
 class Controller {
-  static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
-  "http://192.168.1.25:8000/api";
+  static const String appBaseURL = "http://vmi808920.contaboserver.net/api";
+ // "http://192.168.1.21:8000/api";
 
 
   final String auth_token = "auth_token";
@@ -23,7 +22,9 @@ class Controller {
   final String fcmMsgValue = "fcm_msg_key";
   final String userKey = "user_key";
   final defaultPic = "http://simpleicon.com/wp-content/uploads/account.png";
-
+  final String emailPref="emailPref";
+  final String passPref="passPref";
+  final String fingerPrintPref = "finger_pref";
   static const PREF_KEY_THEME = "pref_key_theme";
 
   setTheme(bool value) async {
@@ -79,13 +80,43 @@ class Controller {
 
   Future<void> setEmail(String emaiID) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(this.auth_token, auth_token);
+    prefs.setString( emailPref,emaiID);
   }
 
-  Future<void> setPassword(String emaiID) async {
+  Future<void> setPassword(String pass) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(this.auth_token, auth_token);
+    prefs.setString(passPref, pass);
   }
+
+  Future<String> getEmail() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    
+  return  prefs.getString(emailPref)?? "";
+  }
+
+  Future<String> getPassword() async {
+   
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+   return prefs.getString( passPref)?? "";
+  }
+
+
+
+  Future<void> setBiometericStatus(bool isRemember) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(this.fingerPrintPref, isRemember);
+  }
+
+  Future<bool> getBiometericStatus() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    bool isRemember;
+    isRemember = pref.getBool(this.fingerPrintPref) ?? false;
+    return isRemember;
+  }
+
+
+
+
 
   Future<void> setRememberLogin(bool isRemember) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -295,8 +326,14 @@ class Controller {
   Color getThemeTextColor() {
     return (Get.isDarkMode ? primaryColor : blackThemeTextColor);
   }
-}
 
+
+
+}
+enum FingerPrintOption {
+  ENABLE,
+  DISABLE
+}
 enum Screen {
   PROFILE,
   SHIFT,

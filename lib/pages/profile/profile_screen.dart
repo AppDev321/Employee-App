@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/response/user_profile.dart';
 import 'package:hnh_flutter/view_models/profile_vm.dart';
-
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
 import '../../utils/controller.dart';
@@ -81,8 +80,9 @@ class _MyAccountState extends State<MyAccount> {
           _errorMsg = "";
         });
         profileDetail = _profileViewModel.getUserProfile();
-        if (profileDetail.profileURL != null)
+        if (profileDetail.profileURL != null) {
           userImageURL = profileDetail.profileURL.toString();
+        }
 
         setState(() {
           profileImageView = NetworkImage(
@@ -104,9 +104,10 @@ class _MyAccountState extends State<MyAccount> {
         Navigator.pop(context);
         Controller().showToastMessage(context, "Profile Updated Successfully");
       } else {
-        if (_profileViewModel.getErrorMsg().isNotEmpty)
+        if (_profileViewModel.getErrorMsg().isNotEmpty) {
           Controller()
               .showToastMessage(context, _profileViewModel.getErrorMsg());
+        }
       }
     });
   }
@@ -121,29 +122,29 @@ class _MyAccountState extends State<MyAccount> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: const Text("Profile"),
       ),
       body: Column(
         children: [
           BlocBuilder<ConnectedBloc, ConnectedState>(builder: (context, state) {
             if (state is ConnectedFailureState) {
-              return InternetNotAvailable();
+              return const InternetNotAvailable();
             } else {
               return Container();
             }
           }),
           _isFirstLoadRunning
-              ? Expanded(child: Center(child: CircularProgressIndicator()))
+              ? const Expanded(child: Center(child: CircularProgressIndicator()))
               : _isErrorInApi
                   ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                   : Expanded(
                       child: RefreshIndicator(
                         onRefresh: _profileViewModel.getProfileDetail,
                         child: Container(
-                          padding: EdgeInsets.only(left: 16, top: 0, right: 16),
+                          padding: const EdgeInsets.only(left: 16, top: 0, right: 16),
                           child: ListView(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 height: 15,
                               ),
                               Center(
@@ -167,7 +168,7 @@ class _MyAccountState extends State<MyAccount> {
                                               ],
                                               shape: BoxShape.circle,
                                             ),
-                                            child: CircularProgressIndicator(
+                                            child: const CircularProgressIndicator(
                                               color: Colors.white,
                                             ),
                                           )
@@ -222,7 +223,7 @@ class _MyAccountState extends State<MyAccount> {
                                                 });
                                               });
                                             },
-                                            child: Icon(
+                                            child: const Icon(
                                               Icons.edit,
                                               color: Colors.white,
                                             ),
@@ -231,7 +232,7 @@ class _MyAccountState extends State<MyAccount> {
                                   ],
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 35,
                               ),
                               buildTextField(
@@ -291,7 +292,7 @@ class _MyAccountState extends State<MyAccount> {
                                       "N/A",
                                   false,
                                   false),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Row(
@@ -308,11 +309,11 @@ class _MyAccountState extends State<MyAccount> {
                                               MaterialStateProperty.all(
                                                   Colors.grey),
                                           textStyle: MaterialStateProperty.all(
-                                              TextStyle(fontSize: 12))),
-                                      child: Text('Cancel'),
+                                              const TextStyle(fontSize: 12))),
+                                      child: const Text('Cancel'),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 20,
                                   ),
                                   Container(
@@ -370,13 +371,13 @@ class _MyAccountState extends State<MyAccount> {
                                               MaterialStateProperty.all(
                                                   primaryColor),
                                           textStyle: MaterialStateProperty.all(
-                                              TextStyle(fontSize: 12))),
-                                      child: Text('Save'),
+                                              const TextStyle(fontSize: 12))),
+                                      child: const Text('Save'),
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 50,
                               ),
                             ],
@@ -406,13 +407,13 @@ class _MyAccountState extends State<MyAccount> {
                         showPassword = !showPassword;
                       });
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.remove_red_eye,
                       color: Colors.grey,
                     ),
                   )
                 : null,
-            contentPadding: EdgeInsets.only(bottom: 3),
+            contentPadding: const EdgeInsets.only(bottom: 3),
             labelText: labelText,
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: placeholder,

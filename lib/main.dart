@@ -127,12 +127,12 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data!) {
-                return Dashboard();
+                return const Dashboard();
               } else {
-                return LoginClass();
+                return const LoginClass();
               }
             }
-            return Center();
+            return const Center();
           }),
       duration: 3000,
       imageSize: 300,
@@ -165,7 +165,7 @@ class MyApp extends StatelessWidget {
   }
 
 
-  ThemeData _darkTheme = ThemeData(
+  final ThemeData _darkTheme = ThemeData(
     fontFamily: 'Raleway',
     accentColor: primaryDarkColor,
     brightness: Brightness.dark,
@@ -175,7 +175,7 @@ class MyApp extends StatelessWidget {
 
   );
 
-  ThemeData _lightTheme = ThemeData(
+  final ThemeData _lightTheme = ThemeData(
     fontFamily: 'Raleway',
     accentColor: primaryColor,
     brightness: Brightness.light,

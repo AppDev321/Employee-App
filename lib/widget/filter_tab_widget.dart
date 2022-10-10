@@ -27,7 +27,7 @@ class CustomFilterTab extends StatelessWidget {
           indicator: BoxDecoration(
               borderRadius: BorderRadius.circular(Controller.roundCorner), color: primaryColor),
           labelColor: Colors.white,
-          labelStyle: TextStyle(fontWeight: FontWeight.normal),
+          labelStyle:const TextStyle(fontWeight: FontWeight.normal),
           unselectedLabelColor: Colors.black,
           tabs: tabs,
         ));

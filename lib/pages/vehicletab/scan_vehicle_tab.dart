@@ -113,7 +113,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
       body: Center(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             Container(
@@ -142,21 +142,21 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
             _isErrorInApi
                 ? Column(
                     children: [
-                      SizedBox(
+                      const  SizedBox(
                         height: 80,
                       ),
                       Align(
                         alignment: Alignment.center,
                           child: Container(
 
-                              margin: EdgeInsets.all(20),
+                              margin:const EdgeInsets.all(20),
                               child: ErrorMessageWidget(
                                 label: _errorMsg!,
                                 color: Colors.red,
                               )))
                     ],
                   )
-                : Center(),
+                :const Center(),
           ],
         ),
       ),
@@ -170,7 +170,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             backgroundColor: primaryColor,
-            label: Text(
+            label:const Text(
               "Scan QR Code",
               style: TextStyle(
                 fontWeight: FontWeight.bold,

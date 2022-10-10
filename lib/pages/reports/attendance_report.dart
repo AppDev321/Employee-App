@@ -26,7 +26,7 @@ class AttendanceReport extends StatefulWidget {
 
 class AttendanceReportStateful extends State<AttendanceReport> {
   int buttonState = 0;
-  TextEditingController _dateFilterController = TextEditingController();
+  final TextEditingController _dateFilterController = TextEditingController();
 
 // List<String> months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec"];
   //List<String> years = ["2018","2019","2020","2021","2022","2023","2024","2024"];
@@ -52,9 +52,9 @@ class AttendanceReportStateful extends State<AttendanceReport> {
 
     //Getting current month and date time
     DateTime now = DateTime.now();
-    var startDate = new DateTime(now.year, now.month, 1);
+    var startDate =  DateTime(now.year, now.month, 1);
     var endDate =
-        new DateTime(now.year, now.month + 1, 0); //this month last date
+         DateTime(now.year, now.month + 1, 0); //this month last date
 
    request = ClaimShiftHistoryRequest();
     request.start_date = Controller().getConvertedDate(startDate);
@@ -105,21 +105,21 @@ class AttendanceReportStateful extends State<AttendanceReport> {
 
                     return Container();
                   }else {
-                    return InternetNotAvailable();
+                    return const InternetNotAvailable();
                   }
                 }
 
             ),
 
-            Padding(
-              padding: const EdgeInsets.all(20),
+            const Padding(
+              padding: EdgeInsets.all(20),
               child: CustomTextWidget(
                 text: subMenuReportAttandance,
                 size: 20,
               ),
             ),
             AnimatedButtonBar(
-              padding: EdgeInsets.all(9),
+              padding: const EdgeInsets.all(9),
               backgroundColor: cardThemeBaseColor,
               radius: 20,
               invertedSelection: true,
@@ -129,22 +129,22 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                     onTap: () {
                       changeButtonState(0);
                     },
-                    child: Text('This Month')),
+                    child: const Text('This Month')),
                 ButtonBarEntry(
                     onTap: () {
                       changeButtonState(1);
                     },
-                    child: Text('Last Month')),
+                    child:const Text('Last Month')),
                 ButtonBarEntry(
                     onTap: () {
                       changeButtonState(2);
                     },
-                    child: Text('This Year')),
+                    child:const Text('This Year')),
                 ButtonBarEntry(
                     onTap: () {
                       changeButtonState(3);
                     },
-                    child: Text('Custom'))
+                    child:const Text('Custom'))
               ],
             ),
             Padding(
@@ -179,12 +179,12 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                         isSearchButtonShow: false,
                       )
                     : buttonState == 1
-                        ? Center()
+                        ? const Center()
                         : buttonState == 2
-                            ? Center()
-                            : Center()),
+                            ? const Center()
+                            : const Center()),
             _isFirstLoadRunning
-                ? Expanded(child: Center(child: CircularProgressIndicator()))
+                ? const Expanded(child: Center(child: CircularProgressIndicator()))
                 : _isErrorInApi
                     ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                     : Expanded(
@@ -224,7 +224,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
             // width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
                 color: cardThemeBaseColor,
-                borderRadius: BorderRadius.only(
+                borderRadius:const BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))),
             child: IntrinsicHeight(
@@ -245,7 +245,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                 text: _reportsViewModel.convertStringDate(item.date.toString(),"day"),
                                 color: HexColor.fromHex("#7da36a"),
                               ),
-                              SizedBox(
+                              const    SizedBox(
                                 height: 5,
                               ),
                               CustomTextWidget(
@@ -255,12 +255,12 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                 size: 28,
                               ),
 
-                              SizedBox(
+                              const   SizedBox(
                                 height: 5,
                               ),
 
                               CustomTextWidget(
-                                text:   _reportsViewModel.convertStringDate(item.date.toString(),"month") +", "+  _reportsViewModel.convertStringDate(item.date.toString(),"year"),
+                                text:   "${_reportsViewModel.convertStringDate(item.date.toString(),"month")}, ${_reportsViewModel.convertStringDate(item.date.toString(),"year")}",
                                 color: HexColor.fromHex("#7da36a"),
                                 fontWeight: FontWeight.w400,
                               ),
@@ -269,7 +269,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                   Expanded(
                       flex: 3,
                       child: Container(
-                          padding: EdgeInsets.all(8),
+                          padding:const EdgeInsets.all(8),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,16 +292,16 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                               size: 15.0,
                                               color: primaryColor,
                                             ),
-                                            SizedBox(
+                                            const  SizedBox(
                                               width: 5,
                                             ),
-                                            CustomTextWidget(
+                                            const  CustomTextWidget(
                                               text: "Check In",
                                               size: 12,
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const  SizedBox(
                                           height: 5,
                                         ),
                                         Padding(
@@ -321,7 +321,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Row(
-                                          children: [
+                                          children: const [
                                             Icon(
                                               Icons
                                                   .assignment_turned_in_outlined,
@@ -337,7 +337,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         Center(
@@ -355,7 +355,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 20,
                               ),
                               Row(
@@ -366,7 +366,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                     size: 15.0,
                                     color: HexColor.fromHex("#7da36a"),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
                                   CustomTextWidget(
@@ -392,20 +392,20 @@ class AttendanceReportStateful extends State<AttendanceReport> {
     DateTime now = DateTime.now();
     if (status == 0)
     {
-      var startDate = new DateTime(now.year, now.month, 1);
-      var endDate =new DateTime(now.year, now.month + 1, 0); //this month last date
+      var startDate =  DateTime(now.year, now.month, 1);
+      var endDate = DateTime(now.year, now.month + 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     }
     else if (status == 1) {
-      var startDate = new DateTime(now.year, now.month - 2, 1);
-      var endDate = new DateTime(now.year, now.month - 1, 0); //this month last date
+      var startDate =  DateTime(now.year, now.month - 2, 1);
+      var endDate =  DateTime(now.year, now.month - 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     }
     else if (status == 2) {
-      var startDate = new DateTime(now.year, 1, 1);
-      var endDate = new DateTime(now.year, now.month + 1, 0); //this month last date
+      var startDate =  DateTime(now.year, 1, 1);
+      var endDate =  DateTime(now.year, now.month + 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     }

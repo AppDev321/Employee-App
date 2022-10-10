@@ -119,12 +119,12 @@ class _AddAttandenceState extends State<AddAttandence> {
     var colorText = Get.isDarkMode ? blackThemeTextColor : Colors.black;
     return Scaffold(
       appBar: AppBar(
-        title: Text(menuAttandance),
+        title: const Text(menuAttandance),
       ),
       body: Center(
         child: Column(
           children: [
-           SizedBox(height: 50,),
+           const SizedBox(height: 50,),
             Container(
               padding: const EdgeInsets.all(20.0),
               child:  Text(
@@ -163,7 +163,7 @@ class _AddAttandenceState extends State<AddAttandence> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             backgroundColor: primaryColor,
-            label:  Text(
+            label:  const Text(
 
               "Scan QR Code",
               style: TextStyle(

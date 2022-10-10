@@ -62,6 +62,8 @@ abstract class ApiClient {
 
   @POST('/leave-request')
   Future<LoginApiResponse> leaveRequest(@Body() LeaveRequest body);
+  @POST('/leave-request/delete?leave_request_id={id}')
+  Future<LoginApiResponse> deleteLeaveRequest(@Path("id") String id);
 
   @POST('/change-password')
   Future<LoginApiResponse> changePassword(@Body() ChangePasswordRequest body);
@@ -74,6 +76,8 @@ abstract class ApiClient {
 
   @POST('/request-overtime')
   Future<LoginApiResponse> saveOvertimeRequest(@Body() OvertimeRequest body);
+  @POST('/request-overtime/delete?over_time_request_id={id}')
+  Future<LoginApiResponse> deleteOvertimeRequest(@Path("id") String id);
 
   @POST('/overtime-request-history')
   Future<OvertimeListResponse> getOvertimeHistory(@Body() ClaimShiftHistoryRequest body);

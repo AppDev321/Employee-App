@@ -32,7 +32,6 @@ class AddLeave extends StatefulWidget {
 class AddLeaveStateful extends State<AddLeave> {
 
   String? _errorMsg = "";
-  CalendarController _controller = CalendarController();
   TextEditingController descController = TextEditingController();
   TextEditingController subjectController = TextEditingController();
    DateTime startDate = DateTime.now(),endDate=DateTime.now();
@@ -121,10 +120,10 @@ class AddLeaveStateful extends State<AddLeave> {
 
 
                     CustomTextWidget(text: "Leave Request", size: 25),
-                    SizedBox(
+                    const  SizedBox(
                       height: 20,
                     ),
-                    CustomTextWidget(text: "Leave Type:",fontWeight: FontWeight.bold,),
+                    const  CustomTextWidget(text: "Leave Type:",fontWeight: FontWeight.bold,),
                     CustomDropDownWidget(
                       spinnerItems: widget.leaveTypes!,
                       onClick: (data) {
@@ -159,18 +158,18 @@ class AddLeaveStateful extends State<AddLeave> {
                       ],
                     ),
 
-                    SizedBox(
+                    const  SizedBox(
                       height: 10,
                     ),
 
                     CustomCommentBox(label:"Subject" ,hintMessage: "Enter your subject",controller: subjectController),
 
-                    SizedBox(
+                    const   SizedBox(
                       height: 10,
                     ),
                     CustomCommentBox(label:"Description" ,hintMessage: "Enter your description",controller: descController),
 
-                    SizedBox(
+                    const  SizedBox(
                       height: 20,
                     ),
 
@@ -191,7 +190,7 @@ class AddLeaveStateful extends State<AddLeave> {
                               ),
                            ),
 
-                          SizedBox(
+                              const    SizedBox(
                             width: 30,
                           ),
                               Expanded(
@@ -220,7 +219,7 @@ class AddLeaveStateful extends State<AddLeave> {
                                   backgroundColor: MaterialStateProperty.all(primaryColor),
                                   textStyle:
                                   MaterialStateProperty.all(TextStyle(fontSize: 12))),
-                              child: Text('Save'),
+                              child:const Text('Save'),
                             ),
                           ),
 

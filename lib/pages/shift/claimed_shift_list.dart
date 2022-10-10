@@ -36,7 +36,7 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
   late BuildContext contextBuild;
   late ShiftListViewModel _shiftListViewModel;
 
-  TextEditingController _dateFilterController = TextEditingController();
+  final TextEditingController _dateFilterController = TextEditingController();
 
 
   @override
@@ -51,7 +51,7 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
 
 
     _shiftListViewModel = ShiftListViewModel();
-    var now = new DateTime.now();
+    var now =  DateTime.now();
     String formattedDate = Controller().getConvertedDate(now);
 
     var request = ClaimShiftHistoryRequest();
@@ -95,7 +95,7 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
     contextBuild = context;
     return Scaffold(
       appBar: AppBar(
-        title: Text(subMenuOpenShift),
+        title:const Text(subMenuOpenShift),
       ),
 
       body: Column(
@@ -104,7 +104,7 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
           BlocBuilder<ConnectedBloc, ConnectedState>(
               builder: (context, state) {
                 if (state is ConnectedFailureState) {
-                  return InternetNotAvailable();
+                  return const InternetNotAvailable();
                 }else
                 {
                   return Container();
@@ -159,14 +159,14 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
                     ),
                   ),
                   _isFirstLoadRunning
-                      ? Expanded(child: Center(child: CircularProgressIndicator()))
+                      ?const Expanded(child: Center(child: CircularProgressIndicator()))
                       : _isErrorInApi
                       ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                       : Expanded(
                           child:
-                          _claimedHistoryList.length >0?
+                          _claimedHistoryList.isNotEmpty?
                            showListData(context,_claimedHistoryList,false)
-                              : ErrorMessageWidget(label: "No Shift Found")
+                              : const ErrorMessageWidget(label: "No Shift Found")
                           )
                 ],
               ),
@@ -201,11 +201,11 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       color:  cardThemeBaseColor,
-                      borderRadius: BorderRadius.only(
+                      borderRadius:const BorderRadius.only(
                           bottomRight: Radius.circular(Controller.roundCorner),
                           topRight: Radius.circular(Controller.roundCorner))),
-                  margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin:const EdgeInsets.only(left: Controller.leftCardColorMargin),
+                  padding:const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: indexBuilder(context, shifts[index]))),
         ),
       ),
@@ -219,7 +219,7 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
           child:
           ExpansionTile(
 
-            tilePadding:EdgeInsets.all(0),
+            tilePadding:const EdgeInsets.all(0),
             title: LayoutBuilder(
               builder: (context, constraint) {
                 return    itemClaimedHistory(context, item);
@@ -259,14 +259,14 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
               createRowDate("Managed by:",
                   "${item.managedBy == '' ? 'N/A' : item.managedBy}"),
               Container(
-                margin: EdgeInsets.only(top: 10),
+                margin: const EdgeInsets.only(top: 10),
                 child: Row(
                   children: [
-                    CustomTextWidget(
+                    const CustomTextWidget(
                       text: "Status:",
                       fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     TextColorContainer(
@@ -303,7 +303,7 @@ Widget createRowDate(String title,String? value,{Color color= Colors.black})
 Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
 
@@ -312,7 +312,7 @@ Column(
                   CustomTextWidget(  text:title,fontWeight: FontWeight.bold),
                     Expanded(
                       child: Padding(
-                            padding: EdgeInsets.only(left: 5),
+                            padding:const EdgeInsets.only(left: 5),
                             child:
                             CustomTextWidget(  text:value,color: color,)
 

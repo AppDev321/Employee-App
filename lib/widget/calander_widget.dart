@@ -36,7 +36,7 @@ class CustomCalanderWidget extends StatelessWidget {
       startingDayOfWeek: StartingDayOfWeek.monday,
 
       onDaySelected: (date, events, holidays) {
-        var formatter = new DateFormat('yyyy-MM-dd');
+        var formatter =  DateFormat('yyyy-MM-dd');
 
         String formattedDate = formatter.format(date);
         onChanged(formattedDate);
@@ -49,7 +49,7 @@ class CustomCalanderWidget extends StatelessWidget {
                 color: primaryColor, borderRadius: BorderRadius.circular(Controller.roundCorner)),
             child: Text(
               date.day.toString(),
-              style: TextStyle(color: Colors.white),
+              style:const TextStyle(color: Colors.white),
             )),
         todayDayBuilder: (context, date, events) => Container(
             margin: const EdgeInsets.all(5.0),
@@ -58,7 +58,7 @@ class CustomCalanderWidget extends StatelessWidget {
                 color: primaryColor.withOpacity(0.4), borderRadius: BorderRadius.circular(Controller.roundCorner)),
             child: Text(
               date.day.toString(),
-              style: TextStyle(color: Colors.white),
+              style:const TextStyle(color: Colors.white),
             )),
       ),
       calendarController: controller,

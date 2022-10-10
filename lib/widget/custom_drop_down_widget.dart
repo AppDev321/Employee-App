@@ -58,7 +58,7 @@ class _CustomDropMenuWidget extends State<CustomDropDownWidget> {
           child: Container(
 
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(left: 5, right: 5),
+            padding:const EdgeInsets.only(left: 5, right: 5),
             decoration: BoxDecoration(
                 border: Border.all(color:colorText, width: 1),
                 borderRadius: BorderRadius.circular(Controller.roundCorner)),
@@ -66,11 +66,11 @@ class _CustomDropMenuWidget extends State<CustomDropDownWidget> {
             DropdownButton<DropMenuItems>(
               isExpanded: true,
               value: dropdownValue,
-              icon: Icon(Icons.arrow_drop_down),
+              icon:const Icon(Icons.arrow_drop_down),
               iconSize: 24,
               elevation: 16,
-              style: TextStyle(color: Colors.black, fontSize: 16),
-              underline: SizedBox(),
+              style:const TextStyle(color: Colors.black, fontSize: 16),
+              underline:const SizedBox(),
               onChanged: (data) {
                 setState(() {
                   dropdownValue = data!;
@@ -80,7 +80,7 @@ class _CustomDropMenuWidget extends State<CustomDropDownWidget> {
               },
               items: widget.spinnerItems.map((DropMenuItems f) {
 
-                return new DropdownMenuItem<DropMenuItems>(
+                return  DropdownMenuItem<DropMenuItems>(
                   value: f,
                   child: CustomTextWidget(text:f.name),
                 );
@@ -92,18 +92,18 @@ class _CustomDropMenuWidget extends State<CustomDropDownWidget> {
             Container(
 
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(left: 5, right: 5),
+                padding:const EdgeInsets.only(left: 5, right: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color:colorText, width: 1),
                     borderRadius: BorderRadius.circular(Controller.roundCorner)),
                 child:
                 DropdownButton<DropMenuItems>(
                   value: dropdownValue,
-                  icon: Icon(Icons.arrow_drop_down),
+                  icon:const Icon(Icons.arrow_drop_down),
                   iconSize: 24,
                   elevation: 16,
-                  style: TextStyle(color: Colors.black, fontSize: 16),
-                  underline: SizedBox(),
+                  style:const TextStyle(color: Colors.black, fontSize: 16),
+                  underline:const SizedBox(),
                   onChanged: (data) {
                     setState(() {
                       dropdownValue = data!;
@@ -113,7 +113,7 @@ class _CustomDropMenuWidget extends State<CustomDropDownWidget> {
                   },
                   items: widget.spinnerItems.map((DropMenuItems f) {
 
-                    return new DropdownMenuItem<DropMenuItems>(
+                    return  DropdownMenuItem<DropMenuItems>(
                       value: f,
                       child: CustomTextWidget(text:f.name),
                     );

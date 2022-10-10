@@ -35,6 +35,8 @@ import '../reports/leave_report.dart';
 import '../vehicletab/scan_vehicle_tab.dart';
 
 class Dashboard extends StatefulWidget {
+  const Dashboard({Key? key}) : super(key: key);
+
   @override
   _DashboardState createState() => _DashboardState();
 }
@@ -44,13 +46,13 @@ class _DashboardState extends State<Dashboard> {
   List<DashBoardGrid> listQuickAccess = [];
   bool _isFirstLoadRunning = false;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-  new GlobalKey<RefreshIndicatorState>();
+   GlobalKey<RefreshIndicatorState>();
   bool _isErrorInApi = false;
   String? _errorMsg = "";
   late DashBoardViewModel _dashBoardViewModel;
 
-  Shifts? dashBoardShift = null;
-  Stats? dashboardStat = null;
+  Shifts? dashBoardShift;
+  Stats? dashboardStat;
   User userDashboard = User();
   String profileImageUrl = "";
 
@@ -102,9 +104,7 @@ class _DashboardState extends State<Dashboard> {
           dashBoardShift = _dashBoardViewModel.getDashBoardShift();
           dashboardStat = _dashBoardViewModel.getDashboardStat();
           userDashboard = _dashBoardViewModel.getUserObject()!;
-          if (userDashboard.profileURL == null) {
-            userDashboard.profileURL = "";
-          }
+          userDashboard.profileURL ??= "";
 
           profileImageUrl = userDashboard.profileURL.toString();
           Controller().setUserProfilePic(profileImageUrl);
@@ -276,7 +276,7 @@ class _DashboardState extends State<Dashboard> {
                                     fontWeight: FontWeight.bold,
                                     color: primaryColor.withOpacity(0.5),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 5,
                                   ),
                                   CustomTextWidget(
@@ -298,7 +298,7 @@ class _DashboardState extends State<Dashboard> {
                           dashBoardShift != null
                               ? Column(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
                                     Align(
@@ -313,7 +313,7 @@ class _DashboardState extends State<Dashboard> {
                                             color: primaryColor),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
                                     upComingShift(
@@ -321,18 +321,18 @@ class _DashboardState extends State<Dashboard> {
                                   ],
                                 )
                               : Container(),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           CustomTextWidget(
                               text: "Events", size: 18, color: primaryColor),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           ImageSliderWidget(
                             height: 135,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Row(
@@ -340,27 +340,25 @@ class _DashboardState extends State<Dashboard> {
                             children: [
                               Align(
                                 alignment: Alignment.centerLeft,
-                                child: Container(
-                                  child: CustomTextWidget(
-                                      text: "Your Stats",
-                                      size: 18,
-                                      color: primaryColor),
-                                ),
+                                child: CustomTextWidget(
+                                    text: "Your Stats",
+                                    size: 18,
+                                    color: primaryColor),
                               ),
                               TextColorContainer(
                                   label: "Monthly",
                                   color: claimedShiftApprovedColor),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           GridView.builder(
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: listStats.length,
                               gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 childAspectRatio: 2 / 2,
                                 crossAxisSpacing: 3,
                                 mainAxisSpacing: 3,
@@ -370,27 +368,25 @@ class _DashboardState extends State<Dashboard> {
                                 var data = listStats[i];
                                 return statsContainerItem(data);
                               }),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Container(
-                              child: CustomTextWidget(
-                                  text: "Quick Access",
-                                  size: 18,
-                                  color: primaryColor),
-                            ),
+                            child: CustomTextWidget(
+                                text: "Quick Access",
+                                size: 18,
+                                color: primaryColor),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           GridView.builder(
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: listQuickAccess.length,
                               gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 childAspectRatio: 3 / 2,
                                 crossAxisSpacing: 5,
                                 mainAxisSpacing: 5,
@@ -400,7 +396,7 @@ class _DashboardState extends State<Dashboard> {
                                 var data = listQuickAccess[i];
                                 return quickAccess(data);
                               }),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                         ],
@@ -428,10 +424,10 @@ class _DashboardState extends State<Dashboard> {
         width: Get.mediaQuery.size.width,
         decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
                 bottomRight: Radius.circular(Controller.roundCorner),
                 topRight: Radius.circular(Controller.roundCorner))),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -445,7 +441,7 @@ class _DashboardState extends State<Dashboard> {
                       color: Colors.white,
                       width: 15,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     CustomTextWidget(
@@ -462,7 +458,7 @@ class _DashboardState extends State<Dashboard> {
                       color: Colors.white,
                       width: 15,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     CustomTextWidget(
@@ -474,7 +470,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            SizedBox(
+            const  SizedBox(
               height: 20,
             ),
             Row(
@@ -484,7 +480,7 @@ class _DashboardState extends State<Dashboard> {
                   color: Colors.white,
                   width: 22,
                 ),
-                SizedBox(
+                const    SizedBox(
                   width: 10,
                 ),
                 CustomTextWidget(
@@ -494,7 +490,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            SizedBox(
+            const  SizedBox(
               height: 10,
             ),
           ],
@@ -507,11 +503,11 @@ class _DashboardState extends State<Dashboard> {
     return InkWell(
       onTap: () {
         if (item.label.toString().contains("Shift")) {
-          Get.to(() => ShiftList());
+          Get.to(() => const ShiftList());
         } else if (item.label.toString().contains("Leaves")) {
-          Get.to(() => LeaveReport());
+          Get.to(() => const LeaveReport());
         } else {
-          Get.to(() => OverTimePage());
+          Get.to(() => const OverTimePage());
         }
       },
       child: Card(
@@ -523,12 +519,12 @@ class _DashboardState extends State<Dashboard> {
           clipBehavior: Clip.antiAlias,
           child: Container(
             width: Get.mediaQuery.size.width,
-            decoration: BoxDecoration(
+            decoration:const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))),
-            margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            margin:const EdgeInsets.only(left: Controller.leftCardColorMargin),
+            padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -538,7 +534,7 @@ class _DashboardState extends State<Dashboard> {
                   width: 22,
                   height: 22,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Expanded(
                   child: CustomTextWidget(
                     text: item.id.toString(),
@@ -547,7 +543,7 @@ class _DashboardState extends State<Dashboard> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10),
+                const  SizedBox(height: 10),
                 Expanded(
                   child: CustomTextWidget(
                     text: item.label.toString(),
@@ -573,10 +569,10 @@ class _DashboardState extends State<Dashboard> {
                   ));
               break;
             case 2:
-              Get.to(() => AddOverTime());
+              Get.to(() =>const AddOverTime());
               break;
             case 3:
-              Get.to(() => AttendanceReport());
+              Get.to(() =>const AttendanceReport());
               break;
             case 4:
               Get.to(() => SettingScreen());
@@ -593,12 +589,12 @@ class _DashboardState extends State<Dashboard> {
             clipBehavior: Clip.antiAlias,
             child: Container(
               width: Get.mediaQuery.size.width,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(Controller.roundCorner),
                       topRight: Radius.circular(Controller.roundCorner))),
-              margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              margin:const EdgeInsets.only(left: Controller.leftCardColorMargin),
+              padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -607,7 +603,7 @@ class _DashboardState extends State<Dashboard> {
                     color: Colors.white,
                     width: 22,
                   ),
-                  SizedBox(height: 10),
+                  const  SizedBox(height: 10),
                   CustomTextWidget(
                     text: item.label.toString(),
                     color: Colors.white,

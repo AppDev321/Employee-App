@@ -202,11 +202,11 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     CustomTextWidget(text: isEditableView? "Availability Request" : "Request Detail", size: 25),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     isEditableView ?
@@ -220,14 +220,14 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                           CustomTextWidget(text: "Title", fontWeight: FontWeight.bold,),
                           CustomTextWidget(text: availabilityRequest.title, ),
                         ]),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
 
 
                     isEditableView ?Column(
                       children:[
-                        CustomTextWidget(
+                        const CustomTextWidget(
                           text: "Effective Dates:",
                           fontWeight: FontWeight.bold,
                         ),
@@ -276,25 +276,25 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children:[
-                        CustomTextWidget(text: "Effective Date:",fontWeight: FontWeight.bold,),
-                        SizedBox(height: 5,),
+                        const CustomTextWidget(text: "Effective Date:",fontWeight: FontWeight.bold,),
+                        const SizedBox(height: 5,),
                         Row(children: [
                         endEffectDate.isEmpty ?
                         CustomTextWidget(text: startEffectDate )
-                        : CustomTextWidget(text: startEffectDate +" to " +endEffectDate),
+                        : CustomTextWidget(text: "$startEffectDate to $endEffectDate"),
                         ],)
 
                       ]
                   ),
 
 
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
 
                     showAvailabilityBox( isEditableView ),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
@@ -314,9 +314,9 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                               child: Text('Cancel'),
                             ),
                           ),
-                          isEditableView ? SizedBox(
+                          isEditableView ? const SizedBox(
                             width: 30,
-                          ):Center(),
+                          ):const Center(),
                           isEditableView ?
                           Expanded(
                             child: ElevatedButton(
@@ -345,13 +345,13 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                                   backgroundColor:
                                       MaterialStateProperty.all(primaryColor),
                                   textStyle: MaterialStateProperty.all(
-                                      TextStyle(fontSize: 12))),
-                              child: Text('Save'),
+                                      const TextStyle(fontSize: 12))),
+                              child: const Text('Save'),
                             ),
-                          ):Center()
+                          ):const Center()
                           ,
                         ]),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                   ],
@@ -376,7 +376,7 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomTextWidget(
+        const CustomTextWidget(
           text: "Availability:",
           fontWeight: FontWeight.bold,
         ),
@@ -386,10 +386,10 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
           onClick: (data) {
             dayName = data.name.toString().substring(0,3).toLowerCase();
           },
-        ):Center(),
+        ):const Center(),
 
 
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         ListView.builder(
@@ -397,11 +397,11 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
             return timeListRow(timeList[index],isEditableView);
           },
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: timeList.length,
         ),
         isEditableView ?  Container(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: Colors.blue.withOpacity(0.1),
             borderRadius: BorderRadius.circular(Controller.roundCorner),
@@ -432,13 +432,13 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                       children: [
                         Row(
                           children: [
-                            CustomTextWidget(
+                            const CustomTextWidget(
                               text: "From",
                               fontWeight: FontWeight.w500,
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Container(
-                              margin: EdgeInsets.only(bottom: 10),
+                              margin: const EdgeInsets.only(bottom: 10),
                               child: CustomDropDownWidget(
                                 spinnerItems: hours,
                                 fullWidth: false,
@@ -447,9 +447,9 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                                 },
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Container(
-                              margin: EdgeInsets.only(bottom: 10),
+                              margin: const EdgeInsets.only(bottom: 10),
                               child: CustomDropDownWidget(
                                 spinnerItems: minutes,
                                 fullWidth: false,
@@ -462,13 +462,13 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                         ),
                         Row(
                           children: [
-                            CustomTextWidget(
+                            const CustomTextWidget(
                               text: "To",
                               fontWeight: FontWeight.w500,
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Container(
-                              margin: EdgeInsets.only(bottom: 10),
+                              margin: const EdgeInsets.only(bottom: 10),
                               child: CustomDropDownWidget(
                                 spinnerItems: hours,
                                 fullWidth: false,
@@ -477,9 +477,9 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                                 },
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Container(
-                              margin: EdgeInsets.only(bottom: 10),
+                              margin: const EdgeInsets.only(bottom: 10),
                               child: CustomDropDownWidget(
                                 spinnerItems: minutes,
                                 fullWidth: false,
@@ -497,7 +497,7 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
 
 
 
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               Row(
@@ -516,9 +516,9 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                         saveTimeSlots(true);
                       });
                     },
-                    child: Text('Available'),
+                    child: const Text('Available'),
                   )),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   Expanded(
@@ -532,13 +532,13 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
                         saveTimeSlots(false);
                       });
                     },
-                    child: Text('Unavailable'),
+                    child: const Text('Unavailable'),
                   )),
                 ],
               ),
             ],
           ),
-        ):Center(),
+        ):const Center(),
       ],
     );
   }
@@ -584,8 +584,8 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
 
 
     if(isEntryAllow) {
-      startTime = "${start_hour}:${start_minute}";
-      endTime = "${end_hour}:${end_minute}";
+      startTime = "$start_hour:$start_minute";
+      endTime = "$end_hour:$end_minute";
 
       var timeAdd = TimeSlot();
       timeAdd.end = endTime;
@@ -635,13 +635,13 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
             (startHour < storedStartHour && startHour <= storedEndHour)
         ) {
           if (startHour < 10) {
-            savedTimeSlot.startHour = "0" + startHour.toString();
+            savedTimeSlot.startHour = "0$startHour";
           } else {
             savedTimeSlot.startHour = startHour.toString();
           }
 
           if (endHour < 10) {
-            savedTimeSlot.endHour = "0" + endHour.toString();
+            savedTimeSlot.endHour = "0$endHour";
           }
           else {
             savedTimeSlot.endHour = endHour.toString();
@@ -713,8 +713,8 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
   Widget timeListRow(TimeSlot item,bool isEditableView) {
     var color = item.isAvailable! ? Colors.green : Colors.red;
     return Container(
-      margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(Controller.roundCorner),
@@ -724,7 +724,7 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
         children: [
           item.isAllDay!
               ? CustomTextWidget(
-                  text: "${item.dayName.toString().toUpperCase()} " + "${item.isAvailable!
+                  text: "${item.dayName.toString().toUpperCase()} ${item.isAvailable!
                       ? "All Day Available"
                       : "All Day Unavailable"}",
                   color: color,
@@ -733,11 +733,11 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
               : Row(
                   children: [
                     CustomTextWidget(
-                      text: "${item.dayName.toString().toUpperCase()}",
+                      text: item.dayName.toString().toUpperCase(),
                       color: color,
                       fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     CustomTextWidget(
@@ -758,7 +758,7 @@ class ViewAvailabilityStateful extends State<ViewAvailability> {
               Icons.close,
               color: color,
             ),
-          ):Center()
+          ):const Center()
         ],
       ),
     );

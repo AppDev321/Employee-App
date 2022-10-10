@@ -72,14 +72,14 @@ class _NotificationListState extends State<NotificationList> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Notification"),
+          title: const Text("Notification"),
         ),
         body: Column(
           children: [
             BlocBuilder<ConnectedBloc, ConnectedState>(
                 builder: (context, state) {
               if (state is ConnectedFailureState) {
-                return InternetNotAvailable();
+                return const InternetNotAvailable();
               } else if (state is FirebaseMsgReceived) {
                 return Container();
               } else {
@@ -87,11 +87,11 @@ class _NotificationListState extends State<NotificationList> {
               }
             }),
             _isFirstLoadRunning
-                ? Expanded(child: Center(child: CircularProgressIndicator()))
+                ? const Expanded(child: Center(child: CircularProgressIndicator()))
                 : _isErrorInApi
                     ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                     : Expanded(
-                        child: notificationList.length > 0
+                        child: notificationList.isNotEmpty
                             ? RefreshIndicator(
                                 onRefresh:
                                     _notificationViewModel.getNotification,
@@ -126,7 +126,7 @@ class _NotificationListState extends State<NotificationList> {
                                       );
                                     }),
                               )
-                            : ErrorMessageWidget(
+                            : const ErrorMessageWidget(
                                 label: "No Notification Found"),
                       )
           ],
@@ -147,7 +147,7 @@ class _NotificationListState extends State<NotificationList> {
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
+            children: const <Widget>[
               Icon(
                 Icons.notifications_rounded,
                 size: 30,
@@ -167,7 +167,7 @@ class _NotificationListState extends State<NotificationList> {
             color: Colors.grey,
             size: 10,
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           CustomTextWidget(
@@ -182,7 +182,7 @@ class _NotificationListState extends State<NotificationList> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             InkWell(
-              child: Icon(
+              child: const Icon(
                 Icons.keyboard_arrow_right,
                 color: Colors.grey,
                 size: 30.0,
@@ -206,8 +206,9 @@ class _NotificationListState extends State<NotificationList> {
                     if (!screenName
                         .toString()
                         .toLowerCase()
-                        .contains("dashboard"))
+                        .contains("dashboard")) {
                       LocalNotificationService().navigateFCMScreen(screenName);
+                    }
                   }
                 }
               },
@@ -229,9 +230,9 @@ class _NotificationListState extends State<NotificationList> {
                     top: 0,
                     left: 0,
                     child: Container(
-                      padding: EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(4),
                       color: Colors.red,
-                      child: CustomTextWidget(
+                      child: const CustomTextWidget(
                         text: "New",
                         color: Colors.white,
                         size: 10,

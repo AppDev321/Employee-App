@@ -58,7 +58,7 @@ class PieChartWidgetState extends State<PieChartWidget> {
               ),
 
              Container(
-               padding: EdgeInsets.only(left:10,right: 10,top:20,bottom: 10),
+               padding: const EdgeInsets.only(left:10,right: 10,top:20,bottom: 10),
                   child:
                   Wrap(
                     children:chartData.asMap().keys.map((index){
@@ -68,7 +68,7 @@ class PieChartWidgetState extends State<PieChartWidget> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            margin: EdgeInsets.all(3),
+                            margin: const EdgeInsets.all(3),
                             child:Indicator(
                               color: colorArray[index],
                               text: chartData[index].name.toString(),
@@ -76,7 +76,7 @@ class PieChartWidgetState extends State<PieChartWidget> {
                             ),
                           ),
                         ],
-                      ):Center();
+                      ):const Center();
                     }).toList(),
                   )
                 ),

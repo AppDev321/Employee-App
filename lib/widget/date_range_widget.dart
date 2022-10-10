@@ -32,9 +32,9 @@ class CustomDateRangeWidget extends StatelessWidget
         TextField(
               controller: controllerDate,
               decoration: InputDecoration(
-              border: OutlineInputBorder(),
-          prefixIcon: Icon(Icons.date_range),
-          suffixIcon: Icon(Icons.arrow_drop_down),
+              border:const OutlineInputBorder(),
+          prefixIcon:const Icon(Icons.date_range),
+          suffixIcon:const Icon(Icons.arrow_drop_down),
           labelText:labelText,
           ),
           onTap: () {
@@ -47,8 +47,8 @@ class CustomDateRangeWidget extends StatelessWidget
        Container(
          alignment: Alignment.bottomRight,
          child: ElevatedButton.icon(
-           icon: Icon(Icons.search),
-           label: Text("Search"),
+           icon:const Icon(Icons.search),
+           label:const Text("Search"),
            onPressed:() {
              if(start != null && end != null)
              {
@@ -61,7 +61,7 @@ class CustomDateRangeWidget extends StatelessWidget
            },
          )
 
-       ):Center()
+       ):const Center()
 
      ],
    );

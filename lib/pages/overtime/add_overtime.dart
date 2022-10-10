@@ -94,7 +94,7 @@ class AddLeaveStateful extends State<AddOverTime> {
             BlocBuilder<ConnectedBloc, ConnectedState>(
                 builder: (context, state) {
                   if (state is ConnectedFailureState) {
-                    return InternetNotAvailable();
+                    return const InternetNotAvailable();
                   } else {
                     return Container();
                   }
@@ -102,14 +102,14 @@ class AddLeaveStateful extends State<AddOverTime> {
             ),
 
             Padding(
-              padding: EdgeInsets.only(left: 10, top: 10, right: 10),
+              padding:const EdgeInsets.only(left: 10, top: 10, right: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
 
-                  CustomTextWidget(text: "Overtime Request", size: 25),
-                  SizedBox(
+                  const  CustomTextWidget(text: "Overtime Request", size: 25),
+                  const   SizedBox(
                     height: 20,
                   ),
                   DatePickerWidget(
@@ -121,24 +121,24 @@ class AddLeaveStateful extends State<AddOverTime> {
                       });
                     },
                   ),
-                  SizedBox(
+                  const    SizedBox(
                     height: 10,
                   ),
-                  CustomTextWidget(text: "Hour:", fontWeight: FontWeight.bold),
-                  SizedBox(
+                  const   CustomTextWidget(text: "Hour:", fontWeight: FontWeight.bold),
+                  const    SizedBox(
                     height: 10,
                   ),
                   CustomEditTextWidget(text: "Enter your hour",
                       controller: hourController,
                       isNumberField: true),
-                  SizedBox(
+                  const   SizedBox(
                     height: 10,
                   ),
                   CustomCommentBox(
                       label: "Reason:",
                       hintMessage: "Enter your description",
                       controller: reasonController),
-                  SizedBox(
+                  const    SizedBox(
                     height: 20,
                   ),
                   Row(
@@ -158,7 +158,7 @@ class AddLeaveStateful extends State<AddOverTime> {
                             child: Text('Cancel'),
                           ),
                         ),
-                        SizedBox(
+                        const      SizedBox(
                           width: 30,
                         ),
                         Expanded(
@@ -177,8 +177,8 @@ class AddLeaveStateful extends State<AddOverTime> {
                                 backgroundColor:
                                 MaterialStateProperty.all(primaryColor),
                                 textStyle: MaterialStateProperty.all(
-                                    TextStyle(fontSize: 12))),
-                            child: Text('Save'),
+                                    const TextStyle(fontSize: 12))),
+                            child: const Text('Save'),
                           ),
                         ),
                       ]),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
-class LabeledRadio extends StatelessWidget {
+class LabeledRadio<T> extends StatelessWidget {
   const LabeledRadio({
     Key? key,
     required this.label,
@@ -12,9 +13,9 @@ class LabeledRadio extends StatelessWidget {
 
   final String label;
   final EdgeInsets padding;
-  final int groupValue;
-  final int value;
-  final ValueChanged<int> onChanged;
+  final T? groupValue;
+  final T value;
+  final ValueChanged<T> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +29,14 @@ class LabeledRadio extends StatelessWidget {
         padding: padding,
         child: Row(
           children: <Widget>[
-            Radio<int>(
+            Radio<T>(
               groupValue: groupValue,
               value: value,
-              onChanged: (int? newValue) {
+              onChanged: (T? newValue) {
                 onChanged(newValue!);
               },
             ),
-            Text(label),
+            CustomTextWidget(text:label),
           ],
         ),
       ),

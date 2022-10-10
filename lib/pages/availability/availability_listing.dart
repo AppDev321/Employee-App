@@ -32,7 +32,7 @@ class AvailabilityList extends StatefulWidget {
 
 class AvailabilityListStateful extends State<AvailabilityList> {
   int buttonState = 0;
-  TextEditingController _dateFilterController = TextEditingController();
+  final TextEditingController _dateFilterController = TextEditingController();
   bool _isFirstLoadRunning = false;
   bool _isErrorInApi = false;
   String? _errorMsg = "";
@@ -64,9 +64,9 @@ class AvailabilityListStateful extends State<AvailabilityList> {
 
     //Getting current month and date time
     DateTime now = DateTime.now();
-    var startDate = new DateTime(now.year, now.month, 1);
+    var startDate =  DateTime(now.year, now.month, 1);
     var endDate =
-        new DateTime(now.year, now.month + 1, 0); //this month last date
+        DateTime(now.year, now.month + 1, 0); //this month last date
 
     request = ClaimShiftHistoryRequest();
     request.start_date = Controller().getConvertedDate(startDate);
@@ -104,7 +104,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
           setState(() {
             _errorMsg = "";
             availabilities.remove(deletedItemRequest);
-            if (availabilities.length == 0) {
+            if (availabilities.isEmpty) {
               _isErrorInApi = true;
               _errorMsg = "No Data found";
             }
@@ -139,7 +139,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
     }
 
     return VisibilityDetector(
-      key: Key('leave-widget'),
+      key: const Key('leave-widget'),
       onVisibilityChanged: (VisibilityInfo info) {
         var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
 
@@ -174,12 +174,11 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            child: CustomTextWidget(
+                   const CustomTextWidget(
                               text: "Add Request",
                               size: 20,
                             ),
-                          ),
+
                           ElevatedButton(
                             onPressed: () {
                               Get.to(() => AddAvailability());
@@ -194,11 +193,11 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     AnimatedButtonBar(
-                      padding: EdgeInsets.all(9),
+                      padding: const EdgeInsets.all(9),
                       backgroundColor: cardThemeBaseColor,
                       radius: 20,
                       invertedSelection: true,
@@ -207,22 +206,22 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                             onTap: () {
                               changeButtonState(0);
                             },
-                            child: Text('This Month')),
+                            child: const Text('This Month')),
                         ButtonBarEntry(
                             onTap: () {
                               changeButtonState(1);
                             },
-                            child: Text('Last Month')),
+                            child: const Text('Last Month')),
                         ButtonBarEntry(
                             onTap: () {
                               changeButtonState(2);
                             },
-                            child: Text('This Year')),
+                            child: const Text('This Year')),
                         ButtonBarEntry(
                             onTap: () {
                               changeButtonState(3);
                             },
-                            child: Text('Custom'))
+                            child: const Text('Custom'))
                       ],
                     ),
                     Padding(
@@ -263,7 +262,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                                     ? Center()
                                     : Center()),
                     _isFirstLoadRunning
-                        ? Expanded(
+                        ? const Expanded(
                             child: Center(child: CircularProgressIndicator()))
                         : _isErrorInApi
                             ? Expanded(
@@ -304,7 +303,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
             // width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
                 color: cardThemeBaseColor,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))),
             child: IntrinsicHeight(
@@ -333,7 +332,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                                         ? claimedShiftApprovedColor
                                         : claimedShiftRejectColor,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               CustomTextWidget(
@@ -347,15 +346,13 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                                         : claimedShiftRejectColor,
                                 size: 28,
                               ),
-                              SizedBox(
+                            const  SizedBox(
                                 height: 5,
                               ),
                               CustomTextWidget(
-                                text: Controller().convertStringDate(
-                                        item.requestDate.toString(), "month") +
-                                    ", " +
-                                    Controller().convertStringDate(
-                                        item.requestDate.toString(), "year"),
+                                text: "${Controller().convertStringDate(
+                                        item.requestDate.toString(), "month")}, ${Controller().convertStringDate(
+                                        item.requestDate.toString(), "year")}",
                                 color: item.status == ConstantData.pending
                                     ? claimedShiftColor
                                     : item.status == ConstantData.approved
@@ -392,7 +389,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          SizedBox(
+                         const SizedBox(
                             height: 10,
                           ),
                           InkWell(
@@ -406,9 +403,10 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                                 color: primaryColor,
                                 icon: Icons.remove_red_eye),
                           ),
-                          SizedBox(
+                       const   SizedBox(
                             height: 15,
                           ),
+                          item.status == ConstantData.pending ?
                           InkWell(
                             onTap: () {
                               Controller().showConfirmationMsgDialog(
@@ -434,7 +432,8 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                               color: claimedShiftRejectColor,
                               icon: Icons.delete,
                             ),
-                          ),
+                          )
+                          :Center(),
                         ],
                       ),
                     ),
@@ -447,7 +446,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
   Widget createRowDate(String title, String? value) {
     return Column(
       children: [
-        SizedBox(
+       const SizedBox(
           height: 10,
         ),
         Row(
@@ -456,11 +455,11 @@ class AvailabilityListStateful extends State<AvailabilityList> {
             CustomTextWidget(text: title, fontWeight: FontWeight.bold),
             Expanded(
               child: Padding(
-                  padding: EdgeInsets.only(left: 5),
+                  padding: const EdgeInsets.only(left: 5),
                   child: CustomTextWidget(
                     text: value,
                     color: Colors.grey,
-                    size: 16,
+
                   )),
             ),
           ],
@@ -477,21 +476,21 @@ class AvailabilityListStateful extends State<AvailabilityList> {
     request = ClaimShiftHistoryRequest();
     DateTime now = DateTime.now();
     if (status == 0) {
-      var startDate = new DateTime(now.year, now.month, 1);
+      var startDate =  DateTime(now.year, now.month, 1);
       var endDate =
-          new DateTime(now.year, now.month + 1, 0); //this month last date
+           DateTime(now.year, now.month + 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     } else if (status == 1) {
-      var startDate = new DateTime(now.year, now.month - 2, 1);
+      var startDate =  DateTime(now.year, now.month - 2, 1);
       var endDate =
-          new DateTime(now.year, now.month - 1, 0); //this month last date
+           DateTime(now.year, now.month - 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     } else if (status == 2) {
-      var startDate = new DateTime(now.year, 1, 1);
+      var startDate =  DateTime(now.year, 1, 1);
       var endDate =
-          new DateTime(now.year, now.month + 1, 0); //this month last date
+           DateTime(now.year, now.month + 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     }

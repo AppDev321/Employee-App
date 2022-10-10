@@ -187,21 +187,21 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
-                    CustomTextWidget(text: "Availability Request", size: 25),
-                    SizedBox(
+                    const CustomTextWidget(text: "Availability Request", size: 25),
+                    const SizedBox(
                       height: 20,
                     ),
                     CustomCommentBox(
                         label: "Title",
                         hintMessage: "E.g Summer Holiday Availability",
                         controller: subjectController),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
-                    CustomTextWidget(
+                    const CustomTextWidget(
                       text: "Effective Dates:",
                       fontWeight: FontWeight.bold,
                     ),
@@ -248,11 +248,11 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                         : Container(),
 
 
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     showAvailabilityBox(),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
@@ -272,7 +272,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                               child: Text('Cancel'),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 30,
                           ),
                           Expanded(
@@ -307,7 +307,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                             ),
                           ),
                         ]),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                   ],
@@ -332,7 +332,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomTextWidget(
+        const CustomTextWidget(
           text: "Availability:",
           fontWeight: FontWeight.bold,
         ),
@@ -342,7 +342,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
             dayName = data.name.toString().substring(0,3).toLowerCase();
           },
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         ListView.builder(
@@ -382,13 +382,13 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                       children: [
                         Row(
                           children: [
-                            CustomTextWidget(
+                            const CustomTextWidget(
                               text: "From",
                               fontWeight: FontWeight.w500,
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Container(
-                              margin: EdgeInsets.only(bottom: 10),
+                              margin: const EdgeInsets.only(bottom: 10),
                               child: CustomDropDownWidget(
                                 spinnerItems: hours,
                                 fullWidth: false,
@@ -397,9 +397,9 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                                 },
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Container(
-                              margin: EdgeInsets.only(bottom: 10),
+                              margin: const EdgeInsets.only(bottom: 10),
                               child: CustomDropDownWidget(
                                 spinnerItems: minutes,
                                 fullWidth: false,
@@ -412,13 +412,13 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                         ),
                         Row(
                           children: [
-                            CustomTextWidget(
+                            const CustomTextWidget(
                               text: "To",
                               fontWeight: FontWeight.w500,
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Container(
-                              margin: EdgeInsets.only(bottom: 10),
+                              margin: const EdgeInsets.only(bottom: 10),
                               child: CustomDropDownWidget(
                                 spinnerItems: hours,
                                 fullWidth: false,
@@ -427,9 +427,9 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                                 },
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Container(
-                              margin: EdgeInsets.only(bottom: 10),
+                              margin: const EdgeInsets.only(bottom: 10),
                               child: CustomDropDownWidget(
                                 spinnerItems: minutes,
                                 fullWidth: false,
@@ -443,7 +443,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                       ],
                     )
                   : Container(),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               Row(
@@ -462,9 +462,9 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                         saveTimeSlots(true);
                       });
                     },
-                    child: Text('Available'),
+                    child: const Text('Available'),
                   )),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   Expanded(
@@ -478,7 +478,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
                         saveTimeSlots(false);
                       });
                     },
-                    child: Text('Unavailable'),
+                    child: const Text('Unavailable'),
                   )),
                 ],
               ),
@@ -495,7 +495,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
 
     bool isEntryAllow=true;
 
-    var savedTimeSlot = new TimeSlot();
+    var savedTimeSlot = TimeSlot();
 
 
     for (int i = 0; i < timeList.length; i++) {
@@ -530,8 +530,8 @@ class AddAvailabilityStateful extends State<AddAvailability> {
 
 
     if(isEntryAllow) {
-      startTime = "${start_hour}:${start_minute}";
-      endTime = "${end_hour}:${end_minute}";
+      startTime = "$start_hour:$start_minute";
+      endTime = "$end_hour:$end_minute";
 
       var timeAdd = TimeSlot();
       timeAdd.end = endTime;
@@ -581,13 +581,13 @@ class AddAvailabilityStateful extends State<AddAvailability> {
             (startHour < storedStartHour && startHour <= storedEndHour)
         ) {
           if (startHour < 10) {
-            savedTimeSlot.startHour = "0" + startHour.toString();
+            savedTimeSlot.startHour = "0$startHour";
           } else {
             savedTimeSlot.startHour = startHour.toString();
           }
 
           if (endHour < 10) {
-            savedTimeSlot.endHour = "0" + endHour.toString();
+            savedTimeSlot.endHour = "0$endHour";
           }
           else {
             savedTimeSlot.endHour = endHour.toString();
@@ -670,7 +670,7 @@ class AddAvailabilityStateful extends State<AddAvailability> {
         children: [
           item.isAllDay!
               ? CustomTextWidget(
-                  text: "${item.dayName.toString().toUpperCase()} " + "${item.isAvailable!
+                  text: "${item.dayName.toString().toUpperCase()} ${item.isAvailable!
                       ? "All Day Available"
                       : "All Day Unavailable"}",
                   color: color,
@@ -679,11 +679,11 @@ class AddAvailabilityStateful extends State<AddAvailability> {
               : Row(
                   children: [
                     CustomTextWidget(
-                      text: "${item.dayName.toString().toUpperCase()}",
+                      text: item.dayName.toString().toUpperCase(),
                       color: color,
                       fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     CustomTextWidget(

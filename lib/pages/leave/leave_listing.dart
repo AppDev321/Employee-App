@@ -34,7 +34,7 @@ class LeavePage extends StatefulWidget {
 
 class _LeavePageState extends State<LeavePage>
     with SingleTickerProviderStateMixin {
-  TextEditingController _dateFilterController = TextEditingController();
+  final TextEditingController _dateFilterController = TextEditingController();
   bool _isFirstLoadRunning = false;
 
   bool _isErrorInApi = false;
@@ -62,7 +62,7 @@ class _LeavePageState extends State<LeavePage>
     });
 
     _leaveListViewModel = LeaveListViewModel();
-    var now = new DateTime.now();
+    var now =  DateTime.now();
     String formattedDate = Controller().getConvertedDate(now);
 
     //  var request = ClaimShiftHistoryRequest();
@@ -109,7 +109,7 @@ class _LeavePageState extends State<LeavePage>
 
   @override
   Widget build(BuildContext context) => VisibilityDetector(
-        key: Key('leave-widget'),
+        key: const Key('leave-widget'),
         onVisibilityChanged: (VisibilityInfo info) {
           var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
 
@@ -126,18 +126,19 @@ class _LeavePageState extends State<LeavePage>
         
         Scaffold(
             appBar: AppBar(
-              title: Text(menuLeave),
+              title: const Text(menuLeave),
             ),
             body: Column(
               children: [
                 BlocBuilder<ConnectedBloc, ConnectedState>(
                     builder: (context, state) {
                   if (state is ConnectedFailureState) {
-                    return InternetNotAvailable();
+                    return const InternetNotAvailable();
                   } else if (state is FirebaseMsgReceived) {
                     if (state.screenName == Screen.OVERTIME) {
                       _leaveListViewModel.getLeaveHistoryList(request);
-                      print("updating overtime Screen");
+
+
                       state.screenName = Screen.NULL;
                     }
                     return Container();
@@ -153,17 +154,15 @@ class _LeavePageState extends State<LeavePage>
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              child: CustomTextWidget(
-                                text: "Add Leave",
-                                size: 20,
-                              ),
+                            const CustomTextWidget(
+                              text: "Add Leave",
+                              size: 20,
                             ),
                             ElevatedButton(
                               onPressed: () {
                                 var leavesType =
                                     _leaveListViewModel.getLeaveTypes();
-                                if (leavesType.length > 0) {
+                                if (leavesType.isNotEmpty) {
                                   Get.to(
                                       () => AddLeave(leaveTypes: leavesType));
                                 } else {
@@ -171,16 +170,16 @@ class _LeavePageState extends State<LeavePage>
                                       context, "No leave types found");
                                 }
                               },
-                              child: Icon(Icons.add, color: Colors.white),
                               style: ElevatedButton.styleFrom(
                                 shape: CircleBorder(),
                                 primary: primaryColor,
                                 onPrimary: Colors.black,
                               ),
+                              child:const Icon(Icons.add, color: Colors.white),
                             )
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         CustomDateRangeWidget(
@@ -231,29 +230,29 @@ class _LeavePageState extends State<LeavePage>
       Column(
         children: [
 
-         _leaveHistoryList.length > 0
+         _leaveHistoryList.isNotEmpty
             ? Column(
           children: [
             Container(
                 height: Get.mediaQuery.size.width / 3,
                 child:
                 DoughnutChart(chartData: chartData)),
-            SizedBox(height: 5)
+            const SizedBox(height: 5)
           ],
         )
-            : SizedBox(height: 10),
+            : const SizedBox(height: 10),
         CustomFilterTab(
           controller: _tabController,
           tabs: ConstantData.filterTabs,
         ),
-        SizedBox(
+          const SizedBox(
           height: 15,
         ),
 
 
 
         _isFirstLoadRunning
-            ? Expanded(
+            ? const Expanded(
             child:
             Center(child: CircularProgressIndicator()))
             : _isErrorInApi
@@ -261,7 +260,7 @@ class _LeavePageState extends State<LeavePage>
             child:
             ErrorMessageWidget(label: _errorMsg!))
             : Expanded(
-            child: _leaveHistoryList.length > 0
+            child: _leaveHistoryList.isNotEmpty
                 ? TabBarView(
               controller: _tabController,
               children: [
@@ -280,7 +279,7 @@ class _LeavePageState extends State<LeavePage>
                     ConstantData.rejected)),
               ],
             )
-                : ErrorMessageWidget(
+                : const ErrorMessageWidget(
                 label: "No Leaves Found"))
 
         ]
@@ -326,11 +325,11 @@ class _LeavePageState extends State<LeavePage>
         child: Container(
             decoration: BoxDecoration(
                 color: cardThemeBaseColor,
-                borderRadius: BorderRadius.only(
+                borderRadius:const BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))),
-            margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            margin:const EdgeInsets.only(left: Controller.leftCardColorMargin),
+            padding:const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Column(
               children: [
                 Padding(
@@ -354,7 +353,7 @@ class _LeavePageState extends State<LeavePage>
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 6,
                 ),
                 Container(
@@ -362,11 +361,11 @@ class _LeavePageState extends State<LeavePage>
                     color: cardThemeBaseColor,
                     borderRadius: BorderRadius.circular(0),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding:const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Column(
                     children: [
                       containerCard(item),
-                      SizedBox(
+                      const   SizedBox(
                         height: 15,
                       ),
                       item.status == ConstantData.approved ||
@@ -376,7 +375,7 @@ class _LeavePageState extends State<LeavePage>
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  CustomTextWidget(
+                                  const   CustomTextWidget(
                                     text: "Managed By:",
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -398,7 +397,7 @@ class _LeavePageState extends State<LeavePage>
 
   Widget containerCard(Leaves item) {
     return Table(children: [
-      TableRow(
+      const TableRow(
         children: [
           TableCellPadded(
               child: CustomTextWidget(

@@ -28,7 +28,7 @@ const Color textFielBoxBorderColor =Colors.black38;
 
 const Color inspectionTableColor= Color(0xFFDBDBDB);
 const Color claimedShiftColor = Colors.orange;
-const Color claimedShiftApprovedColor = Color(0xFF0692C9);
+ Color claimedShiftApprovedColor =HexColor.fromHex("#5cb85c");
 const Color claimedShiftRejectColor = Color(0xFFD92C3C);
 const Color cardShadow= Color(0x33959BA5);
 

@@ -28,7 +28,7 @@ class CustomCommentBox extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomTextWidget(text: label,fontWeight: FontWeight.bold,),
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
               TextFormField(
                   controller: controller,
                   minLines: 1,

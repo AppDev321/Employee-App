@@ -28,7 +28,7 @@ class  LatenessReport extends StatefulWidget {
 
 class LatenessReportStateful extends State<LatenessReport> {
   int buttonState = 0;
-  TextEditingController _dateFilterController = TextEditingController();
+  final TextEditingController _dateFilterController = TextEditingController();
 
 // List<String> months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec"];
   //List<String> years = ["2018","2019","2020","2021","2022","2023","2024","2024"];
@@ -38,7 +38,7 @@ class LatenessReportStateful extends State<LatenessReport> {
   String? _errorMsg = "";
 
   late ReportsViewModel _reportsViewModel;
-  LatenessData? latenessData = null;
+  LatenessData? latenessData;
 
   List<ChartData> chartData= [];
   var request = ClaimShiftHistoryRequest();
@@ -56,9 +56,9 @@ class LatenessReportStateful extends State<LatenessReport> {
 
     //Getting current month and date time
     DateTime now = DateTime.now();
-    var startDate = new DateTime(now.year, now.month, 1);
+    var startDate =  DateTime(now.year, now.month, 1);
     var endDate =
-        new DateTime(now.year, now.month + 1, 0); //this month last date
+         DateTime(now.year, now.month + 1, 0); //this month last date
 
  request = ClaimShiftHistoryRequest();
     request.start_date = Controller().getConvertedDate(startDate);
@@ -115,7 +115,7 @@ class LatenessReportStateful extends State<LatenessReport> {
 
                 return Container();
               } else {
-                return InternetNotAvailable();
+                return const InternetNotAvailable();
               }
             }
 
@@ -126,15 +126,15 @@ class LatenessReportStateful extends State<LatenessReport> {
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
+            const Padding(
+              padding: EdgeInsets.all(20),
               child: CustomTextWidget(
                 text: subMenuReportLateness,
                 size: 20,
               ),
             ),
             AnimatedButtonBar(
-              padding: EdgeInsets.all(9),
+              padding:const EdgeInsets.all(9),
               backgroundColor: cardThemeBaseColor,
               radius: 20,
               invertedSelection: true,
@@ -144,24 +144,24 @@ class LatenessReportStateful extends State<LatenessReport> {
                     onTap: () {
                       changeButtonState(0);
                     },
-                    child: Text('This Month')),
+                    child:const Text('This Month')),
                 ButtonBarEntry(
                     onTap: () {
 
                       changeButtonState(1);
                     },
-                    child: Text('Last Month')),
+                    child:const Text('Last Month')),
                 ButtonBarEntry(
                     onTap: () {
 
                       changeButtonState(2);
                     },
-                    child: Text('This Year')),
+                    child:const Text('This Year')),
                 ButtonBarEntry(
                     onTap: () {
                       changeButtonState(3);
                     },
-                    child: Text('Custom'))
+                    child:const Text('Custom'))
               ],
             ),
             Padding(
@@ -196,12 +196,12 @@ class LatenessReportStateful extends State<LatenessReport> {
                         isSearchButtonShow: false,
                       )
                     : buttonState == 1
-                        ? Center()
+                        ? const Center()
                         : buttonState == 2
-                            ? Center()
-                            : Center()),
+                            ? const Center()
+                            : const Center()),
             _isFirstLoadRunning
-                ? Expanded(child: Center(child: CircularProgressIndicator()))
+                ? const Expanded(child: Center(child: CircularProgressIndicator()))
                 : _isErrorInApi
                     ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                     : Expanded(
@@ -212,12 +212,12 @@ class LatenessReportStateful extends State<LatenessReport> {
                           child: Column(
                                 children: [
                                   DoughnutChart(chartData: chartData),
-                                 SizedBox(height:10),
+                                 const SizedBox(height:10),
                                   latenessData != null?
                                       GridView.count(
                                         shrinkWrap: true,
                                       primary: false,
-                                        padding: EdgeInsets.all(5),
+                                        padding:const EdgeInsets.all(5),
                                       crossAxisSpacing: 10,
                                       mainAxisSpacing: 10,
                                       crossAxisCount: 2,
@@ -226,7 +226,7 @@ class LatenessReportStateful extends State<LatenessReport> {
                                         containerItem("Total Late",latenessData!.totalLates.toString(),1),
                                        // containerItem("Late Percentage",latenessData!.latePercentage.toString(),2)
                                       ],
-                                      ): Center(),
+                                      ):const Center(),
 
 
 
@@ -264,11 +264,11 @@ class LatenessReportStateful extends State<LatenessReport> {
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
           color:cardThemeBaseColor,
-          borderRadius: BorderRadius.only(
+          borderRadius:const BorderRadius.only(
               bottomRight: Radius.circular(Controller.roundCorner),
               topRight: Radius.circular(Controller.roundCorner))),
       margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child:
       Column(
         mainAxisAlignment:
@@ -281,7 +281,7 @@ class LatenessReportStateful extends State<LatenessReport> {
             size: 18,
             fontWeight: FontWeight.bold,
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           CustomTextWidget(
             text: label
                 .toString(),
@@ -303,20 +303,20 @@ class LatenessReportStateful extends State<LatenessReport> {
     DateTime now = DateTime.now();
     if (status == 0)
     {
-      var startDate = new DateTime(now.year, now.month, 1);
-      var endDate =new DateTime(now.year, now.month + 1, 0); //this month last date
+      var startDate =  DateTime(now.year, now.month, 1);
+      var endDate = DateTime(now.year, now.month + 1, 0); //this month last date
      request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
      }
     else if (status == 1) {
-      var startDate = new DateTime(now.year, now.month - 2, 1);
-      var endDate = new DateTime(now.year, now.month - 1, 0); //this month last date
+      var startDate =  DateTime(now.year, now.month - 2, 1);
+      var endDate =  DateTime(now.year, now.month - 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
      }
     else if (status == 2) {
-      var startDate = new DateTime(now.year, 1, 1);
-      var endDate = new DateTime(now.year, now.month + 1, 0); //this month last date
+      var startDate =  DateTime(now.year, 1, 1);
+      var endDate =  DateTime(now.year, now.month + 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     }
