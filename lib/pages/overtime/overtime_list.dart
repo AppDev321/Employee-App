@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:hnh_flutter/custom_style/strings.dart';
-import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
-import 'package:hnh_flutter/view_models/leave_list_vm.dart';
-import 'package:hnh_flutter/widget/custom_text_widget.dart';
-import 'package:hnh_flutter/widget/table_cell_padding.dart';
 import 'package:get/get.dart';
+import 'package:hnh_flutter/custom_style/strings.dart';
+import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
 import '../../data/drawer_items.dart';
 import '../../repository/model/request/claim_shift_history_request.dart';
-import '../../repository/model/response/leave_list.dart';
 import '../../repository/model/response/overtime_list.dart';
 import '../../repository/model/response/report_leave_response.dart';
 import '../../utils/controller.dart';
@@ -23,7 +19,6 @@ import '../../widget/dongout_chart.dart';
 import '../../widget/error_message.dart';
 import '../../widget/filter_tab_widget.dart';
 import '../../widget/internet_not_available.dart';
-import '../login/login.dart';
 import 'add_overtime.dart';
 
 class OverTimePage extends StatefulWidget {
@@ -36,7 +31,8 @@ class OverTimePage extends StatefulWidget {
   }
 }
 
-class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderStateMixin{
+class _OverTimePageState extends State<OverTimePage>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _dateFilterController = TextEditingController();
   bool _isFirstLoadRunning = false;
   late TabController _tabController;
@@ -46,15 +42,14 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
 
   late BuildContext contextBuild;
   late OvertimeViewModel _overtimeViewModel;
- var request = ClaimShiftHistoryRequest();
-  List<ChartData> chartData= [];
-
+  var request = ClaimShiftHistoryRequest();
+  List<ChartData> chartData = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: ConstantData.filterTabs.length, vsync: this);
-
+    _tabController =
+        TabController(length: ConstantData.filterTabs.length, vsync: this);
 
     setState(() {
       _isFirstLoadRunning = true;
@@ -62,14 +57,14 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
     });
 
     _overtimeViewModel = OvertimeViewModel();
-    var now =  DateTime.now();
+    var now = DateTime.now();
     String formattedDate = Controller().getConvertedDate(now);
 
-  request = ClaimShiftHistoryRequest();
+    request = ClaimShiftHistoryRequest();
     request.start_date = formattedDate;
     request.end_date = formattedDate;
 
-   // _overtimeViewModel.getOverTimeList(request);
+    // _overtimeViewModel.getOverTimeList(request);
     _overtimeViewModel.addListener(() {
       _overtimeHistoryList.clear();
 
@@ -88,10 +83,18 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
 
         _overtimeHistoryList = _overtimeViewModel.getOvertimeHistoryList();
         chartData.clear();
-        chartData.add(  ChartData(name:ConstantData.approved,count:getCountDataList( _overtimeHistoryList,ConstantData.approved)) );
-        chartData.add(  ChartData(name:ConstantData.pending,count:getCountDataList( _overtimeHistoryList,ConstantData.pending)));
-        chartData.add(  ChartData(name:ConstantData.rejected,count:getCountDataList( _overtimeHistoryList,ConstantData.rejected)));
-
+        chartData.add(ChartData(
+            name: ConstantData.approved,
+            count:
+                getCountDataList(_overtimeHistoryList, ConstantData.approved)));
+        chartData.add(ChartData(
+            name: ConstantData.pending,
+            count:
+                getCountDataList(_overtimeHistoryList, ConstantData.pending)));
+        chartData.add(ChartData(
+            name: ConstantData.rejected,
+            count:
+                getCountDataList(_overtimeHistoryList, ConstantData.rejected)));
 
         setState(() {
           _isErrorInApi = checkErrorApiStatus;
@@ -103,207 +106,197 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) => VisibilityDetector(
-    key: Key('overtime-widget'),
-    onVisibilityChanged: (VisibilityInfo info) {
-      var isVisibleScreen = info.visibleFraction == 1.0 ? true :false;
+        key: Key('overtime-widget'),
+        onVisibilityChanged: (VisibilityInfo info) {
+          var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
 
-      if(isVisibleScreen) {
+          if (isVisibleScreen) {
             setState(() {
               _overtimeHistoryList.clear();
               _isFirstLoadRunning = true;
               _isErrorInApi = false;
               _overtimeViewModel.getOverTimeList(request);
             });
-        }
-    },
-    child: Scaffold(
-        appBar: AppBar(
-          title: Text(overtime),
-        ),
-        body: Column(
-          children: [
-
-            BlocBuilder<ConnectedBloc, ConnectedState>(
-                builder: (context, state) {
+          }
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text(overtime),
+            ),
+            body: Column(
+              children: [
+                BlocBuilder<ConnectedBloc, ConnectedState>(
+                    builder: (context, state) {
                   if (state is ConnectedFailureState) {
                     return InternetNotAvailable();
-                  }
-                  else if(state is FirebaseMsgReceived)
-                  {
-                    if(state.screenName == Screen.OVERTIME)
-                    {
+                  } else if (state is FirebaseMsgReceived) {
+                    if (state.screenName == Screen.OVERTIME) {
                       _overtimeViewModel.getOverTimeList(request);
-                      state.screenName=Screen.NULL;
-
+                      state.screenName = Screen.NULL;
                     }
                     return Container();
-                  }
-                  else
-                  {
+                  } else {
                     return Container();
                   }
-                }
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                }),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
                       children: [
-                        const CustomTextWidget(
-                          text: "Add Request",
-                          size: 20,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const CustomTextWidget(
+                              text: "Add Request",
+                              size: 20,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Get.to(() => const AddOverTime());
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: CircleBorder(),
+                                primary: primaryColor,
+                                onPrimary: Colors.black,
+                              ),
+                              child: const Icon(Icons.add, color: Colors.white),
+                            )
+                          ],
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-
-                        Get.to(()=> const AddOverTime());
-
-
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomDateRangeWidget(
+                          labelText: "Select Date",
+                          onDateChanged: (date) {
+                            String startDate =
+                                Controller().getConvertedDate(date['start']);
+                            String endDate =
+                                Controller().getConvertedDate(date['end']);
+                            _dateFilterController.text =
+                                "$startDate To $endDate";
                           },
-                          style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            primary: primaryColor,
-                            onPrimary: Colors.black,
-                          ),
-                          child: const Icon(Icons.add, color: Colors.white),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    CustomDateRangeWidget(
-                      labelText: "Select Date",
-                      onDateChanged: (date) {
-                        String startDate = Controller().getConvertedDate(date['start']);
-                        String endDate = Controller().getConvertedDate(date['end']);
-                        _dateFilterController.text = "$startDate To $endDate";
-                      },
-                      onFetchDates: (date) {
-                        String startDate = Controller().getConvertedDate(date['start']);
-                        String endDate = Controller().getConvertedDate(date['end']);
-                        setState(() {
-
-                        request = ClaimShiftHistoryRequest();
-                          request.start_date = startDate;
-                          request.end_date = endDate;
-                          _overtimeHistoryList.clear();
-                          _isFirstLoadRunning = true;
-                          _isErrorInApi = false;
-                          _overtimeViewModel.getOverTimeList(request);
-
-
-                        });
-                      },
-                      controllerDate: _dateFilterController,
-                      isSearchButtonShow: false,
-                    ),
-
-
-
-                    _overtimeHistoryList.isNotEmpty ?
-                    Column(
-                      children: [
-                        Container(
-                            height: Get.mediaQuery.size.width/3,
-                            child:
-                            DoughnutChart(chartData: chartData)
+                          onFetchDates: (date) {
+                            String startDate =
+                                Controller().getConvertedDate(date['start']);
+                            String endDate =
+                                Controller().getConvertedDate(date['end']);
+                            setState(() {
+                              request = ClaimShiftHistoryRequest();
+                              request.start_date = startDate;
+                              request.end_date = endDate;
+                              _overtimeHistoryList.clear();
+                              _isFirstLoadRunning = true;
+                              _isErrorInApi = false;
+                              _overtimeViewModel.getOverTimeList(request);
+                            });
+                          },
+                          controllerDate: _dateFilterController,
+                          isSearchButtonShow: false,
                         ),
-                        const  SizedBox(height:5)
+                        _overtimeHistoryList.isNotEmpty
+                            ? Column(
+                                children: [
+                                  Container(
+                                      height: Get.mediaQuery.size.width / 3,
+                                      child:
+                                          DoughnutChart(chartData: chartData)),
+                                  const SizedBox(height: 5)
+                                ],
+                              )
+                            : const SizedBox(height: 10),
+                        CustomFilterTab(
+                          controller: _tabController,
+                          tabs: ConstantData.filterTabs,
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        _isFirstLoadRunning
+                            ? const Expanded(
+                                child:
+                                    Center(child: CircularProgressIndicator()))
+                            : _isErrorInApi
+                                ? Expanded(
+                                    child:
+                                        ErrorMessageWidget(label: _errorMsg!))
+                                : Expanded(
+                                    child: _overtimeHistoryList.isNotEmpty
+                                        ? TabBarView(
+                                            controller: _tabController,
+                                            children: [
+                                                //All
+
+                                                listContainer(
+                                                    _overtimeHistoryList),
+
+                                                listContainer(getFilterList(
+                                                    _overtimeHistoryList,
+                                                    ConstantData.approved)),
+
+                                                listContainer(getFilterList(
+                                                    _overtimeHistoryList,
+                                                    ConstantData.pending)),
+                                                listContainer(getFilterList(
+                                                    _overtimeHistoryList,
+                                                    ConstantData.rejected)),
+                                              ])
+                                        : const ErrorMessageWidget(
+                                            label: "No Overtime Found"))
                       ],
-                    ) : const SizedBox(height:10),
-
-                    CustomFilterTab(controller: _tabController, tabs: ConstantData.filterTabs,),
-
-
-
-                    const   SizedBox(
-                      height: 15,
                     ),
-                    _isFirstLoadRunning
-                        ? const Expanded(child: Center(child: CircularProgressIndicator()))
-                        : _isErrorInApi
-                            ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
-                            : Expanded(
-                                child: _overtimeHistoryList.isNotEmpty
-                                    ?
-
-                                TabBarView(
-                                    controller: _tabController,
-                                    children: [
-                                      //All
-
-                                      listContainer(_overtimeHistoryList),
-
-                                      listContainer(getFilterList(_overtimeHistoryList,ConstantData.approved)),
-
-                                      listContainer(getFilterList(_overtimeHistoryList,ConstantData.pending)),
-                                      listContainer(getFilterList(_overtimeHistoryList,ConstantData.rejected)),
-
-                                    ])  :const ErrorMessageWidget(label: "No Overtime Found"))
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ],
-        )),
-  );
+              ],
+            )),
+      );
 
-
-  int getCountDataList(List<OvertimeHistory> inputlist,String status) {
-    List<OvertimeHistory> outputList = inputlist.where((o) => o.status == status).toList();
+  int getCountDataList(List<OvertimeHistory> inputlist, String status) {
+    List<OvertimeHistory> outputList =
+        inputlist.where((o) => o.status == status).toList();
     return outputList.length;
   }
-  List<OvertimeHistory> getFilterList(List<OvertimeHistory> inputlist,String status) {
-    List<OvertimeHistory> outputList = inputlist.where((o) => o.status == status).toList();
+
+  List<OvertimeHistory> getFilterList(
+      List<OvertimeHistory> inputlist, String status) {
+    List<OvertimeHistory> outputList =
+        inputlist.where((o) => o.status == status).toList();
     return outputList;
   }
 
-  Widget listContainer(List<OvertimeHistory> _leaveHistoryList)
-  {
-
-    return  RefreshIndicator(
-      onRefresh:()=> _overtimeViewModel.getOverTimeList(request),
+  Widget listContainer(List<OvertimeHistory> _leaveHistoryList) {
+    return RefreshIndicator(
+      onRefresh: () => _overtimeViewModel.getOverTimeList(request),
       child: ListView.builder(
           itemCount: _leaveHistoryList.length,
           itemBuilder: (_, index) => Padding(
               padding: const EdgeInsets.all(5.0),
-              child: containerListItems( _leaveHistoryList[index]))),
+              child: containerListItems(_leaveHistoryList[index]))),
     );
   }
 
-
-
-
   Widget containerListItems(OvertimeHistory item) {
     return Card(
-        color:   item.status == ConstantData.pending  ? claimedShiftColor :
-        item.status == ConstantData.approved ? claimedShiftApprovedColor :
-        claimedShiftRejectColor,
+        color: item.status == ConstantData.pending
+            ? claimedShiftColor
+            : item.status == ConstantData.approved
+                ? claimedShiftApprovedColor
+                : claimedShiftRejectColor,
         elevation: 5,
         shadowColor: cardShadow,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Controller.roundCorner),
         ),
         clipBehavior: Clip.antiAlias,
-        child:
-
-        Container(
+        child: Container(
             decoration: BoxDecoration(
-              color: cardThemeBaseColor,
-                borderRadius:const BorderRadius.only(
+                color: cardThemeBaseColor,
+                borderRadius: const BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
-                    topRight: Radius.circular(Controller.roundCorner))
-
-            ),
-            margin:const EdgeInsets.only(left:Controller.leftCardColorMargin),
-
-            padding:const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    topRight: Radius.circular(Controller.roundCorner))),
+            margin: const EdgeInsets.only(left: Controller.leftCardColorMargin),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Column(
               children: [
                 Padding(
@@ -311,43 +304,44 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-
                       TextColorContainer(
-                      label: item.status!,
-                      color:
-                      item.status == ConstantData.pending  ? claimedShiftColor:
-                      item.status == ConstantData.approved ? claimedShiftApprovedColor :
-                      claimedShiftRejectColor),
-
-                      item.status == ConstantData.pending ?
-                      InkWell(
-                        onTap: () {
-                          Controller().showConfirmationMsgDialog(
-                              context,
-                              "Confirm",
-                              "Are you sure you want to delete?",
-                              "Yes", (value) {
-                            if (value) {
-                              setState(() {
-                                _overtimeHistoryList.remove(item);
-                                _overtimeViewModel.deleteOverTimeRequest(item.id.toString());
-                              });
-
-                            }
-                          });
-                        },
-                        child: TextColorContainer(
-                          label: "Delete",
-                          color: claimedShiftRejectColor,
-                          icon: Icons.delete,
-                        ),
-                      )
-                          :const Center(),
+                          label: item.status!,
+                          color: item.status == ConstantData.pending
+                              ? claimedShiftColor
+                              : item.status == ConstantData.approved
+                                  ? claimedShiftApprovedColor
+                                  : claimedShiftRejectColor),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      item.status == ConstantData.pending
+                          ? InkWell(
+                              onTap: () {
+                                Controller().showConfirmationMsgDialog(
+                                    context,
+                                    "Confirm",
+                                    "Are you sure you want to delete?",
+                                    "Yes", (value) {
+                                  if (value) {
+                                    setState(() {
+                                      _overtimeHistoryList.remove(item);
+                                      _overtimeViewModel.deleteOverTimeRequest(
+                                          item.id.toString());
+                                    });
+                                  }
+                                });
+                              },
+                              child: TextColorContainer(
+                                label: "Delete",
+                                color: claimedShiftRejectColor,
+                                icon: Icons.delete,
+                              ),
+                            )
+                          : const Center(),
                     ],
                   ),
                 ),
-
-                const  SizedBox(
+                const SizedBox(
                   height: 6,
                 ),
                 Container(
@@ -355,30 +349,30 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
                     color: cardThemeBaseColor,
                     borderRadius: BorderRadius.circular(0),
                   ),
-                  padding:const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Column(
                     children: [
-
-                      createRowDate("Date:",item.date),
-                      const   SizedBox(
+                      createRowDate("Date:", item.date),
+                      const SizedBox(
                         height: 5,
                       ),
-                      createRowDate("Hours:",item.hour),
-                      const   SizedBox(
+                      createRowDate("Hours:", item.hour),
+                      const SizedBox(
                         height: 5,
                       ),
-                      createRowDate("Reason:",item.reason),
-                      const   SizedBox(
+                      createRowDate("Reason:", item.reason),
+                      const SizedBox(
                         height: 5,
                       ),
-                       item.status == ConstantData.approved || item.status == ConstantData.rejected ?
-                      Padding(
-                        padding: const EdgeInsets.all(0),
-                        child:
-                        createRowDate("Managed By:",item.managedBy),
-
-                      ):
-                      Container(),
+                      item.status == ConstantData.approved ||
+                              item.status == ConstantData.rejected
+                          ? Padding(
+                              padding: const EdgeInsets.all(0),
+                              child:
+                                  createRowDate("Managed By:", item.managedBy),
+                            )
+                          : Container(),
                     ],
                   ),
                 )
@@ -386,33 +380,23 @@ class _OverTimePageState extends State<OverTimePage> with SingleTickerProviderSt
             )));
   }
 
-
-  Widget createRowDate(String title,String? value)
-  {
-
+  Widget createRowDate(String title, String? value) {
     return Column(
       children: [
         const SizedBox(
           height: 5,
         ),
-
         Row(
           children: [
-            CustomTextWidget(  text:title,fontWeight: FontWeight.bold),
+            CustomTextWidget(text: title, fontWeight: FontWeight.bold),
             Expanded(
               child: Padding(
-                  padding:const EdgeInsets.only(left: 5),
-                  child:
-                  CustomTextWidget(  text:value)),
+                  padding: const EdgeInsets.only(left: 5),
+                  child: CustomTextWidget(text: value)),
             )
-
           ],
         )
       ],
-    )
-    ;
+    );
   }
-
-
-
 }

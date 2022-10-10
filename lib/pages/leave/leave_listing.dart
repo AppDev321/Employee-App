@@ -336,6 +336,7 @@ class _LeavePageState extends State<LeavePage>
                   padding: const EdgeInsets.all(10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                     children: [
                       CustomTextWidget(
                         text: item.leaveType,
@@ -350,6 +351,31 @@ class _LeavePageState extends State<LeavePage>
                               : item.status == ConstantData.approved
                                   ? claimedShiftApprovedColor
                                   : claimedShiftRejectColor),
+
+                      item.status == ConstantData.pending ?
+                      InkWell(
+                        onTap: () {
+                          Controller().showConfirmationMsgDialog(
+                              context,
+                              "Confirm",
+                              "Are you sure you want to delete?",
+                              "Yes", (value) {
+                            if (value) {
+                              setState(() {
+                                _leaveHistoryList.remove(item);
+                                _leaveListViewModel.deleteOverTimeRequest(item.id.toString());
+                              });
+
+                            }
+                          });
+                        },
+                        child: TextColorContainer(
+                          label: "Delete",
+                          color: claimedShiftRejectColor,
+                          icon: Icons.delete,
+                        ),
+                      )
+                          :const Center(),
                     ],
                   ),
                 ),

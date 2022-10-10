@@ -228,7 +228,7 @@ class DashBoardViewModel extends BaseViewModel {
         String btnLabelCancel = "Close";
         return WillPopScope(
           onWillPop: () async => false,
-          child: new AlertDialog(
+          child: AlertDialog(
             title: Text(title),
             content: Text(message),
             actions: <Widget>[
@@ -268,13 +268,13 @@ class FirebaseAppUpdate
   if (json['app_data'] != null) {
   appData = <AppData>[];
   json['app_data'].forEach((v) {
-  appData!.add(new AppData.fromJson(v));
+  appData!.add(AppData.fromJson(v));
   });
   }
   }
 
   Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = new Map<String, dynamic>();
+  final Map<String, dynamic> data = Map<String, dynamic>();
   if (this.appData != null) {
   data['app_data'] = this.appData!.map((v) => v.toJson()).toList();
   }
@@ -296,7 +296,7 @@ class AppData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data =  Map<String, dynamic>();
     data['app_name'] = this.appName;
     data['version'] = this.version;
     data['download_url'] = this.downloadUrl;
