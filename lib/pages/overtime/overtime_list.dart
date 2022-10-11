@@ -106,7 +106,7 @@ class _OverTimePageState extends State<OverTimePage>
 
   @override
   Widget build(BuildContext context) => VisibilityDetector(
-        key: Key('overtime-widget'),
+        key: const Key('overtime-widget'),
         onVisibilityChanged: (VisibilityInfo info) {
           var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
 
