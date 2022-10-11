@@ -144,7 +144,7 @@ class ReportsViewModel extends BaseViewModel {
   String convertStringDate(String jsonDate , String parsingType)
   {
 
-    DateTime parseDate = new DateFormat("dd-MMM-yyyy").parse(jsonDate);
+    DateTime parseDate =  DateFormat("dd-MMM-yyyy").parse(jsonDate);
    var dateFormat =  DateFormat('E MMM dd yyyy');
 
    switch(parsingType)

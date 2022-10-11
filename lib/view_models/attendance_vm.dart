@@ -27,9 +27,10 @@ class AttendanceViewModel extends BaseViewModel {
   }
 
 
-  Future<void> markAttendanceRequest(String code) async {
+  Future<void> markAttendanceRequest(String code,int attendanceType) async {
     setLoading(true);
-    final results = await APIWebService().markAttendance(code);
+    //0- check in , 1- check out
+    final results = attendanceType == 0 ?await APIWebService().markAttendance(code) : await APIWebService().markClockOutAttendance(code);
 
     if (results == null) {
       var errorString = "Check your internet connection";

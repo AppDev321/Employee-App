@@ -207,11 +207,6 @@ class AttendanceReportStateful extends State<AttendanceReport> {
   }
 
   Widget listItem(Attendance item) {
-
-
-    _reportsViewModel.convertStringDate(item.date.toString(),"day");
-
-
     return Card(
         color: claimedShiftApprovedColor,
         elevation: 5,

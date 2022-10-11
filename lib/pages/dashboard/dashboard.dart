@@ -27,12 +27,14 @@ import '../../widget/image_slider.dart';
 import '../../widget/internet_not_available.dart';
 import '../../widget/name_icon_badge.dart';
 import '../../widget/navigation_drawer_new.dart';
+import '../attandence/add_attendance.dart';
 import '../notification_history/notification_list.dart';
 import '../overtime/add_overtime.dart';
 import '../profile/components/profile_pic.dart';
 import '../reports/attendance_report.dart';
 import '../reports/leave_report.dart';
 import '../vehicletab/scan_vehicle_tab.dart';
+import 'clock_in_out.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -204,7 +206,7 @@ class _DashboardState extends State<Dashboard> {
                             color: colorText,
                             size: 22),
                         onPressed: () {
-                          Get.to(() => VehicleTabScan());
+                          Get.to(() => const VehicleTabScan());
                         })
                 ),
                 Container(
@@ -222,7 +224,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 Container(
                   child: NamedIcon(
-                    onTap: () => Get.to(() => NotificationList()),
+                    onTap: () => Get.to(() => const NotificationList()),
                     notificationCount: notificationCount,
                     iconData: Icons.notifications,
                     color: colorText,
@@ -238,7 +240,7 @@ class _DashboardState extends State<Dashboard> {
             BlocBuilder<ConnectedBloc, ConnectedState>(
                 builder: (context, state) {
               if (state is ConnectedFailureState) {
-                return InternetNotAvailable();
+                return const InternetNotAvailable();
               } else if (state is FirebaseMsgReceived) {
                 if (state.screenName == Screen.DASHBOARD) {
                   _dashBoardViewModel.getDashBoardData();
@@ -255,7 +257,7 @@ class _DashboardState extends State<Dashboard> {
                 onRefresh: _dashBoardViewModel.getDashBoardData,
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(15, 10, 25, 25),
+                    padding:const EdgeInsets.fromLTRB(15, 10, 25, 25),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       child: Column(
@@ -298,6 +300,8 @@ class _DashboardState extends State<Dashboard> {
                           dashBoardShift != null
                               ? Column(
                                   children: [
+
+
                                     const SizedBox(
                                       height: 20,
                                     ),
@@ -321,6 +325,39 @@ class _DashboardState extends State<Dashboard> {
                                   ],
                                 )
                               : Container(),
+
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: CustomTextWidget(
+                                    text: "Today Attendance",
+                                    size: 18,
+                                    color: primaryColor),
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: ()=>
+                                    Get.to(() => const AddAttendance(attendanceType: 0,)),
+
+                                icon: const Icon(Icons.qr_code_outlined),
+                                label: const Text("Check In"), //label text
+                              ),
+
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          CustomTextWidget(
+                              text: "Attendance", size: 18, color: primaryColor),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        const  ClockInOutWidget(),
                           const SizedBox(
                             height: 10,
                           ),

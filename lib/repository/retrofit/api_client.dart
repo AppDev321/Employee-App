@@ -90,9 +90,10 @@ abstract class ApiClient {
   Future<LoginApiResponse> deleteAvailabilityRequest(@Path("code") String code);
 
 
-
   @POST('/attendance/mark-attendance')
   Future<LoginApiResponse> markAttendance(@Body() Map<String,String> body);
+  @POST('/attendance/mark-clock-out')
+  Future<LoginApiResponse> markClockOutAttendance(@Body() Map<String,String> body);
 
   @POST('/validate-qr-code')
   Future<LoginApiResponse> validateVehicleTab(@Body() Map<String,String> body );

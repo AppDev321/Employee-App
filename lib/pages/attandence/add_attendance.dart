@@ -1,11 +1,9 @@
-
-import 'package:flutter/material.dart';
-import 'package:barcode_scan2/barcode_scan2.dart';
-import 'package:get/get.dart';
-import 'package:hnh_flutter/custom_style/colors.dart';
-
 import 'dart:async';
 
+import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/data/drawer_items.dart';
 import 'package:hnh_flutter/pages/reports/attendance_report.dart';
 
@@ -14,24 +12,19 @@ import '../../utils/controller.dart';
 import '../../view_models/attendance_vm.dart';
 import '../../widget/dialog_builder.dart';
 
-class AddAttandence extends StatefulWidget {
-  const AddAttandence({Key? key}) : super(key: key);
-
+class AddAttendance extends StatefulWidget {
+  const AddAttendance({Key? key, attendanceType}) : super(key: key);
+  final int attendanceType = 0; //0 - check in ,1 - check out
 
   @override
-  State<AddAttandence> createState() => _AddAttandenceState();
+  State<AddAttendance> createState() => _AddAttendanceState();
 }
 
-class _AddAttandenceState extends State<AddAttandence> {
-
+class _AddAttendanceState extends State<AddAttendance> {
   String? _errorMsg = "";
   DialogBuilder? _progressDialog;
-  late  AttendanceViewModel attendanceViewModel;
+  late AttendanceViewModel attendanceViewModel;
   BuildContext? _dialogContext;
-
-
-
-
 
   Future<void> scanAttendanceCode() async {
     AppBar(
@@ -41,7 +34,6 @@ class _AddAttandenceState extends State<AddAttandence> {
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 20.0,
-
         ),
       ),
       centerTitle: true,
@@ -50,9 +42,7 @@ class _AddAttandenceState extends State<AddAttandence> {
       var qrResult = await BarcodeScanner.scan();
 
       _progressDialog?.showLoadingDialog();
-      attendanceViewModel.markAttendanceRequest(qrResult.rawContent);
-
-
+      attendanceViewModel.markAttendanceRequest(qrResult.rawContent,  widget.attendanceType);
     } on FormatException catch (ex) {
       print('Pressed the Back Button before Scanning');
     } catch (ex) {
@@ -60,12 +50,10 @@ class _AddAttandenceState extends State<AddAttandence> {
     }
   }
 
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
 
     attendanceViewModel = AttendanceViewModel();
 
@@ -88,14 +76,11 @@ class _AddAttandenceState extends State<AddAttandence> {
             _errorMsg = "";
           });
 
-          Controller()
-              .showToastMessage(
-              context, "Request submitted successfully");
-          Navigator.pop(context);
-          Get.to(()=>AttendanceReport());
-        }
-        else
-        {
+          Controller() .showToastMessage(context, "Request submitted successfully");
+         // Navigator.pop(context);
+          Get.back();
+          Get.to(() => const AttendanceReport());
+        } else {
           _errorMsg = attendanceViewModel.getErrorMsg();
           if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
             Controller().logoutUser();
@@ -105,12 +90,10 @@ class _AddAttandenceState extends State<AddAttandence> {
         }
       }
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     _dialogContext = context;
     if (_progressDialog == null) {
       _progressDialog = DialogBuilder(_dialogContext!);
@@ -124,29 +107,29 @@ class _AddAttandenceState extends State<AddAttandence> {
       body: Center(
         child: Column(
           children: [
-           const SizedBox(height: 50,),
+            const SizedBox(
+              height: 50,
+            ),
             Container(
               padding: const EdgeInsets.all(20.0),
-              child:  Text(
-
-                'Scan QR-Code for Attendance',
+              child: Text(
+                'Scan QR-Code',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color:colorText,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 26.0,
-                 ),
+                  color: colorText,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 26.0,
+                ),
               ),
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(50.0, 5.0, 50.0, 20.0),
-              child:  Text(
-
+              child: Text(
                 'Please give access to your Camera so that\n we can scan and provide you what is\n inside the code',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.4,
-                  color:colorText,
+                  color: colorText,
                 ),
               ),
             ),
@@ -163,11 +146,9 @@ class _AddAttandenceState extends State<AddAttandence> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             backgroundColor: primaryColor,
-            label:  const Text(
-
+            label: const Text(
               "Scan QR Code",
               style: TextStyle(
-
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
                 fontSize: 18.0,

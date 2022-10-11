@@ -330,6 +330,20 @@ class APIWebService {
     }
   }
 
+  Future<LoginApiResponse?> markClockOutAttendance(String code) async {
+    try {
+      Map<String,String> request = {
+        'code': code
+      };
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.markClockOutAttendance(request);
+      return response;
+    } catch (e) {
+      print("$TAG$e");
+      return null;
+    }
+  }
+
   Future<LoginApiResponse?> validateVehicleTab(String code) async {
     try {
       Map<String,String> request = {

@@ -10,12 +10,8 @@ import 'color_text_round_widget.dart';
 
 class ImageSliderWidget extends StatefulWidget {
   final List<String> imagesList = [
-    'https://www.wishesmsg.com/wp-content/uploads/Eid-Milad-Un-Nabi-Mubarak-Wishes-1280x720.jpg',
-     '',
-    'https://wallpapercave.com/wp/wp7813509.jpg',
-    'https://www.thefestivalwishes.com/pixlab/uploads/sample_uploads/webp/1601132419_create-eid-milad-un-nabi-card-with-name-online.webp',
-        'https://www.oyeyeah.com/wp-content/uploads/2019/11/eid-milad-un-nabi.jpg',
-  ];
+    '',
+    ];
 
   ImageSliderWidget({
     this.height = 80,

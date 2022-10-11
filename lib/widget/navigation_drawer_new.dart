@@ -223,7 +223,7 @@ class NavigationDrawer extends StatelessWidget {
         break;
 
       case menuAttandance:
-        Get.to(()=>AddAttandence());
+        Get.to(()=>AddAttendance());
         break;
       case subMenuReportLateness:
         Get.to(()=>LatenessReport());

@@ -37,19 +37,19 @@ const iconPath= "assets/icons/";
 
 
 List<DrawerItem> itemsFirst = [
-  /*new DrawerItem(
+  /* DrawerItem(
     menuVehicle,
     [],
     Icons.car_rental,
   ),
-  new DrawerItem(
+   DrawerItem(
     menuAttandance,
     [subMenuToday, subMenuMyLeave],
     Icons.access_time,
   ),
 
 */
-  new DrawerItem(
+   DrawerItem(
     menuShift,
     [
       subMenuMyShift,
@@ -60,32 +60,32 @@ List<DrawerItem> itemsFirst = [
     iconPath+"shifts_icon.svg"
   ),
 
-  new DrawerItem(
+ /*  DrawerItem(
       menuAttandance,
     [],
     Icons.analytics_outlined,
       iconPath+"calendar_icon.svg"
-  ),
-  new DrawerItem(
+  ),*/
+   DrawerItem(
     menuLeave,
     [],
     Icons.analytics_outlined,
       iconPath+"shifts_icon.svg"
   ),
-  /*new DrawerItem(
+  /* DrawerItem(
     "Account$todo",
     [],
     Icons.analytics_outlined,
       iconPath+"shifts_icon.svg"
   ),*/
 
-  /*new DrawerItem(
+  /* DrawerItem(
     "Payment$todo",
     [],
     Icons.analytics_outlined,
       iconPath+"Cash.svg"
   ),*/
-  new DrawerItem(
+   DrawerItem(
     menuReport,
     [
       subMenuReportAttandance,subMenuReportLeave,subMenuReportLateness
@@ -94,21 +94,21 @@ List<DrawerItem> itemsFirst = [
       iconPath+"reports_icon.svg"
   ),
 
-  new DrawerItem(
+   DrawerItem(
     availability,
     [],
     Icons.analytics_outlined,
       iconPath+"shifts_icon.svg"
   ),
 
-  new DrawerItem(
+   DrawerItem(
     overtime,
     [],
     Icons.analytics_outlined,
       iconPath+"overtime_icon.svg"
   ),
 
-  new DrawerItem(
+   DrawerItem(
       menuScanVehicleTab,
       [],
       Icons.analytics_outlined,
@@ -116,13 +116,13 @@ List<DrawerItem> itemsFirst = [
   ),
 
 
-  new DrawerItem(
+   DrawerItem(
     profile,
     [],
     Icons.analytics_outlined,
       iconPath+"User.svg"
   ),
-  new DrawerItem(
+   DrawerItem(
     "Logout",
     [],
     Icons.analytics_outlined,
