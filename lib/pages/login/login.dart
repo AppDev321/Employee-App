@@ -39,6 +39,7 @@ class LoginClassStateful extends State<LoginClass> {
   TextEditingController _emailController = TextEditingController();
 
   TextEditingController _passwordController = TextEditingController();
+  bool isBiometricEnabled=false;
 
   @override
   void initState() {
@@ -113,7 +114,7 @@ class LoginClassStateful extends State<LoginClass> {
     return Container(
 
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
 
         body: SingleChildScrollView(
           child: Container(
@@ -228,6 +229,10 @@ class LoginClassStateful extends State<LoginClass> {
                                       fontSize: 20,
                                       fontWeight: FontWeight.normal)),
                             )),
+                        isBiometricEnabled?
+                            Center(child: IconButton(onPressed: (){
+
+                            },icon: Icon(Icons.fingerprint),),):Center()
                       ],
                     ),
                   ),

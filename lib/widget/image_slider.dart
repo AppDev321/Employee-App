@@ -3,20 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:hnh_flutter/repository/model/response/events_list.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
 import '../custom_style/colors.dart';
 import 'color_text_round_widget.dart';
 
 class ImageSliderWidget extends StatefulWidget {
-  final List<String> imagesList = [
-    '',
-    ];
+ final List<Events> event;
 
   ImageSliderWidget({
     this.height = 80,
     Key? key,
     this.onClick = null,
+   required this.event
   }) : super(key: key);
 
   final VoidCallback? onClick;
@@ -28,11 +28,17 @@ class ImageSliderWidget extends StatefulWidget {
 
 class _ImageSliderWidget extends State<ImageSliderWidget> {
   int _currentIndex = 0;
-  List<String> imagesList = [];
+  List<Events> imagesList = [];
+  @override
+  void initState() {
+    imagesList = widget.event;
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    imagesList = widget.imagesList;
+
     //var colorText = !Get.isDarkMode ? blackThemeTextColor : color;
     return Column(
       children: [
@@ -81,7 +87,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          item.isEmpty
+                          item.hasImage==false
                               ? Container()
                               : Container(
                                   constraints: BoxConstraints(
@@ -89,7 +95,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
-                                      item,
+                                      item.image.toString(),
                                       fit: BoxFit.fill,
                                       loadingBuilder: (BuildContext context,
                                           Widget child,
@@ -122,7 +128,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               CustomTextWidget(
-                                text: "Prophet's Birthday",
+                               text: item.title ,
                                 fontWeight: FontWeight.bold,
                                 size: 18,
                                 maxLines: 2,
@@ -133,10 +139,10 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                               ),
                               CustomTextWidget(
                                 text:
-                                "Mawlid, Mawlid an-Nabi ash-Sharif or Eid Milad un Nabi is the observance of the birthday of the Islamic prophet Muhammad which is commemorated in Rabi' al-awwal, the third month in the Islamic calendar.",
+                                item.description,
                                   fontWeight: FontWeight.bold,
                                 size: 12,
-                                maxLines: item.isEmpty ? 2 : 2,
+                                maxLines: 2,
                                   color:Colors.white
                               ),
                               SizedBox(
@@ -144,6 +150,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                               ),
                               InkWell(
                                 onTap: () {
+
                                   showEventDescriptionDialog(context, item);
                                 },
                                 child: TextColorContainer(
@@ -178,7 +185,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
     );
   }
 
-  showEventDescriptionDialog(BuildContext context, String item) {
+  showEventDescriptionDialog(BuildContext context, Events item) {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: cardThemeBaseColor,
@@ -195,11 +202,11 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                 Container(
                     padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                     child: CustomTextWidget(
-                      text: "Prophet's Birthday",
+                      text:item.title,
                       fontWeight: FontWeight.bold,
                       size: 18,
                     )),
-                item.isEmpty
+                item.hasImage==false
                     ? Container()
                     : Expanded(
                         child: Container(
@@ -207,7 +214,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(30.0),
                             child: Image.network(
-                              item,
+                              item.image.toString(),
                               fit: BoxFit.fill,
                               loadingBuilder: (BuildContext context,
                                   Widget child,
@@ -236,8 +243,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                         child: CustomTextWidget(
                           text:
-                          "Mawlid, Mawlid an-Nabi ash-Sharif or Eid Milad un Nabi is the observance of the birthday of the Islamic prophet Muhammad which is commemorated in Rabi' al-awwal, the third month in the Islamic calendar."
-                                )),
+                           item.description     )),
                   ),
                 ),
               ],

@@ -22,6 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../notification/firebase_notification.dart';
 import '../repository/model/request/claim_shift_history_request.dart';
 import '../repository/model/response/claimed_shift_list.dart';
+import '../repository/model/response/events_list.dart';
 import '../repository/model/response/get_dashboard.dart';
 import '../repository/model/response/leave_list.dart';
 import '../repository/model/response/overtime_list.dart';
@@ -32,8 +33,11 @@ class DashBoardViewModel extends BaseViewModel {
   Shifts? getDashBoardShift() => dashBoardShift;
 
   Stats? dashboardStat = null;
-
   Stats? getDashboardStat() => dashboardStat;
+
+  List<Events> events=[];
+  List<Events>  getEventsList() => events;
+
 
 
   User? userObject = null;
@@ -93,7 +97,11 @@ class DashBoardViewModel extends BaseViewModel {
     setLoading(false);
     notifyListeners();
 
+
     getNotificationCount();
+
+
+ getEventsListResponse();
   }
 
 
@@ -254,7 +262,36 @@ class DashBoardViewModel extends BaseViewModel {
       },
     );
   }
+  Future<void> getEventsListResponse() async {
+    setLoading(true);
+    final results = await APIWebService().getEventsList();
 
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+      setIsErrorReceived(true);
+    } else {
+      if (results.code == 200) {
+
+
+       events = results.data!.events!;
+
+
+        setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += results.errors![i].message! + "\n";
+        }
+        setErrorMsg(errorString);
+        setIsErrorReceived(true);
+      }
+    }
+
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+  }
 }
 
 class FirebaseAppUpdate

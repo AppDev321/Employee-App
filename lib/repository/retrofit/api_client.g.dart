@@ -10,7 +10,7 @@ part of 'api_client.dart';
 
 class _ApiClient implements ApiClient {
   _ApiClient(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'http://vmi808920.contaboserver.net/api';
+    baseUrl ??= 'http://192.168.0.69:8000/api';
   }
 
   final Dio _dio;
@@ -183,6 +183,22 @@ class _ApiClient implements ApiClient {
   }
 
   @override
+  Future<EventListResponse> getEvents() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<EventListResponse>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/events',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = EventListResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<LoginApiResponse> updateProfileAccount(body) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -226,7 +242,7 @@ class _ApiClient implements ApiClient {
         _setStreamType<LoginApiResponse>(
             Options(method: 'POST', headers: _headers, extra: _extra)
                 .compose(_dio.options,
-                    '/request-overtime/delete?over_time_request_id=${id}',
+                    '/overtime-request/delete?overtime_request_id=${id}',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = LoginApiResponse.fromJson(_result.data!);

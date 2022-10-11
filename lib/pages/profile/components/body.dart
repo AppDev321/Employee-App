@@ -26,8 +26,6 @@ class Body extends StatefulWidget {
     return _Body();
   }
 }
-
-
 class _Body extends State<Body> {
   final TextEditingController _oldPassword = TextEditingController();
   final TextEditingController _newPassword = TextEditingController();

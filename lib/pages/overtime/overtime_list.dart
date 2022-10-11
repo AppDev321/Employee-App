@@ -325,8 +325,7 @@ class _OverTimePageState extends State<OverTimePage>
                                   if (value) {
                                     setState(() {
                                       _overtimeHistoryList.remove(item);
-                                      _overtimeViewModel.deleteOverTimeRequest(
-                                          item.id.toString());
+                                      _overtimeViewModel.deleteOverTimeRequest( item.id.toString());
                                     });
                                   }
                                 });

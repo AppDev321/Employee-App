@@ -111,7 +111,7 @@ class OvertimeViewModel extends BaseViewModel {
       // setIsErrorReceived(true);
     } else {
       if (results.code == 200) {
-        setOverTimeStatus(true);
+       // setOverTimeStatus(true);
 
       } else {
         var errorString = "";
@@ -126,7 +126,7 @@ class OvertimeViewModel extends BaseViewModel {
 
     setResponseStatus(true);
     setLoading(false);
-    notifyListeners();
+   // notifyListeners();
   }
 
 

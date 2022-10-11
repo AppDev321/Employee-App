@@ -18,6 +18,7 @@ import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
 import '../../main.dart';
 import '../../provider/theme_provider.dart';
+import '../../repository/model/response/events_list.dart';
 import '../../repository/model/response/get_dashboard.dart';
 import '../../repository/model/response/get_shift_list.dart';
 import '../../utils/controller.dart';
@@ -67,6 +68,7 @@ class _DashboardState extends State<Dashboard> {
   int notificationCount = 0;
 
   bool isAppUpdateRequired = false;
+  List<Events> eventsList=[];
 
   @override
   void initState() {
@@ -87,7 +89,11 @@ class _DashboardState extends State<Dashboard> {
 
     _dashBoardViewModel.getBackgroundFCMNotificaiton();
 
+    _dashBoardViewModel.getEventsListResponse();
     _dashBoardViewModel.addListener(() {
+
+
+
       notificationCount = _dashBoardViewModel.notificationCount;
       var checkErrorApiStatus = _dashBoardViewModel.getIsErrorRecevied();
       if (checkErrorApiStatus) {
@@ -108,7 +114,7 @@ class _DashboardState extends State<Dashboard> {
           dashboardStat = _dashBoardViewModel.getDashboardStat();
           userDashboard = _dashBoardViewModel.getUserObject()!;
           userDashboard.profileURL ??= "";
-
+          eventsList= _dashBoardViewModel.getEventsList();
           profileImageUrl = userDashboard.profileURL.toString();
           Controller().setUserProfilePic(profileImageUrl);
 
@@ -359,17 +365,24 @@ class _DashboardState extends State<Dashboard> {
                             height: 10,
                           ),
                         const  ClockInOutWidget(),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          CustomTextWidget(
-                              text: "Events", size: 18, color: primaryColor),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          ImageSliderWidget(
-                            height: 135,
-                          ),
+                          eventsList.isNotEmpty ?
+                       Column(
+                         mainAxisAlignment: MainAxisAlignment.start,
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [   const SizedBox(
+                         height: 10,
+                       ),
+                         CustomTextWidget(
+                             text: "Events", size: 18, color: primaryColor),
+                         const SizedBox(
+                           height: 10,
+                         ),
+
+
+                         ImageSliderWidget(event: eventsList,
+                           height: 135,
+                         ),],):Center(),
+
                           const SizedBox(
                             height: 20,
                           ),

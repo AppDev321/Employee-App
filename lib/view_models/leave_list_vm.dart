@@ -139,7 +139,7 @@ class LeaveListViewModel extends BaseViewModel {
 
     setResponseStatus(true);
     setLoading(false);
-    notifyListeners();
+    //notifyListeners();
   }
 
 

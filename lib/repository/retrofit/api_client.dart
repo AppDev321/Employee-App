@@ -4,6 +4,7 @@ import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
 import 'package:hnh_flutter/repository/model/response/availability_list.dart';
+import 'package:hnh_flutter/repository/model/response/events_list.dart';
 import 'package:hnh_flutter/repository/model/response/leave_list.dart';
 import 'package:hnh_flutter/repository/model/response/user_profile.dart';
 import 'package:hnh_flutter/repository/retrofit/logging.dart';
@@ -61,12 +62,15 @@ abstract class ApiClient {
   @GET('/profile-details')
   Future<UserProfileDetail> getProfileAccount();
 
+  @GET('/events')
+  Future<EventListResponse> getEvents();
+
   @POST('/update-profile')
   Future<LoginApiResponse> updateProfileAccount(@Body() Profile body);
 
   @POST('/request-overtime')
   Future<LoginApiResponse> saveOvertimeRequest(@Body() OvertimeRequest body);
-  @POST('/request-overtime/delete?over_time_request_id={id}')
+  @POST('/overtime-request/delete?overtime_request_id={id}')
   Future<LoginApiResponse> deleteOvertimeRequest(@Path("id") String id);
 
   @POST('/overtime-request-history')
