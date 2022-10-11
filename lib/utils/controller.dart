@@ -130,7 +130,7 @@ class Controller {
 
   String getConvertedDate(DateTime now) {
     //var now = new DateTime.now();
-    var formatter = new DateFormat('yyyy-MM-dd');
+    var formatter =  DateFormat('yyyy-MM-dd');
     String formattedDate = formatter.format(now);
     return formattedDate;
   }
