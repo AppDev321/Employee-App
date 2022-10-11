@@ -6,20 +6,14 @@ import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart'
 import 'package:hnh_flutter/repository/model/response/availability_list.dart';
 import 'package:hnh_flutter/repository/model/response/leave_list.dart';
 import 'package:hnh_flutter/repository/model/response/user_profile.dart';
-
 import 'package:hnh_flutter/repository/retrofit/logging.dart';
-
 import 'package:retrofit/http.dart';
-
 import '../../utils/controller.dart';
 import '../model/request/change_password_request.dart';
 import '../model/request/claim_shift_history_request.dart';
 import '../model/request/claim_shift_request.dart';
-
 import '../model/response/claimed_shift_list.dart';
-
 import '../model/response/get_dashboard.dart';
-
 import '../model/response/get_notification.dart';
 import '../model/response/get_shift_list.dart';
 import '../model/response/login_api_response.dart';
@@ -27,8 +21,6 @@ import '../model/response/overtime_list.dart';
 import '../model/response/report_attendance_response.dart';
 import '../model/response/report_lateness_response.dart';
 import '../model/response/report_leave_response.dart';
-
-
 part 'api_client.g.dart';
 
 
@@ -39,8 +31,6 @@ abstract class ApiClient {
     dio.interceptors.add(Logging());
     return _ApiClient(dio, baseUrl: baseUrl);
   }
-
-
 
   @POST('/login')
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);
@@ -84,8 +74,10 @@ abstract class ApiClient {
 
   @POST('/availability-request/store')
   Future<LoginApiResponse> saveAvailabilityRequest(@Body() AvailabilityRequest body);
+
   @POST('/availability-request/index')
   Future<AvailabilityListResponse> getAvailabilityList(@Body() ClaimShiftHistoryRequest body);
+
   @POST('/availability-request/delete?code={code}')
   Future<LoginApiResponse> deleteAvailabilityRequest(@Path("code") String code);
 
@@ -98,12 +90,18 @@ abstract class ApiClient {
   @POST('/validate-qr-code')
   Future<LoginApiResponse> validateVehicleTab(@Body() Map<String,String> body );
 
-
-
   @POST('/report/leaves')
   Future<LeaveReportResponse> getLeaveReport(@Body() ClaimShiftHistoryRequest body);
+
+  // @POST('/leave-request/delete')
+  // Future<LeaveReportResponse> getLeaveReport(@Body() ClaimShiftHistoryRequest);
+  //
+  // @POST('/leave-request/delete')
+  // Future<LeaveReportResponse> getLeaveReport(@Body() ClaimShiftHistoryRequest);
+
   @POST('/report/my-attendance')
   Future<AttendanceReportResponse> getAttandenceReport(@Body() ClaimShiftHistoryRequest body);
+
   @POST('/report/lateness')
   Future<LatenessReportResponse> getLatenessReport(@Body() ClaimShiftHistoryRequest body);
 
@@ -117,10 +115,13 @@ abstract class ApiClient {
 
   @POST('/notification/my-notifications')
   Future<GetNotificationResponse> getNotificationList();
+
   @POST('/notification/delete-notification?notification_id={id}')
   Future<LoginApiResponse> deleteNotification(@Path("id") String notificaitonID);
+
   @POST('/notification/change-read-status?notification_id={id}')
   Future<LoginApiResponse> updateNotificationStatus(@Path("id") String notificaitonID);
+
   @GET('/notification/get-notification-count')
   Future<LoginApiResponse> getNotificationCount();
 

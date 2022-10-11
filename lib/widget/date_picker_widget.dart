@@ -24,15 +24,11 @@ class DatePickerWidget extends StatefulWidget {
   @override
   _DateWidget createState() => _DateWidget();
 }
-
 class _DateWidget extends State<DatePickerWidget> {
   late DateTime selectedDate = widget.selectedDate;
-
-
   @override
   Widget build(BuildContext context) {
     var colorText =borderColor;
-
     return  Padding(
         padding: const EdgeInsets.only(top: 10),
         child: Column(
@@ -78,7 +74,6 @@ class _DateWidget extends State<DatePickerWidget> {
 
     );
   }
-
   _selectDate(BuildContext context) async {
     final DateTime? selected = await showDatePicker(
       context: context,
@@ -95,8 +90,6 @@ class _DateWidget extends State<DatePickerWidget> {
         });
 
       }
-
-
     // Text("${selectedDate.day}/${selectedDate.month}/${selectedDate.year}"),
   }
 

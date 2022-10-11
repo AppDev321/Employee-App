@@ -49,27 +49,27 @@ List<DrawerItem> itemsFirst = [
   ),
 
 */
-   DrawerItem(
-    menuShift,
-    [
-      subMenuMyShift,
-      subMenuOpenShift,
+  DrawerItem(
+      menuShift,
+      [
+        subMenuMyShift,
+        subMenuOpenShift,
 
-    ],
-    Icons.analytics_outlined,
-    iconPath+"shifts_icon.svg"
+      ],
+      Icons.analytics_outlined,
+      iconPath+"shifts_icon.svg"
   ),
 
- /*  DrawerItem(
+  /*  DrawerItem(
       menuAttandance,
     [],
     Icons.analytics_outlined,
       iconPath+"calendar_icon.svg"
   ),*/
-   DrawerItem(
-    menuLeave,
-    [],
-    Icons.analytics_outlined,
+  DrawerItem(
+      menuLeave,
+      [],
+      Icons.analytics_outlined,
       iconPath+"shifts_icon.svg"
   ),
   /* DrawerItem(
@@ -85,30 +85,30 @@ List<DrawerItem> itemsFirst = [
     Icons.analytics_outlined,
       iconPath+"Cash.svg"
   ),*/
-   DrawerItem(
-    menuReport,
-    [
-      subMenuReportAttandance,subMenuReportLeave,subMenuReportLateness
-    ],
-    Icons.analytics_outlined,
+  DrawerItem(
+      menuReport,
+      [
+        subMenuReportAttandance,subMenuReportLeave,subMenuReportLateness
+      ],
+      Icons.analytics_outlined,
       iconPath+"reports_icon.svg"
   ),
 
-   DrawerItem(
-    availability,
-    [],
-    Icons.analytics_outlined,
+  DrawerItem(
+      availability,
+      [],
+      Icons.analytics_outlined,
       iconPath+"shifts_icon.svg"
   ),
 
-   DrawerItem(
-    overtime,
-    [],
-    Icons.analytics_outlined,
+  DrawerItem(
+      overtime,
+      [],
+      Icons.analytics_outlined,
       iconPath+"overtime_icon.svg"
   ),
 
-   DrawerItem(
+  DrawerItem(
       menuScanVehicleTab,
       [],
       Icons.analytics_outlined,
@@ -116,16 +116,16 @@ List<DrawerItem> itemsFirst = [
   ),
 
 
-   DrawerItem(
-    profile,
-    [],
-    Icons.analytics_outlined,
+  DrawerItem(
+      profile,
+      [],
+      Icons.analytics_outlined,
       iconPath+"User.svg"
   ),
-   DrawerItem(
-    "Logout",
-    [],
-    Icons.analytics_outlined,
+  DrawerItem(
+      "Logout",
+      [],
+      Icons.analytics_outlined,
       iconPath+"Log out.svg"
   ),
 

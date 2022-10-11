@@ -10,7 +10,7 @@ import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
 class Controller {
   static const String appBaseURL = "http://vmi808920.contaboserver.net/api";
- // "http://192.168.1.21:8000/api";
+  // "http://192.168.1.21:8000/api";
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
   static const double leftCardColorMargin = 5;
@@ -88,14 +88,14 @@ class Controller {
 
   Future<String> getEmail() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    
-  return  prefs.getString(emailPref)?? "";
+
+    return  prefs.getString(emailPref)?? "";
   }
 
   Future<String> getPassword() async {
-   
+
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-   return prefs.getString( passPref)?? "";
+    return prefs.getString( passPref)?? "";
   }
 
 
@@ -144,7 +144,7 @@ class Controller {
 
   bool validatePassword(String value) {
     RegExp regex =
-        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
     if (value.isEmpty) {
       return false;
     } else {
@@ -230,7 +230,7 @@ class Controller {
       Duration difference = Duration(minutes: minute);
 
       final today =
-          DateTime(now.year).add(difference).subtract(const Duration(days: 1));
+      DateTime(now.year).add(difference).subtract(const Duration(days: 1));
 
       //return '${today.day} Days ${today.hour} Hours ${today.minute} Min';
 
@@ -245,10 +245,10 @@ class Controller {
 
   String getServerDateFormated(String serverDate) {
     DateTime requestDateFormate =
-        new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
+    new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
     var dateFormat = DateFormat('dd-MMM-yyyy');
     var startDate =
-        dateFormat.format(DateTime.parse(requestDateFormate.toString()));
+    dateFormat.format(DateTime.parse(requestDateFormate.toString()));
     return startDate;
   }
 

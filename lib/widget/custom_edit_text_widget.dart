@@ -61,9 +61,9 @@ bool showPass =true;
               });
             },
             child: Icon(
-              showPass
-                  ? Icons.visibility_rounded
-                  : Icons.visibility_off_rounded,
+              showPass?Icons.visibility_off_rounded
+                  :Icons.visibility_rounded
+              ,
               size: 24,
             ),
           ),)

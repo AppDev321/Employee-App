@@ -8,7 +8,7 @@ import 'base_view_model.dart';
 
 class LoginViewModel extends BaseViewModel {
 
-  final _auth = LocalAuthentication();
+  var _auth = LocalAuthentication();
   String authToken = "";
 
   String getUserToken() => authToken;

@@ -14,13 +14,9 @@ class ThemeModel extends ChangeNotifier {
     _preferences = Controller();
     getPreferences();
   }
-
-
   set isDark(bool value) {
     _isDark = value;
     _preferences.setTheme(value);
-
-
     notifyListeners();
   }
 

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,6 @@ import 'package:hnh_flutter/view_models/shift_list_vm.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:provider/provider.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
-
 import 'bloc/connected_bloc.dart';
 import 'custom_style/colors.dart';
 import 'custom_style/strings.dart';
@@ -151,8 +149,6 @@ class MyApp extends StatelessWidget {
                    primaryColor =  themeNotifier.isDark ? primaryDarkColor : primaryBlueColor;
                    cardThemeBaseColor =  themeNotifier.isDark ? Colors.black : Colors.white;
                    borderColor = themeNotifier.isDark ? blackThemeTextColor  : textFielBoxBorderColor;
-
-
                   return GetMaterialApp(
                     title: ConstantData.appName,
                     home: example5,
@@ -184,3 +180,4 @@ class MyApp extends StatelessWidget {
 
   );
 }
+
