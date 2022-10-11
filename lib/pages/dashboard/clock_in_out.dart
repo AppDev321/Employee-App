@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
+import 'package:intl/intl.dart';
 
 import '../../custom_style/colors.dart';
 import '../../repository/model/response/report_attendance_response.dart';
@@ -17,8 +20,17 @@ class ClockInOutWidget extends StatefulWidget {
 }
 
 class ClockInOutWidgetState extends State<ClockInOutWidget> {
+  String timeCounter ="";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getTimeDiff();
+  }
   @override
   Widget build(BuildContext context) {
+
+
     return listItem(Attendance(
         date: "20-May-2022",
         timeIn: "10:45 AM",
@@ -187,7 +199,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                         width: 5,
                                       ),
                                       CustomTextWidget(
-                                        text: item.duration,
+                                        text:timeCounter ,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ],
@@ -208,5 +220,28 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                 ],
               ),
             )));
+  }
+ getTimeDiff()
+{
+  final periodicTimer = Timer.periodic(
+    const Duration(seconds: 1),
+        (timer) {
+          DateFormat dateFormat =  DateFormat.Hm();
+          DateTime now = DateTime.now();
+          DateTime open = dateFormat.parse("10:00");
+          open =  DateTime(now.year, now.month, now.day, open.hour, open.minute);
+
+          setState(() {
+            timeCounter =_printDuration( now.difference(open));
+          });
+    },
+  );
+}
+
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 }
