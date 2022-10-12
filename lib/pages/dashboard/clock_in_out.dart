@@ -29,8 +29,6 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
   }
   @override
   Widget build(BuildContext context) {
-
-
     return listItem(Attendance(
         date: "20-May-2022",
         timeIn: "10:45 AM",
@@ -230,18 +228,21 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
           DateTime now = DateTime.now();
           DateTime open = dateFormat.parse("10:00");
           open =  DateTime(now.year, now.month, now.day, open.hour, open.minute);
-
-          setState(() {
-            timeCounter =_printDuration( now.difference(open));
-          });
+          if (this.mounted) {
+            setState(() {
+              timeCounter = _printDuration(now.difference(open));
+            });
+          }
     },
   );
 }
-
   String _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
+
+
+
 }

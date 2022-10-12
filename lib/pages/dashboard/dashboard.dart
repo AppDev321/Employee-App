@@ -112,7 +112,7 @@ class _DashboardState extends State<Dashboard> {
           _errorMsg = "";
           dashBoardShift = _dashBoardViewModel.getDashBoardShift();
           dashboardStat = _dashBoardViewModel.getDashboardStat();
-          userDashboard = _dashBoardViewModel.getUserObject()!;
+          userDashboard = _dashBoardViewModel.getUserObject();
           userDashboard.profileURL ??= "";
           eventsList= _dashBoardViewModel.getEventsList();
           profileImageUrl = userDashboard.profileURL.toString();

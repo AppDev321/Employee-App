@@ -1,5 +1,6 @@
 
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
+import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'get_dashboard.g.dart';
@@ -46,13 +47,17 @@ class Data {
   User? user;
   Shifts? shift;
   Stats? stats;
+  bool? checkedIn;
+  Attendance? attendance;
 
-  Data({this.user, this.shift, this.stats});
+  Data({this.user, this.shift, this.stats,this.checkedIn,this.attendance});
 
   Data.fromJson(Map<String, dynamic> json) {
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
     shift = json['shift'] != null ? new Shifts.fromJson(json['shift']) : null;
     stats = json['stats'] != null ? new Stats.fromJson(json['stats']) : null;
+    attendance = json['attendance'] != null ? new Attendance.fromJson(json['attendance']) : null;
+    checkedIn = json['checked_in'];
   }
 
   Map<String, dynamic> toJson() {
@@ -65,6 +70,10 @@ class Data {
     }
     if (this.stats != null) {
       data['stats'] = this.stats!.toJson();
+    }
+    data['checked_in'] = this.checkedIn;
+    if (this.attendance != null) {
+      data['attendance'] = this.attendance!.toJson();
     }
     return data;
   }

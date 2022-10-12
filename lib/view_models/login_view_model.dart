@@ -13,9 +13,7 @@ class LoginViewModel extends BaseViewModel {
 
   String getUserToken() => authToken;
 
-  bool biometericStatus = false;
 
-  bool getBiometericStatus() => biometericStatus;
 
   setUserAuth(String token) async {
     authToken = token;
@@ -58,8 +56,8 @@ class LoginViewModel extends BaseViewModel {
     return isAuthenticated;
   }
 
-  Future<void> getFinerPrintStatus() async {
-    biometericStatus = await Controller().getBiometericStatus();
+  Future<bool> getFinerPrintStatus() async {
+    return  await Controller().getBiometericStatus();
   }
 
   Future<void> getUserLogin(LoginRequestBody body) async {
@@ -74,6 +72,23 @@ class LoginViewModel extends BaseViewModel {
     } else {
       if (results.code == 200) {
         setUserAuth(results.data!.token!);
+
+        //Save user login details
+        if(results.data!.token!.isNotEmpty) {
+          Controller().setAuthToken(results.data!.token!);
+
+          //encryt
+          var key=null;
+          String encrypt;
+          var email=null;
+
+
+
+
+
+          Controller().setEmail(body.email.toString());
+          Controller().setPassword(body.password.toString());
+        }
         setIsErrorReceived(false);
       } else {
         var errorString = "";

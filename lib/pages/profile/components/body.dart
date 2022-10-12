@@ -182,107 +182,108 @@ class _Body extends State<Body> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: Container(
+        return Container(
             color: Colors.white12,
             child: Center(
-              child: Column(
-                children: [
-                  Container(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                      child: const CustomTextWidget(
-                        text: "Password Change",
-                        fontWeight: FontWeight.bold,
-                        size: 18,
-                      )),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          child: CustomEditTextWidget(
-                            text: "Old Password",
-                            isPasswordField: true,
-                            controller: _oldPassword,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                        child: const CustomTextWidget(
+                          text: "Password Change",
+                          fontWeight: FontWeight.bold,
+                          size: 18,
+                        )),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            child: CustomEditTextWidget(
+                              text: "Old Password",
+                              isPasswordField: true,
+                              controller: _oldPassword,
+                            ),
                           ),
-                        ),
-                        Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
-                            child: CustomEditTextWidget(
-                              text: "New Password",
-                              isPasswordField: true,
-                              controller: _newPassword,
-                            )),
-                        Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
-                            child: CustomEditTextWidget(
-                              text: "Confirm Password",
-                              isPasswordField: true,
-                              controller: _confirmPassword,
-                            )),
-                        const Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
-                            child: CustomTextWidget(
-                                text:
-                                    "Password must be 8 characters long and one uppercase,lowercase,symbol and number")),
-                        Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  onPrimary: Colors.red,
-                                  primary: Colors.red,
-                                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30)),
-                                  )),
-                              onPressed: () {
-                                var oldPass = Controller()
-                                    .validatePassword(_oldPassword.text);
-                                var newPass = Controller()
-                                    .validatePassword(_newPassword.text);
-                                var conPass = Controller()
-                                    .validatePassword(_confirmPassword.text);
+                          Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              child: CustomEditTextWidget(
+                                text: "New Password",
+                                isPasswordField: true,
+                                controller: _newPassword,
+                              )),
+                          Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              child: CustomEditTextWidget(
+                                text: "Confirm Password",
+                                isPasswordField: true,
+                                controller: _confirmPassword,
+                              )),
+                          const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              child: CustomTextWidget(
+                                  text:
+                                      "Password must be 8 characters long and one uppercase,lowercase,symbol and number")),
+                          Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    onPrimary: Colors.red,
+                                    primary: Colors.red,
+                                    padding: const EdgeInsets.symmetric(vertical: 15.0),
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(30)),
+                                    )),
+                                onPressed: () {
+                                  var oldPass = Controller()
+                                      .validatePassword(_oldPassword.text);
+                                  var newPass = Controller()
+                                      .validatePassword(_newPassword.text);
+                                  var conPass = Controller()
+                                      .validatePassword(_confirmPassword.text);
 
-                                //  if (oldPass && newPass && conPass) {
-                                _progressDialog?.showLoadingDialog();
-                                var request = ChangePasswordRequest();
-                                request.currentPassword = _oldPassword.text;
-                                request.newPassword = _newPassword.text;
-                                request.newConfirmPassword =
-                                    _confirmPassword.text;
-                                _profileViewModel
-                                    .changePasswordRequest(request);
-                                isPasswordUpdateCalled = true;
-                                /*  } else {
+                                  //  if (oldPass && newPass && conPass) {
+                                  _progressDialog?.showLoadingDialog();
+                                  var request = ChangePasswordRequest();
+                                  request.currentPassword = _oldPassword.text;
+                                  request.newPassword = _newPassword.text;
+                                  request.newConfirmPassword =
+                                      _confirmPassword.text;
+                                  _profileViewModel
+                                      .changePasswordRequest(request);
+                                  isPasswordUpdateCalled = true;
+                                  /*  } else {
 
-                         Controller().showMessageDialog(
-                                      "Please enter valid password","Error");
-                            }   */
-                              },
-                              child: const Center(
-                                child: CustomTextWidget(
-                                  text: "SAVE PASSWORD",
-                                  color: Colors.white,
+                           Controller().showMessageDialog(
+                                        "Please enter valid password","Error");
+                              }   */
+                                },
+                                child: const Center(
+                                  child: CustomTextWidget(
+                                    text: "SAVE PASSWORD",
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                            )),
-                      ],
+                              )),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
+
         );
       },
     );
@@ -323,8 +324,11 @@ class _Body extends State<Body> {
 
                         if (item.index == 0) {
                           Controller().setBiometericStatus(false);
+                          // Navigator.of(context).pop();
+                        Get.back();
                         } else {
                           Controller().setBiometericStatus(true);
+                          Get.back();
                         }
                       }),
                 ],

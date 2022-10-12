@@ -40,9 +40,9 @@ class DashBoardViewModel extends BaseViewModel {
 
 
 
-  User? userObject = null;
+  User userObject = User();
 
-  User? getUserObject() => userObject;
+  User getUserObject() => userObject;
 
   final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
 
@@ -79,7 +79,8 @@ class DashBoardViewModel extends BaseViewModel {
       if (results.code == 200) {
         dashBoardShift = results.data?.shift;
         dashboardStat = results.data?.stats;
-        userObject = results.data?.user;
+        userObject = results.data!.user!;
+
 
         // setIsErrorReceived(false);
       } else {

@@ -11,8 +11,6 @@ import '../repository/model/request/claim_shift_history_request.dart';
 import '../repository/model/response/claimed_shift_list.dart';
 
 class ShiftListViewModel extends BaseViewModel {
-
-
   ShiftListViewModel() {
 
   }
