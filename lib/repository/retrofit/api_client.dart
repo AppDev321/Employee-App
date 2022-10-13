@@ -65,7 +65,6 @@ abstract class ApiClient {
   @GET('/events')
   Future<EventListResponse> getEvents();
 
-
   @POST('/update-profile')
   Future<LoginApiResponse> updateProfileAccount(@Body() Profile body);
 

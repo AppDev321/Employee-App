@@ -79,6 +79,7 @@ class Controller {
 
   Future<void> setEmail(String emaiID) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     prefs.setString( emailPref,emaiID);
   }
 

@@ -83,7 +83,6 @@ class User {
   String? name;
   String? profileURL;
 
-
   User({this.name,this.profileURL});
 
   User.fromJson(Map<String, dynamic> json) {

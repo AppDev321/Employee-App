@@ -21,7 +21,6 @@ class LoginClass extends StatefulWidget {
 class LoginClassStateful extends State<LoginClass> {
   /* final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();*/
-  final String _ambulaceSVG = "assets/images/afj_logo.png";
   DialogBuilder? _progressDialog;
 
   static const String _loginText = 'Login';
@@ -91,17 +90,10 @@ class LoginClassStateful extends State<LoginClass> {
       child: _uiSetup(context),
     );
 
-
-
   }
 
   Widget _uiSetup(BuildContext context) {
     var colorText = Get.isDarkMode ? blackThemeTextColor : cardDarkThemeBg;
-
-
-
-
-
 
     Widget welcomeBack = Text(
       'Welcome Back',
@@ -266,9 +258,9 @@ class LoginClassStateful extends State<LoginClass> {
 
   void _onLoginButtonPress(String email, String pass) async {
     _progressDialog?.showLoadingDialog();
+
     LoginRequestBody requestBody =
         LoginRequestBody(email: email, password: pass);
-
     // LoginRequestBody(email: "mohsin121@afj.com", password: "123456");
     _loginViewModel.getUserLogin(requestBody);
   }

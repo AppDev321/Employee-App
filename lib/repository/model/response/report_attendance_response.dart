@@ -13,6 +13,7 @@ class AttendanceReportResponse {
   Data? data;
   List<Errors>? errors;
 
+
   AttendanceReportResponse({this.code, this.message, this.data, this.errors});
 
   AttendanceReportResponse.fromJson(Map<String, dynamic> json) {

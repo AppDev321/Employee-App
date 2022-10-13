@@ -21,12 +21,12 @@ import '../../provider/theme_provider.dart';
 import '../../repository/model/response/events_list.dart';
 import '../../repository/model/response/get_dashboard.dart';
 import '../../repository/model/response/get_shift_list.dart';
+import '../../repository/model/response/report_attendance_response.dart';
 import '../../utils/controller.dart';
 import '../../webservices/APIWebServices.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/image_slider.dart';
 import '../../widget/internet_not_available.dart';
-import '../../widget/custom_radio_group_widget.dart';
 import '../../widget/name_icon_badge.dart';
 import '../../widget/navigation_drawer_new.dart';
 import '../attandence/add_attendance.dart';
@@ -50,7 +50,7 @@ class _DashboardState extends State<Dashboard> {
   List<DashBoardGrid> listQuickAccess = [];
   bool _isFirstLoadRunning = false;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-   GlobalKey<RefreshIndicatorState>();
+      GlobalKey<RefreshIndicatorState>();
   bool _isErrorInApi = false;
   String? _errorMsg = "";
   late DashBoardViewModel _dashBoardViewModel;
@@ -59,6 +59,7 @@ class _DashboardState extends State<Dashboard> {
   Stats? dashboardStat;
   User userDashboard = User();
   String profileImageUrl = "";
+  Attendance? attendance = null;
 
   Map<String, String> map = {
     'device_type': platFormType!.toLowerCase(),
@@ -68,7 +69,8 @@ class _DashboardState extends State<Dashboard> {
   int notificationCount = 0;
 
   bool isAppUpdateRequired = false;
-  List<Events> eventsList=[];
+  List<Events> eventsList = [];
+  bool IsCheckIn = false;
 
   @override
   void initState() {
@@ -91,8 +93,7 @@ class _DashboardState extends State<Dashboard> {
 
     _dashBoardViewModel.getEventsListResponse();
     _dashBoardViewModel.addListener(() {
-
-
+      attendance = _dashBoardViewModel.attendance;
 
       notificationCount = _dashBoardViewModel.notificationCount;
       var checkErrorApiStatus = _dashBoardViewModel.getIsErrorRecevied();
@@ -332,57 +333,75 @@ class _DashboardState extends State<Dashboard> {
                                   ],
                                 )
                               : Container(),
+                          attendance == null
+                              ? Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: CustomTextWidget(
+                                              text: "Today Attendance",
+                                              size: 18,
+                                              color: primaryColor),
+                                        ),
+                                        ElevatedButton.icon(
+                                          onPressed: () =>
+                                              Get.to(() =>  AddAttendance(
+                                                    attendanceType: 0,
+                                                  )),
 
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: CustomTextWidget(
-                                    text: "Today Attendance",
-                                    size: 18,
-                                    color: primaryColor),
-                              ),
-                              ElevatedButton.icon(
-                                onPressed: ()=>
-                                    Get.to(() => const AddAttendance(attendanceType: 0,)),
-
-                                icon: const Icon(Icons.qr_code_outlined),
-                                label: const Text("Check In"), //label text
-                              ),
-
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          CustomTextWidget(
-                              text: "Attendance", size: 18, color: primaryColor),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                        const  ClockInOutWidget(),
-                          eventsList.isNotEmpty ?
-                       Column(
-                         mainAxisAlignment: MainAxisAlignment.start,
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                         children: [   const SizedBox(
-                         height: 10,
-                       ),
-                         CustomTextWidget(
-                             text: "Events", size: 18, color: primaryColor),
-                         const SizedBox(
-                           height: 10,
-                         ),
-
-
-                         ImageSliderWidget(event: eventsList,
-                           height: 135,
-                         ),],):Center(),
-
+                                          icon: const Icon(
+                                              Icons.qr_code_outlined),
+                                          label: const Text(
+                                              "Check In"), //label text
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    CustomTextWidget(
+                                        text: "Attendance",
+                                        size: 18,
+                                        color: primaryColor),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                     ClockInOutWidget(attendanceItem: this.attendance!),
+                                  ],
+                                ),
+                          eventsList.isNotEmpty
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    CustomTextWidget(
+                                        text: "Events",
+                                        size: 18,
+                                        color: primaryColor),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    ImageSliderWidget(
+                                      event: eventsList,
+                                      height: 135,
+                                    ),
+                                  ],
+                                )
+                              : Center(),
                           const SizedBox(
                             height: 20,
                           ),

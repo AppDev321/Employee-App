@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/data/drawer_items.dart';
-import 'package:hnh_flutter/pages/reports/attendance_report.dart';
 
 import '../../custom_style/strings.dart';
 import '../../utils/controller.dart';
@@ -13,8 +12,11 @@ import '../../view_models/attendance_vm.dart';
 import '../../widget/dialog_builder.dart';
 
 class AddAttendance extends StatefulWidget {
-  const AddAttendance({Key? key, attendanceType}) : super(key: key);
-  final int attendanceType = 0; //0 - check in ,1 - check out
+
+  final int? attendanceType  ; //0 - check in ,1 - check out
+  AddAttendance({Key? key,  this.attendanceType =0}) : super(key: key);
+
+
 
   @override
   State<AddAttendance> createState() => _AddAttendanceState();
@@ -42,7 +44,8 @@ class _AddAttendanceState extends State<AddAttendance> {
       var qrResult = await BarcodeScanner.scan();
 
       _progressDialog?.showLoadingDialog();
-      attendanceViewModel.markAttendanceRequest(qrResult.rawContent,  widget.attendanceType);
+
+    attendanceViewModel.markAttendanceRequest(qrResult.rawContent,  widget.attendanceType!);
     } on FormatException catch (ex) {
       print('Pressed the Back Button before Scanning');
     } catch (ex) {
@@ -54,6 +57,8 @@ class _AddAttendanceState extends State<AddAttendance> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    print("Type:${widget.attendanceType}");
 
     attendanceViewModel = AttendanceViewModel();
 
@@ -77,9 +82,10 @@ class _AddAttendanceState extends State<AddAttendance> {
           });
 
           Controller() .showToastMessage(context, "Request submitted successfully");
-         // Navigator.pop(context);
+         Navigator.pop(context);
           Get.back();
-          Get.to(() => const AttendanceReport());
+
+         // Get.to(() => const AttendanceReport());
         } else {
           _errorMsg = attendanceViewModel.getErrorMsg();
           if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {

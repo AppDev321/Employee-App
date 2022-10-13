@@ -5,48 +5,38 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:hnh_flutter/pages/shift/claimed_shift_list.dart';
-import 'package:hnh_flutter/repository/model/request/availability_request.dart';
-import 'package:hnh_flutter/repository/model/request/claim_shift_request.dart';
-import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
-import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
-import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
+import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
-import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../notification/firebase_notification.dart';
-import '../repository/model/request/claim_shift_history_request.dart';
-import '../repository/model/response/claimed_shift_list.dart';
 import '../repository/model/response/events_list.dart';
 import '../repository/model/response/get_dashboard.dart';
 import '../repository/model/response/leave_list.dart';
-import '../repository/model/response/overtime_list.dart';
 
 class DashBoardViewModel extends BaseViewModel {
 
   Shifts? dashBoardShift = null;
+
   Shifts? getDashBoardShift() => dashBoardShift;
 
   Stats? dashboardStat = null;
+
   Stats? getDashboardStat() => dashboardStat;
 
-  List<Events> events=[];
-  List<Events>  getEventsList() => events;
+  List<Events> events = [];
 
-
+  List<Events> getEventsList() => events;
+  Attendance? attendance = null;
 
   User userObject = User();
 
   User getUserObject() => userObject;
 
   final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
-
-
 
   final List<DropMenuItems> leaveTypes = [
 
@@ -80,7 +70,9 @@ class DashBoardViewModel extends BaseViewModel {
         dashBoardShift = results.data?.shift;
         dashboardStat = results.data?.stats;
         userObject = results.data!.user!;
-
+        if (results.data!.checkedIn == true) {
+          attendance = results.data?.attendance;
+        }
 
         // setIsErrorReceived(false);
       } else {
@@ -215,7 +207,7 @@ class DashBoardViewModel extends BaseViewModel {
       if (data.appName == "CRM") {
         PackageInfo packageInfo = await PackageInfo.fromPlatform();
         String version = packageInfo.version;
-        String code = packageInfo.buildNumber;
+        //String code = packageInfo.buildNumber;
         if (data.version != version) {
           return data;
         }

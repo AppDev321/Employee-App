@@ -47,6 +47,7 @@ dependencies:
   url_launcher: ^6.1.5
   carousel_slider: ^4.0.0
   local_auth: ^2.1.2
+  flutter_string_encryption: ^0.3.1
 
 
 

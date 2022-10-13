@@ -12,8 +12,10 @@ import '../../utils/controller.dart';
 import '../../view_models/reports_vm.dart';
 import '../attandence/add_attendance.dart';
 
+
 class ClockInOutWidget extends StatefulWidget {
-  const ClockInOutWidget({Key? key}) : super(key: key);
+  final Attendance attendanceItem;
+   ClockInOutWidget({Key? key,required this.attendanceItem}) : super(key: key);
 
   @override
   ClockInOutWidgetState createState() => ClockInOutWidgetState();
@@ -21,20 +23,20 @@ class ClockInOutWidget extends StatefulWidget {
 
 class ClockInOutWidgetState extends State<ClockInOutWidget> {
   String timeCounter ="";
+  late Attendance attendance;
+  // bool isCheckIn=false;
   @override
   void initState() {
     // TODO: implement initState
+   attendance= widget.attendanceItem;
     super.initState();
-    getTimeDiff();
+    if(attendance.timeOut!.isEmpty) {
+      getTimeDiff(attendance.timeIn!);
+    }
   }
   @override
   Widget build(BuildContext context) {
-    return listItem(Attendance(
-        date: "20-May-2022",
-        timeIn: "10:45 AM",
-        timeOut: "10:45 AM",
-        duration: "128minutes",
-        totalTime: 125));
+    return listItem(attendance);
   }
 
   Widget listItem(Attendance item) {
@@ -136,7 +138,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                         padding:
                                             const EdgeInsets.only(left: 20.0),
                                         child: CustomTextWidget(
-                                            text: item.timeIn,
+                                            text: item.timeIn?.isEmpty==true ?"--/--":item.timeIn,
                                             fontWeight: FontWeight.bold,
                                             color: primaryColor),
                                       ),
@@ -170,7 +172,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                           padding:
                                               const EdgeInsets.only(left: 20.0),
                                           child: CustomTextWidget(
-                                              text: item.timeOut,
+                                              text: item.timeOut?.isEmpty==true ?"--/--":item.timeOut,
                                               fontWeight: FontWeight.bold,
                                               color: claimedShiftColor),
                                         ),
@@ -197,7 +199,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                         width: 5,
                                       ),
                                       CustomTextWidget(
-                                        text:timeCounter ,
+                                        text:item.timeOut!.isEmpty?timeCounter:item.duration ,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ],
@@ -205,7 +207,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
 
                                   ElevatedButton.icon(
                                     onPressed: ()=>
-                                      Get.to(() => const AddAttendance(attendanceType: 1,)),
+                                      Get.to(() =>  AddAttendance(attendanceType: 1,)) ,
 
                                     icon: const Icon(Icons.qr_code_outlined),
                                     label: const Text("Check Out"), //label text
@@ -219,24 +221,24 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
               ),
             )));
   }
- getTimeDiff()
+ getTimeDiff(String checkIn)
 {
-  final periodicTimer = Timer.periodic(
+  Timer.periodic(
     const Duration(seconds: 1),
         (timer) {
           DateFormat dateFormat =  DateFormat.Hm();
           DateTime now = DateTime.now();
-          DateTime open = dateFormat.parse("10:00");
+          DateTime open = dateFormat.parse(checkIn);
           open =  DateTime(now.year, now.month, now.day, open.hour, open.minute);
-          if (this.mounted) {
+          if (mounted) {
             setState(() {
-              timeCounter = _printDuration(now.difference(open));
+              timeCounter = calculateDuration(now.difference(open));
             });
           }
     },
   );
 }
-  String _printDuration(Duration duration) {
+  String calculateDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));

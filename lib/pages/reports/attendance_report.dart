@@ -303,7 +303,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                           padding:
                                               const EdgeInsets.only(left: 30.0),
                                           child: CustomTextWidget(
-                                              text: item.timeIn,
+                                              text: item.timeIn?.isEmpty==true ?"--/--":item.timeIn,
                                               fontWeight: FontWeight.bold,
                                               color: primaryColor),
                                         ),
@@ -340,7 +340,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                             padding:
                                                 const EdgeInsets.only(left: 30.0),
                                             child: CustomTextWidget(
-                                                text: item.timeOut,
+                                                text: item.timeOut?.isEmpty==true ?"--/--":item.timeOut,
                                                 fontWeight: FontWeight.bold,
                                                 color: claimedShiftColor),
                                           ),
