@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
@@ -235,7 +237,7 @@ class LoginClassStateful extends State<LoginClass> {
                                 _loginViewModel
                                     .authenticateWithBiometrics()
                                     .then((value) {
-                                  if (value) _onFingerPrintCalled();
+                                  if (value) onFingerPrintVerified();
                                 });
                               },
                               icon: const Icon(
@@ -260,22 +262,30 @@ class LoginClassStateful extends State<LoginClass> {
 
     LoginRequestBody requestBody =
         LoginRequestBody(email: email, password: pass);
-    // LoginRequestBody(email: "mohsin121@afj.com", password: "123456");
     _loginViewModel.getUserLogin(requestBody);
+
+    
+
   }
 
-  Future<void> _onFingerPrintCalled() async {
+  Future<void> onFingerPrintVerified() async {
     var getEmailPref = await Controller().getEmail();
     var getPassPref = await Controller().getPassword();
-
-    ///Decrypt
-    ///
-    ///
-    ///
-
-
     if (getEmailPref != null || getPassPref != null) {
-      _onLoginButtonPress(getEmailPref, getPassPref);
+      print("------ Geting -----");
+      print(getEmailPref);
+      print(getPassPref);
+
+
+      Codec<String, String> stringToBase64 = utf8.fuse(base64);
+      String decyptEmail = stringToBase64.decode(getEmailPref);
+      String decryptPassword = stringToBase64.decode(getPassPref);
+
+
+      _onLoginButtonPress(decyptEmail,
+          decryptPassword);
+
+
     }
   }
 

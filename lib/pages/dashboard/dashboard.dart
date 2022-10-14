@@ -305,6 +305,57 @@ class _DashboardState extends State<Dashboard> {
                               ),
                             ],
                           ),
+
+
+                          attendance == null
+                              ? Column(
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: CustomTextWidget(
+                                        text: "Mark Attendance",
+                                        size: 18,
+                                        color: primaryColor),
+                                  ),
+                                  ElevatedButton.icon(
+                                    onPressed: () =>
+                                        Get.to(() =>  AddAttendance(
+                                          attendanceType: 0,
+                                        )),
+
+                                    icon: const Icon(
+                                        Icons.qr_code_outlined),
+                                    label: const Text(
+                                        "Check In"), //label text
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
+                              : Column(crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextWidget(
+                                      text: "Attendance",
+                                      size: 18,
+                                      color: primaryColor),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  ClockInOutWidget(attendanceItem: this.attendance!),
+                            ],
+                          ),
+
+
                           dashBoardShift != null
                               ? Column(
                                   children: [
@@ -333,53 +384,7 @@ class _DashboardState extends State<Dashboard> {
                                   ],
                                 )
                               : Container(),
-                          attendance == null
-                              ? Column(
-                                  children: [
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: CustomTextWidget(
-                                              text: "Today Attendance",
-                                              size: 18,
-                                              color: primaryColor),
-                                        ),
-                                        ElevatedButton.icon(
-                                          onPressed: () =>
-                                              Get.to(() =>  AddAttendance(
-                                                    attendanceType: 0,
-                                                  )),
 
-                                          icon: const Icon(
-                                              Icons.qr_code_outlined),
-                                          label: const Text(
-                                              "Check In"), //label text
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )
-                              : Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    CustomTextWidget(
-                                        text: "Attendance",
-                                        size: 18,
-                                        color: primaryColor),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                     ClockInOutWidget(attendanceItem: this.attendance!),
-                                  ],
-                                ),
                           eventsList.isNotEmpty
                               ? Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
