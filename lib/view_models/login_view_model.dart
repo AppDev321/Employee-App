@@ -1,3 +1,6 @@
+
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
@@ -12,7 +15,6 @@ class LoginViewModel extends BaseViewModel {
   String authToken = "";
 
   String getUserToken() => authToken;
-
 
 
   setUserAuth(String token) async {
@@ -36,7 +38,6 @@ class LoginViewModel extends BaseViewModel {
   }
 
   Future<bool> authenticateWithBiometrics() async {
-
     final LocalAuthentication localAuthentication = LocalAuthentication();
     bool isBiometricSupported = await localAuthentication.isDeviceSupported();
     bool canCheckBiometrics = await localAuthentication.canCheckBiometrics;
@@ -44,13 +45,11 @@ class LoginViewModel extends BaseViewModel {
     bool isAuthenticated = false;
 
     if (isBiometricSupported && canCheckBiometrics) {
-
       isAuthenticated = await localAuthentication.authenticate(
         localizedReason: 'Please complete the biometrics to proceed.',
         options:
         AuthenticationOptions(useErrorDialogs: true, stickyAuth: true),
       );
-
     }
 
     return isAuthenticated;
@@ -79,10 +78,13 @@ class LoginViewModel extends BaseViewModel {
 
 
 
+          Codec<String, String> stringToBase64 = utf8.fuse(base64);
+          String encyptedEmail = stringToBase64.encode(body.email.toString());
+          String encyptedPassword = stringToBase64.encode(body.password.toString());
 
 
-          Controller().setEmail(body.email.toString());
-          Controller().setPassword(body.password.toString());
+          Controller().setEmail( encyptedEmail);
+          Controller().setPassword( encyptedPassword);
         }
         setIsErrorReceived(false);
       } else {
@@ -93,13 +95,10 @@ class LoginViewModel extends BaseViewModel {
         setErrorMsg(errorString);
         setIsErrorReceived(true);
       }
-
     }
     setResponseStatus(true);
     setLoading(false);
     notifyListeners();
-
   }
-
-
 }
+
