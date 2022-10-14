@@ -77,11 +77,6 @@ class LoginViewModel extends BaseViewModel {
         if(results.data!.token!.isNotEmpty) {
           Controller().setAuthToken(results.data!.token!);
 
-          //encryt
-          var key=null;
-          String encrypt;
-          var email=null;
-
 
 
 

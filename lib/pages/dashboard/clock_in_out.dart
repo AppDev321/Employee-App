@@ -15,7 +15,7 @@ import '../attandence/add_attendance.dart';
 
 class ClockInOutWidget extends StatefulWidget {
   final Attendance attendanceItem;
-   ClockInOutWidget({Key? key,required this.attendanceItem}) : super(key: key);
+  ClockInOutWidget({Key? key,required this.attendanceItem}) : super(key: key);
 
   @override
   ClockInOutWidgetState createState() => ClockInOutWidgetState();
@@ -28,7 +28,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
   @override
   void initState() {
     // TODO: implement initState
-   attendance= widget.attendanceItem;
+    attendance= widget.attendanceItem;
     super.initState();
     if(attendance.timeOut!.isEmpty) {
       getTimeDiff(attendance.timeIn!);
@@ -91,7 +91,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                               ),
                               CustomTextWidget(
                                 text:
-                                    "${reportsViewModel.convertStringDate(item.date.toString(), "month")}, ${reportsViewModel.convertStringDate(item.date.toString(), "year")}",
+                                "${reportsViewModel.convertStringDate(item.date.toString(), "month")}, ${reportsViewModel.convertStringDate(item.date.toString(), "year")}",
                                 color: HexColor.fromHex("#7da36a"),
                                 fontWeight: FontWeight.w400,
                               ),
@@ -109,11 +109,11 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                               Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -136,7 +136,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                       ),
                                       Padding(
                                         padding:
-                                            const EdgeInsets.only(left: 20.0),
+                                        const EdgeInsets.only(left: 20.0),
                                         child: CustomTextWidget(
                                             text: item.timeIn?.isEmpty==true ?"--/--":item.timeIn,
                                             fontWeight: FontWeight.bold,
@@ -146,7 +146,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: const [
@@ -170,7 +170,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                       Center(
                                         child: Padding(
                                           padding:
-                                              const EdgeInsets.only(left: 20.0),
+                                          const EdgeInsets.only(left: 20.0),
                                           child: CustomTextWidget(
                                               text: item.timeOut?.isEmpty==true ?"--/--":item.timeOut,
                                               fontWeight: FontWeight.bold,
@@ -186,7 +186,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                               ),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -207,7 +207,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
 
                                   ElevatedButton.icon(
                                     onPressed: ()=>
-                                      Get.to(() =>  AddAttendance(attendanceType: 1,)) ,
+                                        Get.to(() =>  AddAttendance(attendanceType: 1,)) ,
 
                                     icon: const Icon(Icons.qr_code_outlined),
                                     label: const Text("Check Out"), //label text
@@ -221,23 +221,23 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
               ),
             )));
   }
- getTimeDiff(String checkIn)
-{
-  Timer.periodic(
-    const Duration(seconds: 1),
-        (timer) {
-          DateFormat dateFormat =  DateFormat.Hm();
-          DateTime now = DateTime.now();
-          DateTime open = dateFormat.parse(checkIn);
-          open =  DateTime(now.year, now.month, now.day, open.hour, open.minute);
-          if (mounted) {
-            setState(() {
-              timeCounter = calculateDuration(now.difference(open));
-            });
-          }
-    },
-  );
-}
+  getTimeDiff(String checkIn)
+  {
+    Timer.periodic(
+      const Duration(seconds: 1),
+          (timer) {
+        DateFormat dateFormat =  DateFormat.Hm();
+        DateTime now = DateTime.now();
+        DateTime open = dateFormat.parse(checkIn);
+        open =  DateTime(now.year, now.month, now.day, open.hour, open.minute);
+        if (mounted) {
+          setState(() {
+            timeCounter = calculateDuration(now.difference(open));
+          });
+        }
+      },
+    );
+  }
   String calculateDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
