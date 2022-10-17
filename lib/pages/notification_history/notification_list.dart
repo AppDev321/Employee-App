@@ -106,7 +106,7 @@ class _NotificationListState extends State<NotificationList> {
                                           children: [
                                             SlidableAction(
                                               onPressed: (value) {
-                                                print(value);
+
                                                 setState(() {
                                                   _notificationViewModel.deleteNotificationStatus(notificationList[index].id.toString());
                                                   notificationList.remove(notificationList[index]);
@@ -115,7 +115,7 @@ class _NotificationListState extends State<NotificationList> {
 
                                                 });
                                               },
-                                              backgroundColor:  Color(0xFFFE4A49),
+                                              backgroundColor:  const Color(0xFFFE4A49),
                                               foregroundColor: Colors.white,
                                               icon: Icons.delete,
                                               label: 'Delete',
@@ -137,7 +137,7 @@ class _NotificationListState extends State<NotificationList> {
     var item = notificationData.notificationData!;
 
     return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       leading: Container(
         padding: EdgeInsets.zero,
         /*  decoration: new BoxDecoration(
@@ -202,13 +202,11 @@ class _NotificationListState extends State<NotificationList> {
 
                 if (notificationData.type.toString() == 'TEXT') {
                   var screenName = item.activity ?? 'N/A';
-                  if (screenName != null) {
-                    if (!screenName
-                        .toString()
-                        .toLowerCase()
-                        .contains("dashboard")) {
-                      LocalNotificationService().navigateFCMScreen(screenName);
-                    }
+                  if (!screenName
+                      .toString()
+                      .toLowerCase()
+                      .contains("dashboard")) {
+                    LocalNotificationService().navigateFCMScreen(screenName);
                   }
                 }
               },
@@ -222,26 +220,24 @@ class _NotificationListState extends State<NotificationList> {
     return Card(
       elevation: 8.0,
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: Container(
-
-          child: Stack(children: <Widget>[
-            item.isRead == 0
-                ? Positioned(
-                    top: 0,
-                    left: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      color: Colors.red,
-                      child: const CustomTextWidget(
-                        text: "New",
-                        color: Colors.white,
-                        size: 10,
-                      ),
-                    ),
-                  )
-                : Container(),
-            makeListTile(item, index)
-          ])),
+      child: Stack(children: <Widget>[
+        item.isRead == 0
+            ? Positioned(
+                top: 0,
+                left: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  color: Colors.red,
+                  child: const CustomTextWidget(
+                    text: "New",
+                    color: Colors.white,
+                    size: 10,
+                  ),
+                ),
+              )
+            : Container(),
+        makeListTile(item, index)
+      ]),
     );
   }
 }
