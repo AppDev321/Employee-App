@@ -15,7 +15,8 @@ import '../attandence/add_attendance.dart';
 
 class ClockInOutWidget extends StatefulWidget {
   final Attendance attendanceItem;
-   ClockInOutWidget({Key? key,required this.attendanceItem}) : super(key: key);
+  final bool isCheckOut;
+   ClockInOutWidget({Key? key,required this.attendanceItem,this.isCheckOut = true}) : super(key: key);
 
   @override
   ClockInOutWidgetState createState() => ClockInOutWidgetState();
@@ -24,18 +25,23 @@ class ClockInOutWidget extends StatefulWidget {
 class ClockInOutWidgetState extends State<ClockInOutWidget> {
   String timeCounter ="";
   late Attendance attendance;
+
   // bool isCheckIn=false;
   @override
   void initState() {
     // TODO: implement initState
-   attendance= widget.attendanceItem;
     super.initState();
-    if(attendance.timeOut!.isEmpty) {
-      getTimeDiff(attendance.timeIn!);
-    }
+
+
+
   }
   @override
   Widget build(BuildContext context) {
+    attendance= widget.attendanceItem;
+
+    if(attendance.timeOut!.isEmpty) {
+      getTimeDiff(attendance.timeIn!);
+    }
 
     return listItem(attendance);
   }
@@ -208,10 +214,10 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
 
                                   ElevatedButton.icon(
                                     onPressed: ()=>
-                                      Get.to(() =>  AddAttendance(attendanceType: 1,)) ,
+                                      Get.to(() =>  AddAttendance(attendanceType: widget.isCheckOut?1:0,)) ,
 
                                     icon: const Icon(Icons.qr_code_outlined),
-                                    label: const Text("Check Out"), //label text
+                                    label:  Text(widget.isCheckOut?"Check Out":"Check In"), //label text
                                   ),
 
                                 ],

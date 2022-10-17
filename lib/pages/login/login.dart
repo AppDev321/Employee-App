@@ -231,7 +231,9 @@ class LoginClassStateful extends State<LoginClass> {
                         )),
                     const SizedBox(height: 10),
                     isBiometericEnable == true
-                        ? Center(
+                        ? Padding(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: Center(
                             child: IconButton(
                               onPressed: () {
                                 _loginViewModel
@@ -245,7 +247,8 @@ class LoginClassStateful extends State<LoginClass> {
                                 size: 60,
                               ),
                             ),
-                          )
+                          ),
+                        )
                         : const Center()
                   ],
                 ),

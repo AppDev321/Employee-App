@@ -37,7 +37,7 @@ import '../reports/attendance_report.dart';
 import '../reports/leave_report.dart';
 import '../vehicletab/scan_vehicle_tab.dart';
 import 'clock_in_out.dart';
-
+import 'package:visibility_detector/visibility_detector.dart';
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
 
@@ -54,20 +54,18 @@ class _DashboardState extends State<Dashboard> {
   bool _isErrorInApi = false;
   String? _errorMsg = "";
   late DashBoardViewModel _dashBoardViewModel;
-
   Shifts? dashBoardShift;
   Stats? dashboardStat;
   User userDashboard = User();
   String profileImageUrl = "";
   Attendance? attendance = null;
+  bool isCheckInOut=false;
 
   Map<String, String> map = {
     'device_type': platFormType!.toLowerCase(),
     'fcm_token': fcmToken!
   };
-
   int notificationCount = 0;
-
   bool isAppUpdateRequired = false;
   List<Events> eventsList = [];
   bool IsCheckIn = false;
@@ -90,11 +88,10 @@ class _DashboardState extends State<Dashboard> {
     });
 
     _dashBoardViewModel.getBackgroundFCMNotificaiton();
-
     _dashBoardViewModel.getEventsListResponse();
     _dashBoardViewModel.addListener(() {
       attendance = _dashBoardViewModel.attendance;
-
+      isCheckInOut = _dashBoardViewModel.isCheckInOut;
       notificationCount = _dashBoardViewModel.notificationCount;
       var checkErrorApiStatus = _dashBoardViewModel.getIsErrorRecevied();
       if (checkErrorApiStatus) {
@@ -118,7 +115,6 @@ class _DashboardState extends State<Dashboard> {
           eventsList= _dashBoardViewModel.getEventsList();
           profileImageUrl = userDashboard.profileURL.toString();
           Controller().setUserProfilePic(profileImageUrl);
-
           if (dashboardStat != null) {
             listStats.clear();
             listStats.add(DashBoardGrid(
@@ -181,309 +177,334 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
 
-
-
     return Consumer<ThemeModel>(
         builder: (context, ThemeModel themeNotifier, child) {
           var colorText = themeNotifier.isDark ? blackThemeTextColor : primaryColor;
-          return Scaffold(
+          return
+
+            VisibilityDetector(   key: const Key('Dashboard-widget'),
+              onVisibilityChanged: (VisibilityInfo info) {
+                var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
+
+                if (isVisibleScreen) {
+
+                    _dashBoardViewModel.getDashBoardData();
+
+                }
+              },
+              child: Scaffold(
           drawer: NavigationDrawer(),
           appBar: AppBar(
-            iconTheme: IconThemeData(color: colorText),
-            elevation: 0,
-            titleSpacing: 10,
-            backgroundColor:  themeNotifier.isDark ? Colors.black : Colors.white,
-            title: Align(
-              alignment: Alignment.centerLeft,
-              child: CustomTextWidget(
-                text: Controller().greeting(),
-                size: 22,
-                color: colorText,
-              ),
+              iconTheme: IconThemeData(color: colorText),
+              elevation: 0,
+              titleSpacing: 10,
+              backgroundColor:  themeNotifier.isDark ? Colors.black : Colors.white,
+              title: Align(
+                alignment: Alignment.centerLeft,
+                child: CustomTextWidget(
+                  text: Controller().greeting(),
+                  size: 22,
+                  color: colorText,
+                ),
           ),
           actions: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
 
-                Container(
-                    child: IconButton(
-                        icon: Icon(Icons.qr_code,
-                            color: colorText,
-                            size: 22),
-                        onPressed: () {
-                          Get.to(() => const VehicleTabScan());
-                        })
-                ),
-                Container(
-                    child: IconButton(
-                        icon: Icon(themeNotifier.isDark
-                            ? Icons.nightlight_round
-                            : Icons.wb_sunny,
-                            size: 22),
-                        onPressed: () {
-                          themeNotifier.isDark
-                              ? themeNotifier.isDark = false
-                              : themeNotifier.isDark = true;
-                          _refreshIndicatorKey.currentState?.show();
-                        })
-                ),
-                Container(
-                  child: NamedIcon(
-                    onTap: () => Get.to(() => const NotificationList()),
-                    notificationCount: notificationCount,
-                    iconData: Icons.notifications,
-                    color: colorText,
+                  Container(
+                      child: IconButton(
+                          icon: Icon(Icons.qr_code,
+                              color: colorText,
+                              size: 22),
+                          onPressed: () {
+                            Get.to(() => const VehicleTabScan());
+                          })
                   ),
-                ),
+                  Container(
+                      child: IconButton(
+                          icon: Icon(themeNotifier.isDark
+                              ? Icons.nightlight_round
+                              : Icons.wb_sunny,
+                              size: 22),
+                          onPressed: () {
+                            themeNotifier.isDark
+                                ? themeNotifier.isDark = false
+                                : themeNotifier.isDark = true;
+                            _refreshIndicatorKey.currentState?.show();
+                          })
+                  ),
+                  Container(
+                    child: NamedIcon(
+                      onTap: () => Get.to(() => const NotificationList()),
+                      notificationCount: notificationCount,
+                      iconData: Icons.notifications,
+                      color: colorText,
+                    ),
+                  ),
 
-              ],
-            )
+                ],
+              )
           ],
         ),
         body: Column(
           children: [
-            BlocBuilder<ConnectedBloc, ConnectedState>(
-                builder: (context, state) {
-              if (state is ConnectedFailureState) {
-                return const InternetNotAvailable();
-              } else if (state is FirebaseMsgReceived) {
-                if (state.screenName == Screen.DASHBOARD) {
-                  _dashBoardViewModel.getDashBoardData();
-                  state.screenName = Screen.NULL;
+              BlocBuilder<ConnectedBloc, ConnectedState>(
+                  builder: (context, state) {
+                if (state is ConnectedFailureState) {
+                  return const InternetNotAvailable();
+                } else if (state is FirebaseMsgReceived) {
+                  if (state.screenName == Screen.DASHBOARD) {
+                    _dashBoardViewModel.getDashBoardData();
+                    state.screenName = Screen.NULL;
+                  }
+                  return Container();
+                } else {
+                  return Container();
                 }
-                return Container();
-              } else {
-                return Container();
-              }
-            }),
-            Expanded(
-              child: RefreshIndicator(
-                key:_refreshIndicatorKey,
-                onRefresh: _dashBoardViewModel.getDashBoardData,
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding:const EdgeInsets.fromLTRB(15, 10, 25, 25),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomTextWidget(
-                                    text: "Hello,",
-                                    size: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: primaryColor.withOpacity(0.5),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  CustomTextWidget(
-                                    text: userDashboard.name ?? 'Employee',
-                                    size: 30,
-                                    fontWeight: FontWeight.bold,
-                                    color: primaryColor,
-                                  ),
-                                ],
-                              ),
-                              ProfilePic(
-                                profileImageUrl: profileImageUrl,
-                                width: 80,
-                                height: 80,
-                                isEditable: false,
-                              ),
-                            ],
-                          ),
-
-
-                          attendance == null
-                              ? Column(
-                            children: [
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: CustomTextWidget(
-                                        text: "Mark Attendance",
-                                        size: 18,
-                                        color: primaryColor),
-                                  ),
-                                  ElevatedButton.icon(
-                                    onPressed: () =>
-                                        Get.to(() =>  AddAttendance(
-                                          attendanceType: 0,
-                                        )),
-
-                                    icon: const Icon(
-                                        Icons.qr_code_outlined),
-                                    label: const Text(
-                                        "Check In"), //label text
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                              : Column(crossAxisAlignment: CrossAxisAlignment.start,
+              }),
+              Expanded(
+                child: RefreshIndicator(
+                  key:_refreshIndicatorKey,
+                  onRefresh: _dashBoardViewModel.getDashBoardData,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding:const EdgeInsets.fromLTRB(15, 10, 25, 25),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomTextWidget(
-                                      text: "Attendance",
-                                      size: 18,
-                                      color: primaryColor),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  ClockInOutWidget(attendanceItem: this.attendance!),
-                            ],
-                          ),
-
-
-                          dashBoardShift != null
-                              ? Column(
-                                  children: [
-
-
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Container(
-                                        child: CustomTextWidget(
-                                            text: dashBoardShift?.todayShift ==
-                                                    true
-                                                ? "Today Shift"
-                                                : "Upcoming Shift",
-                                            size: 18,
-                                            color: primaryColor),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    upComingShift(
-                                        Colors.blueGrey, dashBoardShift!),
-                                  ],
-                                )
-                              : Container(),
-
-                          eventsList.isNotEmpty
-                              ? Column(
+                                Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    CustomTextWidget(
+                                      text: "Hello,",
+                                      size: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: primaryColor.withOpacity(0.5),
+                                    ),
                                     const SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                     CustomTextWidget(
-                                        text: "Events",
-                                        size: 18,
-                                        color: primaryColor),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    ImageSliderWidget(
-                                      event: eventsList,
-                                      height: 135,
+                                      text: userDashboard.name ?? 'Employee',
+                                      size: 30,
+                                      fontWeight: FontWeight.bold,
+                                      color: primaryColor,
                                     ),
                                   ],
-                                )
-                              : Center(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: CustomTextWidget(
-                                    text: "Your Stats",
+                                ),
+                                ProfilePic(
+                                  profileImageUrl: profileImageUrl,
+                                  width: 80,
+                                  height: 80,
+                                  isEditable: false,
+                                ),
+                              ],
+                            ),
+                            isCheckInOut == true ?
+                            Column(crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                CustomTextWidget(
+                                    text: "Attendance",
                                     size: 18,
                                     color: primaryColor),
-                              ),
-                              TextColorContainer(
-                                  label: "Monthly",
-                                  color: claimedShiftApprovedColor),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: listStats.length,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                childAspectRatio: 2 / 2,
-                                crossAxisSpacing: 3,
-                                mainAxisSpacing: 3,
-                                crossAxisCount: 3,
-                              ),
-                              itemBuilder: (ctx, i) {
-                                var data = listStats[i];
-                                return statsContainerItem(data);
-                              }),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: CustomTextWidget(
-                                text: "Quick Access",
-                                size: 18,
-                                color: primaryColor),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: listQuickAccess.length,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                childAspectRatio: 3 / 2,
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 5,
-                                crossAxisCount: 2,
-                              ),
-                              itemBuilder: (ctx, i) {
-                                var data = listQuickAccess[i];
-                                return quickAccess(data);
-                              }),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ],
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                ClockInOutWidget(attendanceItem: this.attendance!,isCheckOut:false),
+                              ],
+                             ):
+                            attendance == null
+                                ? Column(
+                              children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: CustomTextWidget(
+                                          text: "Mark Attendance",
+                                          size: 18,
+                                          color: primaryColor),
+                                    ),
+                                    ElevatedButton.icon(
+                                      onPressed: () =>
+                                          Get.to(() =>  AddAttendance(
+                                            attendanceType: 0,
+                                          )),
+
+                                      icon: const Icon(
+                                          Icons.qr_code_outlined),
+                                      label: const Text(
+                                          "Check In"), //label text
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                                : Column(crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                CustomTextWidget(
+                                    text: "Attendance",
+                                    size: 18,
+                                    color: primaryColor),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                ClockInOutWidget(attendanceItem: this.attendance!),
+                              ],
+                            ),
+
+
+                            dashBoardShift != null
+                                ? Column(
+                                    children: [
+
+
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Container(
+                                          child: CustomTextWidget(
+                                              text: dashBoardShift?.todayShift ==
+                                                      true
+                                                  ? "Today Shift"
+                                                  : "Upcoming Shift",
+                                              size: 18,
+                                              color: primaryColor),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      upComingShift(
+                                          Colors.blueGrey, dashBoardShift!),
+                                    ],
+                                  )
+                                : Container(),
+
+                            eventsList.isNotEmpty
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomTextWidget(
+                                          text: "Events",
+                                          size: 18,
+                                          color: primaryColor),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      ImageSliderWidget(
+                                        event: eventsList,
+                                        height: 135,
+                                      ),
+                                    ],
+                                  )
+                                : Center(),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: CustomTextWidget(
+                                      text: "Your Stats",
+                                      size: 18,
+                                      color: primaryColor),
+                                ),
+                                TextColorContainer(
+                                    label: "Monthly",
+                                    color: claimedShiftApprovedColor),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            GridView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: listStats.length,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  childAspectRatio: 2 / 2,
+                                  crossAxisSpacing: 3,
+                                  mainAxisSpacing: 3,
+                                  crossAxisCount: 3,
+                                ),
+                                itemBuilder: (ctx, i) {
+                                  var data = listStats[i];
+                                  return statsContainerItem(data);
+                                }),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: CustomTextWidget(
+                                  text: "Quick Access",
+                                  size: 18,
+                                  color: primaryColor),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            GridView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: listQuickAccess.length,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  childAspectRatio: 3 / 2,
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 5,
+                                  crossAxisCount: 2,
+                                ),
+                                itemBuilder: (ctx, i) {
+                                  var data = listQuickAccess[i];
+                                  return quickAccess(data);
+                                }),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
-      );
+      ),
+            );
     });
   }
 

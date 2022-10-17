@@ -35,6 +35,7 @@ class DashBoardViewModel extends BaseViewModel {
   User userObject = User();
 
   User getUserObject() => userObject;
+  bool isCheckInOut=false;
 
   final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
 
@@ -67,12 +68,16 @@ class DashBoardViewModel extends BaseViewModel {
       setErrorMsg(errorString);
     } else {
       if (results.code == 200) {
+        isCheckInOut = false;
         dashBoardShift = results.data?.shift;
         dashboardStat = results.data?.stats;
         userObject = results.data!.user!;
-        if (results.data!.checkedIn == true) {
-          attendance = results.data?.attendance;
-        }
+        attendance = results.data?.attendance;
+        if (results.data!.checkedIn == false && results.data?.attendance != null)
+        {
+                isCheckInOut=true;
+
+          }
 
         // setIsErrorReceived(false);
       } else {

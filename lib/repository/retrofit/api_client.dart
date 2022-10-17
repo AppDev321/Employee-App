@@ -86,7 +86,7 @@ abstract class ApiClient {
   Future<LoginApiResponse> deleteAvailabilityRequest(@Path("code") String code);
 
 
-  @POST('/attendance/mark-attendance')
+  @POST('/attendance/mark-clock-in')
   Future<LoginApiResponse> markAttendance(@Body() Map<String,String> body);
   @POST('/attendance/mark-clock-out')
   Future<LoginApiResponse> markClockOutAttendance(@Body() Map<String,String> body);
