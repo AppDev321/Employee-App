@@ -44,6 +44,7 @@ class _OverTimePageState extends State<OverTimePage>
   late OvertimeViewModel _overtimeViewModel;
   var request = ClaimShiftHistoryRequest();
   List<ChartData> chartData = [];
+  bool hideWidget=false;
 
   @override
   void initState() {
@@ -122,8 +123,9 @@ class _OverTimePageState extends State<OverTimePage>
         child: Scaffold(
             appBar: AppBar(
               title: Text(overtime),
+
             ),
-            body: Column(
+            body: Column(mainAxisSize: MainAxisSize.min,
               children: [
                 BlocBuilder<ConnectedBloc, ConnectedState>(
                     builder: (context, state) {
@@ -140,6 +142,7 @@ class _OverTimePageState extends State<OverTimePage>
                   }
                 }),
                 Expanded(
+
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Column(
@@ -195,17 +198,20 @@ class _OverTimePageState extends State<OverTimePage>
                           controllerDate: _dateFilterController,
                           isSearchButtonShow: false,
                         ),
-                        _overtimeHistoryList.isNotEmpty
-                            ? Column(
-                                children: [
-                                  Container(
-                                      height: Get.mediaQuery.size.width / 3,
-                                      child:
-                                          DoughnutChart(chartData: chartData)),
-                                  const SizedBox(height: 5)
-                                ],
-                              )
-                            : const SizedBox(height: 10),
+                      _overtimeHistoryList.isNotEmpty
+                          ?
+
+                      Column(
+                        children: [
+                          hideWidget==true?
+                          Container(
+                              height: Get.mediaQuery.size.width / 3,
+                              child:
+                              DoughnutChart(chartData: chartData)):Center(),
+                          const SizedBox(height: 5)
+                        ],
+                      )
+                          : const SizedBox(height: 10),
                         CustomFilterTab(
                           controller: _tabController,
                           tabs: ConstantData.filterTabs,
@@ -214,38 +220,38 @@ class _OverTimePageState extends State<OverTimePage>
                           height: 15,
                         ),
                         _isFirstLoadRunning
-                            ? const Expanded(
-                                child:
-                                    Center(child: CircularProgressIndicator()))
+                            ? const Expanded(flex: 5,
+                            child:
+                            Center(child: CircularProgressIndicator()))
                             : _isErrorInApi
-                                ? Expanded(
-                                    child:
-                                        ErrorMessageWidget(label: _errorMsg!))
-                                : Expanded(
-                                    child: _overtimeHistoryList.isNotEmpty
-                                        ? TabBarView(
-                                            controller: _tabController,
-                                            children: [
-                                                //All
+                            ? Expanded(
+                            child:
+                            ErrorMessageWidget(label: _errorMsg!))
+                            : Expanded(flex: 5,
+                            child: _overtimeHistoryList.isNotEmpty
+                                ? TabBarView(
+                                controller: _tabController,
+                                children: [
+                                  //All
 
-                                                listContainer(
-                                                    _overtimeHistoryList),
+                                  listContainer(
+                                        _overtimeHistoryList),
+                                  
 
-                                                listContainer(getFilterList(
-                                                    _overtimeHistoryList,
-                                                    ConstantData.approved)),
+                                  listContainer(getFilterList(
+                                      _overtimeHistoryList,
+                                      ConstantData.approved)),
 
-                                                listContainer(getFilterList(
-                                                    _overtimeHistoryList,
-                                                    ConstantData.pending)),
-                                                listContainer(getFilterList(
-                                                    _overtimeHistoryList,
-                                                    ConstantData.rejected)),
-                                              ])
-                                        : const ErrorMessageWidget(
-                                            label: "No Overtime Found"))
-                      ],
-                    ),
+                                  listContainer(getFilterList(
+                                      _overtimeHistoryList,
+                                      ConstantData.pending)),
+                                  listContainer(getFilterList(
+                                      _overtimeHistoryList,
+                                      ConstantData.rejected)),
+                                ])
+                                : const ErrorMessageWidget(
+                                label: "No Overtime Found"))],)
+
                   ),
                 ),
               ],
@@ -281,8 +287,8 @@ class _OverTimePageState extends State<OverTimePage>
         color: item.status == ConstantData.pending
             ? claimedShiftColor
             : item.status == ConstantData.approved
-                ? claimedShiftApprovedColor
-                : claimedShiftRejectColor,
+            ? claimedShiftApprovedColor
+            : claimedShiftRejectColor,
         elevation: 5,
         shadowColor: cardShadow,
         shape: RoundedRectangleBorder(
@@ -296,102 +302,92 @@ class _OverTimePageState extends State<OverTimePage>
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))),
             margin: const EdgeInsets.only(left: Controller.leftCardColorMargin),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextColorContainer(
-                          label: item.status!,
-                          color: item.status == ConstantData.pending
-                              ? claimedShiftColor
-                              : item.status == ConstantData.approved
-                                  ? claimedShiftApprovedColor
-                                  : claimedShiftRejectColor),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      item.status == ConstantData.pending
-                          ? InkWell(
-                              onTap: () {
-                                Controller().showConfirmationMsgDialog(
-                                    context,
-                                    "Confirm",
-                                    "Are you sure you want to delete?",
-                                    "Yes", (value) {
-                                  if (value) {
-                                    setState(() {
-                                      _overtimeHistoryList.remove(item);
-                                      _overtimeViewModel.deleteOverTimeRequest( item.id.toString());
-                                    });
-                                  }
-                                });
-                              },
-                              child: TextColorContainer(
-                                label: "Delete",
-                                color: claimedShiftRejectColor,
-                                icon: Icons.delete,
-                              ),
-                            )
-                          : const Center(),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 6,
-                ),
                 Container(
                   decoration: BoxDecoration(
                     color: cardThemeBaseColor,
                     borderRadius: BorderRadius.circular(0),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+
                   child: Column(
                     children: [
-                      createRowDate("Date:", item.date),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      createRowDate("Hours:", item.hour),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      createRowDate("Reason:", item.reason),
-                      const SizedBox(
-                        height: 5,
-                      ),
+                      createRowDate("Date:", item.date,false),
+
+                      createRowDate("Hours:", item.hour,false),
+
+                      createRowDate("Reason:", item.reason,true),
+
                       item.status == ConstantData.approved ||
-                              item.status == ConstantData.rejected
+                          item.status == ConstantData.rejected
                           ? Padding(
-                              padding: const EdgeInsets.all(0),
-                              child:
-                                  createRowDate("Managed By:", item.managedBy),
-                            )
+                        padding: const EdgeInsets.all(0),
+                        child:
+                        createRowDate("Managed By:", item.managedBy,false),
+                      )
                           : Container(),
                     ],
                   ),
-                )
+                ), const SizedBox(
+                  height: 6,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextColorContainer(
+                        label: item.status!,
+                        color: item.status == ConstantData.pending
+                            ? claimedShiftColor
+                            : item.status == ConstantData.approved
+                            ? claimedShiftApprovedColor
+                            : claimedShiftRejectColor),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    item.status == ConstantData.pending
+                        ? InkWell(
+                      onTap: () {
+                        Controller().showConfirmationMsgDialog(
+                            context,
+                            "Confirm",
+                            "Are you sure you want to delete?",
+                            "Yes", (value) {
+                          if (value) {
+                            setState(() {
+                              _overtimeHistoryList.remove(item);
+                              _overtimeViewModel.deleteOverTimeRequest( item.id.toString());
+                            });
+                          }
+                        });
+                      },
+                      child: TextColorContainer(
+                        label: "Delete",
+                        color: claimedShiftRejectColor,
+                        icon: Icons.delete,
+                      ),
+                    )
+                        : const Center(),
+                  ],
+                ),
               ],
             )));
   }
 
-  Widget createRowDate(String title, String? value) {
+  Widget createRowDate(String title, String? value,bool isMaxLine) {
     return Column(
       children: [
         const SizedBox(
           height: 5,
         ),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomTextWidget(text: title, fontWeight: FontWeight.bold),
             Expanded(
               child: Padding(
                   padding: const EdgeInsets.only(left: 5),
-                  child: CustomTextWidget(text: value)),
+                  child: CustomTextWidget(text: value, maxLines:isMaxLine? 2:1,)),
             )
           ],
         )

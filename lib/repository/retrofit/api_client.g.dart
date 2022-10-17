@@ -13,7 +13,7 @@ class _ApiClient implements ApiClient {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://afjdev.hnhtechpk.com/api';
+    baseUrl ??= 'http://192.168.0.69:8000/api';
   }
 
   final Dio _dio;
@@ -458,7 +458,7 @@ class _ApiClient implements ApiClient {
     )
             .compose(
               _dio.options,
-              '/attendance/mark-attendance',
+              '/attendance/mark-clock-in',
               queryParameters: queryParameters,
               data: _data,
             )
