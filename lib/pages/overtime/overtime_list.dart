@@ -44,7 +44,7 @@ class _OverTimePageState extends State<OverTimePage>
   late OvertimeViewModel _overtimeViewModel;
   var request = ClaimShiftHistoryRequest();
   List<ChartData> chartData = [];
-  bool hideWidget=false;
+
 
   @override
   void initState() {
@@ -142,115 +142,129 @@ class _OverTimePageState extends State<OverTimePage>
                   }
                 }),
                 Expanded(
-
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const CustomTextWidget(
-                              text: "Add Request",
-                              size: 20,
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Get.to(() => const AddOverTime());
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: CircleBorder(),
-                                primary: primaryColor,
-                                onPrimary: Colors.black,
-                              ),
-                              child: const Icon(Icons.add, color: Colors.white),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        CustomDateRangeWidget(
-                          labelText: "Select Date",
-                          onDateChanged: (date) {
-                            String startDate =
-                                Controller().getConvertedDate(date['start']);
-                            String endDate =
-                                Controller().getConvertedDate(date['end']);
-                            _dateFilterController.text =
-                                "$startDate To $endDate";
-                          },
-                          onFetchDates: (date) {
-                            String startDate =
-                                Controller().getConvertedDate(date['start']);
-                            String endDate =
-                                Controller().getConvertedDate(date['end']);
-                            setState(() {
-                              request = ClaimShiftHistoryRequest();
-                              request.start_date = startDate;
-                              request.end_date = endDate;
-                              _overtimeHistoryList.clear();
-                              _isFirstLoadRunning = true;
-                              _isErrorInApi = false;
-                              _overtimeViewModel.getOverTimeList(request);
-                            });
-                          },
-                          controllerDate: _dateFilterController,
-                          isSearchButtonShow: false,
-                        ),
-                      _overtimeHistoryList.isNotEmpty
-                          ?
-
-                      Column(
-                        children: [
-                          hideWidget==true?
-                          Container(
-                              height: Get.mediaQuery.size.width / 3,
-                              child:
-                              DoughnutChart(chartData: chartData)):Center(),
-                          const SizedBox(height: 5)
-                        ],
-                      )
-                          : const SizedBox(height: 10),
-                        CustomFilterTab(
-                          controller: _tabController,
-                          tabs: ConstantData.filterTabs,
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        _isFirstLoadRunning
-                            ? const Expanded(flex: 5,
-                            child:
-                            Center(child: CircularProgressIndicator()))
-                            : _isErrorInApi
-                            ? Expanded(
-                            child:
-                            ErrorMessageWidget(label: _errorMsg!))
-                            : Expanded(flex: 5,
-                            child: _overtimeHistoryList.isNotEmpty
-                                ? TabBarView(
-                                controller: _tabController,
+                      Expanded(
+                        child: NestedScrollView(
+                            floatHeaderSlivers: true,
+                            headerSliverBuilder: (context,Innerbox)=>[
+                              SliverToBoxAdapter(
+                                child:    Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  //All
 
-                                  listContainer(
+                                  const CustomTextWidget(
+                                    text: "Add Request",
+                                    size: 20,
+                                  ),
+                                  ElevatedButton(
+                                onPressed: () {
+                                      Get.to(() => const AddOverTime());
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: CircleBorder(),
+                                      primary: primaryColor,
+                                      onPrimary: Colors.black,
+                                    ),
+                                    child: const Icon(Icons.add, color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                                  ),
+                              SliverToBoxAdapter(child: SizedBox(height: 10,),),
+                              SliverToBoxAdapter(
+                                child:
+                                CustomDateRangeWidget(
+                                labelText: "Select Date",
+                                onDateChanged: (date) {
+                                  String startDate =
+                                  Controller().getConvertedDate(date['start']);
+                                  String endDate =
+                                  Controller().getConvertedDate(date['end']);
+                                  _dateFilterController.text =
+                                  "$startDate To $endDate";
+                                },
+                                onFetchDates: (date) {
+                                  String startDate =
+                                  Controller().getConvertedDate(date['start']);
+                                  String endDate =
+                                  Controller().getConvertedDate(date['end']);
+                                  setState(() {
+                                    request = ClaimShiftHistoryRequest();
+                                    request.start_date = startDate;
+                                    request.end_date = endDate;
+                                    _overtimeHistoryList.clear();
+                                    _isFirstLoadRunning = true;
+                                    _isErrorInApi = false;
+                                    _overtimeViewModel.getOverTimeList(request);
+                                  });
+                                },
+                                controllerDate: _dateFilterController,
+                                isSearchButtonShow: false,
+                              ),),
+                          SliverToBoxAdapter(
+                            child:  _overtimeHistoryList.isNotEmpty
+                                ?
+                            Column(
+                              children: [
+
+                                Container(
+                                    height: Get.mediaQuery.size.width / 3,
+                                    child:
+                                    DoughnutChart(chartData: chartData)),
+
+                                const SizedBox(height: 5)
+                              ],
+                            )
+                                : const SizedBox(height: 10),
+                          )
+                        ],
+                            body: Column(children: [
+                            CustomFilterTab(
+                            controller: _tabController,
+                            tabs: ConstantData.filterTabs,
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          _isFirstLoadRunning
+                              ? const Expanded(flex: 5,
+                              child:
+                              Center(child: CircularProgressIndicator()))
+                              : _isErrorInApi
+                              ? Expanded(
+                              child:
+                              ErrorMessageWidget(label: _errorMsg!))
+                              : Expanded(flex: 5,
+                              child: _overtimeHistoryList.isNotEmpty
+                                  ? TabBarView(
+                                  controller: _tabController,
+                                  children: [
+
+                                    listContainer(
                                         _overtimeHistoryList),
-                                  
 
-                                  listContainer(getFilterList(
-                                      _overtimeHistoryList,
-                                      ConstantData.approved)),
+                                    listContainer(getFilterList(
+                                        _overtimeHistoryList,
+                                        ConstantData.approved)),
 
-                                  listContainer(getFilterList(
-                                      _overtimeHistoryList,
-                                      ConstantData.pending)),
-                                  listContainer(getFilterList(
-                                      _overtimeHistoryList,
-                                      ConstantData.rejected)),
-                                ])
-                                : const ErrorMessageWidget(
-                                label: "No Overtime Found"))],)
+                                    listContainer(getFilterList(
+                                        _overtimeHistoryList,
+                                        ConstantData.pending)),
+
+                                    listContainer(getFilterList(
+                                        _overtimeHistoryList,
+                                        ConstantData.rejected)),
+                                  ])
+                                  : const ErrorMessageWidget(
+                                  label: "No Overtime Found"))
+                        ],)),
+                      )
+
+
+                      ],)
 
                   ),
                 ),
@@ -276,9 +290,12 @@ class _OverTimePageState extends State<OverTimePage>
       onRefresh: () => _overtimeViewModel.getOverTimeList(request),
       child: ListView.builder(
           itemCount: _leaveHistoryList.length,
-          itemBuilder: (_, index) => Padding(
+          itemBuilder: (_, index) =>
+              Padding(
               padding: const EdgeInsets.all(5.0),
-              child: containerListItems(_leaveHistoryList[index]))),
+              child: containerListItems(_leaveHistoryList[index]),
+              )
+      ),
     );
   }
 
