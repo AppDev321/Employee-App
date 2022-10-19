@@ -272,7 +272,7 @@ class _DashboardState extends State<Dashboard> {
                   child: SingleChildScrollView(
                     child: Padding(
                       padding:const EdgeInsets.fromLTRB(15, 10, 25, 25),
-                      child: Container(
+                      child: SizedBox(
                         width: MediaQuery.of(context).size.width,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,7 +324,7 @@ class _DashboardState extends State<Dashboard> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                ClockInOutWidget(attendanceItem: this.attendance!,isCheckOut:false),
+                                ClockInOutWidget(attendanceItem: attendance!,isCheckOut:false),
                               ],
                              ):
                             attendance == null
@@ -371,7 +371,7 @@ class _DashboardState extends State<Dashboard> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                ClockInOutWidget(attendanceItem: this.attendance!),
+                                ClockInOutWidget(attendanceItem: attendance!),
                               ],
                             ),
 
@@ -386,15 +386,13 @@ class _DashboardState extends State<Dashboard> {
                                       ),
                                       Align(
                                         alignment: Alignment.centerLeft,
-                                        child: Container(
-                                          child: CustomTextWidget(
-                                              text: dashBoardShift?.todayShift ==
-                                                      true
-                                                  ? "Today Shift"
-                                                  : "Upcoming Shift",
-                                              size: 18,
-                                              color: primaryColor),
-                                        ),
+                                        child: CustomTextWidget(
+                                            text: dashBoardShift?.todayShift ==
+                                                    true
+                                                ? "Today Shift"
+                                                : "Upcoming Shift",
+                                            size: 18,
+                                            color: primaryColor),
                                       ),
                                       const SizedBox(
                                         height: 20,
@@ -426,7 +424,7 @@ class _DashboardState extends State<Dashboard> {
                                       ),
                                     ],
                                   )
-                                : Center(),
+                                : const Center(),
                             const SizedBox(
                               height: 20,
                             ),

@@ -275,9 +275,6 @@ class LoginClassStateful extends State<LoginClass> {
     var getEmailPref = await Controller().getEmail();
     var getPassPref = await Controller().getPassword();
     if (getEmailPref != null || getPassPref != null) {
-      print("------ Geting -----");
-      print(getEmailPref);
-      print(getPassPref);
 
 
       Codec<String, String> stringToBase64 = utf8.fuse(base64);

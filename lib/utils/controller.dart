@@ -12,8 +12,7 @@ import '../pages/login/login.dart';
 class Controller {
   static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
   // "http://192.168.1.21:8000/api";
-  // "http://192.168.0.69:8000/api";
- "http://afjdev.hnhtechpk.com/api";
+  "http://afjdev.hnhtechpk.com/api";
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
   static const double leftCardColorMargin = 5;
