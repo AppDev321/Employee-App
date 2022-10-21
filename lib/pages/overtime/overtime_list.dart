@@ -149,7 +149,7 @@ class _OverTimePageState extends State<OverTimePage>
                       Expanded(
                         child: NestedScrollView(
                             floatHeaderSlivers: true,
-                            headerSliverBuilder: (context,Innerbox)=>[
+                            headerSliverBuilder: (context,_)=>[
                               SliverToBoxAdapter(
                                 child:    Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -164,7 +164,7 @@ class _OverTimePageState extends State<OverTimePage>
                                       Get.to(() => const AddOverTime());
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      shape: CircleBorder(),
+                                      shape: const CircleBorder(),
                                       primary: primaryColor,
                                       onPrimary: Colors.black,
                                     ),
@@ -173,7 +173,7 @@ class _OverTimePageState extends State<OverTimePage>
                                 ],
                               ),
                                   ),
-                              SliverToBoxAdapter(child: SizedBox(height: 10,),),
+                              const SliverToBoxAdapter(child: SizedBox(height: 10,),),
                               SliverToBoxAdapter(
                                 child:
                                 CustomDateRangeWidget(
@@ -210,7 +210,7 @@ class _OverTimePageState extends State<OverTimePage>
                             Column(
                               children: [
 
-                                Container(
+                                SizedBox(
                                     height: Get.mediaQuery.size.width / 3,
                                     child:
                                     DoughnutChart(chartData: chartData)),
