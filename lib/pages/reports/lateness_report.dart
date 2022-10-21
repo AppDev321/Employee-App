@@ -42,6 +42,7 @@ class LatenessReportStateful extends State<LatenessReport> {
 
   List<ChartData> chartData= [];
   var request = ClaimShiftHistoryRequest();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -100,6 +101,9 @@ class LatenessReportStateful extends State<LatenessReport> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    final double itemHeight = (size.height - kToolbarHeight - 350) / 2;
+    final double itemWidth = size.width / 2;
     return Scaffold(
       appBar: AppBar(
         title: const Text(menuReport),
@@ -211,15 +215,18 @@ class LatenessReportStateful extends State<LatenessReport> {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                                 children: [
-                                  DoughnutChart(chartData: chartData),
+                                  Container(
+                                      height: MediaQuery.of(context).size.height*0.3,
+                                      child: DoughnutChart(chartData: chartData)),
                                  const SizedBox(height:10),
                                   latenessData != null?
                                       GridView.count(
+                                        childAspectRatio: (itemWidth / itemHeight),
                                         shrinkWrap: true,
                                       primary: false,
                                         padding:const EdgeInsets.all(5),
-                                      crossAxisSpacing: 10,
-                                      mainAxisSpacing: 10,
+                                      crossAxisSpacing: 5,
+                                      mainAxisSpacing: 5,
                                       crossAxisCount: 2,
                                       children: <Widget>[
                                         containerItem("Total Shifts",latenessData!.totalShifts.toString(),0),
@@ -227,13 +234,6 @@ class LatenessReportStateful extends State<LatenessReport> {
                                        // containerItem("Late Percentage",latenessData!.latePercentage.toString(),2)
                                       ],
                                       ):const Center(),
-
-
-
-
-
-
-
                                 ],
                               ),
                         ),
@@ -250,7 +250,6 @@ class LatenessReportStateful extends State<LatenessReport> {
   Widget containerItem(String label, String count,int index)
   {
     return
-
       Card(
         color:  colorArray[index],
         elevation: 5,
@@ -259,16 +258,16 @@ class LatenessReportStateful extends State<LatenessReport> {
           borderRadius: BorderRadius.circular(Controller.roundCorner),
         ),
         clipBehavior: Clip.antiAlias,
-        child:
-      Container(
+        child: Container(
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
           color:cardThemeBaseColor,
           borderRadius:const BorderRadius.only(
               bottomRight: Radius.circular(Controller.roundCorner),
-              topRight: Radius.circular(Controller.roundCorner))),
+              topRight: Radius.circular(Controller.roundCorner))
+      ),
       margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
-      padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding:const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       child:
       Column(
         mainAxisAlignment:
@@ -289,7 +288,8 @@ class LatenessReportStateful extends State<LatenessReport> {
           ),
         ],
       ),
-    ));
+    )
+    );
   }
 
 

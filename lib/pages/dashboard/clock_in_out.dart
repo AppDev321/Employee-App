@@ -1,11 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:intl/intl.dart';
-
 import '../../custom_style/colors.dart';
 import '../../repository/model/response/report_attendance_response.dart';
 import '../../utils/controller.dart';
@@ -122,6 +120,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+
                                       Row(
                                         children: [
                                           Icon(
@@ -155,6 +154,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+
                                       Row(
                                         children: const [
                                           Icon(
@@ -171,10 +171,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      Center(
+                                     Center(
                                         child: Padding(
                                           padding:
                                               const EdgeInsets.only(left: 20.0),
@@ -186,6 +183,11 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                       ),
                                     ],
                                   ),
+                                  // PopupMenuButton(itemBuilder: (context)=>[
+                                  //   PopupMenuItem(child:  CustomTextWidget(text: "View Details",),)
+                                  // ],
+                                  //
+                                  //   onSelected: (item)=>(){},)
                                 ],
                               ),
                               const SizedBox(
@@ -193,9 +195,10 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                               ),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Row(
+                                  Expanded(
+                                      child: Row(
                                     children: [
                                       Icon(
                                         Icons.timelapse_outlined,
@@ -205,21 +208,31 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                       const SizedBox(
                                         width: 5,
                                       ),
-                                      CustomTextWidget(
-                                        text:item.timeOut!.isEmpty?timeCounter:item.duration ,
-                                        fontWeight: FontWeight.w500,
+                                      Expanded(
+                                        child: CustomTextWidget(
+                                          text: item.timeOut!.isEmpty
+                                              ? timeCounter
+                                              : durationToString(item!.totalTime!),
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ],
+                                  )),
+                                  Expanded(
+                                    child:
+                                    ElevatedButton.icon(
+                                      onPressed: () => Get.to(() => AddAttendance(
+                                            attendanceType:
+                                                widget.isCheckOut ? 1 : 0,
+                                          )
+                                      ),
+
+                                      icon: const Icon(Icons.qr_code_outlined),
+                                      label: Text(widget.isCheckOut
+                                          ? "Check Out"
+                                          : "Check In"), //label text
+                                    ),
                                   ),
-
-                                  ElevatedButton.icon(
-                                    onPressed: ()=>
-                                      Get.to(() =>  AddAttendance(attendanceType: widget.isCheckOut?1:0,)) ,
-
-                                    icon: const Icon(Icons.qr_code_outlined),
-                                    label:  Text(widget.isCheckOut?"Check Out":"Check In"), //label text
-                                  ),
-
                                 ],
                               )
                             ],
@@ -245,13 +258,20 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
     },
   );
 }
+
   String calculateDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+    return
+      "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
+  String durationToString(int minutes) {
+    var d = Duration(minutes:minutes);
+    List<String> parts = d.toString().split(':');
+    return '${parts[0].padLeft(2, '0')} hour ${parts[1].padLeft(2, '0')} min';
+  }
 
 
 }

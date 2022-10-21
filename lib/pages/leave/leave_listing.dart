@@ -151,70 +151,125 @@ class _LeavePageState extends State<LeavePage>
                     padding: const EdgeInsets.all(6.0),
                     child: Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const CustomTextWidget(
-                              text: "Add Leave",
-                              size: 20,
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                var leavesType =
-                                    _leaveListViewModel.getLeaveTypes();
-                                if (leavesType.isNotEmpty) {
-                                  Get.to(
-                                      () => AddLeave(leaveTypes: leavesType));
-                                } else {
-                                  Controller().showToastMessage(
-                                      context, "No leave types found");
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: CircleBorder(),
-                                primary: primaryColor,
-                                onPrimary: Colors.black,
-                              ),
-                              child:const Icon(Icons.add, color: Colors.white),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        CustomDateRangeWidget(
-                          labelText: "Select Date",
-                          onDateChanged: (date) {
-                            String startDate =
-                                Controller().getConvertedDate(date['start']);
-                            String endDate =
-                                Controller().getConvertedDate(date['end']);
-                            _dateFilterController.text =
-                                "$startDate To $endDate";
-                          },
-                          onFetchDates: (date) {
-                            String startDate =
-                                Controller().getConvertedDate(date['start']);
-                            String endDate =
-                                Controller().getConvertedDate(date['end']);
-                            setState(() {
-                              //  var request = ClaimShiftHistoryRequest();
-                              request = ClaimShiftHistoryRequest();
-                              request.start_date = startDate;
-                              request.end_date = endDate;
-                              _leaveHistoryList.clear();
-                              _isFirstLoadRunning = true;
-                              _isErrorInApi = false;
-                              _leaveListViewModel.getLeaveHistoryList(request);
-                            });
-                          },
-                          controllerDate: _dateFilterController,
-                          isSearchButtonShow: false,
-                        ),
 
-                        Expanded(child: createDataView()),
+                       Expanded(
 
-                       
+                           child: NestedScrollView(
+
+                             floatHeaderSlivers: true,
+                             headerSliverBuilder: (context,Innerbox)=>[
+                         SliverToBoxAdapter(child:  Row(
+                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                           children: [
+                             const CustomTextWidget(
+                               text: "Add Leave",
+                               size: 20,
+                             ),
+                             ElevatedButton(
+                               onPressed: () {
+                                 var leavesType =
+                                 _leaveListViewModel.getLeaveTypes();
+                                 if (leavesType.isNotEmpty) {
+                                   Get.to(
+                                           () => AddLeave(leaveTypes: leavesType));
+                                 } else {
+                                   Controller().showToastMessage(
+                                       context, "No leave types found");
+                                 }
+                               },
+                               style: ElevatedButton.styleFrom(
+                                 shape: CircleBorder(),
+                                 primary: primaryColor,
+                                 onPrimary: Colors.black,
+                               ),
+                               child:const Icon(Icons.add, color: Colors.white),
+                             )
+                           ],
+                         ),
+                             ),SliverToBoxAdapter(child: const SizedBox(
+                           height: 10,
+                         ),),
+                         SliverToBoxAdapter(child:   CustomDateRangeWidget(
+                           labelText: "Select Date",
+                           onDateChanged: (date) {
+                             String startDate =
+                             Controller().getConvertedDate(date['start']);
+                             String endDate =
+                             Controller().getConvertedDate(date['end']);
+                             _dateFilterController.text =
+                             "$startDate To $endDate";
+                           },
+                           onFetchDates: (date) {
+                             String startDate =
+                             Controller().getConvertedDate(date['start']);
+                             String endDate =
+                             Controller().getConvertedDate(date['end']);
+                             setState(() {
+                               //  var request = ClaimShiftHistoryRequest();
+                               request = ClaimShiftHistoryRequest();
+                               request.start_date = startDate;
+                               request.end_date = endDate;
+                               _leaveHistoryList.clear();
+                               _isFirstLoadRunning = true;
+                               _isErrorInApi = false;
+                               _leaveListViewModel.getLeaveHistoryList(request);
+                             });
+                           },
+                           controllerDate: _dateFilterController,
+                           isSearchButtonShow: false,
+                         ),
+                             ),
+                         SliverToBoxAdapter(child: _leaveHistoryList.isNotEmpty
+                             ? Column(
+                           children: [
+                             Container(
+                                 height: Get.mediaQuery.size.width / 3,
+                                 child:
+                                 DoughnutChart(chartData: chartData)),
+                             const SizedBox(height: 5)
+                           ],
+                         )
+                             : const SizedBox(height: 10),)
+                       ], body:
+                           Column(children: [  CustomFilterTab(
+                             controller: _tabController,
+                             tabs: ConstantData.filterTabs,
+                           ),
+                             const SizedBox(
+                               height: 15,
+                             ),
+
+                             _isFirstLoadRunning
+                                 ? const Expanded(
+                                 child:
+                                 Center(child: CircularProgressIndicator()))
+                                 : _isErrorInApi
+                                 ? Expanded(
+                                 child:
+                                 ErrorMessageWidget(label: _errorMsg!))
+                                 : Expanded(
+                                 child: _leaveHistoryList.isNotEmpty
+                                     ? TabBarView(
+                                   controller: _tabController,
+                                   children: [
+                                     //All
+                                     listContainer(_leaveHistoryList),
+
+                                     listContainer(getFilterList(
+                                         _leaveHistoryList,
+                                         ConstantData.approved)),
+
+                                     listContainer(getFilterList(
+                                         _leaveHistoryList,
+                                         ConstantData.pending)),
+                                     listContainer(getFilterList(
+                                         _leaveHistoryList,
+                                         ConstantData.rejected)),
+                                   ],
+                                 )
+                                     : const ErrorMessageWidget(
+                                     label: "No Leaves Found"))], ),))
+
                       ],
                     ),
                   ),
@@ -222,69 +277,6 @@ class _LeavePageState extends State<LeavePage>
               ],
             )),
       );
-
-
-  Widget createDataView()
-  {
-    return 
-      Column(
-        children: [
-
-         _leaveHistoryList.isNotEmpty
-            ? Column(
-          children: [
-            Container(
-                height: Get.mediaQuery.size.width / 3,
-                child:
-                DoughnutChart(chartData: chartData)),
-            const SizedBox(height: 5)
-          ],
-        )
-            : const SizedBox(height: 10),
-        CustomFilterTab(
-          controller: _tabController,
-          tabs: ConstantData.filterTabs,
-        ),
-          const SizedBox(
-          height: 15,
-        ),
-
-
-
-        _isFirstLoadRunning
-            ? const Expanded(
-            child:
-            Center(child: CircularProgressIndicator()))
-            : _isErrorInApi
-            ? Expanded(
-            child:
-            ErrorMessageWidget(label: _errorMsg!))
-            : Expanded(
-            child: _leaveHistoryList.isNotEmpty
-                ? TabBarView(
-              controller: _tabController,
-              children: [
-                //All
-                listContainer(_leaveHistoryList),
-
-                listContainer(getFilterList(
-                    _leaveHistoryList,
-                    ConstantData.approved)),
-
-                listContainer(getFilterList(
-                    _leaveHistoryList,
-                    ConstantData.pending)),
-                listContainer(getFilterList(
-                    _leaveHistoryList,
-                    ConstantData.rejected)),
-              ],
-            )
-                : const ErrorMessageWidget(
-                label: "No Leaves Found"))
-
-        ]
-    );
-  }
 
   List<Leaves> getFilterList(List<Leaves> inputlist, String status) {
     List<Leaves> outputList =
