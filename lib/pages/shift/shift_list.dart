@@ -129,63 +129,86 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
               return Container();
             }
           }),
-          CustomCalanderWidget(
-            controller: _controller,
-            onChanged: (String value) {
-              setState(() {
-                _shiftList.clear();
-                _openShiftList.clear();
-                _isFirstLoadRunning = true;
-                _isErrorInApi = false;
-                _shiftListViewModel.getShiftList(value);
-              });
-            },
-          ),
-          _isFirstLoadRunning
-              ? const Expanded(child: Center(child: CircularProgressIndicator()))
-              : _isErrorInApi
+
+          Expanded(
+            child: NestedScrollView(
+                floatHeaderSlivers: true,
+                headerSliverBuilder: (context,InnerBox)=>[
+                    SliverToBoxAdapter(child:
+                CustomCalanderWidget(
+                  controller: _controller,
+                  onChanged: (String value) {
+                    setState(() {
+                      _shiftList.clear();
+                      _openShiftList.clear();
+                      _isFirstLoadRunning = true;
+                      _isErrorInApi = false;
+                      _shiftListViewModel.getShiftList(value);
+                    });
+                  },
+                ),)
+                ], body: Column(children: [
+              _isFirstLoadRunning
+                  ? const Expanded(child: Center(child: CircularProgressIndicator()))
+                  : _isErrorInApi
                   ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                   : Expanded(
-                      flex: 1,
-                      child: Container(
-                        child: Column(
-                          children: [
-                            Container(
-                              color: primaryColor,
-                              child: TabBar(
-                                controller: _tabController,
-                                indicatorColor: Colors.white,
-                                labelColor: cardThemeBaseColor,
-                                unselectedLabelColor: Colors.white54,
-                                tabs: const [
-                                  Tab(text: 'My Shift'),
-                                  Tab(text: 'Open Shift')
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                child: TabBarView(
-                                  controller: _tabController,
-                                  children: [
-                                    _shiftList.isNotEmpty
-                                        ? showListData(
-                                            context, _shiftList, false)
-                                        : const ErrorMessageWidget(
-                                            label: "No Shift Found"),
-                                    _openShiftList.isNotEmpty
-                                        ? showListData(
-                                            context, _openShiftList, true)
-                                        : const ErrorMessageWidget(
-                                            label: "No Open  Shift Found")
-                                  ],
-                                ),
-                              ),
-                            ),
+                flex: 1,
+                child: Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        color: primaryColor,
+                        child: TabBar(
+                          controller: _tabController,
+                          indicatorColor: Colors.white,
+                          labelColor: cardThemeBaseColor,
+                          unselectedLabelColor: Colors.white54,
+                          tabs: const [
+                            Tab(text: 'My Shift'),
+                            Tab(text: 'Open Shift')
                           ],
                         ),
                       ),
-                    ),
+                      Expanded(
+                        child: Container(
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: [
+                              _shiftList.isNotEmpty
+                                  ? showListData(
+                                  context, _shiftList, false)
+                                  : const ErrorMessageWidget(
+                                  label: "No Shift Found"),
+                              _openShiftList.isNotEmpty
+                                  ? showListData(
+                                  context, _openShiftList, true)
+                                  : const ErrorMessageWidget(
+                                  label: "No Open  Shift Found")
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],)),
+          )
+
+          // CustomCalanderWidget(
+          //   controller: _controller,
+          //   onChanged: (String value) {
+          //     setState(() {
+          //       _shiftList.clear();
+          //       _openShiftList.clear();
+          //       _isFirstLoadRunning = true;
+          //       _isErrorInApi = false;
+          //       _shiftListViewModel.getShiftList(value);
+          //     });
+          //   },
+          // ),
+
         ],
       ),
     );

@@ -156,7 +156,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
             title: Text(availability),
           ),
           body: Padding(
-              padding: const EdgeInsets.all(0.0),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
@@ -169,118 +169,126 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                         return Container();
                       }
                     }),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                   const CustomTextWidget(
-                              text: "Add Request",
-                              size: 20,
-                            ),
+                   Expanded(
+                     child: NestedScrollView(
+                         floatHeaderSlivers: true,
+                         headerSliverBuilder: (context,InnerBox)=>[
+                           SliverToBoxAdapter(child:
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                               const CustomTextWidget(
+                                        text: "Add Request",
+                                        size: 20,
+                                      ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Get.to(() => AddAvailability());
+                                      },
+                                      child: Icon(Icons.add, color: Colors.white),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: CircleBorder(),
+                                        primary: primaryColor,
+                                        onPrimary: Colors.black,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                           )],
+                         body:  Column(children: [
 
-                          ElevatedButton(
-                            onPressed: () {
-                              Get.to(() => AddAvailability());
-                            },
-                            child: Icon(Icons.add, color: Colors.white),
-                            style: ElevatedButton.styleFrom(
-                              shape: CircleBorder(),
-                              primary: primaryColor,
-                              onPrimary: Colors.black,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    AnimatedButtonBar(
-                      padding: const EdgeInsets.all(9),
-                      backgroundColor: cardThemeBaseColor,
-                      radius: 20,
-                      invertedSelection: true,
-                      children: [
-                        ButtonBarEntry(
-                            onTap: () {
-                              changeButtonState(0);
-                            },
-                            child: const Text('This Month')),
-                        ButtonBarEntry(
-                            onTap: () {
-                              changeButtonState(1);
-                            },
-                            child: const Text('Last Month')),
-                        ButtonBarEntry(
-                            onTap: () {
-                              changeButtonState(2);
-                            },
-                            child: const Text('This Year')),
-                        ButtonBarEntry(
-                            onTap: () {
-                              changeButtonState(3);
-                            },
-                            child: const Text('Custom'))
-                      ],
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: buttonState == 3
-                            ? CustomDateRangeWidget(
-                                labelText: "Select Date",
-                                onDateChanged: (date) {
-                                  String startDate = Controller()
-                                      .getConvertedDate(date['start']);
-                                  String endDate = Controller()
-                                      .getConvertedDate(date['end']);
-                                  _dateFilterController.text =
-                                      "$startDate To $endDate";
-                                },
-                                onFetchDates: (date) {
-                                  setState(() {
-                                    _isFirstLoadRunning = true;
-                                    _isErrorInApi = false;
-                                  });
 
-                                  String startDate = Controller()
-                                      .getConvertedDate(date['start']);
-                                  String endDate = Controller()
-                                      .getConvertedDate(date['end']);
+                           AnimatedButtonBar(
+                             padding: const EdgeInsets.all(9),
+                             backgroundColor: cardThemeBaseColor,
+                             radius: 20,
+                             invertedSelection: true,
+                             children: [
+                               ButtonBarEntry(
+                                   onTap: () {
+                                     changeButtonState(0);
+                                   },
+                                   child: const Text('This Month')),
+                               ButtonBarEntry(
+                                   onTap: () {
+                                     changeButtonState(1);
+                                   },
+                                   child: const Text('Last Month')),
+                               ButtonBarEntry(
+                                   onTap: () {
+                                     changeButtonState(2);
+                                   },
+                                   child: const Text('This Year')),
+                               ButtonBarEntry(
+                                   onTap: () {
+                                     changeButtonState(3);
+                                   },
+                                   child: const Text('Custom'))
+                             ],
+                           ),
+                           Padding(
+                               padding: const EdgeInsets.all(10),
+                               child: buttonState == 3
+                                   ? CustomDateRangeWidget(
+                                 labelText: "Select Date",
+                                 onDateChanged: (date) {
+                                   String startDate = Controller()
+                                       .getConvertedDate(date['start']);
+                                   String endDate = Controller()
+                                       .getConvertedDate(date['end']);
+                                   _dateFilterController.text =
+                                   "$startDate To $endDate";
+                                 },
+                                 onFetchDates: (date) {
+                                   setState(() {
+                                     _isFirstLoadRunning = true;
+                                     _isErrorInApi = false;
+                                   });
 
-                                  request = ClaimShiftHistoryRequest();
-                                  request.start_date = startDate;
-                                  request.end_date = endDate;
-                                  // _availabilityViewModel.getAttendanceReport(request);
-                                },
-                                controllerDate: _dateFilterController,
-                                isSearchButtonShow: false,
-                              )
-                            : buttonState == 1
-                                ? Center()
-                                : buttonState == 2
-                                    ? Center()
-                                    : Center()),
-                    _isFirstLoadRunning
-                        ? const Expanded(
-                            child: Center(child: CircularProgressIndicator()))
-                        : _isErrorInApi
-                            ? Expanded(
-                                child: ErrorMessageWidget(label: _errorMsg!))
-                            : Expanded(
-                                flex: 1,
-                                child: RefreshIndicator(
-                                  onRefresh: () => _availabilityViewModel
-                                      .getAvailabilityList(request),
-                                  child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: ListView.builder(
-                                        itemCount: availabilities.length,
-                                        itemBuilder: (context, index) =>
-                                            listItem(availabilities[index]),
-                                      )),
-                                )),
-                  ]))),
+                                   String startDate = Controller()
+                                       .getConvertedDate(date['start']);
+                                   String endDate = Controller()
+                                       .getConvertedDate(date['end']);
+
+                                   request = ClaimShiftHistoryRequest();
+                                   request.start_date = startDate;
+                                   request.end_date = endDate;
+                                   // _availabilityViewModel.getAttendanceReport(request);
+                                 },
+                                 controllerDate: _dateFilterController,
+                                 isSearchButtonShow: false,
+                               )
+                                   : buttonState == 1
+                                   ? Center()
+                                   : buttonState == 2
+                                   ? Center()
+                                   : Center()),
+                           _isFirstLoadRunning
+                               ? const Expanded(
+                               child: Center(child: CircularProgressIndicator()))
+                               : _isErrorInApi
+                               ? Expanded(
+                               child: ErrorMessageWidget(label: _errorMsg!))
+                               : Expanded(
+                               flex: 1,
+                               child: RefreshIndicator(
+                                 onRefresh: () => _availabilityViewModel
+                                     .getAvailabilityList(request),
+                                 child: Padding(
+                                     padding: const EdgeInsets.all(8.0),
+                                     child: ListView.builder(
+                                       itemCount: availabilities.length,
+                                       itemBuilder: (context, index) =>
+                                           listItem(availabilities[index]),
+                                     )),
+                               )),
+                         ],)
+                   )
+
+
+
+
+                   )]))),
     );
   }
 
