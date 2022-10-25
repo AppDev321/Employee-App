@@ -176,12 +176,10 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-
     return Consumer<ThemeModel>(
         builder: (context, ThemeModel themeNotifier, child) {
           var colorText = themeNotifier.isDark ? blackThemeTextColor : primaryColor;
           return
-
             VisibilityDetector(   key: const Key('Dashboard-widget'),
               onVisibilityChanged: (VisibilityInfo info) {
                 var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;

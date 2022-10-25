@@ -26,8 +26,7 @@ const String menuLeave="Leave";
 const String profile = "Profile";
 const String availability = "Availability";
 const String menuScanVehicleTab="Scan Vehicle Device";
-
-
+const String markedAttandanceDetails="Attendance Summary";
 const String menuReport="Reports";
 const String subMenuReportAttandance="Attendance Report";
 const String subMenuReportLeave="Leave Report";

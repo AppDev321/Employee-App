@@ -12,8 +12,6 @@ class SettingScreen extends StatelessWidget {
         title:const Text("Settings"),
       ),
       body:
-
-
       Body(),
 
     );

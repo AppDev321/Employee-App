@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
-
+import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
 import '../../data/drawer_items.dart';
@@ -37,6 +37,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
 
   late ReportsViewModel _reportsViewModel;
   List<Attendance> attendanceList = [];
+    Attendance? attendance=null;
   var request = ClaimShiftHistoryRequest();
   @override
   void initState() {
@@ -86,6 +87,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(menuReport),
@@ -93,6 +95,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+
           mainAxisSize: MainAxisSize.max,
           children: [
             BlocBuilder<ConnectedBloc, ConnectedState>(
@@ -226,6 +229,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                       flex: 1,
@@ -365,13 +369,20 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                     width: 5,
                                   ),
                                   CustomTextWidget(
-                                    text: item.duration,
+                                    text: _reportsViewModel.durationToString(item!.totalTime!),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ],
                               ),
                             ],
                           ))),
+                  item.summary != null  ?
+                  IconButton(
+                      onPressed: () {
+                            _reportsViewModel.showBottomSheet(context, item.summary!);
+                      },
+                      icon: Icon(Icons.more_vert))
+                :Center()
                 ],
               ),
             )));

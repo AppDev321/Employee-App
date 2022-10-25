@@ -1,9 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:intl/intl.dart';
+
 import '../../custom_style/colors.dart';
 import '../../repository/model/response/report_attendance_response.dart';
 import '../../utils/controller.dart';
@@ -16,26 +19,26 @@ class ClockInOutWidget extends StatefulWidget {
   final bool isCheckOut;
    ClockInOutWidget({Key? key,required this.attendanceItem,this.isCheckOut = true}) : super(key: key);
 
+
   @override
   ClockInOutWidgetState createState() => ClockInOutWidgetState();
 }
 
 class ClockInOutWidgetState extends State<ClockInOutWidget> {
-  String timeCounter ="";
+  String timeCounter = "";
   late Attendance attendance;
+  final NavigatorKey = GlobalKey<NavigatorState>();
 
   // bool isCheckIn=false;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-
-
   }
+
   @override
   Widget build(BuildContext context) {
-    attendance= widget.attendanceItem;
+    attendance = widget.attendanceItem;
 
     if(attendance.timeOut!.isEmpty) {
       getTimeDiff(attendance.timeIn!);
@@ -55,7 +58,6 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
         ),
         clipBehavior: Clip.antiAlias,
         child: Container(
-
             decoration: BoxDecoration(
                 color: cardThemeBaseColor,
                 borderRadius: const BorderRadius.only(
@@ -176,18 +178,27 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                           padding:
                                               const EdgeInsets.only(left: 20.0),
                                           child: CustomTextWidget(
-                                              text: item.timeOut?.isEmpty==true ?"--/--":item.timeOut,
+                                              text:
+                                                  item.timeOut?.isEmpty == true
+                                                      ? "--/--"
+                                                      : item.timeOut,
                                               fontWeight: FontWeight.bold,
                                               color: claimedShiftColor),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  // PopupMenuButton(itemBuilder: (context)=>[
-                                  //   PopupMenuItem(child:  CustomTextWidget(text: "View Details",),)
-                                  // ],
-                                  //
-                                  //   onSelected: (item)=>(){},)
+                                  // MaterialButton(child: Text("data"),
+                                  //     onPressed: (){Get.to(() =>  MarkedAttendanceDetails(summaryItem: attendance.summary!));
+                                  // }),
+                                  attendance.summary != null
+                                      ? IconButton(
+                                          onPressed: () {
+                                          reportsViewModel.showBottomSheet(
+                                                context, attendance.summary!);
+                                          },
+                                          icon: Icon(Icons.more_vert))
+                                      : Center()
                                 ],
                               ),
                               const SizedBox(
@@ -212,7 +223,7 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                         child: CustomTextWidget(
                                           text: item.timeOut!.isEmpty
                                               ? timeCounter
-                                              : durationToString(item!.totalTime!),
+                                              :reportsViewModel. durationToString(item!.totalTime!),
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -249,29 +260,83 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
           DateFormat dateFormat =  DateFormat.Hm();
           DateTime now = DateTime.now();
           DateTime open = dateFormat.parse(checkIn);
-          open =  DateTime(now.year, now.month, now.day, open.hour, open.minute);
-          if (mounted) {
-            setState(() {
-              timeCounter = calculateDuration(now.difference(open));
-            });
-          }
-    },
-  );
-}
+        open = DateTime(now.year, now.month, now.day, open.hour, open.minute);
+        if (mounted) {
+          setState(() {
+            timeCounter = calculateDuration(now.difference(open));
+          });
+        }
+      },
+    );
+  }
 
   String calculateDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return
-      "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
-  String durationToString(int minutes) {
-    var d = Duration(minutes:minutes);
-    List<String> parts = d.toString().split(':');
-    return '${parts[0].padLeft(2, '0')} hour ${parts[1].padLeft(2, '0')} min';
-  }
-
-
+  // String durationToString(int minutes) {
+  //   var d = Duration(minutes: minutes);
+  //   String timeString = "";
+  //   List<String> parts = d.toString().split(':');
+  //   if (parts.length > 1) {
+  //     if (parts[1] != '00') {
+  //       timeString =
+  //           '${parts[0].padLeft(2, '0')} hour ${parts[1].padLeft(2, '0')} min';
+  //     }
+  //     else
+  //       {
+  //         timeString = '${parts[0].padLeft(2, '0')} hour';
+  //       }
+  //   } else {
+  //     timeString = '${parts[0].padLeft(2, '0')} hour';
+  //   }
+  //   return timeString;
+  // }
+  //
+  // showBiometricSheet(
+  //     BuildContext context, List<Summary> summaryItemList) async {
+  //
+  //   showModalBottomSheet(
+  //       context: context,
+  //       backgroundColor: cardThemeBaseColor,
+  //       clipBehavior: Clip.antiAlias,
+  //       shape: const RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+  //       ),
+  //       builder: (BuildContext bc) {
+  //         return Container(
+  //             color: Colors.white12,
+  //             child: Column(
+  //               children: [
+  //                 SingleChildScrollView(scrollDirection: Axis.horizontal,
+  //                   child: DataTable(columns: const <DataColumn>[
+  //                     DataColumn(
+  //                         label: CustomTextWidget(
+  //                       text: "Sr#",
+  //                       fontWeight: FontWeight.bold,
+  //                     )),
+  //                     DataColumn(label: CustomTextWidget(text: "Time In")),
+  //                     DataColumn(label: CustomTextWidget(text: "Time Out")),
+  //                     DataColumn(label: CustomTextWidget(text: "Total Time")),
+  //                   ], rows: _createRows(summaryItemList)
+  //                       ),
+  //                 ),
+  //               ],
+  //             ));
+  //       });
+  // }
+  // List<DataRow> _createRows(List<Summary> summaryItemList) {
+  //   return summaryItemList
+  //       .map((item) => DataRow(cells: [
+  //             DataCell(Text('${summaryItemList.indexOf(item) + 1}')),
+  //             DataCell(CustomTextWidget(text: item.timeIn.toString())),
+  //             DataCell(CustomTextWidget(text: item.timeOut.toString())),
+  //             DataCell(
+  //                 CustomTextWidget(text: durationToString(item.totalTime!))),
+  //           ]))
+  //       .toList();
+  // }
 }
