@@ -80,6 +80,7 @@ class Attendance {
   String? timeOut;
   String? duration;
   int? totalTime;
+  List<Summary>? summary;
 
   Attendance(
       {this.id,
@@ -100,6 +101,10 @@ class Attendance {
     timeOut = json['time_out'];
     duration = json['duration'];
     totalTime = json['total_time'];
+    if (json['summary'] != null) {
+      summary = <Summary>[];
+      json['summary'].forEach((v) { summary!.add(new Summary.fromJson(v)); });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -108,6 +113,37 @@ class Attendance {
     data['date'] = this.date;
     data['day_num'] = this.dayNum;
     data['day_name'] = this.dayName;
+    data['time_in'] = this.timeIn;
+    data['time_out'] = this.timeOut;
+    data['duration'] = this.duration;
+    data['total_time'] = this.totalTime;
+    if (this.summary != null) {
+      data['summary'] = this.summary!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+
+}
+class Summary {
+  int? id;
+  String? timeIn;
+  String? timeOut;
+  String? duration;
+  int? totalTime;
+
+  Summary({this.id, this.timeIn, this.timeOut, this.duration, this.totalTime});
+
+  Summary.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    timeIn = json['time_in'];
+    timeOut = json['time_out'];
+    duration = json['duration'];
+    totalTime = json['total_time'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['time_in'] = this.timeIn;
     data['time_out'] = this.timeOut;
     data['duration'] = this.duration;

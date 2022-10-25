@@ -12,10 +12,12 @@ import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../custom_style/colors.dart';
 import '../notification/firebase_notification.dart';
 import '../repository/model/response/events_list.dart';
 import '../repository/model/response/get_dashboard.dart';
 import '../repository/model/response/leave_list.dart';
+import '../widget/custom_text_widget.dart';
 
 class DashBoardViewModel extends BaseViewModel {
 
@@ -45,12 +47,10 @@ class DashBoardViewModel extends BaseViewModel {
     DropMenuItems(id: 2, name: "Sickness"),
     DropMenuItems(id: 3, name: "Public Holiday"),
     DropMenuItems(id: 4, name: "Absence Authorized"),
-
     DropMenuItems(id: 5, name: "Absence Unauthorized"),
     DropMenuItems(id: 6, name: "Compassionate"),
     DropMenuItems(id: 7, name: "Maternity / Paternity"),
     DropMenuItems(id: 8, name: "Parental"),
-
     DropMenuItems(id: 9, name: "Study Leave"),
     DropMenuItems(id: 10, name: "Training"),
     DropMenuItems(id: 11, name: "Furlough"),
@@ -76,7 +76,6 @@ class DashBoardViewModel extends BaseViewModel {
         if (results.data!.checkedIn == false && results.data?.attendance != null)
         {
                 isCheckInOut=true;
-
           }
 
         // setIsErrorReceived(false);
@@ -95,9 +94,7 @@ class DashBoardViewModel extends BaseViewModel {
     setLoading(false);
     notifyListeners();
 
-
     getNotificationCount();
-
 
  getEventsListResponse();
   }
@@ -260,6 +257,7 @@ class DashBoardViewModel extends BaseViewModel {
       },
     );
   }
+
   Future<void> getEventsListResponse() async {
     setLoading(true);
     final results = await APIWebService().getEventsList();

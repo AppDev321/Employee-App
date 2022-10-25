@@ -77,15 +77,12 @@ class _Body extends State<Body> {
         setState(() {
           Controller().setUserProfilePic(value);
           imageLinkUser =value;
-
         });
 
       });
     }
 
     );
-
-
   }
 
 
