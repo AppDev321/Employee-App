@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
-import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
+
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
 import '../../data/drawer_items.dart';
@@ -37,8 +37,9 @@ class AttendanceReportStateful extends State<AttendanceReport> {
 
   late ReportsViewModel _reportsViewModel;
   List<Attendance> attendanceList = [];
-    Attendance? attendance=null;
+  Attendance? attendance = null;
   var request = ClaimShiftHistoryRequest();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -53,11 +54,10 @@ class AttendanceReportStateful extends State<AttendanceReport> {
 
     //Getting current month and date time
     DateTime now = DateTime.now();
-    var startDate =  DateTime(now.year, now.month, 1);
-    var endDate =
-         DateTime(now.year, now.month + 1, 0); //this month last date
+    var startDate = DateTime(now.year, now.month, 1);
+    var endDate = DateTime(now.year, now.month + 1, 0); //this month last date
 
-   request = ClaimShiftHistoryRequest();
+    request = ClaimShiftHistoryRequest();
     request.start_date = Controller().getConvertedDate(startDate);
     request.end_date = Controller().getConvertedDate(endDate);
 
@@ -87,7 +87,6 @@ class AttendanceReportStateful extends State<AttendanceReport> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(menuReport),
@@ -95,25 +94,18 @@ class AttendanceReportStateful extends State<AttendanceReport> {
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-
           mainAxisSize: MainAxisSize.max,
           children: [
             BlocBuilder<ConnectedBloc, ConnectedState>(
                 builder: (context, state) {
-                  if (state is ConnectedSucessState) {
-                    return Container();
-                  }
-                  else if(state is FirebaseMsgReceived)
-                  {
-
-                    return Container();
-                  }else {
-                    return const InternetNotAvailable();
-                  }
-                }
-
-            ),
-
+              if (state is ConnectedSucessState) {
+                return Container();
+              } else if (state is FirebaseMsgReceived) {
+                return Container();
+              } else {
+                return const InternetNotAvailable();
+              }
+            }),
             const Padding(
               padding: EdgeInsets.all(20),
               child: CustomTextWidget(
@@ -128,7 +120,6 @@ class AttendanceReportStateful extends State<AttendanceReport> {
               invertedSelection: true,
               children: [
                 ButtonBarEntry(
-
                     onTap: () {
                       changeButtonState(0);
                     },
@@ -137,17 +128,17 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                     onTap: () {
                       changeButtonState(1);
                     },
-                    child:const Text('Last Month')),
+                    child: const Text('Last Month')),
                 ButtonBarEntry(
                     onTap: () {
                       changeButtonState(2);
                     },
-                    child:const Text('This Year')),
+                    child: const Text('This Year')),
                 ButtonBarEntry(
                     onTap: () {
                       changeButtonState(3);
                     },
-                    child:const Text('Custom'))
+                    child: const Text('Custom'))
               ],
             ),
             Padding(
@@ -187,22 +178,23 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                             ? const Center()
                             : const Center()),
             _isFirstLoadRunning
-                ? const Expanded(child: Center(child: CircularProgressIndicator()))
+                ? const Expanded(
+                    child: Center(child: CircularProgressIndicator()))
                 : _isErrorInApi
                     ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
                     : Expanded(
                         flex: 1,
                         child: RefreshIndicator(
-                          onRefresh:  ()=>_reportsViewModel.getAttendanceReport(request),
+                          onRefresh: () =>
+                              _reportsViewModel.getAttendanceReport(request),
                           child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ListView.builder(
-                                    itemCount: attendanceList.length,
-                                    itemBuilder: (context, index) =>
-                                        listItem(attendanceList[index]))),
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListView.builder(
+                                  itemCount: attendanceList.length,
+                                  itemBuilder: (context, index) =>
+                                      listItem(attendanceList[index]))),
                         ),
-                        ),
-
+                      ),
           ],
         ),
       ),
@@ -222,7 +214,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
             // width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
                 color: cardThemeBaseColor,
-                borderRadius:const BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))),
             child: IntrinsicHeight(
@@ -234,32 +226,34 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                   Expanded(
                       flex: 1,
                       child: Container(
-                          color: Get.isDarkMode?primaryColor:HexColor.fromHex("#dff4d8"),
+                          color: Get.isDarkMode
+                              ? primaryColor
+                              : HexColor.fromHex("#dff4d8"),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CustomTextWidget(
-
-                                text: _reportsViewModel.convertStringDate(item.date.toString(),"day"),
+                                text: _reportsViewModel.convertStringDate(
+                                    item.date.toString(), "day"),
                                 color: HexColor.fromHex("#7da36a"),
                               ),
-                              const    SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               CustomTextWidget(
-                                text:  _reportsViewModel.convertStringDate(item.date.toString(),"date"),
+                                text: _reportsViewModel.convertStringDate(
+                                    item.date.toString(), "date"),
                                 fontWeight: FontWeight.bold,
                                 color: HexColor.fromHex("#99cc60"),
                                 size: 28,
                               ),
-
-                              const   SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
-
                               CustomTextWidget(
-                                text:   "${_reportsViewModel.convertStringDate(item.date.toString(),"month")}, ${_reportsViewModel.convertStringDate(item.date.toString(),"year")}",
+                                text:
+                                    "${_reportsViewModel.convertStringDate(item.date.toString(), "month")}, ${_reportsViewModel.convertStringDate(item.date.toString(), "year")}",
                                 color: HexColor.fromHex("#7da36a"),
                                 fontWeight: FontWeight.w400,
                               ),
@@ -268,7 +262,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                   Expanded(
                       flex: 3,
                       child: Container(
-                          padding:const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,81 +270,83 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                             children: [
                               Row(
                                 mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:   MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons
-                                                  .assignment_turned_in_outlined,
-                                              size: 15.0,
-                                              color: primaryColor,
-                                            ),
-                                            const  SizedBox(
-                                              width: 5,
-                                            ),
-                                            const  CustomTextWidget(
-                                              text: "Check In",
-                                              size: 12,
-                                            ),
-                                          ],
-                                        ),
-                                        const  SizedBox(
-                                          height: 5,
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 30.0),
-                                          child: CustomTextWidget(
-                                              text: item.timeIn?.isEmpty==true ?"--/--":item.timeIn,
-                                              fontWeight: FontWeight.bold,
-                                              color: primaryColor),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: const [
-                                            Icon(
-                                              Icons
-                                                  .assignment_turned_in_outlined,
-                                              size: 15.0,
-                                              color: claimedShiftColor,
-                                            ),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            CustomTextWidget(
-                                              text: "Check Out",
-                                              size: 12,
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        Center(
-                                          child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 30.0),
-                                            child: CustomTextWidget(
-                                                text: item.timeOut?.isEmpty==true ?"--/--":item.timeOut,
-                                                fontWeight: FontWeight.bold,
-                                                color: claimedShiftColor),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons
+                                                .assignment_turned_in_outlined,
+                                            size: 15.0,
+                                            color: primaryColor,
                                           ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          const CustomTextWidget(
+                                            text: "Check In",
+                                            size: 12,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 30.0),
+                                        child: CustomTextWidget(
+                                            text: item.timeIn?.isEmpty == true
+                                                ? "--/--"
+                                                : item.timeIn,
+                                            fontWeight: FontWeight.bold,
+                                            color: primaryColor),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: const [
+                                          Icon(
+                                            Icons
+                                                .assignment_turned_in_outlined,
+                                            size: 15.0,
+                                            color: claimedShiftColor,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          CustomTextWidget(
+                                            text: "Check Out",
+                                            size: 12,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 30.0),
+                                          child: CustomTextWidget(
+                                              text: item.timeOut?.isEmpty ==
+                                                      true
+                                                  ? "--/--"
+                                                  : item.timeOut,
+                                              fontWeight: FontWeight.bold,
+                                              color: claimedShiftColor),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -369,53 +365,50 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                     width: 5,
                                   ),
                                   CustomTextWidget(
-                                    text: _reportsViewModel.durationToString(item!.totalTime!),
+                                    text: _reportsViewModel
+                                        .durationToString(item!.totalTime!),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ],
                               ),
                             ],
                           ))),
-                  item.summary != null  ?
-                  IconButton(
-                      onPressed: () {
-                            _reportsViewModel.showBottomSheet(context, item.summary!);
-                      },
-                      icon: Icon(Icons.more_vert))
-                :Center()
+                  item.summary != null
+                      ? IconButton(
+                          onPressed: () {
+                            _reportsViewModel.showBottomSheet(
+                                context, item.summary!);
+                          },
+                          icon: const Icon(Icons.more_vert))
+                      : const Center()
                 ],
               ),
             )));
   }
-
 
   void changeButtonState(int status) {
     setState(() {
       buttonState = status;
     });
 
-     request = ClaimShiftHistoryRequest();
+    request = ClaimShiftHistoryRequest();
     DateTime now = DateTime.now();
-    if (status == 0)
-    {
-      var startDate =  DateTime(now.year, now.month, 1);
+    if (status == 0) {
+      var startDate = DateTime(now.year, now.month, 1);
+      var endDate = DateTime(now.year, now.month + 1, 0); //this month last date
+      request.start_date = Controller().getConvertedDate(startDate);
+      request.end_date = Controller().getConvertedDate(endDate);
+    } else if (status == 1) {
+      var startDate = DateTime(now.year, now.month - 2, 1);
+      var endDate = DateTime(now.year, now.month - 1, 0); //this month last date
+      request.start_date = Controller().getConvertedDate(startDate);
+      request.end_date = Controller().getConvertedDate(endDate);
+    } else if (status == 2) {
+      var startDate = DateTime(now.year, 1, 1);
       var endDate = DateTime(now.year, now.month + 1, 0); //this month last date
       request.start_date = Controller().getConvertedDate(startDate);
       request.end_date = Controller().getConvertedDate(endDate);
     }
-    else if (status == 1) {
-      var startDate =  DateTime(now.year, now.month - 2, 1);
-      var endDate =  DateTime(now.year, now.month - 1, 0); //this month last date
-      request.start_date = Controller().getConvertedDate(startDate);
-      request.end_date = Controller().getConvertedDate(endDate);
-    }
-    else if (status == 2) {
-      var startDate =  DateTime(now.year, 1, 1);
-      var endDate =  DateTime(now.year, now.month + 1, 0); //this month last date
-      request.start_date = Controller().getConvertedDate(startDate);
-      request.end_date = Controller().getConvertedDate(endDate);
-    }
-
 
     if (status < 3) {
       setState(() {

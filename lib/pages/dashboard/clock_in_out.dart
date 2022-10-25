@@ -191,14 +191,14 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                   // MaterialButton(child: Text("data"),
                                   //     onPressed: (){Get.to(() =>  MarkedAttendanceDetails(summaryItem: attendance.summary!));
                                   // }),
-                                  attendance.summary != null
+                                  item.summary != null
                                       ? IconButton(
                                           onPressed: () {
                                           reportsViewModel.showBottomSheet(
-                                                context, attendance.summary!);
+                                                context, item.summary!);
                                           },
-                                          icon: Icon(Icons.more_vert))
-                                      : Center()
+                                          icon: const Icon(Icons.more_vert))
+                                      : const Center()
                                 ],
                               ),
                               const SizedBox(
@@ -277,66 +277,4 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
-  // String durationToString(int minutes) {
-  //   var d = Duration(minutes: minutes);
-  //   String timeString = "";
-  //   List<String> parts = d.toString().split(':');
-  //   if (parts.length > 1) {
-  //     if (parts[1] != '00') {
-  //       timeString =
-  //           '${parts[0].padLeft(2, '0')} hour ${parts[1].padLeft(2, '0')} min';
-  //     }
-  //     else
-  //       {
-  //         timeString = '${parts[0].padLeft(2, '0')} hour';
-  //       }
-  //   } else {
-  //     timeString = '${parts[0].padLeft(2, '0')} hour';
-  //   }
-  //   return timeString;
-  // }
-  //
-  // showBiometricSheet(
-  //     BuildContext context, List<Summary> summaryItemList) async {
-  //
-  //   showModalBottomSheet(
-  //       context: context,
-  //       backgroundColor: cardThemeBaseColor,
-  //       clipBehavior: Clip.antiAlias,
-  //       shape: const RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-  //       ),
-  //       builder: (BuildContext bc) {
-  //         return Container(
-  //             color: Colors.white12,
-  //             child: Column(
-  //               children: [
-  //                 SingleChildScrollView(scrollDirection: Axis.horizontal,
-  //                   child: DataTable(columns: const <DataColumn>[
-  //                     DataColumn(
-  //                         label: CustomTextWidget(
-  //                       text: "Sr#",
-  //                       fontWeight: FontWeight.bold,
-  //                     )),
-  //                     DataColumn(label: CustomTextWidget(text: "Time In")),
-  //                     DataColumn(label: CustomTextWidget(text: "Time Out")),
-  //                     DataColumn(label: CustomTextWidget(text: "Total Time")),
-  //                   ], rows: _createRows(summaryItemList)
-  //                       ),
-  //                 ),
-  //               ],
-  //             ));
-  //       });
-  // }
-  // List<DataRow> _createRows(List<Summary> summaryItemList) {
-  //   return summaryItemList
-  //       .map((item) => DataRow(cells: [
-  //             DataCell(Text('${summaryItemList.indexOf(item) + 1}')),
-  //             DataCell(CustomTextWidget(text: item.timeIn.toString())),
-  //             DataCell(CustomTextWidget(text: item.timeOut.toString())),
-  //             DataCell(
-  //                 CustomTextWidget(text: durationToString(item.totalTime!))),
-  //           ]))
-  //       .toList();
-  // }
 }
