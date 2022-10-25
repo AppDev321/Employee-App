@@ -72,7 +72,7 @@ class AvailabilityViewModel extends BaseViewModel {
 
       if (results.code == 200) {
         setIsErrorReceived(false);
-        if(results.data!.availabilities!.length > 0)
+        if(results.data!.availabilities!.isNotEmpty)
         {
           availabilities = results.data!.availabilities!;
         }
@@ -86,7 +86,7 @@ class AvailabilityViewModel extends BaseViewModel {
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
-          errorString += results.errors![i].message! + "\n";
+          errorString += "${results.errors![i].message!}\n";
         }
         setErrorMsg(errorString);
          setIsErrorReceived(true);

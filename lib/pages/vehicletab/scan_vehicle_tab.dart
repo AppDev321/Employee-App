@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
+import 'package:hnh_flutter/view_models/profile_vm.dart';
 
 import '../../custom_style/strings.dart';
 import '../../data/drawer_items.dart';
@@ -24,9 +26,12 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
   DialogBuilder? _progressDialog;
   late AttendanceViewModel attendanceViewModel;
   BuildContext? _dialogContext;
+  String uploadId = "";
 
   bool c = false;
   bool _isErrorInApi = false;
+
+  var userPicturePath = "";
 
   Future<void> scanAttendanceCode() async {
     AppBar(
@@ -42,7 +47,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
       var qrResult = await BarcodeScanner.scan();
 
       _progressDialog?.showLoadingDialog();
-      attendanceViewModel.verifyVehicleTab(qrResult.rawContent);
+      attendanceViewModel.verifyVehicleTab(qrResult.rawContent,uploadId);
     } on FormatException catch (ex) {
       print('Pressed the Back Button before Scanning');
     } catch (ex) {
@@ -56,8 +61,19 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
     super.initState();
 
     attendanceViewModel = AttendanceViewModel();
+    attendanceViewModel.takeUserPictureWithoutPreview();
 
     attendanceViewModel.addListener(() {
+      userPicturePath = attendanceViewModel.userPicturePath;
+
+      if (userPicturePath.isNotEmpty) {
+        var profileViewModel = ProfileViewModel();
+        profileViewModel.uploadImageToServer(
+            context, File(userPicturePath), (isUploaded) {}, (imageUrl) {
+            uploadId = imageUrl;
+        }, requestType: "qr_scan", isReturnPath: false, showUploadAlertMsg: false);
+      }
+
       _progressDialog?.hideOpenDialog();
 
       var checkErrorApiStatus = attendanceViewModel.getIsErrorRecevied();
@@ -83,14 +99,15 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
           Get.back();
         } else {
           _errorMsg = attendanceViewModel.getErrorMsg();
-
-          if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
-            Controller().logoutUser();
-          } else {
-            Controller().showToastMessage(context, _errorMsg!);
-            setState(() {
-              _isErrorInApi = true;
-            });
+          if (_errorMsg?.isNotEmpty == true) {
+            if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
+              Controller().logoutUser();
+            } else {
+              Controller().showToastMessage(context, _errorMsg!);
+              setState(() {
+                _isErrorInApi = true;
+              });
+            }
           }
         }
       }
@@ -108,7 +125,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(menuScanVehicleTab),
+        title: const Text(menuScanVehicleTab),
       ),
       body: Center(
         child: Column(
@@ -129,34 +146,32 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(50.0, 5.0, 50.0, 20.0),
-              child:  Text(
+              child: Text(
                 'Please give access to your Camera so that\n we can scan and provide you what is\n inside the code',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: colorText,
                   height: 1.4,
-
                 ),
               ),
             ),
             _isErrorInApi
                 ? Column(
                     children: [
-                      const  SizedBox(
+                      const SizedBox(
                         height: 80,
                       ),
                       Align(
-                        alignment: Alignment.center,
+                          alignment: Alignment.center,
                           child: Container(
-
-                              margin:const EdgeInsets.all(20),
+                              margin: const EdgeInsets.all(20),
                               child: ErrorMessageWidget(
                                 label: _errorMsg!,
                                 color: Colors.red,
                               )))
                     ],
                   )
-                :const Center(),
+                : const Center(),
           ],
         ),
       ),
@@ -170,7 +185,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             backgroundColor: primaryColor,
-            label:const Text(
+            label: const Text(
               "Scan QR Code",
               style: TextStyle(
                 fontWeight: FontWeight.bold,

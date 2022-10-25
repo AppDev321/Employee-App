@@ -325,10 +325,11 @@ class APIWebService {
       return null;
     }
   }
-  Future<LoginApiResponse?> markAttendance(String code) async {
+  Future<LoginApiResponse?> markAttendance(String code,String uploadID) async {
     try {
       Map<String,String> request = {
-        'code': code
+        'code': code,
+        'upload_id':uploadID
       };
       final client = await RetroClinetHeader.getClientWithAuth();
       var response = await client.markAttendance(request);
@@ -339,10 +340,11 @@ class APIWebService {
     }
   }
 
-  Future<LoginApiResponse?> markClockOutAttendance(String code) async {
+  Future<LoginApiResponse?> markClockOutAttendance(String code,String uploadID) async {
     try {
       Map<String,String> request = {
-        'code': code
+        'code': code,
+        'upload_id':uploadID
       };
       final client = await RetroClinetHeader.getClientWithAuth();
       var response = await client.markClockOutAttendance(request);
@@ -353,10 +355,11 @@ class APIWebService {
     }
   }
 
-  Future<LoginApiResponse?> validateVehicleTab(String code) async {
+  Future<LoginApiResponse?> validateVehicleTab(String code,String uploadID) async {
     try {
       Map<String,String> request = {
-        'code': code
+        'code': code,
+        'upload_id':uploadID
       };
       final client = await RetroClinetHeader.getClientWithAuth();
       var response = await client.validateVehicleTab(request);

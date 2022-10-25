@@ -52,7 +52,7 @@ class ProfileViewModel extends BaseViewModel {
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
-          errorString += results.errors![i].message! + "\n";
+          errorString += "${results.errors![i].message!}\n";
         }
         setErrorMsg(errorString);
         setIsErrorReceived(true);
@@ -85,7 +85,7 @@ Future<void> getUserImageURLPreferecne() async{
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
-          errorString += results.errors![i].message! + "\n";
+          errorString += "${results.errors![i].message!}\n";
         }
         setErrorMsg(errorString);
         setIsErrorReceived(true);
@@ -114,7 +114,7 @@ Future<void> getUserImageURLPreferecne() async{
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
-          errorString += results.errors![i].message! + "\n";
+          errorString += "${results.errors![i].message!}\n";
         }
         setErrorMsg(errorString);
        // setIsErrorReceived(true);
@@ -135,7 +135,7 @@ Future<void> getUserImageURLPreferecne() async{
          backgroundColor: cardThemeBaseColor,
          // set this when inner content overflows, making RoundedRectangleBorder not working as expected
          clipBehavior: Clip.antiAlias,
-         shape: RoundedRectangleBorder(
+         shape: const RoundedRectangleBorder(
            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
          ),
 
@@ -143,20 +143,20 @@ Future<void> getUserImageURLPreferecne() async{
            return SafeArea(
              child: Container(
                color: Colors.white12,
-               child: new Wrap(
+               child: Wrap(
                  children: <Widget>[
-                   new ListTile(
-                       leading: new Icon(Icons.photo_library),
-                       title:  CustomTextWidget(text:'Gallery'),
+                   ListTile(
+                       leading: const Icon(Icons.photo_library),
+                       title:  const CustomTextWidget(text:'Gallery'),
                        onTap: () {
                          pickImageFile(ImageSource.gallery,(value){
                            imageFile(value);
                          });
                          Navigator.of(context).pop();
                        }),
-                   new ListTile(
-                     leading: new Icon(Icons.photo_camera),
-                     title:  CustomTextWidget(text:'Camera'),
+                   ListTile(
+                     leading: const Icon(Icons.photo_camera),
+                     title:  const CustomTextWidget(text:'Camera'),
                      onTap: () {
                        pickImageFile(ImageSource.camera,(value){
                             imageFile(value);
@@ -188,24 +188,36 @@ Future<void> getUserImageURLPreferecne() async{
    }
 
 
-   uploadProfileImage(BuildContext context,File imageFile,ValueChanged<bool> isUpload,ValueChanged<String> imageURL) async {
+   uploadImageToServer(
+       BuildContext context,
+       File imageFile,
+       ValueChanged<bool> isUpload,
+       ValueChanged<String> imageURL,
+       {
+         String requestType = "profile",
+         bool isReturnPath = true,
+         bool showUploadAlertMsg = true
+       }
 
-     var stream = new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
+  ) async {
+
+
+     var stream = http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
      var length = await imageFile.length();
-     var uri = Uri.parse(Controller.appBaseURL +"/upload");
+     var uri = Uri.parse("${Controller.appBaseURL}/upload");
      Controller controller = Controller();
      String? userToken = await controller.getAuthToken();
 
-     var request = new http.MultipartRequest("POST", uri);
+     var request = http.MultipartRequest("POST", uri);
      request.headers['Authorization'] = "Bearer $userToken";
      request.headers['Content-Type']="application/json";
      request.headers['Accept']="application/json";
-     var multipartFile = new http.MultipartFile('file', stream, length,  filename: basename(imageFile.path));
+     var multipartFile = http.MultipartFile('file', stream, length,  filename: basename(imageFile.path));
      request.files.add(multipartFile);
-     request.fields['type']="profile";
+     request.fields['type']=requestType;
      request.fields['filetype']="image/jpg";
-     request.fields['field_name']="profile";
-     request.fields['upload_id']="53346765475";
+     request.fields['field_name']=requestType;
+     request.fields['upload_id']="${DateTime.now().millisecondsSinceEpoch}";
      print(request.fields.toString());
      var response = await request.send();
      response.stream.transform(utf8.decoder).listen((value) {
@@ -219,18 +231,30 @@ Future<void> getUserImageURLPreferecne() async{
            var data =parsedJson['data'];
            if(data != null){
              var convertedURL = data['complete_url'];
-             imageURL(convertedURL) ;
+             if(isReturnPath)
+               {
+                 imageURL(convertedURL) ;
+               }
+             else
+               {
+                 imageURL(request.fields['upload_id']!);
+               }
+
            }
 
          }
-       else
-         {
-           var error=parsedJson['errors'][0]['message'];
-           if(error != null)
-           Controller().showToastMessage(context, error);
-           else
-             Controller().showToastMessage(context, "There is some issue in uploading please try again later");
+       else {
+
+         if (showUploadAlertMsg == true) {
+           var error = parsedJson['errors'][0]['message'];
+           if (error != null) {
+             Controller().showToastMessage(context, error);
+           } else {
+             Controller().showToastMessage(context,
+                 "There is some issue in uploading please try again later");
+           }
          }
+       }
 
      });
    }

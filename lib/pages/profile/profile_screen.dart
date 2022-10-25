@@ -164,7 +164,7 @@ class _MyAccountState extends State<MyAccount> {
                                                     blurRadius: 10,
                                                     color: Colors.black
                                                         .withOpacity(0.1),
-                                                    offset: Offset(0, 10))
+                                                    offset: const Offset(0, 10))
                                               ],
                                               shape: BoxShape.circle,
                                             ),
@@ -185,7 +185,7 @@ class _MyAccountState extends State<MyAccount> {
                                                       blurRadius: 10,
                                                       color: Colors.black
                                                           .withOpacity(0.1),
-                                                      offset: Offset(0, 10))
+                                                      offset: const Offset(0, 10))
                                                 ],
                                                 shape: BoxShape.circle,
                                                 image: DecorationImage(
@@ -214,7 +214,7 @@ class _MyAccountState extends State<MyAccount> {
                                                   tryToUploadImage = true;
                                                 });
 
-                                                _profileViewModel .uploadProfileImage(context,value,   (isUploaded) {  }, (imageUrl) {
+                                                _profileViewModel .uploadImageToServer(context,value,   (isUploaded) {  }, (imageUrl) {
                                                   print(imageUrl);
                                                   setState(() {
                                                     userImageURL = imageUrl;

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
@@ -9,14 +10,12 @@ import 'package:hnh_flutter/data/drawer_items.dart';
 import '../../custom_style/strings.dart';
 import '../../utils/controller.dart';
 import '../../view_models/attendance_vm.dart';
+import '../../view_models/profile_vm.dart';
 import '../../widget/dialog_builder.dart';
 
 class AddAttendance extends StatefulWidget {
-
-  final int? attendanceType  ; //0 - check in ,1 - check out
-  AddAttendance({Key? key,  this.attendanceType =0}) : super(key: key);
-
-
+  final int? attendanceType; //0 - check in ,1 - check out
+  AddAttendance({Key? key, this.attendanceType = 0}) : super(key: key);
 
   @override
   State<AddAttendance> createState() => _AddAttendanceState();
@@ -27,6 +26,8 @@ class _AddAttendanceState extends State<AddAttendance> {
   DialogBuilder? _progressDialog;
   late AttendanceViewModel attendanceViewModel;
   BuildContext? _dialogContext;
+  var userPicturePath = "";
+  String uploadId = "";
 
   Future<void> scanAttendanceCode() async {
     AppBar(
@@ -45,7 +46,8 @@ class _AddAttendanceState extends State<AddAttendance> {
 
       _progressDialog?.showLoadingDialog();
 
-    attendanceViewModel.markAttendanceRequest(qrResult.rawContent,  widget.attendanceType!);
+      attendanceViewModel.markAttendanceRequest(
+          qrResult.rawContent, widget.attendanceType!, userPicturePath);
     } on FormatException catch (ex) {
       print('Pressed the Back Button before Scanning');
     } catch (ex) {
@@ -58,12 +60,23 @@ class _AddAttendanceState extends State<AddAttendance> {
     // TODO: implement initState
     super.initState();
 
-    print("Type:${widget.attendanceType}");
-
     attendanceViewModel = AttendanceViewModel();
-
+    attendanceViewModel.takeUserPictureWithoutPreview();
     attendanceViewModel.addListener(() {
       _progressDialog?.hideOpenDialog();
+
+      userPicturePath = attendanceViewModel.userPicturePath;
+
+      if (userPicturePath.isNotEmpty) {
+        var profileViewModel = ProfileViewModel();
+        profileViewModel.uploadImageToServer(
+            context, File(userPicturePath), (isUploaded) {}, (imageUrl) {
+          uploadId = imageUrl;
+        },
+            requestType: "qr_scan",
+            isReturnPath: false,
+            showUploadAlertMsg: false);
+      }
 
       var checkErrorApiStatus = attendanceViewModel.getIsErrorRecevied();
       if (checkErrorApiStatus) {
@@ -81,17 +94,20 @@ class _AddAttendanceState extends State<AddAttendance> {
             _errorMsg = "";
           });
 
-          Controller() .showToastMessage(context, "Request submitted successfully");
-         Navigator.pop(context);
+          Controller()
+              .showToastMessage(context, "Request submitted successfully");
+          Navigator.pop(context);
           Get.back();
 
-         // Get.to(() => const AttendanceReport());
+          // Get.to(() => const AttendanceReport());
         } else {
           _errorMsg = attendanceViewModel.getErrorMsg();
-          if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
-            Controller().logoutUser();
-          } else {
-            Controller().showToastMessage(context, _errorMsg!);
+          if (_errorMsg?.isNotEmpty == true) {
+            if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
+              Controller().logoutUser();
+            } else {
+              Controller().showToastMessage(context, _errorMsg!);
+            }
           }
         }
       }

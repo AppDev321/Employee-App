@@ -50,7 +50,7 @@ class ProfilePic extends StatelessWidget {
                         spreadRadius: 2,
                         blurRadius: 10,
                         color: primaryColor.withOpacity(0.1),
-                        offset: Offset(0, 10))
+                        offset: const Offset(0, 10))
                   ],
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -75,10 +75,10 @@ class ProfilePic extends StatelessWidget {
                     style: TextButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50),
-                        side: BorderSide(color: Colors.white),
+                        side: const BorderSide(color: Colors.white),
                       ),
                       primary: Colors.white,
-                      backgroundColor: Color(0xFFF5F6F9),
+                      backgroundColor: const Color(0xFFF5F6F9),
                     ),
                     onPressed: () {
                       onEditClick!(true);
@@ -104,7 +104,7 @@ class ProfilePic extends StatelessWidget {
             padding: const EdgeInsets.only(left: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: const [
                 Text(
                   'Preview',
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -120,7 +120,7 @@ class ProfilePic extends StatelessWidget {
               ],
             ),
           ),
-          Container(
+          SizedBox(
             width: Get.mediaQuery.size.width / 2,
             height: Get.mediaQuery.size.height / 2,
             child: Image.network(

@@ -22,14 +22,14 @@ class SettingMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: TextButton(
         style: TextButton.styleFrom(
           primary: primaryColor,
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(Controller.roundCorner)),
-          backgroundColor: Get.isDarkMode?cardThemeBaseColor:Color(0xFFF5F6F9),
+          backgroundColor: Get.isDarkMode?cardThemeBaseColor:const Color(0xFFF5F6F9),
         ),
         onPressed: press,
         child: Row(
@@ -39,7 +39,7 @@ class SettingMenu extends StatelessWidget {
               color: Get.isDarkMode?blackThemeTextColor:Colors.black54,
               width: 22,
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             Expanded(child: CustomTextWidget(text:text)),
             Icon(Icons.arrow_forward_ios ,color: Get.isDarkMode?blackThemeTextColor:Colors.black54,),
           ],
