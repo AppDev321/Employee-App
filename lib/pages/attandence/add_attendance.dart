@@ -47,7 +47,7 @@ class _AddAttendanceState extends State<AddAttendance> {
       _progressDialog?.showLoadingDialog();
 
       attendanceViewModel.markAttendanceRequest(
-          qrResult.rawContent, widget.attendanceType!, userPicturePath);
+          qrResult.rawContent, widget.attendanceType!, uploadId);
     } on FormatException catch (ex) {
       print('Pressed the Back Button before Scanning');
     } catch (ex) {
@@ -71,6 +71,7 @@ class _AddAttendanceState extends State<AddAttendance> {
         var profileViewModel = ProfileViewModel();
         profileViewModel.uploadImageToServer(
             context, File(userPicturePath), (isUploaded) {}, (imageUrl) {
+              print("image=== $imageUrl");
           uploadId = imageUrl;
         },
             requestType: "qr_scan",

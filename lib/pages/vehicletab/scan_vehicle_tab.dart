@@ -70,6 +70,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
         var profileViewModel = ProfileViewModel();
         profileViewModel.uploadImageToServer(
             context, File(userPicturePath), (isUploaded) {}, (imageUrl) {
+              print(imageUrl);
             uploadId = imageUrl;
         }, requestType: "qr_scan", isReturnPath: false, showUploadAlertMsg: false);
       }

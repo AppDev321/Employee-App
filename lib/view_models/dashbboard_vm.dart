@@ -75,14 +75,14 @@ class DashBoardViewModel extends BaseViewModel {
         attendance = results.data?.attendance;
         if (results.data!.checkedIn == false && results.data?.attendance != null)
         {
-                isCheckInOut=true;
+                isCheckInOut = true;
           }
 
         // setIsErrorReceived(false);
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
-          errorString += results.errors![i].message! + "\n";
+          errorString += "${results.errors![i].message!}\n";
         }
         setErrorMsg(errorString);
 

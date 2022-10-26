@@ -12,7 +12,7 @@ import '../pages/login/login.dart';
 class Controller {
   static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
 
-   "http://192.168.18.69:8000/api";
+   "http://afjdemo.hnhtechpk.com/api";
 
  //  "http://afjdev.hnhtechpk.com/api";
   final String auth_token = "auth_token";

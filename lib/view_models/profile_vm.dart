@@ -1,22 +1,20 @@
 
+import 'dart:convert';
 import 'dart:io';
+
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/repository/model/request/change_password_request.dart';
-import 'package:hnh_flutter/repository/retrofit/api_client.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+
 import '../custom_style/colors.dart';
 import '../repository/model/response/user_profile.dart';
 import '../utils/controller.dart';
 import '../widget/custom_text_widget.dart';
-
-
-import 'package:path/path.dart';
-import 'package:async/async.dart';
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 class ProfileViewModel extends BaseViewModel {
 
    Profile profileDetail = Profile();

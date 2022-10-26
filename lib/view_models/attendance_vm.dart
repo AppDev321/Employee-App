@@ -19,12 +19,14 @@ class AttendanceViewModel extends BaseViewModel {
       await controller.initialize();
       await controller.setFlashMode(FlashMode.off);
       final image = await controller.takePicture();
-      controller.dispose();
+
       userPicturePath = image.path;
     } catch (e) {
       // print(e);
-      controller.dispose();
+      await controller.dispose();
     }
+    await controller.dispose();
+
     notifyListeners();
   }
 

@@ -105,7 +105,7 @@ class ReportsViewModel extends BaseViewModel {
   showBottomSheet(
       BuildContext context, List<Summary> summaryItemList) async {
     showModalBottomSheet(
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30)),
       ),
       isScrollControlled: true,
@@ -127,7 +127,7 @@ class ReportsViewModel extends BaseViewModel {
                     children: <Widget>[
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: DataTable(columns:  <DataColumn>[
+                        child: DataTable(columns:  const <DataColumn>[
                           DataColumn(
                               label: CustomTextWidget(
                                 text: "Sr#",
@@ -154,18 +154,13 @@ class ReportsViewModel extends BaseViewModel {
     var d = Duration(minutes: minutes);
     String timeString = "";
     List<String> parts = d.toString().split(':');
-    ;
     if (parts.length > 1) {
-      if (parts[1] != '00') {
-        timeString =
-        '${parts[0].padLeft(2, '0')} hour ${parts[1].padLeft(2, '0')} min';
-      }
-      else
-      {
+      if (parts[0] != '0') {
         timeString = '${parts[0].padLeft(2, '0')} hour';
       }
-    } else {
-      timeString = '${parts[0].padLeft(2, '0')} hour';
+      if (parts[1] != '00') {
+        timeString =   '$timeString ${parts[1].padLeft(2, '0')} min';
+      }
     }
     return timeString;
   }
@@ -211,7 +206,7 @@ class ReportsViewModel extends BaseViewModel {
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
-          errorString += results.errors![i].message! + "\n";
+          errorString += "${results.errors![i].message!}\n";
         }
         setErrorMsg(errorString);
         setIsErrorReceived(true);
