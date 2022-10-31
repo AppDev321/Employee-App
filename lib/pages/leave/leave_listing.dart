@@ -8,6 +8,7 @@ import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
 import 'package:hnh_flutter/view_models/leave_list_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:hnh_flutter/widget/table_cell_padding.dart';
+import 'package:intl/intl.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../bloc/connected_bloc.dart';
@@ -36,7 +37,7 @@ class _LeavePageState extends State<LeavePage>
     with SingleTickerProviderStateMixin {
   final TextEditingController _dateFilterController = TextEditingController();
   bool _isFirstLoadRunning = false;
-
+  String formattedDate = DateFormat.yMMMEd().format(DateTime.now());
   bool _isErrorInApi = false;
   String? _errorMsg = "";
   List<Leaves> _leaveHistoryList = [];
@@ -190,7 +191,7 @@ class _LeavePageState extends State<LeavePage>
                            height: 10,
                          ),),
                          SliverToBoxAdapter(child:   CustomDateRangeWidget(
-                           labelText: "Select Date",
+                           labelText: formattedDate,
                            onDateChanged: (date) {
                              String startDate =
                              Controller().getConvertedDate(date['start']);

@@ -6,6 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/repository/model/request/claim_shift_history_request.dart';
 import 'package:hnh_flutter/repository/model/response/claimed_shift_list.dart';
 import 'package:hnh_flutter/view_models/shift_list_vm.dart';
+import 'package:intl/intl.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
@@ -28,7 +29,7 @@ class ClaimedShiftList extends StatefulWidget {
 
 class ClaimedShiftListState extends State<ClaimedShiftList>  {
   bool _isFirstLoadRunning = false;
-
+  String formattedDate = DateFormat.yMMMEd().format(DateTime.now());
   bool _isErrorInApi = false;
   String? _errorMsg = "";
   List<Claims> _claimedHistoryList = [];
@@ -122,7 +123,7 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
 
                   Padding(
                     padding: const EdgeInsets.all(4.0),
-                    child: CustomDateRangeWidget(labelText: "Select Date",
+                    child: CustomDateRangeWidget(labelText: formattedDate,
                       onDateChanged: (date)
                     {
 

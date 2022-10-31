@@ -34,7 +34,6 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
 final FirebaseMessaging fm = FirebaseMessaging.instance;
 
-
 String? fcmToken = "";
 String? platFormType = "android";
 

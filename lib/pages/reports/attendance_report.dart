@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
+import 'package:intl/intl.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
@@ -25,6 +26,7 @@ class AttendanceReport extends StatefulWidget {
 }
 
 class AttendanceReportStateful extends State<AttendanceReport> {
+  String formattedDate = DateFormat.yMMMEd().format(DateTime.now());
   int buttonState = 0;
   final TextEditingController _dateFilterController = TextEditingController();
 
@@ -145,7 +147,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                 padding: const EdgeInsets.all(10),
                 child: buttonState == 3
                     ? CustomDateRangeWidget(
-                        labelText: "Select Date",
+                        labelText:formattedDate ,
                         onDateChanged: (date) {
                           String startDate =
                               Controller().getConvertedDate(date['start']);

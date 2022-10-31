@@ -157,7 +157,13 @@ class _Body extends State<Body> {
               text: "Log Out",
               icon: "assets/icons/Log out.svg",
               press: () {
+                // Controller().logoutUser();
+              Controller().showMessageDialog(context,"Are You Sure",
+                  "Are you sure you want to quit ?",
+                  (){
+                Navigator.of(context, rootNavigator: true).pop('dialog');
                 Controller().logoutUser();
+                },);
               },
             ),
           ],
