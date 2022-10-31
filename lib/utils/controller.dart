@@ -12,9 +12,9 @@ import '../pages/login/login.dart';
 class Controller {
   static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
 
-   "http://afjdemo.hnhtechpk.com/api";
+ //  "http://afjdemo.hnhtechpk.com/api";
 
- //  "http://afjdev.hnhtechpk.com/api";
+   "http://afjdev.hnhtechpk.com/api";
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
   static const double leftCardColorMargin = 5;
@@ -107,13 +107,13 @@ class Controller {
 
   Future<void> setBiometericStatus(bool isRemember) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool(this.fingerPrintPref, isRemember);
+    prefs.setBool(fingerPrintPref, isRemember);
   }
 
   Future<bool> getBiometericStatus() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     bool isRemember;
-    isRemember = pref.getBool(this.fingerPrintPref) ?? false;
+    isRemember = pref.getBool(fingerPrintPref) ?? false;
     return isRemember;
   }
 
@@ -123,13 +123,13 @@ class Controller {
 
   Future<void> setRememberLogin(bool isRemember) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool(this.loginRemember, isRemember);
+    prefs.setBool(loginRemember, isRemember);
   }
 
   Future<bool> getRememberLogin() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     bool isRemember;
-    isRemember = pref.getBool(this.loginRemember) ?? false;
+    isRemember = pref.getBool(loginRemember) ?? false;
     return isRemember;
   }
 
@@ -169,17 +169,14 @@ class Controller {
           fontWeight: FontWeight.bold,
         ),
         content: CustomTextWidget(text: msg),
-
-        /* actions: [
+         actions: [
           TextButton(
             child: const Text("Close"),
             onPressed: () {
-
-                    Get.back();
-
-              },
+              Get.back();
+            },
           ),
-        ],*/
+        ],
       ),
     );
   }
@@ -193,7 +190,7 @@ class Controller {
   showAlertDialog(BuildContext context) {
     // Create button
     Widget okButton = ElevatedButton(
-      child: Text("OK"),
+      child: const Text("OK"),
       onPressed: () {
         Navigator.of(context).pop();
       },
@@ -201,8 +198,8 @@ class Controller {
 
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Simple Alert"),
-      content: Text("This is an alert message."),
+      title: const Text("Simple Alert"),
+      content: const Text("This is an alert message."),
       actions: [
         okButton,
       ],
@@ -239,10 +236,11 @@ class Controller {
 
       //return '${today.day} Days ${today.hour} Hours ${today.minute} Min';
 
-      if (today.hour > 0)
+      if (today.hour > 0) {
         return '${today.hour}h, ${today.minute}min';
-      else
+      } else {
         return '${today.minute}min';
+      }
     } catch (e) {
       return '';
     }
@@ -250,7 +248,7 @@ class Controller {
 
   String getServerDateFormated(String serverDate) {
     DateTime requestDateFormate =
-    new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
+    DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
     var dateFormat = DateFormat('dd-MMM-yyyy');
     var startDate =
     dateFormat.format(DateTime.parse(requestDateFormate.toString()));
@@ -258,7 +256,7 @@ class Controller {
   }
 
   String convertStringDate(String jsonDate, String parsingType) {
-    DateTime parseDate = new DateFormat("dd-MMM-yyyy").parse(jsonDate);
+    DateTime parseDate = DateFormat("dd-MMM-yyyy").parse(jsonDate);
     var dateFormat = DateFormat('E MMM dd yyyy');
 
     switch (parsingType) {
