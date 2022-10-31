@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/widget/pie_chart.dart';
+import 'package:intl/intl.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
@@ -151,7 +152,7 @@ class LeaveReportStateful extends State<LeaveReport> {
                     padding: const EdgeInsets.all(10),
                     child: buttonState == 3
                         ? CustomDateRangeWidget(
-                            labelText: "Select Date",
+
                             onDateChanged: (date) {
                               String startDate =
                                   Controller().getConvertedDate(date['start']);

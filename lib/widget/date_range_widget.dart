@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CustomDateRangeWidget extends StatelessWidget
 {
 
    CustomDateRangeWidget({
     Key? key,
-    this.labelText,
     required this.controllerDate,
     required this.onDateChanged,
      required this.onFetchDates,
@@ -18,7 +18,7 @@ class CustomDateRangeWidget extends StatelessWidget
 
    final ValueChanged<Map> onFetchDates;
   final ValueChanged<Map> onDateChanged;
-  final String? labelText;
+  final String labelText =DateFormat.yMMMEd().format(DateTime.now());
    final bool isSearchButtonShow;
   final TextEditingController controllerDate;
    DateTime end = DateTime(  DateTime.now().year, DateTime.now().month, DateTime.now().day + 7);
@@ -30,13 +30,12 @@ class CustomDateRangeWidget extends StatelessWidget
 
      children: [
         TextField(
-              controller: controllerDate,
+          controller: controllerDate,
               decoration: InputDecoration(
               border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.date_range),
           suffixIcon: Icon(Icons.arrow_drop_down),
-          labelText:labelText,
-          ),
+         hintText: labelText),
           onTap: () {
                        dateTimeRangePicker(context);
                 },

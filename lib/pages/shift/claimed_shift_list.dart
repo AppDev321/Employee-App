@@ -29,7 +29,7 @@ class ClaimedShiftList extends StatefulWidget {
 
 class ClaimedShiftListState extends State<ClaimedShiftList>  {
   bool _isFirstLoadRunning = false;
-  String formattedDate = DateFormat.yMMMEd().format(DateTime.now());
+
   bool _isErrorInApi = false;
   String? _errorMsg = "";
   List<Claims> _claimedHistoryList = [];
@@ -123,7 +123,7 @@ class ClaimedShiftListState extends State<ClaimedShiftList>  {
 
                   Padding(
                     padding: const EdgeInsets.all(4.0),
-                    child: CustomDateRangeWidget(labelText: formattedDate,
+                    child: CustomDateRangeWidget(
                       onDateChanged: (date)
                     {
 
