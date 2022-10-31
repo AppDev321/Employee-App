@@ -187,7 +187,7 @@ class Controller {
   void logoutUser() {
     Controller controller = Controller();
     controller.setRememberLogin(false);
-    Get.offAll(() => LoginClass());
+    Get.offAll(() => const LoginClass());
   }
 
   showAlertDialog(BuildContext context) {
@@ -314,7 +314,7 @@ class Controller {
               },
             ),
             TextButton(
-              child: CustomTextWidget(text: "Cancel"),
+              child: const CustomTextWidget(text: "Cancel"),
               onPressed: () {
                 OnPostiveButtonClick(false);
                 Navigator.of(context).pop();
