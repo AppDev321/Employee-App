@@ -12,9 +12,9 @@ import '../pages/login/login.dart';
 class Controller {
   static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
 
-   "http://afjdemo.hnhtechpk.com/api";
+      "http://afjdemo.hnhtechpk.com/api";
 
- //  "http://afjdev.hnhtechpk.com/api";
+  //  "http://afjdev.hnhtechpk.com/api";
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
   static const double leftCardColorMargin = 5;
@@ -169,16 +169,16 @@ class Controller {
           fontWeight: FontWeight.bold,
         ),
         content: CustomTextWidget(text: msg),
-         actions: [
-           TextButton(
-             child: const Text("Yes"),
-             onPressed: callback
-           ),
+        actions: [
+          TextButton(
+              child: const Text("Yes"),
+              onPressed: callback
+          ),
           TextButton(
             child: const Text("No"),
             onPressed: () {
               Navigator.of(context, rootNavigator: true).pop('dialog');
-              },
+            },
           ),
         ],
       ),
@@ -188,7 +188,7 @@ class Controller {
   void logoutUser() {
     Controller controller = Controller();
     controller.setRememberLogin(false);
-    Get.offAll(() => const LoginClass());
+    Get.offAll(() => LoginClass());
   }
 
   showAlertDialog(BuildContext context) {
@@ -315,7 +315,7 @@ class Controller {
               },
             ),
             TextButton(
-              child: const CustomTextWidget(text: "Cancel"),
+              child: CustomTextWidget(text: "Cancel"),
               onPressed: () {
                 OnPostiveButtonClick(false);
                 Navigator.of(context).pop();
