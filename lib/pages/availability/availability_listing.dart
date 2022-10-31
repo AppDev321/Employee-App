@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/pages/availability/view_availability.dart';
+import 'package:intl/intl.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
@@ -230,7 +231,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                                padding: const EdgeInsets.all(10),
                                child: buttonState == 3
                                    ? CustomDateRangeWidget(
-                                 labelText: "Select Date",
+
                                  onDateChanged: (date) {
                                    String startDate = Controller()
                                        .getConvertedDate(date['start']);

@@ -35,9 +35,8 @@ class LeavePage extends StatefulWidget {
 
 class _LeavePageState extends State<LeavePage>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _dateFilterController = TextEditingController();
+  final TextEditingController _dateFilterController = TextEditingController(text:"");
   bool _isFirstLoadRunning = false;
-  String formattedDate = DateFormat.yMMMEd().format(DateTime.now());
   bool _isErrorInApi = false;
   String? _errorMsg = "";
   List<Leaves> _leaveHistoryList = [];
@@ -87,7 +86,6 @@ class _LeavePageState extends State<LeavePage>
         });
       } else {
         _isFirstLoadRunning = false;
-
         _leaveHistoryList = _leaveListViewModel.getLeaveList();
         chartData.clear();
         chartData.add(ChartData(
@@ -122,8 +120,7 @@ class _LeavePageState extends State<LeavePage>
               });
           }
         },
-        child: 
-        
+        child:
         
         Scaffold(
             appBar: AppBar(
@@ -138,8 +135,6 @@ class _LeavePageState extends State<LeavePage>
                   } else if (state is FirebaseMsgReceived) {
                     if (state.screenName == Screen.OVERTIME) {
                       _leaveListViewModel.getLeaveHistoryList(request);
-
-
                       state.screenName = Screen.NULL;
                     }
                     return Container();
@@ -190,8 +185,9 @@ class _LeavePageState extends State<LeavePage>
                              ),SliverToBoxAdapter(child: const SizedBox(
                            height: 10,
                          ),),
-                         SliverToBoxAdapter(child:   CustomDateRangeWidget(
-                           labelText: formattedDate,
+                         SliverToBoxAdapter(child:
+                         CustomDateRangeWidget(
+
                            onDateChanged: (date) {
                              String startDate =
                              Controller().getConvertedDate(date['start']);

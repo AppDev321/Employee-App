@@ -161,7 +161,7 @@ class Controller {
     }
   }
 
-  void showMessageDialog(String msg, String title) {
+  void showMessageDialog(BuildContext context,String msg, String title,VoidCallback? callback) {
     Get.dialog(
       AlertDialog(
         title: CustomTextWidget(
@@ -169,17 +169,18 @@ class Controller {
           fontWeight: FontWeight.bold,
         ),
         content: CustomTextWidget(text: msg),
-
-        /* actions: [
+         actions: [
+           TextButton(
+             child: const Text("Yes"),
+             onPressed: callback
+           ),
           TextButton(
-            child: const Text("Close"),
+            child: const Text("No"),
             onPressed: () {
-
-                    Get.back();
-
+              Navigator.of(context, rootNavigator: true).pop('dialog');
               },
           ),
-        ],*/
+        ],
       ),
     );
   }

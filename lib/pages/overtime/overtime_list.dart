@@ -177,7 +177,7 @@ class _OverTimePageState extends State<OverTimePage>
                               SliverToBoxAdapter(
                                 child:
                                 CustomDateRangeWidget(
-                                labelText: "Select Date",
+
                                 onDateChanged: (date) {
                                   String startDate =
                                   Controller().getConvertedDate(date['start']);

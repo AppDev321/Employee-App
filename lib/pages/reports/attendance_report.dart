@@ -26,11 +26,11 @@ class AttendanceReport extends StatefulWidget {
 }
 
 class AttendanceReportStateful extends State<AttendanceReport> {
-  String formattedDate = DateFormat.yMMMEd().format(DateTime.now());
+
   int buttonState = 0;
   final TextEditingController _dateFilterController = TextEditingController();
 
-// List<String> months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec"];
+  // List<String> months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec"];
   //List<String> years = ["2018","2019","2020","2021","2022","2023","2024","2024"];
 
   bool _isFirstLoadRunning = false;
@@ -147,12 +147,12 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                 padding: const EdgeInsets.all(10),
                 child: buttonState == 3
                     ? CustomDateRangeWidget(
-                        labelText:formattedDate ,
+
                         onDateChanged: (date) {
                           String startDate =
-                              Controller().getConvertedDate(date['start']);
+                          Controller().getConvertedDate(date['start']);
                           String endDate =
-                              Controller().getConvertedDate(date['end']);
+                          Controller().getConvertedDate(date['end']);
                           _dateFilterController.text = "$startDate To $endDate";
                         },
                         onFetchDates: (date) {
@@ -160,7 +160,6 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                             _isFirstLoadRunning = true;
                             _isErrorInApi = false;
                           });
-
                           String startDate =
                               Controller().getConvertedDate(date['start']);
                           String endDate =

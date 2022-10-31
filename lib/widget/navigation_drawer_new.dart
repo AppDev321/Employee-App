@@ -18,7 +18,6 @@ import 'package:hnh_flutter/pages/vehicletab/scan_vehicle_tab.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:provider/provider.dart';
-
 import '../data/drawer_items.dart';
 import '../main.dart';
 import '../pages/attandence/add_attendance.dart';
@@ -33,12 +32,10 @@ import '../utils/controller.dart';
 
 class NavigationDrawer extends StatelessWidget {
   final padding = EdgeInsets.symmetric(horizontal: 0);
-
   Map<String,String> map = {
     'device_type': 'android',
     'fcm_token':fcmToken!
   };
-
 
   @override
   Widget build(BuildContext context) {
@@ -189,10 +186,6 @@ class NavigationDrawer extends StatelessWidget {
     );
   }
 
-
-
-
-
   _buildExpandableContent(  DrawerItem vehicle,BuildContext context) {
     List<Widget> columnContent = [];
 
@@ -210,7 +203,6 @@ class NavigationDrawer extends StatelessWidget {
 
     return columnContent;
   }
-
 
   void selectItem(BuildContext context, int index,String menuItem) {
 
@@ -267,9 +259,6 @@ class NavigationDrawer extends StatelessWidget {
         break;
     }
   }
-
-
-
 
   Widget buildCollapseIcon(BuildContext context, bool isCollapsed) {
     final double size = 52;
