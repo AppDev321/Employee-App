@@ -10,9 +10,11 @@ import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
 import 'package:hnh_flutter/pages/overtime/overtime_list.dart';
 import 'package:hnh_flutter/pages/profile/setting_screen.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
+import 'package:hnh_flutter/repository/model/request/socket_message_model.dart';
 import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
@@ -24,6 +26,7 @@ import '../../repository/model/response/get_shift_list.dart';
 import '../../repository/model/response/report_attendance_response.dart';
 import '../../utils/controller.dart';
 import '../../webservices/APIWebServices.dart';
+import '../../websocket/service/socket_service.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/image_slider.dart';
 import '../../widget/internet_not_available.dart';
@@ -36,9 +39,8 @@ import '../profile/components/profile_pic.dart';
 import '../reports/attendance_report.dart';
 import '../reports/leave_report.dart';
 import '../vehicletab/scan_vehicle_tab.dart';
-import '../videocall/video_call_interface.dart';
 import 'clock_in_out.dart';
-import 'package:visibility_detector/visibility_detector.dart';
+
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
 
@@ -60,7 +62,7 @@ class _DashboardState extends State<Dashboard> {
   User userDashboard = User();
   String profileImageUrl = "";
   Attendance? attendance = null;
-  bool isCheckInOut=false;
+  bool isCheckInOut = false;
 
   Map<String, String> map = {
     'device_type': platFormType!.toLowerCase(),
@@ -71,8 +73,12 @@ class _DashboardState extends State<Dashboard> {
   List<Events> eventsList = [];
   bool IsCheckIn = false;
 
+  ChatService chatService = ChatService(Controller.webSocketURL);
+
   @override
   void initState() {
+    chatService.listenWebSocketMessage();
+
     // TODO: implement initState
     super.initState();
 
@@ -113,7 +119,7 @@ class _DashboardState extends State<Dashboard> {
           dashboardStat = _dashBoardViewModel.getDashboardStat();
           userDashboard = _dashBoardViewModel.getUserObject();
           userDashboard.profileURL ??= "";
-          eventsList= _dashBoardViewModel.getEventsList();
+          eventsList = _dashBoardViewModel.getEventsList();
           profileImageUrl = userDashboard.profileURL.toString();
           Controller().setUserProfilePic(profileImageUrl);
           if (dashboardStat != null) {
@@ -137,7 +143,6 @@ class _DashboardState extends State<Dashboard> {
     });
 
     setState(() {
-
       listStats.add(DashBoardGrid("0", "Total Shifts",
           "assets/icons/shifts_icon.svg", claimedShiftApprovedColor));
       listStats.add(DashBoardGrid(
@@ -147,11 +152,8 @@ class _DashboardState extends State<Dashboard> {
     });
 
     setState(() {
-
-      listQuickAccess.add(DashBoardGrid("5", "Video Chat",
-          "assets/icons/leave_icon.svg", Colors.blueAccent));
-
-
+      listQuickAccess.add(DashBoardGrid(
+          "5", "Video Chat", "assets/icons/leave_icon.svg", Colors.blueAccent));
 
       listQuickAccess.add(DashBoardGrid("1", "Leave Request",
           "assets/icons/leave_icon.svg", claimedShiftApprovedColor));
@@ -186,62 +188,56 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Consumer<ThemeModel>(
         builder: (context, ThemeModel themeNotifier, child) {
-          var colorText = themeNotifier.isDark ? blackThemeTextColor : primaryColor;
-          return
-            VisibilityDetector(   key: const Key('Dashboard-widget'),
-              onVisibilityChanged: (VisibilityInfo info) {
-                var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
+      var colorText = themeNotifier.isDark ? blackThemeTextColor : primaryColor;
+      return VisibilityDetector(
+        key: const Key('Dashboard-widget'),
+        onVisibilityChanged: (VisibilityInfo info) {
+          var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
 
-                if (isVisibleScreen) {
-
-                    _dashBoardViewModel.getDashBoardData();
-
-                }
-              },
-              child: Scaffold(
+          if (isVisibleScreen) {
+            _dashBoardViewModel.getDashBoardData();
+          }
+        },
+        child: Scaffold(
           drawer: NavigationDrawer(),
           appBar: AppBar(
-              iconTheme: IconThemeData(color: colorText),
-              elevation: 0,
-              titleSpacing: 10,
-              backgroundColor:  themeNotifier.isDark ? Colors.black : Colors.white,
-              title: Align(
-                alignment: Alignment.centerLeft,
-                child: CustomTextWidget(
-                  text: Controller().greeting(),
-                  size: 22,
-                  color: colorText,
-                ),
-          ),
-          actions: <Widget>[
+            iconTheme: IconThemeData(color: colorText),
+            elevation: 0,
+            titleSpacing: 10,
+            backgroundColor: themeNotifier.isDark ? Colors.black : Colors.white,
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: CustomTextWidget(
+                text: Controller().greeting(),
+                size: 22,
+                color: colorText,
+              ),
+            ),
+            actions: <Widget>[
               Row(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-
                   Container(
                       child: IconButton(
-                          icon: Icon(Icons.qr_code,
-                              color: colorText,
-                              size: 22),
+                          icon: Icon(Icons.qr_code, color: colorText, size: 22),
                           onPressed: () {
                             Get.to(() => const VehicleTabScan());
-                          })
-                  ),
+                          })),
                   Container(
                       child: IconButton(
-                          icon: Icon(themeNotifier.isDark
-                              ? Icons.nightlight_round
-                              : Icons.wb_sunny,
+                          icon: Icon(
+                              themeNotifier.isDark
+                                  ? Icons.nightlight_round
+                                  : Icons.wb_sunny,
                               size: 22),
                           onPressed: () {
                             themeNotifier.isDark
                                 ? themeNotifier.isDark = false
                                 : themeNotifier.isDark = true;
                             _refreshIndicatorKey.currentState?.show();
-                          })
-                  ),
+                          })),
                   Container(
                     child: NamedIcon(
                       onTap: () => Get.to(() => const NotificationList()),
@@ -250,13 +246,12 @@ class _DashboardState extends State<Dashboard> {
                       color: colorText,
                     ),
                   ),
-
                 ],
               )
-          ],
-        ),
-        body: Column(
-          children: [
+            ],
+          ),
+          body: Column(
+            children: [
               BlocBuilder<ConnectedBloc, ConnectedState>(
                   builder: (context, state) {
                 if (state is ConnectedFailureState) {
@@ -273,11 +268,11 @@ class _DashboardState extends State<Dashboard> {
               }),
               Expanded(
                 child: RefreshIndicator(
-                  key:_refreshIndicatorKey,
+                  key: _refreshIndicatorKey,
                   onRefresh: _dashBoardViewModel.getDashBoardData,
                   child: SingleChildScrollView(
                     child: Padding(
-                      padding:const EdgeInsets.fromLTRB(15, 10, 25, 25),
+                      padding: const EdgeInsets.fromLTRB(15, 10, 25, 25),
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width,
                         child: Column(
@@ -317,76 +312,79 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                               ],
                             ),
-                            isCheckInOut == true ?
-                            Column(crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                CustomTextWidget(
-                                    text: "Attendance",
-                                    size: 18,
-                                    color: primaryColor),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                ClockInOutWidget(attendanceItem: attendance!,isCheckOut:false),
-                              ],
-                             ):
-                            attendance == null
+                            isCheckInOut == true
                                 ? Column(
-                              children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: CustomTextWidget(
-                                          text: "Mark Attendance",
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomTextWidget(
+                                          text: "Attendance",
                                           size: 18,
                                           color: primaryColor),
-                                    ),
-                                    ElevatedButton.icon(
-                                      onPressed: () =>
-                                          Get.to(() =>  AddAttendance(
-                                            attendanceType: 0,
-                                          )),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      ClockInOutWidget(
+                                          attendanceItem: attendance!,
+                                          isCheckOut: false),
+                                    ],
+                                  )
+                                : attendance == null
+                                    ? Column(
+                                        children: [
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: CustomTextWidget(
+                                                    text: "Mark Attendance",
+                                                    size: 18,
+                                                    color: primaryColor),
+                                              ),
+                                              ElevatedButton.icon(
+                                                onPressed: () =>
+                                                    Get.to(() => AddAttendance(
+                                                          attendanceType: 0,
+                                                        )),
 
-                                      icon: const Icon(
-                                          Icons.qr_code_outlined),
-                                      label: const Text(
-                                          "Check In"), //label text
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            )
-                                : Column(crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                CustomTextWidget(
-                                    text: "Attendance",
-                                    size: 18,
-                                    color: primaryColor),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                ClockInOutWidget(attendanceItem: attendance!),
-                              ],
-                            ),
-
-
+                                                icon: const Icon(
+                                                    Icons.qr_code_outlined),
+                                                label: const Text(
+                                                    "Check In"), //label text
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    : Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          CustomTextWidget(
+                                              text: "Attendance",
+                                              size: 18,
+                                              color: primaryColor),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          ClockInOutWidget(
+                                              attendanceItem: attendance!),
+                                        ],
+                                      ),
                             dashBoardShift != null
                                 ? Column(
                                     children: [
-
-
                                       const SizedBox(
                                         height: 20,
                                       ),
@@ -408,11 +406,11 @@ class _DashboardState extends State<Dashboard> {
                                     ],
                                   )
                                 : Container(),
-
                             eventsList.isNotEmpty
                                 ? Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const SizedBox(
                                         height: 10,
@@ -505,10 +503,10 @@ class _DashboardState extends State<Dashboard> {
                   ),
                 ),
               ),
-          ],
+            ],
+          ),
         ),
-      ),
-            );
+      );
     });
   }
 
@@ -570,7 +568,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            const  SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Row(
@@ -580,7 +578,7 @@ class _DashboardState extends State<Dashboard> {
                   color: Colors.white,
                   width: 22,
                 ),
-                const    SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 CustomTextWidget(
@@ -590,7 +588,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            const  SizedBox(
+            const SizedBox(
               height: 10,
             ),
           ],
@@ -619,12 +617,12 @@ class _DashboardState extends State<Dashboard> {
           clipBehavior: Clip.antiAlias,
           child: Container(
             width: Get.mediaQuery.size.width,
-            decoration:const BoxDecoration(
+            decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))),
-            margin:const EdgeInsets.only(left: Controller.leftCardColorMargin),
-            padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            margin: const EdgeInsets.only(left: Controller.leftCardColorMargin),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -643,7 +641,7 @@ class _DashboardState extends State<Dashboard> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const  SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Expanded(
                   child: CustomTextWidget(
                     text: item.label.toString(),
@@ -669,17 +667,23 @@ class _DashboardState extends State<Dashboard> {
                   ));
               break;
             case 2:
-              Get.to(() =>const AddOverTime());
+              Get.to(() => const AddOverTime());
               break;
             case 3:
-              Get.to(() =>const AttendanceReport());
+              Get.to(() => const AttendanceReport());
               break;
             case 4:
               Get.to(() => SettingScreen());
               break;
 
             case 5:
-              Get.to(() => VideoCallView());
+              //  Get.to(() => VideoCallView());
+              chatService.sendMessageToWebSocket(SocketMessageModel(
+                  type: "is-client-ready",
+                  sendTo: "1",
+                  data: 0,
+                  callerName: ""));
+
               break;
           }
         },
@@ -697,8 +701,9 @@ class _DashboardState extends State<Dashboard> {
                   borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(Controller.roundCorner),
                       topRight: Radius.circular(Controller.roundCorner))),
-              margin:const EdgeInsets.only(left: Controller.leftCardColorMargin),
-              padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              margin:
+                  const EdgeInsets.only(left: Controller.leftCardColorMargin),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -707,7 +712,7 @@ class _DashboardState extends State<Dashboard> {
                     color: Colors.white,
                     width: 22,
                   ),
-                  const  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   CustomTextWidget(
                     text: item.label.toString(),
                     color: Colors.white,
@@ -718,10 +723,6 @@ class _DashboardState extends State<Dashboard> {
               ),
             )));
   }
-
-
-
-
 }
 
 class DashBoardGrid {

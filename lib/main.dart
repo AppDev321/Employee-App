@@ -16,6 +16,7 @@ import 'package:hnh_flutter/provider/theme_provider.dart';
 import 'package:hnh_flutter/view_models/login_view_model.dart';
 import 'package:hnh_flutter/view_models/shift_list_vm.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
+import 'package:hnh_flutter/websocket/service/socket_service.dart';
 import 'package:provider/provider.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 import 'bloc/connected_bloc.dart';
@@ -118,6 +119,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
+
+
     Widget example5 = SplashScreenView(
       navigateRoute: FutureBuilder<bool>(
           future: checkPassPreference(),

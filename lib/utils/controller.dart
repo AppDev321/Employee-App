@@ -15,6 +15,9 @@ class Controller {
       "http://afjdemo.hnhtechpk.com/api";
 
   //  "http://afjdev.hnhtechpk.com/api";
+
+  static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=11";
+
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
   static const double leftCardColorMargin = 5;
