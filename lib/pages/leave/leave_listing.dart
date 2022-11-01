@@ -8,7 +8,6 @@ import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
 import 'package:hnh_flutter/view_models/leave_list_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:hnh_flutter/widget/table_cell_padding.dart';
-import 'package:intl/intl.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../bloc/connected_bloc.dart';
@@ -35,7 +34,8 @@ class LeavePage extends StatefulWidget {
 
 class _LeavePageState extends State<LeavePage>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _dateFilterController = TextEditingController(text:"");
+  final TextEditingController _dateFilterController =
+      TextEditingController(text: "");
   bool _isFirstLoadRunning = false;
   bool _isErrorInApi = false;
   String? _errorMsg = "";
@@ -62,7 +62,7 @@ class _LeavePageState extends State<LeavePage>
     });
 
     _leaveListViewModel = LeaveListViewModel();
-    var now =  DateTime.now();
+    var now = DateTime.now();
     String formattedDate = Controller().getConvertedDate(now);
 
     //  var request = ClaimShiftHistoryRequest();
@@ -113,16 +113,14 @@ class _LeavePageState extends State<LeavePage>
           var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
 
           if (isVisibleScreen) {
-              setState(() {
-                _isFirstLoadRunning = true;
-                _isErrorInApi = false;
-                _leaveListViewModel.getLeaveHistoryList(request);
-              });
+            setState(() {
+              _isFirstLoadRunning = true;
+              _isErrorInApi = false;
+              _leaveListViewModel.getLeaveHistoryList(request);
+            });
           }
         },
-        child:
-        
-        Scaffold(
+        child: Scaffold(
             appBar: AppBar(
               title: const Text(menuLeave),
             ),
@@ -147,126 +145,136 @@ class _LeavePageState extends State<LeavePage>
                     padding: const EdgeInsets.all(6.0),
                     child: Column(
                       children: [
+                        Expanded(
+                            child: NestedScrollView(
+                          floatHeaderSlivers: true,
+                          headerSliverBuilder: (context, Innerbox) => [
+                            SliverToBoxAdapter(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const CustomTextWidget(
+                                    text: "Add Leave",
+                                    size: 20,
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      var leavesType =
+                                          _leaveListViewModel.getLeaveTypes();
+                                      if (leavesType.isNotEmpty) {
+                                        Get.to(() =>
+                                            AddLeave(leaveTypes: leavesType));
+                                      } else {
+                                        Controller().showToastMessage(
+                                            context, "No leave types found");
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: CircleBorder(),
+                                      primary: primaryColor,
+                                      onPrimary: Colors.black,
+                                    ),
+                                    child: const Icon(Icons.add,
+                                        color: Colors.white),
+                                  )
+                                ],
+                              ),
+                            ),
+                            SliverToBoxAdapter(
+                              child: const SizedBox(
+                                height: 10,
+                              ),
+                            ),
+                            SliverToBoxAdapter(
+                              child: CustomDateRangeWidget(
+                                onDateChanged: (date) {
+                                  String startDate = Controller()
+                                      .getConvertedDate(date['start']);
+                                  String endDate = Controller()
+                                      .getConvertedDate(date['end']);
+                                  _dateFilterController.text =
+                                      "$startDate To $endDate";
+                                },
+                                onFetchDates: (date) {
+                                  String startDate = Controller()
+                                      .getConvertedDate(date['start']);
+                                  String endDate = Controller()
+                                      .getConvertedDate(date['end']);
+                                  setState(() {
+                                    //  var request = ClaimShiftHistoryRequest();
+                                    request = ClaimShiftHistoryRequest();
+                                    request.start_date = startDate;
+                                    request.end_date = endDate;
+                                    _leaveHistoryList.clear();
+                                    _isFirstLoadRunning = true;
+                                    _isErrorInApi = false;
+                                    _leaveListViewModel
+                                        .getLeaveHistoryList(request);
+                                  });
+                                },
+                                controllerDate: _dateFilterController,
+                                isSearchButtonShow: false,
+                              ),
+                            ),
+                            SliverToBoxAdapter(
+                              child: _leaveHistoryList.isNotEmpty
+                                  ? Column(
+                                      children: [
+                                        Container(
+                                            height:
+                                                Get.mediaQuery.size.width / 3,
+                                            child: DoughnutChart(
+                                                chartData: chartData)),
+                                        const SizedBox(height: 5)
+                                      ],
+                                    )
+                                  : const SizedBox(height: 10),
+                            )
+                          ],
+                          body: Column(
+                            children: [
+                              CustomFilterTab(
+                                controller: _tabController,
+                                tabs: ConstantData.filterTabs,
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              _isFirstLoadRunning
+                                  ? const Expanded(
+                                      child: Center(
+                                          child: CircularProgressIndicator()))
+                                  : _isErrorInApi
+                                      ? Expanded(
+                                          child: ErrorMessageWidget(
+                                              label: _errorMsg!))
+                                      : Expanded(
+                                          child: _leaveHistoryList.isNotEmpty
+                                              ? TabBarView(
+                                                  controller: _tabController,
+                                                  children: [
+                                                    //All
+                                                    listContainer(
+                                                        _leaveHistoryList),
 
-                       Expanded(
+                                                    listContainer(getFilterList(
+                                                        _leaveHistoryList,
+                                                        ConstantData.approved)),
 
-                           child: NestedScrollView(
-
-                             floatHeaderSlivers: true,
-                             headerSliverBuilder: (context,Innerbox)=>[
-                         SliverToBoxAdapter(child:  Row(
-                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                           children: [
-                             const CustomTextWidget(
-                               text: "Add Leave",
-                               size: 20,
-                             ),
-                             ElevatedButton(
-                               onPressed: () {
-                                 var leavesType =
-                                 _leaveListViewModel.getLeaveTypes();
-                                 if (leavesType.isNotEmpty) {
-                                   Get.to(
-                                           () => AddLeave(leaveTypes: leavesType));
-                                 } else {
-                                   Controller().showToastMessage(
-                                       context, "No leave types found");
-                                 }
-                               },
-                               style: ElevatedButton.styleFrom(
-                                 shape: CircleBorder(),
-                                 primary: primaryColor,
-                                 onPrimary: Colors.black,
-                               ),
-                               child:const Icon(Icons.add, color: Colors.white),
-                             )
-                           ],
-                         ),
-                             ),SliverToBoxAdapter(child: const SizedBox(
-                           height: 10,
-                         ),),
-                         SliverToBoxAdapter(child:
-                         CustomDateRangeWidget(
-
-                           onDateChanged: (date) {
-                             String startDate =
-                             Controller().getConvertedDate(date['start']);
-                             String endDate =
-                             Controller().getConvertedDate(date['end']);
-                             _dateFilterController.text =
-                             "$startDate To $endDate";
-                           },
-                           onFetchDates: (date) {
-                             String startDate =
-                             Controller().getConvertedDate(date['start']);
-                             String endDate =
-                             Controller().getConvertedDate(date['end']);
-                             setState(() {
-                               //  var request = ClaimShiftHistoryRequest();
-                               request = ClaimShiftHistoryRequest();
-                               request.start_date = startDate;
-                               request.end_date = endDate;
-                               _leaveHistoryList.clear();
-                               _isFirstLoadRunning = true;
-                               _isErrorInApi = false;
-                               _leaveListViewModel.getLeaveHistoryList(request);
-                             });
-                           },
-                           controllerDate: _dateFilterController,
-                           isSearchButtonShow: false,
-                         ),
-                             ),
-                         SliverToBoxAdapter(child: _leaveHistoryList.isNotEmpty
-                             ? Column(
-                           children: [
-                             Container(
-                                 height: Get.mediaQuery.size.width / 3,
-                                 child:
-                                 DoughnutChart(chartData: chartData)),
-                             const SizedBox(height: 5)
-                           ],
-                         )
-                             : const SizedBox(height: 10),)
-                       ], body:
-                           Column(children: [  CustomFilterTab(
-                             controller: _tabController,
-                             tabs: ConstantData.filterTabs,
-                           ),
-                             const SizedBox(
-                               height: 15,
-                             ),
-
-                             _isFirstLoadRunning
-                                 ? const Expanded(
-                                 child:
-                                 Center(child: CircularProgressIndicator()))
-                                 : _isErrorInApi
-                                 ? Expanded(
-                                 child:
-                                 ErrorMessageWidget(label: _errorMsg!))
-                                 : Expanded(
-                                 child: _leaveHistoryList.isNotEmpty
-                                     ? TabBarView(
-                                   controller: _tabController,
-                                   children: [
-                                     //All
-                                     listContainer(_leaveHistoryList),
-
-                                     listContainer(getFilterList(
-                                         _leaveHistoryList,
-                                         ConstantData.approved)),
-
-                                     listContainer(getFilterList(
-                                         _leaveHistoryList,
-                                         ConstantData.pending)),
-                                     listContainer(getFilterList(
-                                         _leaveHistoryList,
-                                         ConstantData.rejected)),
-                                   ],
-                                 )
-                                     : const ErrorMessageWidget(
-                                     label: "No Leaves Found"))], ),))
-
+                                                    listContainer(getFilterList(
+                                                        _leaveHistoryList,
+                                                        ConstantData.pending)),
+                                                    listContainer(getFilterList(
+                                                        _leaveHistoryList,
+                                                        ConstantData.rejected)),
+                                                  ],
+                                                )
+                                              : const ErrorMessageWidget(
+                                                  label: "No Leaves Found"))
+                            ],
+                          ),
+                        ))
                       ],
                     ),
                   ),
@@ -314,18 +322,17 @@ class _LeavePageState extends State<LeavePage>
         child: Container(
             decoration: BoxDecoration(
                 color: cardThemeBaseColor,
-                borderRadius:const BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                     bottomRight: Radius.circular(Controller.roundCorner),
                     topRight: Radius.circular(Controller.roundCorner))),
-            margin:const EdgeInsets.only(left: Controller.leftCardColorMargin),
-            padding:const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            margin: const EdgeInsets.only(left: Controller.leftCardColorMargin),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Column(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
                     children: [
                       CustomTextWidget(
                         text: item.leaveType,
@@ -340,31 +347,30 @@ class _LeavePageState extends State<LeavePage>
                               : item.status == ConstantData.approved
                                   ? claimedShiftApprovedColor
                                   : claimedShiftRejectColor),
-
-                      item.status == ConstantData.pending ?
-                      InkWell(
-                        onTap: () {
-                          Controller().showConfirmationMsgDialog(
-                              context,
-                              "Confirm",
-                              "Are you sure you want to delete?",
-                              "Yes", (value) {
-                            if (value) {
-                              setState(() {
-                                _leaveHistoryList.remove(item);
-                                _leaveListViewModel.deleteOverTimeRequest(item.id.toString());
-                              });
-
-                            }
-                          });
-                        },
-                        child: TextColorContainer(
-                          label: "Delete",
-                          color: claimedShiftRejectColor,
-                          icon: Icons.delete,
-                        ),
-                      )
-                          :const Center(),
+                      item.status == ConstantData.pending
+                          ? InkWell(
+                              onTap: () {
+                                Controller().showConfirmationMsgDialog(
+                                    context,
+                                    "Confirm",
+                                    "Are you sure you want to delete?",
+                                    "Yes", (value) {
+                                  if (value) {
+                                    setState(() {
+                                      _leaveHistoryList.remove(item);
+                                      _leaveListViewModel.deleteOverTimeRequest(
+                                          item.id.toString());
+                                    });
+                                  }
+                                });
+                              },
+                              child: TextColorContainer(
+                                label: "Delete",
+                                color: claimedShiftRejectColor,
+                                icon: Icons.delete,
+                              ),
+                            )
+                          : const Center(),
                     ],
                   ),
                 ),
@@ -376,11 +382,12 @@ class _LeavePageState extends State<LeavePage>
                     color: cardThemeBaseColor,
                     borderRadius: BorderRadius.circular(0),
                   ),
-                  padding:const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Column(
                     children: [
                       containerCard(item),
-                      const   SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       item.status == ConstantData.approved ||
@@ -390,7 +397,7 @@ class _LeavePageState extends State<LeavePage>
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  const   CustomTextWidget(
+                                  const CustomTextWidget(
                                     text: "Managed By:",
                                     fontWeight: FontWeight.bold,
                                   ),

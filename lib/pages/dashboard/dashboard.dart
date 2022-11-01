@@ -36,6 +36,7 @@ import '../profile/components/profile_pic.dart';
 import '../reports/attendance_report.dart';
 import '../reports/leave_report.dart';
 import '../vehicletab/scan_vehicle_tab.dart';
+import '../videocall/video_call_interface.dart';
 import 'clock_in_out.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 class Dashboard extends StatefulWidget {
@@ -136,6 +137,7 @@ class _DashboardState extends State<Dashboard> {
     });
 
     setState(() {
+
       listStats.add(DashBoardGrid("0", "Total Shifts",
           "assets/icons/shifts_icon.svg", claimedShiftApprovedColor));
       listStats.add(DashBoardGrid(
@@ -145,6 +147,12 @@ class _DashboardState extends State<Dashboard> {
     });
 
     setState(() {
+
+      listQuickAccess.add(DashBoardGrid("5", "Video Chat",
+          "assets/icons/leave_icon.svg", Colors.blueAccent));
+
+
+
       listQuickAccess.add(DashBoardGrid("1", "Leave Request",
           "assets/icons/leave_icon.svg", claimedShiftApprovedColor));
       listQuickAccess.add(DashBoardGrid("2", "Overtime Request",
@@ -668,6 +676,10 @@ class _DashboardState extends State<Dashboard> {
               break;
             case 4:
               Get.to(() => SettingScreen());
+              break;
+
+            case 5:
+              Get.to(() => VideoCallView());
               break;
           }
         },

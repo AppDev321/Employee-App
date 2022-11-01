@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:hnh_flutter/data/drawer_items.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/view_models/shift_list_vm.dart';
@@ -51,7 +50,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
 
     _shiftListViewModel = ShiftListViewModel();
 
-    var now =  DateTime.now();
+    var now = DateTime.now();
     String formattedDate = Controller().getConvertedDate(now);
     _shiftListViewModel.getShiftList(formattedDate);
 
@@ -110,7 +109,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
     contextBuild = context;
     return Scaffold(
       appBar: AppBar(
-        title:const Text(menuShift),
+        title: const Text(menuShift),
       ),
       body: Column(
         children: [
@@ -119,7 +118,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
               return const InternetNotAvailable();
             } else if (state is FirebaseMsgReceived) {
               if (state.screenName == Screen.SHIFT) {
-                var now =  DateTime.now();
+                var now = DateTime.now();
                 String formattedDate = Controller().getConvertedDate(now);
                 _shiftListViewModel.getShiftList(formattedDate);
                 state.screenName = Screen.NULL;
@@ -133,67 +132,74 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
           Expanded(
             child: NestedScrollView(
                 floatHeaderSlivers: true,
-                headerSliverBuilder: (context,InnerBox)=>[
-                    SliverToBoxAdapter(child:
-                CustomCalanderWidget(
-                  controller: _controller,
-                  onChanged: (String value) {
-                    setState(() {
-                      _shiftList.clear();
-                      _openShiftList.clear();
-                      _isFirstLoadRunning = true;
-                      _isErrorInApi = false;
-                      _shiftListViewModel.getShiftList(value);
-                    });
-                  },
-                ),)
-                ], body: Column(children: [
-              _isFirstLoadRunning
-                  ? const Expanded(child: Center(child: CircularProgressIndicator()))
-                  : _isErrorInApi
-                  ? Expanded(child: ErrorMessageWidget(label: _errorMsg!))
-                  : Expanded(
-                flex: 1,
-                child: Container(
-                  child: Column(
-                    children: [
-                      Container(
-                        color: primaryColor,
-                        child: TabBar(
-                          controller: _tabController,
-                          indicatorColor: Colors.white,
-                          labelColor: cardThemeBaseColor,
-                          unselectedLabelColor: Colors.white54,
-                          tabs: const [
-                            Tab(text: 'My Shift'),
-                            Tab(text: 'Open Shift')
-                          ],
+                headerSliverBuilder: (context, InnerBox) => [
+                      SliverToBoxAdapter(
+                        child: CustomCalanderWidget(
+                          controller: _controller,
+                          onChanged: (String value) {
+                            setState(() {
+                              _shiftList.clear();
+                              _openShiftList.clear();
+                              _isFirstLoadRunning = true;
+                              _isErrorInApi = false;
+                              _shiftListViewModel.getShiftList(value);
+                            });
+                          },
                         ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: TabBarView(
-                            controller: _tabController,
-                            children: [
-                              _shiftList.isNotEmpty
-                                  ? showListData(
-                                  context, _shiftList, false)
-                                  : const ErrorMessageWidget(
-                                  label: "No Shift Found"),
-                              _openShiftList.isNotEmpty
-                                  ? showListData(
-                                  context, _openShiftList, true)
-                                  : const ErrorMessageWidget(
-                                  label: "No Open  Shift Found")
-                            ],
-                          ),
-                        ),
-                      ),
+                      )
                     ],
-                  ),
-                ),
-              ),
-            ],)),
+                body: Column(
+                  children: [
+                    _isFirstLoadRunning
+                        ? const Expanded(
+                            child: Center(child: CircularProgressIndicator()))
+                        : _isErrorInApi
+                            ? Expanded(
+                                child: ErrorMessageWidget(label: _errorMsg!))
+                            : Expanded(
+                                flex: 1,
+                                child: Container(
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        color: primaryColor,
+                                        child: TabBar(
+                                          controller: _tabController,
+                                          indicatorColor: Colors.white,
+                                          labelColor: cardThemeBaseColor,
+                                          unselectedLabelColor: Colors.white54,
+                                          tabs: const [
+                                            Tab(text: 'My Shift'),
+                                            Tab(text: 'Open Shift')
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          child: TabBarView(
+                                            controller: _tabController,
+                                            children: [
+                                              _shiftList.isNotEmpty
+                                                  ? showListData(context,
+                                                      _shiftList, false)
+                                                  : const ErrorMessageWidget(
+                                                      label: "No Shift Found"),
+                                              _openShiftList.isNotEmpty
+                                                  ? showListData(context,
+                                                      _openShiftList, true)
+                                                  : const ErrorMessageWidget(
+                                                      label:
+                                                          "No Open  Shift Found")
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                  ],
+                )),
           )
 
           // CustomCalanderWidget(
@@ -208,7 +214,6 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
           //     });
           //   },
           // ),
-
         ],
       ),
     );
@@ -218,7 +223,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
       BuildContext context, List<Shifts> shifts, bool openShiftData) {
     return RefreshIndicator(
       onRefresh: () {
-        var now =  DateTime.now();
+        var now = DateTime.now();
         String formattedDate = Controller().getConvertedDate(now);
         return _shiftListViewModel.getShiftList(formattedDate);
       },
@@ -244,7 +249,7 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                     color: cardThemeBaseColor,
-                    borderRadius:const BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                         bottomRight: Radius.circular(Controller.roundCorner),
                         topRight: Radius.circular(Controller.roundCorner))),
                 margin: EdgeInsets.only(left: Controller.leftCardColorMargin),
@@ -258,8 +263,6 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
 
   Widget indexBuilder(BuildContext context, int index, List<Shifts> shifts,
       bool openShiftData) {
-
-
     final data = shifts[index];
     return Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),

@@ -250,8 +250,8 @@ class NavigationDrawer extends StatelessWidget {
         break;
 
       case "Logout":
-        Controller().showMessageDialog(context,"Are You Sure",
-            "Are you sure you want to quit ?",
+        Controller().showMessageDialog(context,
+          "Are you sure you want to logout ?","Logout",
                 (){
               Navigator.of(context, rootNavigator: true).pop('dialog');
               Controller().logoutUser();
