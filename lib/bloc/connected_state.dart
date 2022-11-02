@@ -12,3 +12,11 @@ class FirebaseMsgReceived extends ConnectedState {
   Screen screenName;
   FirebaseMsgReceived({required this.screenName});
 }
+
+class SocketMessage extends ConnectedState{
+  SocketMessageModel msg ;
+  SocketService server;
+  SocketMessage({required this.msg,required this.server});
+}
+
+

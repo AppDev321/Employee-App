@@ -14,3 +14,10 @@ class OnFirebaseNotificationReceive extends ConnectedEvent{
 
 
 
+class SocketMessageReceived extends ConnectedEvent{
+  SocketMessageModel msg ;
+  SocketService server;
+ SocketMessageReceived({required this.msg,required this.server});
+}
+
+

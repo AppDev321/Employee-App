@@ -73,12 +73,10 @@ class _DashboardState extends State<Dashboard> {
   List<Events> eventsList = [];
   bool IsCheckIn = false;
 
-  ChatService chatService = ChatService(Controller.webSocketURL);
+   SocketService? chatService = null;
 
   @override
   void initState() {
-    chatService.listenWebSocketMessage();
-
     // TODO: implement initState
     super.initState();
 
@@ -121,6 +119,13 @@ class _DashboardState extends State<Dashboard> {
           userDashboard.profileURL ??= "";
           eventsList = _dashBoardViewModel.getEventsList();
           profileImageUrl = userDashboard.profileURL.toString();
+
+
+
+          chatService = SocketService(
+              Controller.webSocketURL + userDashboard.id.toString());
+          getChatListner(chatService);
+
           Controller().setUserProfilePic(profileImageUrl);
           if (dashboardStat != null) {
             listStats.clear();
@@ -182,7 +187,22 @@ class _DashboardState extends State<Dashboard> {
             }),
       },
     );
+
+
   }
+
+
+  getChatListner(SocketService? chatService )
+  {
+    if (chatService != null) {
+        chatService.listenWebSocketMessage((messageModel) {
+        print("Message From:${messageModel.toJson()}");
+      }, (msg) {
+        print("Eror From:$msg");
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -678,12 +698,13 @@ class _DashboardState extends State<Dashboard> {
 
             case 5:
               //  Get.to(() => VideoCallView());
-              chatService.sendMessageToWebSocket(SocketMessageModel(
+            if(chatService != null) {
+              chatService?.sendMessageToWebSocket(SocketMessageModel(
                   type: "is-client-ready",
                   sendTo: "1",
                   data: 0,
                   callerName: ""));
-
+            }
               break;
           }
         },

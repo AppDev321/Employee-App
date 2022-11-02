@@ -80,18 +80,21 @@ class Data {
 }
 
 class User {
+  int? id;
   String? name;
   String? profileURL;
 
-  User({this.name,this.profileURL});
+  User({this.id,this.name,this.profileURL});
 
   User.fromJson(Map<String, dynamic> json) {
+    id= json['id'];
     name = json['name'];
     profileURL =json['profile_url'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['name'] = this.name;
     data['profile_url']=this.profileURL;
     return data;

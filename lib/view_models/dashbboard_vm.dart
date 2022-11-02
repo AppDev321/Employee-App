@@ -72,6 +72,11 @@ class DashBoardViewModel extends BaseViewModel {
         dashBoardShift = results.data?.shift;
         dashboardStat = results.data?.stats;
         userObject = results.data!.user!;
+
+
+
+
+
         attendance = results.data?.attendance;
         if (results.data!.checkedIn == false && results.data?.attendance != null)
         {

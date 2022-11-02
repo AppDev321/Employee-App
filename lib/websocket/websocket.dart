@@ -8,8 +8,6 @@ class WebSocket {
   late IOWebSocketChannel channel;
   late String webSocketUrl;
 
-  //String webSocket = "ws://192.168.18.69:6001/mobile?token=11";
-
   WebSocket(this.webSocketUrl) {
     channel = IOWebSocketChannel.connect(webSocketUrl);
   }
@@ -18,16 +16,20 @@ class WebSocket {
     channel.sink.close(status.goingAway);
   }
 
-  void listenForMessages() {
+  void listenForMessages(void Function(SocketMessageModel messgeData) onData,
+      {required Function(String msg) onError}) {
     channel.stream.listen(
       (event) {
+
         Map<String, dynamic> mapData = json.decode(event);
         var webSocketServerResponse = SocketMessageModel.fromJson(mapData);
-        print('Socket Message Received: ${webSocketServerResponse.toJson()}');
+
+        onData(webSocketServerResponse);
       },
       onDone: () {},
       onError: (err) {
-        print("Socket Message parsing issue: $err");
+
+        onError(err);
       },
     );
   }
