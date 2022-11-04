@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +12,13 @@ import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
 
 class Controller {
-  static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
-"http://192.168.18.69:8000/api";
+  static const String appBaseURL = "http://vmi808920.contaboserver.net/api";
+//    "http://192.168.18.69:8000/api";
      // "http://afjdemo.hnhtechpk.com/api";
 
   //  "http://afjdev.hnhtechpk.com/api";
 
-  static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
+  static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/mobile?token=";
 
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
@@ -31,6 +33,10 @@ class Controller {
   final String passPref="passPref";
   final String fingerPrintPref = "finger_pref";
   static const PREF_KEY_THEME = "pref_key_theme";
+  static const PREF_KEY_USER_OBJECT = "pref_key_user_object";
+
+
+  final String socketMessageBroadCast = "socketMessageBroadCast";
 
   setTheme(bool value) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -120,7 +126,15 @@ class Controller {
     return isRemember;
   }
 
+     getObjectPreference(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return json.decode(prefs.getString(key).toString());
+  }
 
+  saveObjectPreference(String key,  value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(key, json.encode(value));
+  }
 
 
 
@@ -341,6 +355,8 @@ enum FingerPrintOption {
   ENABLE,
   DISABLE
 }
+
+
 enum Screen {
   PROFILE,
   SHIFT,
@@ -371,6 +387,72 @@ extension ScreenNameExtention on Screen {
         return 'Availability';
       case Screen.DASHBOARD:
         return 'Dashboard';
+      default:
+        return '';
+    }
+  }
+}
+
+
+
+
+
+
+enum SocketMessageType {
+
+  //From App to Web
+  StartCall,
+  CreateOffer,
+  AnswerCall,
+  SendIceCandidate,
+  RejectCall,
+  CallEnd,
+
+  //From Web to App
+
+  CallResponse,
+  AnswerReceived,
+  OfferReceived,
+  CallReject,
+  CallClosed,
+  ICECandidate,
+
+}
+
+extension MessageTypeExtention on SocketMessageType {
+  String get name => describeEnum(this);
+
+  String get displayTitle {
+    switch (this) {
+      case SocketMessageType.StartCall:
+        return 'is-client-ready';
+      case SocketMessageType.CreateOffer:
+        return 'create_offer';
+      case SocketMessageType.AnswerCall:
+        return 'create_answer';
+      case SocketMessageType.SendIceCandidate:
+        return 'send_ice_candidate';
+      case SocketMessageType.RejectCall:
+        return 'offer_reject';
+      case SocketMessageType.CallEnd:
+        return 'call_end';
+
+
+
+      case SocketMessageType.CallResponse:
+        return 'call_response';
+      case SocketMessageType.AnswerReceived:
+        return 'answer_received';
+      case SocketMessageType.OfferReceived:
+        return 'offer_received';
+      case SocketMessageType.CallReject:
+        return 'call_reject';
+      case SocketMessageType.CallClosed:
+        return 'call_closed';
+      case SocketMessageType.ICECandidate:
+        return 'ice_candidate_received';
+
+
       default:
         return '';
     }

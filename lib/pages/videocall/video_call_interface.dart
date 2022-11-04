@@ -11,14 +11,14 @@ import '../../repository/model/request/chat_user.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/conversation_list_item_widget.dart';
 
-class VideoCallView extends StatefulWidget {
-  const VideoCallView({Key? key}) : super(key: key);
+class ConverationScreen extends StatefulWidget {
+  const ConverationScreen({Key? key}) : super(key: key);
 
   @override
-  State<VideoCallView> createState() => _VideoCallViewState();
+  State<ConverationScreen> createState() => _ConverationScreenState();
 }
 
-class _VideoCallViewState extends State<VideoCallView> {
+class _ConverationScreenState extends State<ConverationScreen> {
 
   List<ChatUsers> chatUsers = [
     ChatUsers("Jane Russel", "Awesome Setup", "images/userImage1.jpeg","Now"),

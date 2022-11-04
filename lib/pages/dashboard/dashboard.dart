@@ -10,7 +10,7 @@ import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
 import 'package:hnh_flutter/pages/overtime/overtime_list.dart';
 import 'package:hnh_flutter/pages/profile/setting_screen.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
-import 'package:hnh_flutter/repository/model/request/socket_message_model.dart';
+import 'package:hnh_flutter/pages/videocall/video_call_screen.dart';
 import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +73,7 @@ class _DashboardState extends State<Dashboard> {
   List<Events> eventsList = [];
   bool IsCheckIn = false;
 
-   SocketService? chatService = null;
+  SocketService? chatService = null;
 
   @override
   void initState() {
@@ -120,11 +120,13 @@ class _DashboardState extends State<Dashboard> {
           eventsList = _dashBoardViewModel.getEventsList();
           profileImageUrl = userDashboard.profileURL.toString();
 
+          if (userDashboard.id != null) {
+            Controller().saveObjectPreference(
+                Controller.PREF_KEY_USER_OBJECT, userDashboard);
 
-
-          chatService = SocketService(
-              Controller.webSocketURL + userDashboard.id.toString());
-          getChatListner(chatService);
+            chatService = SocketService(
+                Controller.webSocketURL + userDashboard.id.toString());
+          }
 
           Controller().setUserProfilePic(profileImageUrl);
           if (dashboardStat != null) {
@@ -157,9 +159,9 @@ class _DashboardState extends State<Dashboard> {
     });
 
     setState(() {
-      listQuickAccess.add(DashBoardGrid(
+    /*  listQuickAccess.add(DashBoardGrid(
           "5", "Video Chat", "assets/icons/leave_icon.svg", Colors.blueAccent));
-
+*/
       listQuickAccess.add(DashBoardGrid("1", "Leave Request",
           "assets/icons/leave_icon.svg", claimedShiftApprovedColor));
       listQuickAccess.add(DashBoardGrid("2", "Overtime Request",
@@ -185,24 +187,32 @@ class _DashboardState extends State<Dashboard> {
               profileImageUrl = value;
               Controller().setUserProfilePic(value);
             }),
+/*  Controller().socketMessageBroadCast: (value, callback){
+          var msg = value as SocketMessageModel;
+           print("Msg Received:${msg.toJson()}");
+           },
+*/
       },
     );
 
+    /* //Handle web socket msges
+    FBroadcast.instance().register(
+        Controller().socketMessageBroadCast,
+            (socketMessage, callback) {
+          var message = socketMessage as SocketMessageModel;
+          print("Message Received Video: ${message.toJson()}");
+          var msgType = message.type.toString();
 
+          if(msgType== SocketMessageType.OfferReceived.displayTitle)
+          {
+
+         _dashBoardViewModel.handleSocketMessage(SocketMessageType.OfferReceived,message);
+
+          }
+
+        }
+    );*/
   }
-
-
-  getChatListner(SocketService? chatService )
-  {
-    if (chatService != null) {
-        chatService.listenWebSocketMessage((messageModel) {
-        print("Message From:${messageModel.toJson()}");
-      }, (msg) {
-        print("Eror From:$msg");
-      });
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -697,14 +707,15 @@ class _DashboardState extends State<Dashboard> {
               break;
 
             case 5:
-              //  Get.to(() => VideoCallView());
-            if(chatService != null) {
-              chatService?.sendMessageToWebSocket(SocketMessageModel(
-                  type: "is-client-ready",
-                  sendTo: "1",
-                  data: 0,
-                  callerName: ""));
-            }
+              /* if (chatService != null) {
+                chatService?.sendMessageToWebSocket(SocketMessageModel(
+                    type: SocketMessageType.StartCall.displayTitle,
+                    sendTo: "1",
+                    data: 0,
+                    callerName: ""));
+              }*/
+              inputBox(context);
+
               break;
           }
         },
@@ -743,6 +754,47 @@ class _DashboardState extends State<Dashboard> {
                 ],
               ),
             )));
+  }
+
+  Future<void> inputBox(BuildContext context) async {
+    TextEditingController _textFieldController = TextEditingController();
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Target Id'),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  //  valueText = value;
+                });
+              },
+              keyboardType: TextInputType.number,
+              controller: _textFieldController,
+              decoration: InputDecoration(hintText: "Enter target user id"),
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text('CANCEL'),
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+              ElevatedButton(
+                child: Text('OK'),
+                onPressed: () {
+                  setState(() {
+                    var id = _textFieldController.text.toString();
+                    Get.to(() => VideoCallScreen(tragetID: id));
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+            ],
+          );
+        });
   }
 }
 

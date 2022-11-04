@@ -13,7 +13,7 @@ class _ApiClient implements ApiClient {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://192.168.18.69:8000/api';
+    baseUrl ??= 'http://vmi808920.contaboserver.net/api';
   }
 
   final Dio _dio;

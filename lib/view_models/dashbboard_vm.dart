@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:connectycube_flutter_call_kit/connectycube_flutter_call_kit.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,15 +13,14 @@ import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../custom_style/colors.dart';
 import '../notification/firebase_notification.dart';
+import '../repository/model/request/socket_message_model.dart';
 import '../repository/model/response/events_list.dart';
 import '../repository/model/response/get_dashboard.dart';
 import '../repository/model/response/leave_list.dart';
-import '../widget/custom_text_widget.dart';
+import '../utils/controller.dart';
 
 class DashBoardViewModel extends BaseViewModel {
-
   Shifts? dashBoardShift = null;
 
   Shifts? getDashBoardShift() => dashBoardShift;
@@ -37,12 +37,11 @@ class DashBoardViewModel extends BaseViewModel {
   User userObject = User();
 
   User getUserObject() => userObject;
-  bool isCheckInOut=false;
+  bool isCheckInOut = false;
 
   final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
 
   final List<DropMenuItems> leaveTypes = [
-
     DropMenuItems(id: 1, name: "Holiday"),
     DropMenuItems(id: 2, name: "Sickness"),
     DropMenuItems(id: 3, name: "Public Holiday"),
@@ -58,7 +57,6 @@ class DashBoardViewModel extends BaseViewModel {
 
   int notificationCount = 0;
 
-
   Future<void> getDashBoardData() async {
     setLoading(true);
     final results = await APIWebService().getDashBoardData();
@@ -73,15 +71,11 @@ class DashBoardViewModel extends BaseViewModel {
         dashboardStat = results.data?.stats;
         userObject = results.data!.user!;
 
-
-
-
-
         attendance = results.data?.attendance;
-        if (results.data!.checkedIn == false && results.data?.attendance != null)
-        {
-                isCheckInOut = true;
-          }
+        if (results.data!.checkedIn == false &&
+            results.data?.attendance != null) {
+          isCheckInOut = true;
+        }
 
         // setIsErrorReceived(false);
       } else {
@@ -101,9 +95,8 @@ class DashBoardViewModel extends BaseViewModel {
 
     getNotificationCount();
 
- getEventsListResponse();
+    getEventsListResponse();
   }
-
 
   Future<void> getNotificationCount() async {
     setLoading(true);
@@ -131,11 +124,9 @@ class DashBoardViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-
 //Notificaiton
 
-  Future<void> getBackgroundFCMNotificaiton() async
-  {
+  Future<void> getBackgroundFCMNotificaiton() async {
     //Check is FCM has Screen Name
     FirebaseMessaging.instance
         .getInitialMessage()
@@ -165,7 +156,6 @@ class DashBoardViewModel extends BaseViewModel {
       }
     });
 
-
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
       RemoteNotification? notification = message.notification;
@@ -188,18 +178,13 @@ class DashBoardViewModel extends BaseViewModel {
     });
   }
 
-
   Future<void> initFireBaseConfig() async {
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
-      fetchTimeout: const Duration(
-          seconds: 30),
-      minimumFetchInterval: const Duration(
-          seconds:
-          120),
+      fetchTimeout: const Duration(seconds: 30),
+      minimumFetchInterval: const Duration(seconds: 120),
     ));
     fetchConfig();
   }
-
 
   void fetchConfig() async {
     await remoteConfig.fetchAndActivate();
@@ -223,8 +208,7 @@ class DashBoardViewModel extends BaseViewModel {
     return null;
   }
 
-
-  showVersionDialog(context,String url) async {
+  showVersionDialog(context, String url) async {
     await showDialog<String>(
       context: context,
       barrierDismissible: false,
@@ -244,13 +228,12 @@ class DashBoardViewModel extends BaseViewModel {
                 child: Text(btnLabel),
                 onPressed: () async {
                   if (await canLaunchUrl(Uri.parse(url))) {
-                  await launchUrl(Uri.parse(url));
+                    await launchUrl(Uri.parse(url));
                   } else {
-                  throw 'Could not launch $url';
+                    throw 'Could not launch $url';
                   }
                 },
               ),
-
               ElevatedButton(
                 child: Text(btnLabelCancel),
                 onPressed: () => exit(0),
@@ -258,7 +241,6 @@ class DashBoardViewModel extends BaseViewModel {
             ],
           ),
         );
-
       },
     );
   }
@@ -273,16 +255,13 @@ class DashBoardViewModel extends BaseViewModel {
       setIsErrorReceived(true);
     } else {
       if (results.code == 200) {
-
-
-       events = results.data!.events!;
-
+        events = results.data!.events!;
 
         setIsErrorReceived(false);
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
-          errorString += results.errors![i].message! + "\n";
+          errorString += "${results.errors![i].message!}\n";
         }
         setErrorMsg(errorString);
         setIsErrorReceived(true);
@@ -293,30 +272,58 @@ class DashBoardViewModel extends BaseViewModel {
     setLoading(false);
     notifyListeners();
   }
+
+  //handle socketMessages
+  void handleSocketMessage(SocketMessageType type, SocketMessageModel message) {
+    switch (type) {
+      case SocketMessageType.OfferReceived:
+        ConnectycubeFlutterCallKit.instance.init(
+          onCallAccepted: _onCallAccepted,
+          onCallRejected: _onCallRejected,
+        );
+
+        CallEvent callEvent = const CallEvent(
+            sessionId: "1",
+            callType: 0,
+            callerId: 1,
+            callerName: 'Caller Name',
+            opponentsIds: {1},
+            userInfo: {'customParameter1': 'value1'});
+        ConnectycubeFlutterCallKit.showCallNotification(callEvent);
+
+        break;
+    }
+  }
+
+  Future<void> _onCallAccepted(CallEvent callEvent) async {
+    print("Call accept");
+  }
+
+  Future<void> _onCallRejected(CallEvent callEvent) async {
+    print("Call reject");
+  }
 }
 
-class FirebaseAppUpdate
-{
-
+class FirebaseAppUpdate {
   List<AppData>? appData;
 
   FirebaseAppUpdate({this.appData});
 
   FirebaseAppUpdate.fromJson(Map<String, dynamic> json) {
-  if (json['app_data'] != null) {
-  appData = <AppData>[];
-  json['app_data'].forEach((v) {
-  appData!.add(AppData.fromJson(v));
-  });
-  }
+    if (json['app_data'] != null) {
+      appData = <AppData>[];
+      json['app_data'].forEach((v) {
+        appData!.add(AppData.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = Map<String, dynamic>();
-  if (this.appData != null) {
-  data['app_data'] = this.appData!.map((v) => v.toJson()).toList();
-  }
-  return data;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    if (this.appData != null) {
+      data['app_data'] = this.appData!.map((v) => v.toJson()).toList();
+    }
+    return data;
   }
 }
 
@@ -334,11 +341,10 @@ class AppData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['app_name'] = this.appName;
     data['version'] = this.version;
     data['download_url'] = this.downloadUrl;
     return data;
   }
 }
-
