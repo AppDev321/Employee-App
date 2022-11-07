@@ -159,9 +159,8 @@ class _DashboardState extends State<Dashboard> {
     });
 
     setState(() {
-    /*  listQuickAccess.add(DashBoardGrid(
+      listQuickAccess.add(DashBoardGrid(
           "5", "Video Chat", "assets/icons/leave_icon.svg", Colors.blueAccent));
-*/
       listQuickAccess.add(DashBoardGrid("1", "Leave Request",
           "assets/icons/leave_icon.svg", claimedShiftApprovedColor));
       listQuickAccess.add(DashBoardGrid("2", "Overtime Request",
