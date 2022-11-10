@@ -3,23 +3,33 @@ import 'dart:convert';
 
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_incoming_call/flutter_incoming_call.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 
 import '../../repository/model/request/socket_message_model.dart';
 import '../../repository/model/response/get_dashboard.dart';
 import '../../utils/controller.dart';
+import '../../utils/size_config.dart';
 import '../../websocket/audio_video_call.dart';
+import '../../widget/custom_text_widget.dart';
+import '../../widget/dial_button.dart';
+import '../../widget/dial_user_pic.dart';
+import '../../widget/rounded_button.dart';
 
-class VideoCallScreen extends StatefulWidget {
+
+class AudioCallScreen extends StatefulWidget {
   final String tragetID;
 
-  VideoCallScreen({Key? key, required this.tragetID}) : super(key: key);
+  AudioCallScreen({Key? key, required this.tragetID}) : super(key: key);
 
   @override
-  _VideoCallScreenState createState() => _VideoCallScreenState();
+  _AudioCallScreenState createState() => _AudioCallScreenState();
 }
 
-class _VideoCallScreenState extends State<VideoCallScreen> {
+class _AudioCallScreenState extends State<AudioCallScreen> {
   late User userObject;
   final _localVideoRenderer = RTCVideoRenderer();
   final _remoteVideoRenderer = RTCVideoRenderer();
@@ -28,9 +38,10 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   bool isCalling = false;
 
   bool isMicUnmute = true;
-  bool isVideoEnable = true;
+  bool isSpeakerEnabled = true;
   bool isRemoteUserOnline = false;
-  final List _remoteRenderers = [];
+  String callTime = "Calling...";
+
 
   late AudioVideoCall audioVideoCall;
 
@@ -48,8 +59,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   void videoCallAction() {
     setState(() {
-      isVideoEnable = !isVideoEnable;
-      audioVideoCall.videoCallAction(isVideoEnable);
+      isSpeakerEnabled = !isSpeakerEnabled;
+      audioVideoCall.videoCallAction(isSpeakerEnabled);
     });
   }
 
@@ -71,20 +82,28 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     setState(() {
       userObject = userData;
 
-
       audioVideoCall = AudioVideoCall();
       audioVideoCall.targetUserId = targetUserId;
       audioVideoCall.currentUserId = userObject.id.toString();
+      audioVideoCall.isVideoCall = true;
 
       audioVideoCall.onLocalStream = ((stream) {
         setState(() {
+
           _localVideoRenderer.srcObject = stream;
         });
       });
 
       audioVideoCall.onAddRemoteStream = ((stream) {
         setState(() {
+
           _remoteVideoRenderer.srcObject = stream;
+        });
+      });
+
+      audioVideoCall.timerCount= ((timer){
+        setState(() {
+          callTime = timer;
         });
       });
       audioVideoCall.initializeState();
@@ -96,8 +115,10 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     loadPreferenceUserData();
     targetUserId = widget.tragetID;
     initRenderers();
-
     handleSocketBroadCasting();
+
+
+
     super.initState();
   }
 
@@ -111,16 +132,28 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
       if (msgType == SocketMessageType.OfferReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-        Controller().showConfirmationMsgDialog(
+      /*  Controller().showConfirmationMsgDialog(
             context, message.callerName.toString(), "Incoming Call", "Answer",
             (value) {
           if (value) {
+
             audioVideoCall.answerCall(message);
             setState(() {
               isRemoteUserOnline = true;
             });
+            audioVideoCall.startTimmer();
+           audioVideoCall.speakerPhoneAction(false);
           }
-        });
+        });*/
+
+        DashBoardViewModel model = DashBoardViewModel();
+        model.handleSocketMessage(SocketMessageType.OfferReceived, message);
+
+
+
+
+
+
       } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
         audioVideoCall.startTimmer();
@@ -146,7 +179,90 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     super.dispose();
   }
 
-  Widget videoCallBottomButtonWidget() {
+
+
+  Future<bool> onBackButtonPress() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Are you sure?'),
+            content: const Text('Do you want to end this call?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () {
+                  endCall(true);
+                  Navigator.of(context).pop(false);
+                },
+                child: const Text('Yes'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    var color = Get.isDarkMode ? Colors.white : Colors.black;
+    return WillPopScope(
+        onWillPop: onBackButtonPress,
+        child: Scaffold(
+            appBar: AppBar(
+              title: const Text("Voice Call"),
+            ),
+            body:  Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CustomTextWidget(
+                        text: "Admin AFJ",
+                        color: color,
+                        size: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      Text(
+                        callTime,
+                        style: TextStyle(color: color),
+                      ),
+                      const VerticalSpacing(),
+                      const DialUserPic(image: "assets/images/anne.jpeg"),
+                      const Spacer(),
+
+                      voiceCallButtonWidget(),
+
+                      Expanded(
+                        flex: 1,
+                        child: RawMaterialButton(
+                          onPressed: () {
+                            endCall(true);
+                          },
+                          shape: const CircleBorder(),
+                          elevation: 2.0,
+                          fillColor: Colors.red,
+                          padding: const EdgeInsets.all(15.0),
+                          child: const Icon(
+                            Icons.call_end,
+                            color: Colors.white,
+                            size: 25.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ));
+  }
+  Widget voiceCallButtonWidget() {
     return Container(
       alignment: Alignment.bottomCenter,
       padding: const EdgeInsets.symmetric(vertical: 48),
@@ -188,134 +304,30 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
               ),
             ),
           ),
+
           Expanded(
             flex: 1,
             child: RawMaterialButton(
               onPressed: () {
-                endCall(true);
-              },
-              shape: const CircleBorder(),
-              elevation: 2.0,
-              fillColor: Colors.redAccent,
-              padding: const EdgeInsets.all(15.0),
-              child: const Icon(
-                Icons.call_end,
-                color: Colors.white,
-                size: 35.0,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: RawMaterialButton(
-              onPressed: () {
-                videoCallAction();
+setState(() {
+  isSpeakerEnabled = !isSpeakerEnabled;
+});
               },
               shape: const CircleBorder(),
               elevation: 2.0,
               fillColor: Colors.black,
               padding: const EdgeInsets.all(12.0),
               child: Icon(
-                isVideoEnable == true ? Icons.videocam : Icons.videocam_off,
+                isSpeakerEnabled == true ? Icons.volume_up : Icons.volume_off,
                 color: Colors.white,
                 size: 20.0,
               ),
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: RawMaterialButton(
-              onPressed: () {
-                switchCamera();
-              },
-              shape: const CircleBorder(),
-              elevation: 2.0,
-              fillColor: Colors.black,
-              padding: const EdgeInsets.all(12.0),
-              child: const Icon(
-                Icons.switch_camera,
-                color: Colors.white,
-                size: 20.0,
-              ),
-            ),
-          )
+
         ],
       ),
     );
   }
 
-  Future<bool> onBackButtonPress() async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Are you sure?'),
-            content: const Text('Do you want to end this call?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
-              ),
-              TextButton(
-                onPressed: () {
-                  endCall(true);
-                  //Navigator.of(context).pop(true);
-                },
-                child: const Text('Yes'),
-              ),
-            ],
-          ),
-        )) ??
-        false;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: onBackButtonPress,
-      child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Video Call"),
-          ),
-          body: OrientationBuilder(builder: (context, orientation) {
-            return Stack(children: <Widget>[
-              _remoteRenderers.isNotEmpty
-                  ? Row(
-                      children: [
-                        ..._remoteRenderers.map((remoteRenderer) {
-                          return SizedBox(
-                              width: 160,
-                              height: 120,
-                              child: RTCVideoView(remoteRenderer));
-                        }).toList(),
-                      ],
-                    )
-                  : Center(),
-              Positioned(
-                  child: isRemoteUserOnline
-                      ? Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          decoration:
-                              const BoxDecoration(color: Colors.black54),
-                          child: RTCVideoView(_remoteVideoRenderer),
-                        )
-                      : const Center(
-                          child: CircularProgressIndicator(strokeWidth: 3))),
-              isVideoEnable
-                  ? Positioned(
-                      bottom: 150.0,
-                      right: 20.0,
-                      child: Container(
-                        width: 105.0,
-                        height: 140.0,
-                        decoration: const BoxDecoration(color: Colors.black54),
-                        child: RTCVideoView(_localVideoRenderer),
-                      ),
-                    )
-                  : const Center(),
-              videoCallBottomButtonWidget()
-            ]);
-          })),
-    );
-  }
 }

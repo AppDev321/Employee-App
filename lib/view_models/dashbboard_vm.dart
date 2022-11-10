@@ -282,13 +282,14 @@ class DashBoardViewModel extends BaseViewModel {
           onCallRejected: _onCallRejected,
         );
 
-        CallEvent callEvent = const CallEvent(
-            sessionId: "1",
-            callType: 0,
-            callerId: 1,
-            callerName: 'Caller Name',
-            opponentsIds: {1},
-            userInfo: {'customParameter1': 'value1'});
+        CallEvent callEvent =  CallEvent(
+            sessionId: DateTime.now().microsecondsSinceEpoch.toString(),
+            callType: 0, //1 for video call and 0 for audio
+            callerId:0,
+
+            callerName: message.callerName.toString(),
+            opponentsIds: const {0},
+           );
         ConnectycubeFlutterCallKit.showCallNotification(callEvent);
 
         break;

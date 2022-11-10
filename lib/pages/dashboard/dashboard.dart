@@ -6,11 +6,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
+import 'package:hnh_flutter/pages/videocall/audio_call_screen.dart';
 import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
 import 'package:hnh_flutter/pages/overtime/overtime_list.dart';
 import 'package:hnh_flutter/pages/profile/setting_screen.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
-import 'package:hnh_flutter/pages/videocall/video_call_screen.dart';
 import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +20,7 @@ import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
 import '../../main.dart';
 import '../../provider/theme_provider.dart';
+import '../../repository/model/request/socket_message_model.dart';
 import '../../repository/model/response/events_list.dart';
 import '../../repository/model/response/get_dashboard.dart';
 import '../../repository/model/response/get_shift_list.dart';
@@ -33,6 +34,7 @@ import '../../widget/internet_not_available.dart';
 import '../../widget/name_icon_badge.dart';
 import '../../widget/navigation_drawer_new.dart';
 import '../attandence/add_attendance.dart';
+
 import '../notification_history/notification_list.dart';
 import '../overtime/add_overtime.dart';
 import '../profile/components/profile_pic.dart';
@@ -186,31 +188,25 @@ class _DashboardState extends State<Dashboard> {
               profileImageUrl = value;
               Controller().setUserProfilePic(value);
             }),
-/*  Controller().socketMessageBroadCast: (value, callback){
-          var msg = value as SocketMessageModel;
-           print("Msg Received:${msg.toJson()}");
-           },
-*/
+
       },
     );
 
-    /* //Handle web socket msges
+     //Handle web socket msg
     FBroadcast.instance().register(
         Controller().socketMessageBroadCast,
             (socketMessage, callback) {
           var message = socketMessage as SocketMessageModel;
-          print("Message Received Video: ${message.toJson()}");
           var msgType = message.type.toString();
 
           if(msgType== SocketMessageType.OfferReceived.displayTitle)
           {
-
-         _dashBoardViewModel.handleSocketMessage(SocketMessageType.OfferReceived,message);
-
+            print("message on dash:${message.toJson()}");
+              _dashBoardViewModel.handleSocketMessage(SocketMessageType.OfferReceived,message);
           }
 
         }
-    );*/
+    );
   }
 
   @override
@@ -786,7 +782,8 @@ class _DashboardState extends State<Dashboard> {
                 onPressed: () {
                   setState(() {
                     var id = _textFieldController.text.toString();
-                    Get.to(() => VideoCallScreen(tragetID: id));
+                 //   Get.to(() => VideoCallScreen(tragetID: id));
+                    Get.to(()=>AudioCallScreen(tragetID: id));
                     Navigator.pop(context);
                   });
                 },

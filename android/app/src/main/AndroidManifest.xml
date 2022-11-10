@@ -60,6 +60,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity
+            android:name="com.github.alezhka.flutter_incoming_call.IncomingCallActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait"
+            android:showOnLockScreen="true">
+            <intent-filter>
+                <action android:name="com.github.alezhka.flutter_incoming_call.activity.ACTION_INCOMING_CALL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name="com.github.alezhka.flutter_incoming_call.CallBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false"/>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

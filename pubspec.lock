@@ -468,6 +468,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
+  flutter_incoming_call:
+    dependency: "direct main"
+    description:
+      name: flutter_incoming_call
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1"
   flutter_lints:
     dependency: "direct dev"
     description:

@@ -121,8 +121,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
 
-
-
     Widget example5 = SplashScreenView(
       navigateRoute: FutureBuilder<bool>(
           future: checkPassPreference(),
