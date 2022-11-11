@@ -214,7 +214,14 @@ class AudioVideoCall{
       _timmerInstance?.cancel();
     }
   }
-
+  void checkUserIsOnline() async {
+      var createOffer = SocketMessageModel(
+          type: SocketMessageType.StartCall.displayTitle,
+          sendTo: targetUserId,
+          sendFrom: currentUserId,
+          data: 0);
+      socketService.sendMessageToWebSocket(createOffer);
+  }
 
   void createOffer() async {
 
@@ -271,12 +278,15 @@ class AudioVideoCall{
   }
 
   void setRemoteDescription(String jsonString) async {
-    dynamic session = await jsonDecode(jsonString);
+    final body = json.decode(jsonString);
 
-    String sdp = write(session, null);
+   // dynamic session = await jsonDecode(jsonString);
+
+
+    //String sdp = write(session, null);
 
     RTCSessionDescription description =
-    RTCSessionDescription(sdp, _offer ? 'answer' : 'offer');
+    RTCSessionDescription(body['sdp'], _offer ? 'answer' : 'offer');
 
     await _peerConnection!.setRemoteDescription(description);
   }

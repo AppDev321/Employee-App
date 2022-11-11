@@ -24,7 +24,7 @@ class SocketService {
     webSocket.listenForMessages((messageData) {
       FBroadcast.instance().broadcast(Controller().socketMessageBroadCast, value: messageData);
     }, onError: (error){
-      print("socket error $error");
+      print("socket error ${error.toString()}");
     });
 
 

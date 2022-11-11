@@ -11,6 +11,8 @@ import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
 import 'package:hnh_flutter/pages/overtime/overtime_list.dart';
 import 'package:hnh_flutter/pages/profile/setting_screen.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
+import 'package:hnh_flutter/pages/videocall/conversation_list_screen.dart';
+import 'package:hnh_flutter/pages/videocall/video_call_screen.dart';
 import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:provider/provider.dart';
@@ -123,6 +125,7 @@ class _DashboardState extends State<Dashboard> {
           profileImageUrl = userDashboard.profileURL.toString();
 
           if (userDashboard.id != null) {
+            print("Socket connection...");
             Controller().saveObjectPreference(
                 Controller.PREF_KEY_USER_OBJECT, userDashboard);
 
@@ -199,10 +202,10 @@ class _DashboardState extends State<Dashboard> {
           var message = socketMessage as SocketMessageModel;
           var msgType = message.type.toString();
 
-          if(msgType== SocketMessageType.OfferReceived.displayTitle)
+          if(msgType == SocketMessageType.OfferReceived.displayTitle)
           {
-            print("message on dash:${message.toJson()}");
-              _dashBoardViewModel.handleSocketMessage(SocketMessageType.OfferReceived,message);
+           // _dashBoardViewModel.handleSocketMessage(SocketMessageType.OfferReceived,message);
+
           }
 
         }
@@ -782,8 +785,9 @@ class _DashboardState extends State<Dashboard> {
                 onPressed: () {
                   setState(() {
                     var id = _textFieldController.text.toString();
-                 //   Get.to(() => VideoCallScreen(tragetID: id));
-                    Get.to(()=>AudioCallScreen(tragetID: id));
+                    Get.to(() => ConversationScreen());
+                  // Get.to(() => VideoCallScreen(tragetID: id));
+                 //   Get.to(()=>AudioCallScreen(tragetID: id));
                     Navigator.pop(context);
                   });
                 },

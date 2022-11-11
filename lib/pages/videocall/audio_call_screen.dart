@@ -130,9 +130,27 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
       print("Message Received Socket: ${message.toJson()}");
       var msgType = message.type.toString();
 
-      if (msgType == SocketMessageType.OfferReceived.displayTitle) {
+      if(msgType == SocketMessageType.CallResponse.displayTitle)
+        {
+          if(message.data == true)
+            {
+              setState(() {
+                callTime = "Ringing";
+              });
+
+              audioVideoCall.createOffer();
+            }
+          else
+            {
+              setState(() {
+                callTime = "Calling";
+              });
+            }
+
+        }
+      else if (msgType == SocketMessageType.OfferReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-      /*  Controller().showConfirmationMsgDialog(
+        Controller().showConfirmationMsgDialog(
             context, message.callerName.toString(), "Incoming Call", "Answer",
             (value) {
           if (value) {
@@ -144,15 +162,11 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
             audioVideoCall.startTimmer();
            audioVideoCall.speakerPhoneAction(false);
           }
-        });*/
+        });
 
-        DashBoardViewModel model = DashBoardViewModel();
+      /*  DashBoardViewModel model = DashBoardViewModel();
         model.handleSocketMessage(SocketMessageType.OfferReceived, message);
-
-
-
-
-
+        */
 
       } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
@@ -274,7 +288,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
             flex: 1,
             child: RawMaterialButton(
               onPressed: () {
-                audioVideoCall.createOffer();
+                audioVideoCall.checkUserIsOnline();
               },
               shape: const CircleBorder(),
               elevation: 2.0,

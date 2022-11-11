@@ -28,8 +28,7 @@ class WebSocket {
       },
       onDone: () {},
       onError: (err) {
-
-        onError(err);
+        onError(err.toString());
       },
     );
   }

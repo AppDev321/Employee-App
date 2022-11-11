@@ -3,6 +3,7 @@ class SocketMessageModel {
   String? callerName;
   String? sendTo;
   String? sendFrom;
+  String? callType;
   dynamic data;
 
   SocketMessageModel({this.type, this.callerName, this.sendTo, this.data,this.sendFrom});
@@ -13,6 +14,7 @@ class SocketMessageModel {
     sendTo = json['sendTo'];
     data = json['data'];
     sendFrom = json['sendFrom'];
+    callType = json['callType'];
   }
 
   Map<String, dynamic> toJson() {
@@ -22,6 +24,7 @@ class SocketMessageModel {
     data['sendTo'] = this.sendTo;
     data['data'] = this.data;
     data['sendFrom'] = this.sendFrom;
+    data['callType'] = this.callType;
     return data;
   }
 }

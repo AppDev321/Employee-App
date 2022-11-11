@@ -6,6 +6,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hnh_flutter/pages/videocall/video_call_screen.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
@@ -14,6 +16,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../notification/firebase_notification.dart';
+import '../pages/videocall/audio_call_screen.dart';
 import '../repository/model/request/socket_message_model.dart';
 import '../repository/model/response/events_list.dart';
 import '../repository/model/response/get_dashboard.dart';
@@ -284,8 +287,8 @@ class DashBoardViewModel extends BaseViewModel {
 
         CallEvent callEvent =  CallEvent(
             sessionId: DateTime.now().microsecondsSinceEpoch.toString(),
-            callType: 0, //1 for video call and 0 for audio
-            callerId:0,
+            callType: message.callType.toString()=="audio" ? 0 : 1, //1 for video call and 0 for audio
+            callerId: int.parse(message.sendTo.toString()),
 
             callerName: message.callerName.toString(),
             opponentsIds: const {0},
@@ -297,7 +300,13 @@ class DashBoardViewModel extends BaseViewModel {
   }
 
   Future<void> _onCallAccepted(CallEvent callEvent) async {
-    print("Call accept");
+    if(callEvent.callType == 0) {
+      Get.to(() => AudioCallScreen(tragetID: "${callEvent.callerId}"));
+    }
+    else
+      {
+        Get.to(() => VideoCallScreen(tragetID: "${callEvent.callerId}"));
+      }
   }
 
   Future<void> _onCallRejected(CallEvent callEvent) async {
