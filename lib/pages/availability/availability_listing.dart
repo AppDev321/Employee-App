@@ -209,22 +209,25 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                                    onTap: () {
                                      changeButtonState(0);
                                    },
-                                   child: const Text('This Month')),
+                                   child: const CustomTextWidget(text:'This Month',size: 12,textAlign: TextAlign.center,),),
                                ButtonBarEntry(
                                    onTap: () {
                                      changeButtonState(1);
                                    },
-                                   child: const Text('Last Month')),
+                                 child: const CustomTextWidget(text:'Last Month',size: 12,textAlign: TextAlign.center,),),
+
                                ButtonBarEntry(
                                    onTap: () {
                                      changeButtonState(2);
                                    },
-                                   child: const Text('This Year')),
+                                 child: const CustomTextWidget(text:'This Year',size: 12,textAlign: TextAlign.center,),),
+
                                ButtonBarEntry(
                                    onTap: () {
                                      changeButtonState(3);
                                    },
-                                   child: const Text('Custom'))
+                                 child: const CustomTextWidget(text:'Custom',size: 12,textAlign: TextAlign.center,),),
+
                              ],
                            ),
                            Padding(
@@ -333,6 +336,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CustomTextWidget(
+
                                 text: Controller().convertStringDate(
                                     item.requestDate.toString(), "day"),
                                 color: item.status == ConstantData.pending
@@ -359,6 +363,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                                 height: 5,
                               ),
                               CustomTextWidget(
+                                textAlign: TextAlign.center,
                                 text: "${Controller().convertStringDate(
                                         item.requestDate.toString(), "month")}, ${Controller().convertStringDate(
                                         item.requestDate.toString(), "year")}",
@@ -372,7 +377,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                             ],
                           ))),
                   Expanded(
-                      flex: 3,
+                      flex: 4,
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
@@ -455,17 +460,16 @@ class AvailabilityListStateful extends State<AvailabilityList> {
   Widget createRowDate(String title, String? value) {
     return Column(
       children: [
-       const SizedBox(
-          height: 10,
-        ),
+SizedBox(height: 3,),
         Row(
           mainAxisSize: MainAxisSize.max,
           children: [
-            CustomTextWidget(text: title, fontWeight: FontWeight.bold),
+            CustomTextWidget(text: title, fontWeight: FontWeight.bold,size: 12,),
             Expanded(
               child: Padding(
-                  padding: const EdgeInsets.only(left: 5),
+                  padding: const EdgeInsets.only(left: 2),
                   child: CustomTextWidget(
+                    size: 12,
                     text: value,
                     color: Colors.grey,
 

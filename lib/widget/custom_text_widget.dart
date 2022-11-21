@@ -12,6 +12,7 @@ class CustomTextWidget extends StatelessWidget {
   final Color color;
   final VoidCallback? onClick;
   final int maxLines ;
+  final TextAlign textAlign;
 
   const CustomTextWidget({
     @required this.text,
@@ -20,6 +21,7 @@ class CustomTextWidget extends StatelessWidget {
     this.color=Colors.black,
     this.onClick=null,
     this.maxLines=10000000000000000,
+    this.textAlign = TextAlign.left
   });
 
   @override
@@ -31,7 +33,7 @@ class CustomTextWidget extends StatelessWidget {
           ? Text(
         text!,
 
-
+        textAlign:textAlign,
         maxLines: maxLines,
         overflow: TextOverflow.ellipsis,
 
@@ -48,6 +50,7 @@ class CustomTextWidget extends StatelessWidget {
         },
         child: Text(
           text!,
+          textAlign:textAlign,
           style: TextStyle(
             fontSize: size,
             fontWeight: fontWeight,

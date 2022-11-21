@@ -75,6 +75,7 @@ class AttendanceViewModel extends BaseViewModel {
     } else {
       if (results.code == 200) {
         setAttendanceRequestStatus(true);
+
         // setIsErrorReceived(false);
       } else {
         var errorString = "";

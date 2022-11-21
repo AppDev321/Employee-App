@@ -159,7 +159,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
             setState(() {
               isRemoteUserOnline = true;
             });
-            audioVideoCall.startTimmer();
+            audioVideoCall.startTimer();
            audioVideoCall.speakerPhoneAction(false);
           }
         });
@@ -170,7 +170,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
 
       } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-        audioVideoCall.startTimmer();
+        audioVideoCall.startTimer();
         setState(() {
           isRemoteUserOnline = true;
         });

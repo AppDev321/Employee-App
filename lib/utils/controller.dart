@@ -12,14 +12,14 @@ import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
 
 class Controller {
-  static const String appBaseURL =// "http://vmi808920.contaboserver.net/api";
-   "http://192.168.18.69:8000/api";
+  static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
+  "http://192.168.18.69:8000/api";
      // "http://afjdemo.hnhtechpk.com/api";
 
   //  "http://afjdev.hnhtechpk.com/api";
 
-//  static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/mobile?token=";
-  static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
+ //static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/mobile?token=";
+ static const String webSocketURL  = "ws://192.168.18.69:6001/video-call?token=";
 
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
@@ -428,11 +428,11 @@ extension MessageTypeExtention on SocketMessageType {
       case SocketMessageType.StartCall:
         return 'is-client-ready';
       case SocketMessageType.CreateOffer:
-        return 'create_offer';
+        return 'store_offer';
       case SocketMessageType.AnswerCall:
-        return 'create_answer';
+        return 'send_answer';
       case SocketMessageType.SendIceCandidate:
-        return 'send_ice_candidate';
+        return 'store_candidate';
       case SocketMessageType.RejectCall:
         return 'offer_reject';
       case SocketMessageType.CallEnd:
@@ -443,7 +443,7 @@ extension MessageTypeExtention on SocketMessageType {
       case SocketMessageType.CallResponse:
         return 'call_response';
       case SocketMessageType.AnswerReceived:
-        return 'answer_received';
+        return 'answer';
       case SocketMessageType.OfferReceived:
         return 'offer_received';
       case SocketMessageType.CallReject:
@@ -451,7 +451,7 @@ extension MessageTypeExtention on SocketMessageType {
       case SocketMessageType.CallClosed:
         return 'call_closed';
       case SocketMessageType.ICECandidate:
-        return 'ice_candidate_received';
+        return 'ice_receive_candidate';
 
 
       default:

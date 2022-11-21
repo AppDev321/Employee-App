@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hnh_flutter/pages/chat/component/chat_bubble.dart';
+import 'package:hnh_flutter/pages/chat/whatsapp_chat_bubble_widget/bubble.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
+import 'package:voice_message_package/voice_message_package.dart';
+
 
 import '../../custom_style/colors.dart';
 import '../../repository/model/request/chat_messge.dart';
-import '../../widget/glowing_action_button_widget.dart';
+import '../../voice_record_animation/audio_encoder_type.dart';
+import '../../voice_record_animation/screen/social_media_recorder.dart';
+import 'component/chat_input_box.dart';
 
 class ChatDetailPage extends StatefulWidget {
   @override
   _ChatDetailPageState createState() => _ChatDetailPageState();
 }
 
-class _ChatDetailPageState extends State<ChatDetailPage> {
+class _ChatDetailPageState extends State<ChatDetailPage>
+    with SingleTickerProviderStateMixin {
 
+
+  late AnimationController controller;
   List<ChatMessage> messages = [
     ChatMessage("Hello, Will", "receiver"),
     ChatMessage("How have you been?", "receiver"),
@@ -20,6 +29,25 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     ChatMessage("ehhhh, doing OK.", "receiver"),
     ChatMessage("Is there any thing wrong?", "sender"),
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+  }
+
+
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +71,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 ),
                 const CircleAvatar(
                   backgroundImage: NetworkImage(
-                      "<https://randomuser.me/api/portraits/men/5.jpg>"),
+                      "https://randomuser.me/api/portraits/men/5.jpg"),
                   maxRadius: 20,
                 ),
                 const SizedBox(
@@ -71,9 +99,15 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   ),
                 ),
                 const Icon(
+                  Icons.videocam,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 20,),
+                const Icon(
                   Icons.call,
                   color: Colors.white,
                 ),
+
               ],
             ),
           ),
@@ -81,59 +115,20 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       ),
       body: Stack(
         children: <Widget>[
-          getChatList(),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
-              height: 60,
-              width: double.infinity,
-              color: cardThemeBaseColor,
-              child: Row(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        color: primaryColor,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  const Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "Write message...",
-                        border: InputBorder.none,
-                        filled: true,
-                        fillColor: Colors.transparent,
-                      ),
-                    ),
-                  ),
+           getChatList(),
 
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  FloatingActionButton(
-                    onPressed: () {},
-                    child:
-                        const Icon(Icons.send, color: Colors.white, size: 18),
-                    backgroundColor: primaryColor,
-                    elevation: 0,
-                  ),
-                ],
-              ),
-            ),
+
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Container(
+                padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
+                width: double.infinity,
+                child: ChatInputBox(recordingFinishedCallback: (path){
+                  print("audio file : $path");
+                },
+                onTextMessageSent: (msg){
+                  print("Text Msg: $msg");
+                },)),
           ),
         ],
       ),
@@ -144,11 +139,18 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     return ListView.builder(
       itemCount: messages.length,
       shrinkWrap: true,
-      padding: EdgeInsets.only(top: 10, bottom: 10),
-      physics: NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        return Container(
-          padding: EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
+        return
+
+       ChatBubble(true, 1,voice: true,);
+       // ChatBubble(true, 2);
+       // ChatBubble(false, 3,voice: true,);
+
+          Container(
+          padding:
+              const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
           child: Align(
             alignment: (messages[index].messageType == "receiver"
                 ? Alignment.topLeft
@@ -160,7 +162,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     ? cardDarkThemeBg
                     : primaryColor),
               ),
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: CustomTextWidget(
                 text: messages[index].messageContent,
                 size: 15,
@@ -172,4 +174,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       },
     );
   }
+
+
 }

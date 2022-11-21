@@ -11,7 +11,7 @@ import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
 import 'package:hnh_flutter/pages/overtime/overtime_list.dart';
 import 'package:hnh_flutter/pages/profile/setting_screen.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
-import 'package:hnh_flutter/pages/videocall/conversation_list_screen.dart';
+import 'package:hnh_flutter/pages/chat/conversation_list_screen.dart';
 import 'package:hnh_flutter/pages/videocall/video_call_screen.dart';
 import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
@@ -485,8 +485,7 @@ class _DashboardState extends State<Dashboard> {
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
                                   childAspectRatio: 2 / 2,
-                                  crossAxisSpacing: 3,
-                                  mainAxisSpacing: 3,
+
                                   crossAxisCount: 3,
                                 ),
                                 itemBuilder: (ctx, i) {
@@ -663,15 +662,17 @@ class _DashboardState extends State<Dashboard> {
                 const SizedBox(height: 10),
                 Expanded(
                   child: CustomTextWidget(
+                    textAlign: TextAlign.center,
                     text: item.id.toString(),
                     color: item.color!,
                     size: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 Expanded(
                   child: CustomTextWidget(
+                    textAlign: TextAlign.center,
                     text: item.label.toString(),
                     size: 10,
                     color: item.color!,
@@ -712,8 +713,8 @@ class _DashboardState extends State<Dashboard> {
                     data: 0,
                     callerName: ""));
               }*/
-              inputBox(context);
-
+              //inputBox(context);
+              Get.to(() => ConversationScreen());
               break;
           }
         },
@@ -744,6 +745,7 @@ class _DashboardState extends State<Dashboard> {
                   ),
                   const SizedBox(height: 10),
                   CustomTextWidget(
+                    textAlign: TextAlign.center,
                     text: item.label.toString(),
                     color: Colors.white,
                     size: 15,
@@ -785,8 +787,8 @@ class _DashboardState extends State<Dashboard> {
                 onPressed: () {
                   setState(() {
                     var id = _textFieldController.text.toString();
-                    Get.to(() => ConversationScreen());
-                  // Get.to(() => VideoCallScreen(tragetID: id));
+                   // Get.to(() => ConversationScreen());
+                   Get.to(() => VideoCallScreen(tragetID: id));
                  //   Get.to(()=>AudioCallScreen(tragetID: id));
                     Navigator.pop(context);
                   });

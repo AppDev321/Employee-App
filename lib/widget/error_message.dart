@@ -15,6 +15,6 @@ class ErrorMessageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child:
-            CustomTextWidget(text: label,size: 22,color:color ,fontWeight: FontWeight.w200,));
+            CustomTextWidget(text: label,size: 22,color:color ,fontWeight: FontWeight.w200,textAlign: TextAlign.center,));
   }
 }

@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.flutter.afj.crm">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -23,7 +24,12 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <!--End Web RTC-->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+      />
 
     <!--ACCESS_BACKGROUND_LOCATION
     To get update in background.
@@ -36,7 +42,7 @@
         android:label="AFJ CRM"
         android:name="${applicationName}"
         android:icon="@drawable/ic_launcher"
-
+        android:requestLegacyExternalStorage="true"
         >
 
         <activity
@@ -66,6 +72,7 @@
             android:name="com.github.alezhka.flutter_incoming_call.IncomingCallActivity"
             android:theme="@style/Theme.AppCompat"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:showOnLockScreen="true">
             <intent-filter>
                 <action android:name="com.github.alezhka.flutter_incoming_call.activity.ACTION_INCOMING_CALL" />
@@ -89,6 +96,14 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="pushnotificationapp"/>
 
-
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_file" />
+        </provider>
     </application>
 </manifest>

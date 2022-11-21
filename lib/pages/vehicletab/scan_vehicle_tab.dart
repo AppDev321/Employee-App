@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -44,15 +45,38 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
       centerTitle: true,
     );
     try {
-      var qrResult = await BarcodeScanner.scan();
+   //   var qrResult = await BarcodeScanner.scan();
+   //    _progressDialog?.showLoadingDialog();
+   //    attendanceViewModel.verifyVehicleTab(qrResult.rawContent,uploadId);
 
-      _progressDialog?.showLoadingDialog();
-      attendanceViewModel.verifyVehicleTab(qrResult.rawContent,uploadId);
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => AiBarcodeScanner(
+            onScan: (String value) {
+              print("barcode text recevied: $value");
+
+uploadId = "${DateTime.now().millisecondsSinceEpoch}";
+                _progressDialog?.showLoadingDialog();
+                attendanceViewModel.verifyVehicleTab(value,uploadId);
+
+            },
+          ),
+        ),
+      );
+
     } on FormatException catch (ex) {
       print('Pressed the Back Button before Scanning');
     } catch (ex) {
       print('Unknown Error $ex');
     }
+  }
+
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
   }
 
   @override
@@ -61,7 +85,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
     super.initState();
 
     attendanceViewModel = AttendanceViewModel();
-    attendanceViewModel.takeUserPictureWithoutPreview();
+    //attendanceViewModel.takeUserPictureWithoutPreview();
 
     attendanceViewModel.addListener(() {
       userPicturePath = attendanceViewModel.userPicturePath;
@@ -78,6 +102,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
       _progressDialog?.hideOpenDialog();
 
       var checkErrorApiStatus = attendanceViewModel.getIsErrorRecevied();
+
       if (checkErrorApiStatus) {
         setState(() {
           _errorMsg = attendanceViewModel.getErrorMsg();
@@ -93,11 +118,11 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
             _errorMsg = "";
             _isErrorInApi = false;
           });
-
+          Get.back();
           Controller()
               .showToastMessage(context, "Request submitted successfully");
-          // Navigator.pop(context);
-          Get.back();
+       //   Navigator.pop(context);
+
         } else {
           _errorMsg = attendanceViewModel.getErrorMsg();
           if (_errorMsg?.isNotEmpty == true) {
@@ -148,7 +173,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
             Container(
               padding: const EdgeInsets.fromLTRB(50.0, 5.0, 50.0, 20.0),
               child: Text(
-                'Please give access to your Camera so that\n we can scan and provide you what is\n inside the code',
+                'Please give access to your Camera so that  we can scan and provide you what is  inside the code',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: colorText,
@@ -166,7 +191,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
                           alignment: Alignment.center,
                           child: Container(
                               margin: const EdgeInsets.all(20),
-                              child: ErrorMessageWidget(
+                              child:  ErrorMessageWidget(
                                 label: _errorMsg!,
                                 color: Colors.red,
                               )))
@@ -182,7 +207,11 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
           height: 60.0,
           width: double.infinity,
           child: FloatingActionButton.extended(
-            onPressed: scanAttendanceCode,
+            onPressed: () {
+
+                scanAttendanceCode();
+
+            },
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             backgroundColor: primaryColor,

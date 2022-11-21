@@ -149,24 +149,29 @@ class LatenessReportStateful extends State<LatenessReport> {
                     onTap: () {
                       changeButtonState(0);
                     },
-                    child:const Text('This Month')),
+      child: const CustomTextWidget(text:'This Month',size: 12,textAlign: TextAlign.center,),),
+
                 ButtonBarEntry(
                     onTap: () {
 
                       changeButtonState(1);
                     },
-                    child:const Text('Last Month')),
-                ButtonBarEntry(
+
+    child: const CustomTextWidget(text:'Last Month',size: 12,textAlign: TextAlign.center,),),
+
+    ButtonBarEntry(
                     onTap: () {
 
                       changeButtonState(2);
                     },
-                    child:const Text('This Year')),
+
+      child: const CustomTextWidget(text:'This Year',size: 12,textAlign: TextAlign.center,),),
                 ButtonBarEntry(
                     onTap: () {
                       changeButtonState(3);
                     },
-                    child:const Text('Custom'))
+            child: const CustomTextWidget(text:'Custom',size: 12,textAlign: TextAlign.center,),),
+
               ],
             ),
             Padding(

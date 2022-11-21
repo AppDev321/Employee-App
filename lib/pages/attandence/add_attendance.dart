@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -42,12 +43,31 @@ class _AddAttendanceState extends State<AddAttendance> {
       centerTitle: true,
     );
     try {
-      var qrResult = await BarcodeScanner.scan();
+      // var qrResult = await BarcodeScanner.scan();
+      // _progressDialog?.showLoadingDialog();
+      // attendanceViewModel.markAttendanceRequest(
+      //     qrResult.rawContent, widget.attendanceType!, uploadId);
 
-      _progressDialog?.showLoadingDialog();
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => AiBarcodeScanner(
+            onScan: (String value) {
+              print("barcode text recevied: $value");
 
-      attendanceViewModel.markAttendanceRequest(
-          qrResult.rawContent, widget.attendanceType!, uploadId);
+
+              _progressDialog?.showLoadingDialog();
+              attendanceViewModel.markAttendanceRequest(
+                  value, widget.attendanceType!, uploadId);
+
+            },
+          ),
+        ),
+      );
+
+
+
+
+
     } on FormatException catch (ex) {
       print('Pressed the Back Button before Scanning');
     } catch (ex) {
@@ -61,7 +81,7 @@ class _AddAttendanceState extends State<AddAttendance> {
     super.initState();
 
     attendanceViewModel = AttendanceViewModel();
-    attendanceViewModel.takeUserPictureWithoutPreview();
+   // attendanceViewModel.takeUserPictureWithoutPreview();
     attendanceViewModel.addListener(() {
       _progressDialog?.hideOpenDialog();
 
@@ -116,6 +136,11 @@ class _AddAttendanceState extends State<AddAttendance> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     _dialogContext = context;
     if (_progressDialog == null) {
@@ -148,7 +173,7 @@ class _AddAttendanceState extends State<AddAttendance> {
             Container(
               padding: const EdgeInsets.fromLTRB(50.0, 5.0, 50.0, 20.0),
               child: Text(
-                'Please give access to your Camera so that\n we can scan and provide you what is\n inside the code',
+                'Please give access to your Camera so that we can scan and provide you what is inside the code',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.4,
@@ -165,7 +190,11 @@ class _AddAttendanceState extends State<AddAttendance> {
           height: 60.0,
           width: double.infinity,
           child: FloatingActionButton.extended(
-            onPressed: scanAttendanceCode,
+            onPressed: () {
+
+                scanAttendanceCode();
+
+            },
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             backgroundColor: primaryColor,

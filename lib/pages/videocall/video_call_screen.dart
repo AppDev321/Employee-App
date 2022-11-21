@@ -136,8 +136,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                   }
                 });
           } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
-            audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-            audioVideoCall.startTimmer();
+             audioVideoCall.setRemoteDescription(jsonEncode(message.data));
+          audioVideoCall.startTimer();
             setState(() {
               isRemoteUserOnline = true;
             });

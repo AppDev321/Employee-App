@@ -13,7 +13,7 @@ import 'package:hnh_flutter/pages/login/login.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:hnh_flutter/provider/theme_provider.dart';
-import 'package:hnh_flutter/utils/globals.dart';
+
 import 'package:hnh_flutter/view_models/login_view_model.dart';
 import 'package:hnh_flutter/view_models/shift_list_vm.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
@@ -42,7 +42,7 @@ String? platFormType = "android";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await Globals.init();
+
 
   fcmToken = await FirebaseMessaging.instance.getToken();
 

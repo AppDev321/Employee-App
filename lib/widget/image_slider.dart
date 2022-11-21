@@ -135,7 +135,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                                 color:Colors.white
                               ),
                               SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               CustomTextWidget(
                                 text:
@@ -146,7 +146,7 @@ class _ImageSliderWidget extends State<ImageSliderWidget> {
                                   color:Colors.white
                               ),
                               SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               InkWell(
                                 onTap: () {

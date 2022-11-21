@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hnh_flutter/websocket/service/socket_service.dart';
-import 'package:sdp_transform/sdp_transform.dart';
+//import 'package:sdp_transform/sdp_transform.dart';
 
 import '../repository/model/request/socket_message_model.dart';
 import '../utils/controller.dart';
@@ -60,7 +60,7 @@ class AudioVideoCall{
   };
 
 
-  void startTimmer() {
+  void startTimer() {
     var oneSec = const Duration(seconds: 1);
     _timmerInstance = Timer.periodic(
         oneSec,
@@ -70,7 +70,7 @@ class AudioVideoCall{
           } else {
             _start = _start + 1;
             _timmer = getTimerTime(_start);
-            timerCount(_timmer);
+         timerCount(_timmer);
           }
         });
   }
@@ -116,7 +116,7 @@ class AudioVideoCall{
     pc.onIceCandidate = (e) {
       if (e.candidate != null) {
         HashMap<String, dynamic> candidate = HashMap.of({
-          'sdpCandidate': e.candidate.toString(),
+          'candidate': e.candidate.toString(),
           'sdpMid': e.sdpMid.toString(),
           'sdpMLineIndex': e.sdpMlineIndex,
         });
@@ -215,6 +215,7 @@ class AudioVideoCall{
     }
   }
   void checkUserIsOnline() async {
+
       var createOffer = SocketMessageModel(
           type: SocketMessageType.StartCall.displayTitle,
           sendTo: targetUserId,
@@ -234,11 +235,11 @@ class AudioVideoCall{
       _offer = true;
       _peerConnection!.setLocalDescription(description);
 
-      var sdpSession = parse(description.sdp.toString());
-      var type = parse(description.type.toString());
+      //var sdpSession = parse(description.sdp.toString());
+      //var type = parse(description.type.toString());
 
       HashMap<String, dynamic> offerData =
-      HashMap.of({"type": type, "sdp": sdpSession});
+      HashMap.of({"type": "offer", "sdp": description.sdp.toString()});
 
       var createOffer = SocketMessageModel(
           type: SocketMessageType.CreateOffer.displayTitle,
@@ -264,10 +265,10 @@ class AudioVideoCall{
         .createAnswer(isVideoCall? offerVideoCallConstraints: offerAudioConstraints);
     _peerConnection!.setLocalDescription(description);
 
-    var sdpSession = parse(description.sdp!); //parse(description.sdp!);
-    var type = parse(description.type!); //parse(description.type!);
+    //var sdpSession = parse(description.sdp!); //parse(description.sdp!);
+    //var type = parse(description.type!); //parse(description.type!);
     HashMap<String, dynamic> offerData =
-    HashMap.of({"type": type, "sdp": sdpSession});
+    HashMap.of({"type": "answer", "sdp": description.sdp.toString()});
     var answerCall = SocketMessageModel(
         type: SocketMessageType.AnswerCall.displayTitle,
         sendTo: targetUserId,
@@ -295,7 +296,7 @@ class AudioVideoCall{
     dynamic session = await jsonDecode(jsonString);
 
     dynamic candidate = RTCIceCandidate(
-        session['sdpCandidate'], session['sdpMid'], session['sdpMLineIndex']);
+        session['candidate'], session['sdpMid'], session['sdpMLineIndex']);
     await _peerConnection!.addCandidate(candidate);
 
   }

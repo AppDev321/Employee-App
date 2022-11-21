@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:hnh_flutter/pages/videocall/chat_detail.dart';
+
+
+import '../pages/chat/chat_detail.dart';
 
 class ConversationList extends StatefulWidget{
   String name;
@@ -26,6 +28,7 @@ class _ConversationListState extends State<ConversationList> {
     return GestureDetector(
       onTap: (){
         Get.to(() =>  ChatDetailPage());
+     //   Get.to(() =>  IndividualChats());
       },
 
       child: Container(

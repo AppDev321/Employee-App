@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
-import 'package:intl/intl.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
@@ -26,7 +25,6 @@ class AttendanceReport extends StatefulWidget {
 }
 
 class AttendanceReportStateful extends State<AttendanceReport> {
-
   int buttonState = 0;
   final TextEditingController _dateFilterController = TextEditingController();
 
@@ -122,37 +120,56 @@ class AttendanceReportStateful extends State<AttendanceReport> {
               invertedSelection: true,
               children: [
                 ButtonBarEntry(
-                    onTap: () {
-                      changeButtonState(0);
-                    },
-                    child: const Text('This Month')),
+                  onTap: () {
+                    changeButtonState(0);
+                  },
+                  child: const CustomTextWidget(
+                    text: 'This Month',
+                    size: 12,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 ButtonBarEntry(
-                    onTap: () {
-                      changeButtonState(1);
-                    },
-                    child: const Text('Last Month')),
+                  onTap: () {
+                    changeButtonState(1);
+                  },
+                  child: const CustomTextWidget(
+                    text: 'Last Month',
+                    size: 12,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 ButtonBarEntry(
-                    onTap: () {
-                      changeButtonState(2);
-                    },
-                    child: const Text('This Year')),
+                  onTap: () {
+                    changeButtonState(2);
+                  },
+                  child: const CustomTextWidget(
+                    text: 'This Year',
+                    size: 12,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 ButtonBarEntry(
-                    onTap: () {
-                      changeButtonState(3);
-                    },
-                    child: const Text('Custom'))
+                  onTap: () {
+                    changeButtonState(3);
+                  },
+                  child: const CustomTextWidget(
+                    text: 'Custom',
+                    size: 12,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ],
             ),
             Padding(
                 padding: const EdgeInsets.all(10),
                 child: buttonState == 3
                     ? CustomDateRangeWidget(
-
                         onDateChanged: (date) {
                           String startDate =
-                          Controller().getConvertedDate(date['start']);
+                              Controller().getConvertedDate(date['start']);
                           String endDate =
-                          Controller().getConvertedDate(date['end']);
+                              Controller().getConvertedDate(date['end']);
                           _dateFilterController.text = "$startDate To $endDate";
                         },
                         onFetchDates: (date) {
@@ -281,8 +298,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                       Row(
                                         children: [
                                           Icon(
-                                            Icons
-                                                .assignment_turned_in_outlined,
+                                            Icons.assignment_turned_in_outlined,
                                             size: 15.0,
                                             color: primaryColor,
                                           ),
@@ -317,8 +333,7 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                       Row(
                                         children: const [
                                           Icon(
-                                            Icons
-                                                .assignment_turned_in_outlined,
+                                            Icons.assignment_turned_in_outlined,
                                             size: 15.0,
                                             color: claimedShiftColor,
                                           ),
@@ -336,13 +351,13 @@ class AttendanceReportStateful extends State<AttendanceReport> {
                                       ),
                                       Center(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 30.0),
+                                          padding:
+                                              const EdgeInsets.only(left: 30.0),
                                           child: CustomTextWidget(
-                                              text: item.timeOut?.isEmpty ==
-                                                      true
-                                                  ? "--/--"
-                                                  : item.timeOut,
+                                              text:
+                                                  item.timeOut?.isEmpty == true
+                                                      ? "--/--"
+                                                      : item.timeOut,
                                               fontWeight: FontWeight.bold,
                                               color: claimedShiftColor),
                                         ),
