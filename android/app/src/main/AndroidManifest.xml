@@ -6,9 +6,12 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+
 
 
 <!--Web RTC-->
@@ -36,6 +39,7 @@
         android:label="AFJ CRM"
         android:name="${applicationName}"
         android:icon="@drawable/ic_launcher"
+        android:usesCleartextTraffic="true"
 
         >
 

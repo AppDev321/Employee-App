@@ -138,11 +138,11 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                           controller: _controller,
                           onChanged: (String value) {
                             setState(() {
-                              _shiftList.clear();
-                              _openShiftList.clear();
-                              _isFirstLoadRunning = true;
-                              _isErrorInApi = false;
-                              _shiftListViewModel.getShiftList(value);
+                              // _shiftList.clear();
+                              // _openShiftList.clear();
+                              // _isFirstLoadRunning = true;
+                              // _isErrorInApi = false;
+                              // _shiftListViewModel.getShiftList(value);
                             });
                           },
                         ),
@@ -201,7 +201,6 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
                   ],
                 )),
           )
-
           // CustomCalanderWidget(
           //   controller: _controller,
           //   onChanged: (String value) {

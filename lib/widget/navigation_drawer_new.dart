@@ -51,9 +51,7 @@ class NavigationDrawer extends StatelessWidget {
         child: Container(
           child: Column(
             children: [
-
               UserAccountsDrawerHeader(
-
                 accountName: CustomTextWidget(text:ConstantData.appName,color: Colors.white,),
                 accountEmail: CustomTextWidget(text:ConstantData.appVersion,color: Colors.white),
                 currentAccountPicture: CircleAvatar(

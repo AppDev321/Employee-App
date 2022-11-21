@@ -11,40 +11,40 @@ import '../../repository/model/request/chat_user.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/conversation_list_item_widget.dart';
 
-class ConverationScreen extends StatefulWidget {
-  const ConverationScreen({Key? key}) : super(key: key);
+class VideoCallView extends StatefulWidget {
+  const VideoCallView({Key? key}) : super(key: key);
 
   @override
-  State<ConverationScreen> createState() => _ConverationScreenState();
+  State<VideoCallView> createState() => _VideoCallViewState();
 }
 
-class _ConverationScreenState extends State<ConverationScreen> {
+class _VideoCallViewState extends State<VideoCallView> {
 
   List<ChatUsers> chatUsers = [
-    ChatUsers("Jane Russel", "Awesome Setup", "images/userImage1.jpeg","Now"),
-    ChatUsers("Glady's Murphy", "That's Great", "images/userImage2.jpeg", "Yesterday"),
-    ChatUsers("Jorge Henry", "Hey where are you?", "images/userImage3.jpeg", "31 Mar"),
-    ChatUsers("Philip Fox", "Busy! Call me in 20 mins", "images/userImage4.jpeg", "28 Mar"),
-    ChatUsers("Debra Hawkins", "Thankyou, It's awesome", "images/userImage5.jpeg", "23 Mar"),
-    ChatUsers("Jacob Pena", "will update you in evening", "images/userImage6.jpeg", "17 Mar"),
-    ChatUsers("Andrey Jones", "Can you please share the file?", "images/userImage7.jpeg", "24 Feb"),
-    ChatUsers("John Wick", "How are you?", "images/userImage8.jpeg", "18 Feb"),
-    ChatUsers("Jane Russel", "Awesome Setup", "images/userImage1.jpeg","Now"),
-    ChatUsers("Glady's Murphy", "That's Great", "images/userImage2.jpeg", "Yesterday"),
-    ChatUsers("Jorge Henry", "Hey where are you?", "images/userImage3.jpeg", "31 Mar"),
-    ChatUsers("Philip Fox", "Busy! Call me in 20 mins", "images/userImage4.jpeg", "28 Mar"),
-    ChatUsers("Debra Hawkins", "Thankyou, It's awesome", "images/userImage5.jpeg", "23 Mar"),
-    ChatUsers("Jacob Pena", "will update you in evening", "images/userImage6.jpeg", "17 Mar"),
-    ChatUsers("Andrey Jones", "Can you please share the file?", "images/userImage7.jpeg", "24 Feb"),
-    ChatUsers("John Wick", "How are you?", "images/userImage8.jpeg", "18 Feb"),
-    ChatUsers("Jane Russel", "Awesome Setup", "images/userImage1.jpeg","Now"),
-    ChatUsers("Glady's Murphy", "That's Great", "images/userImage2.jpeg", "Yesterday"),
-    ChatUsers("Jorge Henry", "Hey where are you?", "images/userImage3.jpeg", "31 Mar"),
-    ChatUsers("Philip Fox", "Busy! Call me in 20 mins", "images/userImage4.jpeg", "28 Mar"),
-    ChatUsers("Debra Hawkins", "Thankyou, It's awesome", "images/userImage5.jpeg", "23 Mar"),
-    ChatUsers("Jacob Pena", "will update you in evening", "images/userImage6.jpeg", "17 Mar"),
-    ChatUsers("Andrey Jones", "Can you please share the file?", "images/userImage7.jpeg", "24 Feb"),
-    ChatUsers("John Wick", "How are you?", "images/userImage8.jpeg", "18 Feb"),
+    ChatUsers("Jane Russel", "Awesome Setup", "images/userImage1.jpeg","Now",1),
+    ChatUsers("Glady's Murphy", "That's Great", "images/userImage2.jpeg", "Yesterday",2),
+    ChatUsers("Jorge Henry", "Hey where are you?", "images/userImage3.jpeg", "31 Mar",3),
+    ChatUsers("Philip Fox", "Busy! Call me in 20 mins", "images/userImage4.jpeg", "28 Mar",4),
+    ChatUsers("Debra Hawkins", "Thankyou, It's awesome", "images/userImage5.jpeg", "23 Mar",5),
+    ChatUsers("Jacob Pena", "will update you in evening", "images/userImage6.jpeg", "17 Mar",5),
+    ChatUsers("Andrey Jones", "Can you please share the file?", "images/userImage7.jpeg", "24 Feb",5),
+    ChatUsers("John Wick", "How are you?", "images/userImage8.jpeg", "18 Feb",5),
+    ChatUsers("Jane Russel", "Awesome Setup", "images/userImage1.jpeg","Now",5),
+    ChatUsers("Glady's Murphy", "That's Great", "images/userImage2.jpeg", "Yesterday",5),
+    ChatUsers("Jorge Henry", "Hey where are you?", "images/userImage3.jpeg", "31 Mar",5),
+    ChatUsers("Philip Fox", "Busy! Call me in 20 mins", "images/userImage4.jpeg", "28 Mar",5),
+    ChatUsers("Debra Hawkins", "Thankyou, It's awesome", "images/userImage5.jpeg", "23 Mar",5),
+    ChatUsers("Jacob Pena", "will update you in evening", "images/userImage6.jpeg", "17 Mar",5),
+    ChatUsers("Andrey Jones", "Can you please share the file?", "images/userImage7.jpeg", "24 Feb",5),
+    ChatUsers("John Wick", "How are you?", "images/userImage8.jpeg", "18 Feb",5),
+    ChatUsers("Jane Russel", "Awesome Setup", "images/userImage1.jpeg","Now",5),
+    ChatUsers("Glady's Murphy", "That's Great", "images/userImage2.jpeg", "Yesterday",5),
+    ChatUsers("Jorge Henry", "Hey where are you?", "images/userImage3.jpeg", "31 Mar",5),
+    ChatUsers("Philip Fox", "Busy! Call me in 20 mins", "images/userImage4.jpeg", "28 Mar",5),
+    ChatUsers("Debra Hawkins", "Thankyou, It's awesome", "images/userImage5.jpeg", "23 Mar",5),
+    ChatUsers("Jacob Pena", "will update you in evening", "images/userImage6.jpeg", "17 Mar",5),
+    ChatUsers("Andrey Jones", "Can you please share the file?", "images/userImage7.jpeg", "24 Feb",5),
+    ChatUsers("John Wick", "How are you?", "images/userImage8.jpeg", "18 Feb",5),
   ];
 
 
@@ -76,16 +76,12 @@ class _ConverationScreenState extends State<ConverationScreen> {
                       TextColorContainer(
                           label: "Add New",
                           color: Colors.red),
-
                     ],
                   ),
                 ),
               ),
-
             ],
           body:
-
-
           Column(
             children: [
               Padding(
@@ -116,7 +112,6 @@ class _ConverationScreenState extends State<ConverationScreen> {
                         },
                       ),
                     ],
-
                   ),
                 ),
               ),

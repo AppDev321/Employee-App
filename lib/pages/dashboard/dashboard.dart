@@ -684,7 +684,6 @@ class _DashboardState extends State<Dashboard> {
     return InkWell(
         onTap: () {
           var id = int.parse(item.id.toString());
-
           switch (id) {
             case 1:
               Get.to(() => AddLeave(

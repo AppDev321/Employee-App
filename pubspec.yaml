@@ -56,6 +56,7 @@ dependencies:
   connectycube_flutter_call_kit: ^2.2.1
   sdp_transform: ^0.3.2
   flutter_incoming_call: ^0.1.1
+  open_settings: ^2.0.2
 
 
 dev_dependencies:

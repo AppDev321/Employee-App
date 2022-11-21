@@ -132,7 +132,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
 
       if (msgType == SocketMessageType.OfferReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-      /*  Controller().showConfirmationMsgDialog(
+        Controller().showConfirmationMsgDialog(
             context, message.callerName.toString(), "Incoming Call", "Answer",
             (value) {
           if (value) {
@@ -144,15 +144,10 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
             audioVideoCall.startTimmer();
            audioVideoCall.speakerPhoneAction(false);
           }
-        });*/
+        });
 
-        DashBoardViewModel model = DashBoardViewModel();
-        model.handleSocketMessage(SocketMessageType.OfferReceived, message);
-
-
-
-
-
+    /*    DashBoardViewModel model = DashBoardViewModel();
+        model.handleSocketMessage(SocketMessageType.OfferReceived, message);*/
 
       } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
@@ -178,8 +173,6 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
     audioVideoCall.disposeAudioVideoCall();
     super.dispose();
   }
-
-
 
   Future<bool> onBackButtonPress() async {
     return (await showDialog(
@@ -324,7 +317,6 @@ setState(() {
               ),
             ),
           ),
-
         ],
       ),
     );

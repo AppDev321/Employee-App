@@ -7,7 +7,7 @@ packages:
       name: _fe_analyzer_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "49.0.0"
+    version: "47.0.0"
   _flutterfire_internals:
     dependency: transitive
     description:
@@ -21,7 +21,7 @@ packages:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.0"
+    version: "4.7.0"
   animated_button_bar:
     dependency: "direct main"
     description:
@@ -807,6 +807,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  open_settings:
+    dependency: "direct main"
+    description:
+      name: open_settings
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   overlay_support:
     dependency: "direct main"
     description:

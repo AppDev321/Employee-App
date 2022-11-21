@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
@@ -23,7 +22,6 @@ class LoginClassStateful extends State<LoginClass> {
   /* final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();*/
   DialogBuilder? _progressDialog;
-
   static const String _loginText = 'Login';
   final bool _isApiCallProcess = false;
   bool _passRemember = false;
@@ -32,11 +30,8 @@ class LoginClassStateful extends State<LoginClass> {
   BuildContext? _dialogContext;
 
   final LoginViewModel _loginViewModel = LoginViewModel();
-
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
-
   // final isAvailable =  Controller.hasBiometrics();
   var isBiometericEnable = false;
 
@@ -90,7 +85,6 @@ class LoginClassStateful extends State<LoginClass> {
       opacity: 0.3,
       child: _uiSetup(context),
     );
-
   }
 
   Widget _uiSetup(BuildContext context) {
@@ -122,8 +116,6 @@ class LoginClassStateful extends State<LoginClass> {
         ));
 
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
-
       body: SingleChildScrollView(
         child: Container(
           height: Get.mediaQuery.size.height,
@@ -211,7 +203,6 @@ class LoginClassStateful extends State<LoginClass> {
                                 _isApiError = false;
                                 _errorMsg = "";
                               });
-
                               FocusScope.of(context)
                                   .requestFocus(new FocusNode()); //remove focus
                               _onLoginButtonPress(_emailController.text,
@@ -230,7 +221,7 @@ class LoginClassStateful extends State<LoginClass> {
                           child: const Text(_loginText),
                         )),
                     const SizedBox(height: 10),
-                    isBiometericEnable == true
+                    isBiometericEnable || _loginViewModel.authenticateIsAvailable() == true
                         ? Padding(
                           padding: const EdgeInsets.only(right: 10.0),
                           child: Center(
@@ -240,7 +231,8 @@ class LoginClassStateful extends State<LoginClass> {
                                     .authenticateWithBiometrics()
                                     .then((value) {
                                   if (value) onFingerPrintVerified();
-                                });
+                                }
+                                );
                               },
                               icon: const Icon(
                                 Icons.fingerprint,
@@ -266,9 +258,6 @@ class LoginClassStateful extends State<LoginClass> {
     LoginRequestBody requestBody =
         LoginRequestBody(email: email, password: pass);
     _loginViewModel.getUserLogin(requestBody);
-
-    
-
   }
 
   Future<void> onFingerPrintVerified() async {
@@ -276,16 +265,12 @@ class LoginClassStateful extends State<LoginClass> {
     var getPassPref = await Controller().getPassword();
     if (getEmailPref != null || getPassPref != null) {
 
-
       Codec<String, String> stringToBase64 = utf8.fuse(base64);
       String decyptEmail = stringToBase64.decode(getEmailPref);
       String decryptPassword = stringToBase64.decode(getPassPref);
 
-
       _onLoginButtonPress(decyptEmail,
           decryptPassword);
-
-
     }
   }
 

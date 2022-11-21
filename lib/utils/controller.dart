@@ -14,12 +14,10 @@ import '../pages/login/login.dart';
 class Controller {
   static const String appBaseURL = "http://vmi808920.contaboserver.net/api";
 //    "http://192.168.18.69:8000/api";
-     // "http://afjdemo.hnhtechpk.com/api";
-
-  //  "http://afjdev.hnhtechpk.com/api";
+// "http://afjdemo.hnhtechpk.com/api";
+//  "http://afjdev.hnhtechpk.com/api";
 
   static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/mobile?token=";
-
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
   static const double leftCardColorMargin = 5;
@@ -179,27 +177,45 @@ class Controller {
   }
 
   void showMessageDialog(BuildContext context,String msg, String title,VoidCallback? callback) {
-    Get.dialog(
-      AlertDialog(
-        title: CustomTextWidget(
-          text: title,
-          fontWeight: FontWeight.bold,
+
+    Get.defaultDialog(
+        title: title,
+        middleText: msg,
+        barrierDismissible: false,
+      actions: [
+        TextButton(
+            child: const Text("Yes"),
+            onPressed: callback
         ),
-        content: CustomTextWidget(text: msg),
-        actions: [
-          TextButton(
-              child: const Text("Yes"),
-              onPressed: callback
-          ),
-          TextButton(
-            child: const Text("No"),
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true).pop('dialog');
-            },
-          ),
-        ],
-      ),
+        TextButton(
+          child: const Text("No"),
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pop('dialog');
+          },
+        ),
+      ],
     );
+    // Get.dialog(
+    //   AlertDialog(
+    //     title: CustomTextWidget(
+    //       text: title,
+    //       fontWeight: FontWeight.bold,
+    //     ),
+    //     content: CustomTextWidget(text: msg),
+    //     actions: [
+    //       TextButton(
+    //           child: const Text("Yes"),
+    //           onPressed: callback
+    //       ),
+    //       TextButton(
+    //         child: const Text("No"),
+    //         onPressed: () {
+    //           Navigator.of(context, rootNavigator: true).pop('dialog');
+    //         },
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   void logoutUser() {

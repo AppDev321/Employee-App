@@ -15,7 +15,6 @@ final itemsSecond = [
 */
 
 const String menuVehicle="Vehicle";
-
 const String menuShift="Shift";
 const String subMenuMyShift="My Shift";
 const String subMenuOpenShift="Claimed History";
@@ -84,6 +83,7 @@ List<DrawerItem> itemsFirst = [
     Icons.analytics_outlined,
       iconPath+"Cash.svg"
   ),*/
+
   DrawerItem(
       menuReport,
       [

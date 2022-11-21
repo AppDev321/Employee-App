@@ -122,7 +122,6 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-
                                       Row(
                                         children: [
                                           Icon(
@@ -156,7 +155,6 @@ class ClockInOutWidgetState extends State<ClockInOutWidget> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-
                                       Row(
                                         children: const [
                                           Icon(
