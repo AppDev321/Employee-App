@@ -163,15 +163,12 @@ class MyApp extends StatelessWidget {
     return multiProvider;
   }
 
-
   final ThemeData _darkTheme = ThemeData(
     fontFamily: 'Raleway',
     accentColor: primaryDarkColor,
     brightness: Brightness.dark,
     primaryColor: primaryDarkColor,
     primarySwatch: primaryColorDarkTheme,
-
-
   );
 
   final ThemeData _lightTheme = ThemeData(
@@ -180,7 +177,6 @@ class MyApp extends StatelessWidget {
     brightness: Brightness.light,
     primaryColor: primaryColor,
     primarySwatch: primaryColorTheme,
-
   );
 }
 

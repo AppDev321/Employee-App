@@ -1,22 +1,19 @@
-
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:local_auth/local_auth.dart';
-
+import 'package:local_auth/error_codes.dart' as auth_error;
+import 'package:open_settings/open_settings.dart';
 import '../utils/controller.dart';
 import 'base_view_model.dart';
 
 class LoginViewModel extends BaseViewModel {
-
+  final LocalAuthentication localAuthentication = LocalAuthentication();
   var _auth = LocalAuthentication();
   String authToken = "";
 
   String getUserToken() => authToken;
-
 
   setUserAuth(String token) async {
     authToken = token;
@@ -37,24 +34,34 @@ class LoginViewModel extends BaseViewModel {
       return false;
     }
   }
-
+  Future<bool> authenticateIsAvailable() async {
+    final isAvailable = await localAuthentication.canCheckBiometrics;
+    final isDeviceSupported = await localAuthentication.isDeviceSupported();
+    return isAvailable && isDeviceSupported;
+  }
   Future<bool> authenticateWithBiometrics() async {
-    final LocalAuthentication localAuthentication = LocalAuthentication();
-    bool isBiometricSupported = await localAuthentication.isDeviceSupported();
-    bool canCheckBiometrics = await localAuthentication.canCheckBiometrics;
-
     bool isAuthenticated = false;
-
-    if (isBiometricSupported && canCheckBiometrics) {
-      isAuthenticated = await localAuthentication.authenticate(
-        localizedReason: 'Please complete the biometrics to proceed.',
-        options:
-        AuthenticationOptions(useErrorDialogs: true, stickyAuth: true),
-      );
-    }
-
+      try {
+        if(await authenticateIsAvailable())
+        isAuthenticated = await localAuthentication.authenticate(
+          localizedReason: 'Please complete the biometrics to proceed.',
+          options:
+          AuthenticationOptions(useErrorDialogs: true, stickyAuth: true,),
+        );
+        else {
+          OpenSettings.openBiometricEnrollSetting();
+        }
+      } on PlatformException catch (e) {
+        if (e.code == auth_error.notEnrolled) {
+          // Add handling of no hardware here.
+        } else if (e.code == auth_error.lockedOut ||
+            e.code == auth_error.permanentlyLockedOut) {
+          // ...print("authenticate");
+        }
+      }
     return isAuthenticated;
   }
+
 
   Future<bool> getFinerPrintStatus() async {
     return  await Controller().getBiometericStatus();
