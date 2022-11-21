@@ -63,7 +63,7 @@ dependencies:
   video_player: ^1.0.1
   voice_message_package: ^0.0.74
   ai_barcode_scanner: ^0.0.2+1
-
+  open_settings: any
 
 
 

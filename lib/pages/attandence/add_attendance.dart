@@ -54,7 +54,7 @@ class _AddAttendanceState extends State<AddAttendance> {
             onScan: (String value) {
               print("barcode text recevied: $value");
 
-
+              uploadId = "${DateTime.now().millisecondsSinceEpoch}";
               _progressDialog?.showLoadingDialog();
               attendanceViewModel.markAttendanceRequest(
                   value, widget.attendanceType!, uploadId);
