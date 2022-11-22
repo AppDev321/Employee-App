@@ -14,6 +14,7 @@ class CustomEditTextWidget extends StatefulWidget {
   final VoidCallback? onClick;
   final bool isNumberField;
   final TextEditingController? controller;
+  final Function(String)? onTextChanged;
 
   CustomEditTextWidget({Key? key,
     @required this.text,
@@ -23,7 +24,10 @@ class CustomEditTextWidget extends StatefulWidget {
     this.color = Colors.black,
     this.onClick = null,
     this.isNumberField = false,
-    this.controller = null}) : super(key: key);
+    this.controller = null,
+    this.onTextChanged = null
+
+  }) : super(key: key);
 
   @override
   _CustomEditTextWidget createState() => _CustomEditTextWidget();
@@ -40,6 +44,12 @@ bool showPass =true;
       controller: widget.controller,
       obscureText:   widget.isPasswordField ? showPass : false,
       decoration: boxContainer(widget.text!),
+      onChanged: (text){
+          if (widget.onTextChanged != null) {
+            widget.onTextChanged!(text);
+
+        }
+      },
     );
 
   }

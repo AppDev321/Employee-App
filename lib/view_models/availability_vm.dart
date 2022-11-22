@@ -9,6 +9,7 @@ import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:intl/intl.dart';
+import '../custom_style/strings.dart';
 import '../repository/model/request/claim_shift_history_request.dart';
 import '../repository/model/response/claimed_shift_list.dart';
 import '../repository/model/response/leave_list.dart';
@@ -79,7 +80,7 @@ class AvailabilityViewModel extends BaseViewModel {
         {
           setIsErrorReceived(true);
           availabilities=[];
-          setErrorMsg("No Data found");
+          setErrorMsg(ConstantData.noDataFound);
         }
 
       } else {

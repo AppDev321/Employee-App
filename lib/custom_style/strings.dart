@@ -16,6 +16,7 @@ static const  String logoIconPath = "assets/images/ic_launcher.png";
 static const String approved= "APPROVED";
 static const String rejected= "REJECTED";
 static const String pending= "PENDING";
+static const String noDataFound= "No Data Found";
 
 
 

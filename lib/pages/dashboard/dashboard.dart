@@ -713,7 +713,7 @@ class _DashboardState extends State<Dashboard> {
                     callerName: ""));
               }*/
               //inputBox(context);
-              Get.to(() => ConversationScreen());
+              Get.to(() => const ConversationScreen());
               break;
           }
         },

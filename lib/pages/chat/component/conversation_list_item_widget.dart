@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 
-import '../pages/chat/chat_detail.dart';
+import '../chat_detail.dart';
 
 class ConversationList extends StatefulWidget{
   String name;
@@ -38,10 +38,10 @@ class _ConversationListState extends State<ConversationList> {
             Expanded(
               child: Row(
                 children: <Widget>[
-                  // CircleAvatar(
-                  //   backgroundImage: NetworkImage(widget.imageUrl),
-                  //   maxRadius: 30,
-                  // ),
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(widget.imageUrl),
+                    maxRadius: 30,
+                  ),
                   const SizedBox(width: 16,),
                   Expanded(
                     child: Container(

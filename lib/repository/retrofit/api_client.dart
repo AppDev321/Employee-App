@@ -14,6 +14,7 @@ import '../model/request/change_password_request.dart';
 import '../model/request/claim_shift_history_request.dart';
 import '../model/request/claim_shift_request.dart';
 import '../model/response/claimed_shift_list.dart';
+import '../model/response/contact_list.dart';
 import '../model/response/get_dashboard.dart';
 import '../model/response/get_notification.dart';
 import '../model/response/get_shift_list.dart';
@@ -129,5 +130,7 @@ abstract class ApiClient {
   @GET('/notification/get-notification-count')
   Future<LoginApiResponse> getNotificationCount();
 
+  @GET('/contact-list')
+  Future<ContactListResponse> getContactList();
 
 }

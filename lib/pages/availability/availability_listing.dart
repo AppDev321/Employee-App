@@ -107,7 +107,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
             availabilities.remove(deletedItemRequest);
             if (availabilities.isEmpty) {
               _isErrorInApi = true;
-              _errorMsg = "No Data found";
+              _errorMsg = ConstantData.noDataFound;
             }
           });
 
