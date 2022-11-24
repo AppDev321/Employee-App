@@ -1,25 +1,21 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:hnh_flutter/database/app_database.dart';
 import 'package:hnh_flutter/pages/dashboard/dashboard.dart';
-import 'package:hnh_flutter/pages/leave/leave_listing.dart';
 import 'package:hnh_flutter/pages/login/login.dart';
-import 'package:hnh_flutter/pages/shift/shift_list.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:hnh_flutter/provider/theme_provider.dart';
-
-import 'package:hnh_flutter/view_models/login_view_model.dart';
-import 'package:hnh_flutter/view_models/shift_list_vm.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
-import 'package:hnh_flutter/websocket/service/socket_service.dart';
 import 'package:provider/provider.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
+
 import 'bloc/connected_bloc.dart';
 import 'custom_style/colors.dart';
 import 'custom_style/strings.dart';
@@ -39,9 +35,12 @@ final FirebaseMessaging fm = FirebaseMessaging.instance;
 String? fcmToken = "";
 String? platFormType = "android";
 
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
 
 
   fcmToken = await FirebaseMessaging.instance.getToken();
@@ -96,6 +95,9 @@ Future<bool> checkPassPreference() async {
     return false;
   }
 }
+
+
+
 
 class MyApp extends StatelessWidget {
   Map<String, String> map = {'device_type': 'android', 'fcm_token': fcmToken!};

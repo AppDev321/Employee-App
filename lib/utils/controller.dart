@@ -158,6 +158,13 @@ class Controller {
     return formattedDate;
   }
 
+  String getConvertedTime(DateTime now) {
+    //var now = new DateTime.now();
+    var formatter =  DateFormat('HH:mm a');
+    String formattedDate = formatter.format(now);
+    return formattedDate;
+  }
+
   void showToastMessage(BuildContext context, String text) {
     Get.snackbar('Alert', text,
         snackPosition: SnackPosition.TOP,

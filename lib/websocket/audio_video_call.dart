@@ -12,10 +12,14 @@ import '../utils/controller.dart';
 
 typedef StreamStateCallback = void Function(MediaStream stream);
 typedef SreamTimerCallback = void Function(String timer);
+typedef PeerConnectionCreatedSuccessfully = void Function();
+
+
 
 class AudioVideoCall{
   late StreamStateCallback onLocalStream;
   late StreamStateCallback onAddRemoteStream;
+  late PeerConnectionCreatedSuccessfully peerConnectionStatus;
   bool isVideoCall = true;
 
 
@@ -201,12 +205,14 @@ class AudioVideoCall{
   void initializeState() {
     _createPeerConnection().then((pc) {
       _peerConnection = pc;
+      peerConnectionStatus();
     });
   }
 
 
   void disposeAudioVideoCall() async {
     _localStream.dispose();
+
     if (_peerConnection != null) {
       _peerConnection?.close();
     }

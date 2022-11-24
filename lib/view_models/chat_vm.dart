@@ -1,15 +1,15 @@
-import 'package:camera/camera.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 
-import '../custom_style/strings.dart';
+import '../database/dao/call_history_dao.dart';
+import '../database/database_single_instance.dart';
+import '../database/model/call_history_table.dart';
 import '../repository/model/response/contact_list.dart';
-import '../utils/controller.dart';
 
 class ChatViewModel extends BaseViewModel {
-
   List<User> listUser = [];
 
+/*
 
 
   Future<void> getContactList() async {
@@ -41,7 +41,17 @@ class ChatViewModel extends BaseViewModel {
     setLoading(false);
     notifyListeners();
   }
+*/
 
+  Future<List<User>> getContactList() async {
+    final results = await APIWebService().getContactList();
+    final listData = results?.data?.contacts as List<User>;
+    return listData;
+  }
+
+  Future<List<CallHistoryTable>> getCallHistoryList() async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final callHistoryDao = db?.callHistoryDAO as CallHistoryDAO;
+    return await callHistoryDao.getAllCallHistory();
+  }
 }
-
-
