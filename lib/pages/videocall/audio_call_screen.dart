@@ -48,16 +48,16 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
   bool isRemoteUserOnline = false;
   String callTime = "Calling...";
   SocketMessageModel? socketMessageModel;
-  bool isIncommingCall = false;
+  bool isIncomingCall = false;
 
   late AudioVideoCall audioVideoCall;
 
-  void endCall(bool isUserClosedCall) async {
+  void endCall(bool isUserClosedCall,{bool isFromDialog =false}) async {
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
     audioVideoCall.endCall(isUserClosedCall);
 
-    Navigator.of(context).pop(true);
+  //  Navigator.of(context).pop(true);
   }
 
   void switchCamera() {
@@ -89,7 +89,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
     setState(() {
       userObject = userData;
       targetUserId = widget.targetUserID;
-      isIncommingCall = widget.isIncommingCall;
+      isIncomingCall = widget.isIncommingCall;
       socketMessageModel = widget.socketMessageModel;
 
 
@@ -122,7 +122,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
       audioVideoCall.peerConnectionStatus=()
       {
 
-        if (isIncommingCall) {
+        if (isIncomingCall) {
           if (socketMessageModel != null) {
             if (socketMessageModel!.type
                 .toString()
@@ -243,8 +243,9 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  endCall(true);
-                  Navigator.of(context).pop(false);
+                  Navigator.of(context).pop(true);
+                  endCall(true,isFromDialog: true);
+
                 },
                 child: const Text('Yes'),
               ),

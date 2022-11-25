@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:hnh_flutter/view_models/chat_vm.dart';
 
 import '../../repository/model/request/socket_message_model.dart';
 import '../../repository/model/response/get_dashboard.dart';
@@ -36,7 +37,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   var targetUserId = "";
   bool isCalling = false;
   SocketMessageModel? socketMessageModel;
-  bool isIncommingCall = false;
+  bool isIncomingCall = false;
 
   bool isMicUnmute = true;
   bool isVideoEnable = true;
@@ -46,12 +47,15 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   late AudioVideoCall audioVideoCall;
 
-  void endCall(bool isUserClosedCall) async {
+  late ChatViewModel chatViewModel;
+
+  void endCall(bool isUserClosedCall, {bool isFromDialog = false}) async {
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
     audioVideoCall.endCall(isUserClosedCall);
-
-    Navigator.of(context).pop(true);
+    if (!isFromDialog) {
+      Navigator.of(context).pop(true);
+    }
   }
 
   void switchCamera() {
@@ -84,7 +88,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     setState(() {
       userObject = userData;
       targetUserId = widget.targetUserID;
-      isIncommingCall = widget.isIncommingCall;
+      isIncomingCall = widget.isIncommingCall;
       socketMessageModel = widget.socketMessageModel;
 
       audioVideoCall = AudioVideoCall();
@@ -95,41 +99,33 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
         setState(() {
           _localVideoRenderer.srcObject = stream;
         });
-
       });
 
       audioVideoCall.onAddRemoteStream = ((stream) {
-
         setState(() {
           _remoteVideoRenderer.srcObject = stream;
         });
       });
       audioVideoCall.initializeState();
-      audioVideoCall.peerConnectionStatus=()
-      {
-
-        if (isIncommingCall) {
+      audioVideoCall.peerConnectionStatus = () {
+        if (isIncomingCall) {
           if (socketMessageModel != null) {
             if (socketMessageModel!.type
                 .toString()
                 .contains(SocketMessageType.OfferReceived.displayTitle)) {
-              audioVideoCall .setRemoteDescription(jsonEncode(socketMessageModel?.data));
+              audioVideoCall
+                  .setRemoteDescription(jsonEncode(socketMessageModel?.data));
               audioVideoCall.answerCall(socketMessageModel!);
 
               setState(() {
                 isRemoteUserOnline = true;
               });
-
             }
           }
+        } else {
+          audioVideoCall.checkUserIsOnline();
         }
-        else
-          {
-            audioVideoCall.checkUserIsOnline();
-          }
       };
-
-
     });
   }
 
@@ -141,16 +137,12 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
     handleSocketBroadCasting();
 
-
-
+    chatViewModel = ChatViewModel();
 
     super.initState();
   }
 
   void handleSocketBroadCasting() {
-
-
-
     //Handle web socket message
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
         (socketMessage, callback) {
@@ -165,6 +157,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
           });
 
           audioVideoCall.createOffer();
+          chatViewModel.insertCallDetailInDB(message, false);
         } else {
           setState(() {
             callingStatus = "Calling";
@@ -215,7 +208,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-        /*  Expanded(
+          /*  Expanded(
             flex: 1,
             child: RawMaterialButton(
               onPressed: () {
@@ -318,8 +311,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  endCall(true);
-                  //Navigator.of(context).pop(true);
+                  Navigator.of(context).pop(true);
+                  endCall(true, isFromDialog: true);
                 },
                 child: const Text('Yes'),
               ),

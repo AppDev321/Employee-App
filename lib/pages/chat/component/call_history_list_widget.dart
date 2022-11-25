@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 
+import '../../../custom_style/strings.dart';
 import '../../../database/model/call_history_table.dart';
 import '../../../repository/model/response/contact_list.dart';
 import '../../../widget/custom_text_widget.dart';
@@ -30,7 +31,9 @@ class _CallHistoryListWidgetState extends State<CallHistoryListWidget> {
           return ErrorMessageWidget(label: "${snapshot.error}");
         } else if (snapshot.hasData) {
           var callHistoryList = snapshot.data as List<CallHistoryTable>;
-          return ListView.builder(
+          return
+            callHistoryList.isNotEmpty?
+            ListView.builder(
             itemCount: callHistoryList.length,
             itemBuilder: (context, index) {
               var item = callHistoryList[index];
@@ -44,15 +47,14 @@ class _CallHistoryListWidgetState extends State<CallHistoryListWidget> {
                         .substring(0, 1)
                         .toUpperCase(),color: Colors.white,),
                   )  ,
-
-
                 ),
                 subtitle: Text("${item.date} ${item.callTime}  ${item.isIncomingCall?"Incoming":"Outgoing" }"),
               );
             },
-          );
+          ): const Expanded(child:
+            Center(child:  CustomTextWidget(text: ConstantData.noDataFound,textAlign: TextAlign.center)));
         } else {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );

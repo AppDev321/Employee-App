@@ -4,7 +4,9 @@ import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import '../database/dao/call_history_dao.dart';
 import '../database/database_single_instance.dart';
 import '../database/model/call_history_table.dart';
+import '../repository/model/request/socket_message_model.dart';
 import '../repository/model/response/contact_list.dart';
+import '../utils/controller.dart';
 
 class ChatViewModel extends BaseViewModel {
   List<User> listUser = [];
@@ -54,4 +56,22 @@ class ChatViewModel extends BaseViewModel {
     final callHistoryDao = db?.callHistoryDAO as CallHistoryDAO;
     return await callHistoryDao.getAllCallHistory();
   }
+
+
+  void insertCallDetailInDB(SocketMessageModel socketMessageModel,bool isMissed) async
+  {
+
+    var now =  DateTime.now();
+    final db =  await AFJDatabaseInstance.instance.afjDatabase;
+    final personDao = db?.callHistoryDAO as CallHistoryDAO;
+    var data = CallHistoryTable("", socketMessageModel.callerName.toString(), socketMessageModel.callType.toString(),
+        false,
+        isMissed,
+        Controller().getConvertedDate(now),
+        "",
+        "",
+        "0");
+    await personDao.updateCallHistoryRecord(data);
+  }
+
 }

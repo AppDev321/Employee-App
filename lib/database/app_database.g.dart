@@ -119,6 +119,22 @@ class _$CallHistoryDAO extends CallHistoryDAO {
                   'callTime': item.callTime,
                   'endCallTime': item.endCallTime,
                   'totalCallTime': item.totalCallTime
+                }),
+        _callHistoryTableUpdateAdapter = UpdateAdapter(
+            database,
+            'CallHistoryTable',
+            ['id'],
+            (CallHistoryTable item) => <String, Object?>{
+                  'id': item.id,
+                  'userPicUrl': item.userPicUrl,
+                  'callerName': item.callerName,
+                  'callType': item.callType,
+                  'isIncomingCall': item.isIncomingCall ? 1 : 0,
+                  'isMissedCall': item.isMissedCall ? 1 : 0,
+                  'date': item.date,
+                  'callTime': item.callTime,
+                  'endCallTime': item.endCallTime,
+                  'totalCallTime': item.totalCallTime
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -128,6 +144,8 @@ class _$CallHistoryDAO extends CallHistoryDAO {
   final QueryAdapter _queryAdapter;
 
   final InsertionAdapter<CallHistoryTable> _callHistoryTableInsertionAdapter;
+
+  final UpdateAdapter<CallHistoryTable> _callHistoryTableUpdateAdapter;
 
   @override
   Future<List<CallHistoryTable>> getAllCallHistory() async {
@@ -171,6 +189,13 @@ class _$CallHistoryDAO extends CallHistoryDAO {
   Future<void> insertCallHistoryRecord(
       CallHistoryTable callHistoryTable) async {
     await _callHistoryTableInsertionAdapter.insert(
+        callHistoryTable, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateCallHistoryRecord(
+      CallHistoryTable callHistoryTable) async {
+    await _callHistoryTableUpdateAdapter.update(
         callHistoryTable, OnConflictStrategy.abort);
   }
 }

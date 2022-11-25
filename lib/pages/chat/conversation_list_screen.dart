@@ -218,14 +218,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   future:getContactList(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
-                      return Expanded(child:
-                      Center(child: ErrorMessageWidget(label: "${snapshot.error}")));
+                      return Expanded(child: ErrorMessageWidget(label: "${snapshot.error}"));
                     } else if (snapshot.hasData) {
                       contactList = snapshot.data as List<User>;
                       filteredContactList = snapshot.data as List<User>;
                       return showContactListItems(filteredContactList);
                     } else {
-                      return const Expanded(
+                      return Expanded(
                           child: Center(child: CircularProgressIndicator()));
                     }
                   })

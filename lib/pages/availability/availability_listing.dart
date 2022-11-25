@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/pages/availability/view_availability.dart';
-import 'package:intl/intl.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/colors.dart';
 import '../../custom_style/strings.dart';
@@ -14,7 +14,6 @@ import '../../data/drawer_items.dart';
 import '../../repository/model/request/availability_request.dart';
 import '../../repository/model/request/claim_shift_history_request.dart';
 import '../../utils/controller.dart';
-
 import '../../view_models/availability_vm.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/custom_text_widget.dart';
@@ -257,7 +256,7 @@ class AvailabilityListStateful extends State<AvailabilityList> {
                                    request = ClaimShiftHistoryRequest();
                                    request.start_date = startDate;
                                    request.end_date = endDate;
-                                   // _availabilityViewModel.getAttendanceReport(request);
+                                    _availabilityViewModel.getAvailabilityList(request);
                                  },
                                  controllerDate: _dateFilterController,
                                  isSearchButtonShow: false,

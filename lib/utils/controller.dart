@@ -12,8 +12,8 @@ import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
 
 class Controller {
-  static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
-  "http://192.168.18.69:8000/api";
+  static const String appBaseURL = "http://vmi808920.contaboserver.net/api";
+ // "http://192.168.18.69:8000/api";
      // "http://afjdemo.hnhtechpk.com/api";
 
   //  "http://afjdev.hnhtechpk.com/api";
