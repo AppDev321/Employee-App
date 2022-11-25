@@ -1,22 +1,27 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:connectycube_flutter_call_kit/connectycube_flutter_call_kit.dart';
+import 'package:billtech_incoming_call/billtech_incoming_call.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hnh_flutter/pages/videocall/video_call_screen.dart';
+import 'package:hnh_flutter/database/dao/call_history_dao.dart';
+import 'package:hnh_flutter/database/model/call_history_table.dart';
+import 'package:hnh_flutter/pages/videocall/audio_call_screen.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:uuid/uuid.dart';
 
+import '../database/app_database.dart';
+import '../database/database_single_instance.dart';
 import '../notification/firebase_notification.dart';
-import '../pages/videocall/audio_call_screen.dart';
+import '../pages/videocall/video_call_screen.dart';
 import '../repository/model/request/socket_message_model.dart';
 import '../repository/model/response/events_list.dart';
 import '../repository/model/response/get_dashboard.dart';
@@ -59,6 +64,28 @@ class DashBoardViewModel extends BaseViewModel {
   ];
 
   int notificationCount = 0;
+
+
+  //Future<AppDatabase?> get afjDatabase async => await AFJDatabaseInstance.instance.afjDatabase;
+
+
+
+  void insertCallDetailInDB(SocketMessageModel socketMessageModel,bool isMissed) async
+  {
+
+    var now =  DateTime.now();
+    final db =  await AFJDatabaseInstance.instance.afjDatabase;
+    final personDao = db?.callHistoryDAO as CallHistoryDAO;
+    var data = CallHistoryTable("", socketMessageModel.callerName.toString(), socketMessageModel.callType.toString(),
+        true,
+        isMissed,
+        Controller().getConvertedDate(now),
+        Controller().getConvertedTime(now),
+        "",
+        "0");
+    await personDao.insertCallHistoryRecord(data);
+  }
+
 
   Future<void> getDashBoardData() async {
     setLoading(true);
@@ -280,37 +307,135 @@ class DashBoardViewModel extends BaseViewModel {
   void handleSocketMessage(SocketMessageType type, SocketMessageModel message) {
     switch (type) {
       case SocketMessageType.OfferReceived:
-        ConnectycubeFlutterCallKit.instance.init(
-          onCallAccepted: _onCallAccepted,
-          onCallRejected: _onCallRejected,
-        );
-
-        CallEvent callEvent =  CallEvent(
-            sessionId: DateTime.now().microsecondsSinceEpoch.toString(),
-            callType: message.callType.toString()=="audio" ? 0 : 1, //1 for video call and 0 for audio
-            callerId: int.parse(message.sendTo.toString()),
-
-            callerName: message.callerName.toString(),
-            opponentsIds: const {0},
-           );
-        ConnectycubeFlutterCallKit.showCallNotification(callEvent);
-
+        makeIncomingCall(message);
         break;
     }
   }
 
-  Future<void> _onCallAccepted(CallEvent callEvent) async {
-    if(callEvent.callType == 0) {
-      Get.to(() => AudioCallScreen(tragetID: "${callEvent.callerId}"));
-    }
-    else
-      {
-        Get.to(() => VideoCallScreen(tragetID: "${callEvent.callerId}"));
+  void makeIncomingCall(SocketMessageModel message) {
+    var uuid = const Uuid();
+    final _currentUuid = uuid.v4();
+    var params = <String, dynamic>{
+      'id': _currentUuid,
+      'nameCaller': message.callerName,
+      'appName': 'AFJ App',
+      'avatar': 'https://i.pravatar.cc/100',
+      'handle': 'Incoming Call',
+      'type': message.callType.toString().contains("audio") ? 0 : 1,
+      'duration': 1000 * 60,
+      'textAccept': 'Accept',
+      'textDecline': 'Decline',
+      'textMissedCall': 'Missed call',
+      'textCallback': 'Call back',
+      'extra': message.toJson(),
+      'headers': <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+      'android': <String, dynamic>{
+        'isCustomNotification': true,
+        'isShowLogo': false,
+        'isShowCallback': true,
+        'isShowMissedCallNotification': true,
+        'ringtonePath': 'system_ringtone_default',
+        'backgroundColor': '#0955fa',
+        'backgroundUrl': '',
+        'actionColor': '#4CAF50'
+      },
+      'ios': <String, dynamic>{
+        'iconName': 'CallKitLogo',
+        'handleType': '',
+        'supportsVideo': true,
+        'maximumCallGroups': 2,
+        'maximumCallsPerCallGroup': 1,
+        'audioSessionMode': 'default',
+        'audioSessionActive': true,
+        'audioSessionPreferredSampleRate': 44100.0,
+        'audioSessionPreferredIOBufferDuration': 0.005,
+        'supportsDTMF': true,
+        'supportsHolding': true,
+        'supportsGrouping': false,
+        'supportsUngrouping': false,
+        'ringtonePath': 'system_ringtone_default'
       }
+    };
+    BilltechIncomingCall.showCallkitIncoming(params);
+
+    listenerEvent((event) {
+      //   print('HOME: ${event?.body['extra']}');
+      switch (event!.name) {
+        case CallEvent.ACTION_CALL_ACCEPT:
+          message.callType.toString().contains("audio")?
+          Get.to(() => AudioCallScreen(
+                targetUserID: message.sendFrom.toString(),
+                isIncommingCall: true,
+                socketMessageModel: message,
+              )):
+          Get.to(() => VideoCallScreen(
+            targetUserID: message.sendFrom.toString(),
+            isIncommingCall: true,
+            socketMessageModel: message,
+          ));
+
+          insertCallDetailInDB(message,false);
+
+          break;
+        case CallEvent.ACTION_CALL_TIMEOUT:
+          insertCallDetailInDB(message,true);
+          break;
+      }
+    });
   }
 
-  Future<void> _onCallRejected(CallEvent callEvent) async {
-    print("Call reject");
+  void listenerEvent(Function? callback) {
+    BilltechIncomingCall.onEvent.listen((event) {
+      switch (event!.name) {
+        case CallEvent.ACTION_CALL_INCOMING:
+        // TODO: received an incoming call
+          break;
+        case CallEvent.ACTION_CALL_START:
+        // TODO: started an outgoing call
+        // TODO: show screen calling in Flutter
+          break;
+        case CallEvent.ACTION_CALL_ACCEPT:
+          if (callback != null) {
+            callback(event);
+          }
+          break;
+        case CallEvent.ACTION_CALL_DECLINE:
+          if (callback != null) {
+            callback(event);
+          }
+
+          break;
+        case CallEvent.ACTION_CALL_ENDED:
+        // TODO: ended an incoming/outgoing call
+          break;
+        case CallEvent.ACTION_CALL_TIMEOUT:
+          if (callback != null) {
+            callback(event);
+          }
+          break;
+        case CallEvent.ACTION_CALL_CALLBACK:
+        // TODO: only Android - click action `Call back` from missed call notification
+          break;
+        case CallEvent.ACTION_CALL_TOGGLE_HOLD:
+        // TODO: only iOS
+          break;
+        case CallEvent.ACTION_CALL_TOGGLE_MUTE:
+        // TODO: only iOS
+          break;
+        case CallEvent.ACTION_CALL_TOGGLE_DMTF:
+        // TODO: only iOS
+          break;
+        case CallEvent.ACTION_CALL_TOGGLE_GROUP:
+        // TODO: only iOS
+          break;
+        case CallEvent.ACTION_CALL_TOGGLE_AUDIO_SESSION:
+        // TODO: only iOS
+          break;
+        case CallEvent.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
+        // TODO: only iOS
+          break;
+      }
+    });
   }
 }
 
@@ -329,9 +454,9 @@ class FirebaseAppUpdate {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (this.appData != null) {
-      data['app_data'] = this.appData!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (appData != null) {
+      data['app_data'] = appData!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -351,10 +476,10 @@ class AppData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['app_name'] = this.appName;
-    data['version'] = this.version;
-    data['download_url'] = this.downloadUrl;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['app_name'] = appName;
+    data['version'] = version;
+    data['download_url'] = downloadUrl;
     return data;
   }
 }

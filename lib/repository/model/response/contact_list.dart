@@ -73,7 +73,7 @@ class Data {
 class User {
   int? id;
   String? fullName;
-  Null? email;
+  String? email;
   String? picture;
 
   User({this.id, this.fullName, this.email, this.picture});

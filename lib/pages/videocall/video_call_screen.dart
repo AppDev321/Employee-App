@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:hnh_flutter/view_models/chat_vm.dart';
 
 import '../../repository/model/request/socket_message_model.dart';
 import '../../repository/model/response/get_dashboard.dart';
@@ -12,9 +13,17 @@ import '../../websocket/audio_video_call.dart';
 import '../../widget/custom_text_widget.dart';
 
 class VideoCallScreen extends StatefulWidget {
-  final String tragetID;
+  final String targetUserID;
 
-  VideoCallScreen({Key? key, required this.tragetID}) : super(key: key);
+  final bool isIncommingCall;
+  final SocketMessageModel? socketMessageModel;
+
+  VideoCallScreen({
+    Key? key,
+    required this.targetUserID,
+    this.isIncommingCall = false,
+    this.socketMessageModel,
+  }) : super(key: key);
 
   @override
   _VideoCallScreenState createState() => _VideoCallScreenState();
@@ -27,6 +36,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   var targetUserId = "";
   bool isCalling = false;
+  SocketMessageModel? socketMessageModel;
+  bool isIncomingCall = false;
 
   bool isMicUnmute = true;
   bool isVideoEnable = true;
@@ -36,12 +47,15 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   late AudioVideoCall audioVideoCall;
 
-  void endCall(bool isUserClosedCall) async {
+  late ChatViewModel chatViewModel;
+
+  void endCall(bool isUserClosedCall, {bool isFromDialog = false}) async {
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
     audioVideoCall.endCall(isUserClosedCall);
-
-    Navigator.of(context).pop(true);
+    if (!isFromDialog) {
+      Navigator.of(context).pop(true);
+    }
   }
 
   void switchCamera() {
@@ -70,8 +84,12 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   loadPreferenceUserData() async {
     User userData = User.fromJson(await Controller()
         .getObjectPreference(Controller.PREF_KEY_USER_OBJECT));
+
     setState(() {
       userObject = userData;
+      targetUserId = widget.targetUserID;
+      isIncomingCall = widget.isIncommingCall;
+      socketMessageModel = widget.socketMessageModel;
 
       audioVideoCall = AudioVideoCall();
       audioVideoCall.targetUserId = targetUserId;
@@ -89,67 +107,89 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
         });
       });
       audioVideoCall.initializeState();
+      audioVideoCall.peerConnectionStatus = () {
+        if (isIncomingCall) {
+          if (socketMessageModel != null) {
+            if (socketMessageModel!.type
+                .toString()
+                .contains(SocketMessageType.OfferReceived.displayTitle)) {
+              audioVideoCall
+                  .setRemoteDescription(jsonEncode(socketMessageModel?.data));
+              audioVideoCall.answerCall(socketMessageModel!);
+
+              setState(() {
+                isRemoteUserOnline = true;
+              });
+            }
+          }
+        } else {
+          audioVideoCall.checkUserIsOnline();
+        }
+      };
     });
   }
 
   @override
   void initState() {
     loadPreferenceUserData();
-    targetUserId = widget.tragetID;
+
     initRenderers();
 
     handleSocketBroadCasting();
+
+    chatViewModel = ChatViewModel();
+
     super.initState();
   }
 
   void handleSocketBroadCasting() {
     //Handle web socket message
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
-            (socketMessage, callback) {
-          var message = socketMessage as SocketMessageModel;
-          print("Message Received Socket: ${message.toJson()}");
-          var msgType = message.type.toString();
+        (socketMessage, callback) {
+      var message = socketMessage as SocketMessageModel;
+      print("Message Received Socket: ${message.toJson()}");
+      var msgType = message.type.toString();
 
-          if (msgType == SocketMessageType.CallResponse.displayTitle) {
-            if (message.data == true) {
-              setState(() {
-                callingStatus = "Ringing";
-              });
+      if (msgType == SocketMessageType.CallResponse.displayTitle) {
+        if (message.data == true) {
+          setState(() {
+            callingStatus = "Ringing";
+          });
 
-              audioVideoCall.createOffer();
-            } else {
-              setState(() {
-                callingStatus = "Calling";
-              });
-            }
-          } else if (msgType == SocketMessageType.OfferReceived.displayTitle) {
-            audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-            Controller().showConfirmationMsgDialog(
-                context, message.callerName.toString(), "Incoming Call",
-                "Answer",
-                    (value) {
-                  if (value) {
-                    audioVideoCall.answerCall(message);
-                    setState(() {
-                      isRemoteUserOnline = true;
-                    });
-                  }
-                });
-          } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
-             audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-          audioVideoCall.startTimmer();
+          audioVideoCall.createOffer();
+          chatViewModel.insertCallDetailInDB(message, false);
+        } else {
+          setState(() {
+            callingStatus = "Calling";
+          });
+        }
+      } else if (msgType == SocketMessageType.OfferReceived.displayTitle) {
+        /*audioVideoCall.setRemoteDescription(jsonEncode(message.data));
+        Controller().showConfirmationMsgDialog(
+            context, message.callerName.toString(), "Incoming Call", "Answer",
+            (value) {
+          if (value) {
+            audioVideoCall.answerCall(message);
             setState(() {
               isRemoteUserOnline = true;
             });
-          } else if (msgType == SocketMessageType.ICECandidate.displayTitle) {
-            audioVideoCall.addCandidate(jsonEncode(message.data));
-          } else if (msgType == SocketMessageType.CallClosed.displayTitle) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(message.data),
-            ));
-            endCall(false);
           }
+        });*/
+      } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
+        audioVideoCall.setRemoteDescription(jsonEncode(message.data));
+        audioVideoCall.startTimer();
+        setState(() {
+          isRemoteUserOnline = true;
         });
+      } else if (msgType == SocketMessageType.ICECandidate.displayTitle) {
+        audioVideoCall.addCandidate(jsonEncode(message.data));
+      } else if (msgType == SocketMessageType.CallClosed.displayTitle) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(message.data),
+        ));
+        endCall(false);
+      }
+    });
   }
 
   @override
@@ -168,11 +208,11 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Expanded(
+          /*  Expanded(
             flex: 1,
             child: RawMaterialButton(
               onPressed: () {
-                // audioVideoCall.checkUserIsOnline();
+                audioVideoCall.checkUserIsOnline();
               },
               shape: const CircleBorder(),
               elevation: 2.0,
@@ -184,7 +224,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                 size: 20.0,
               ),
             ),
-          ),
+          ),*/
           Expanded(
             flex: 1,
             child: RawMaterialButton(
@@ -260,9 +300,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   Future<bool> onBackButtonPress() async {
     return (await showDialog(
-      context: context,
-      builder: (context) =>
-          AlertDialog(
+          context: context,
+          builder: (context) => AlertDialog(
             title: const Text('Are you sure?'),
             content: const Text('Do you want to end this call?'),
             actions: <Widget>[
@@ -272,14 +311,14 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  endCall(true);
-                  //Navigator.of(context).pop(true);
+                  Navigator.of(context).pop(true);
+                  endCall(true, isFromDialog: true);
                 },
                 child: const Text('Yes'),
               ),
             ],
           ),
-    )) ??
+        )) ??
         false;
   }
 
@@ -295,54 +334,51 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
             return Stack(children: <Widget>[
               _remoteRenderers.isNotEmpty
                   ? Row(
-                children: [
-                  ..._remoteRenderers.map((remoteRenderer) {
-                    return SizedBox(
-                        width: 160,
-                        height: 120,
-                        child: RTCVideoView(remoteRenderer));
-                  }).toList(),
-                ],
-              )
+                      children: [
+                        ..._remoteRenderers.map((remoteRenderer) {
+                          return SizedBox(
+                              width: 160,
+                              height: 120,
+                              child: RTCVideoView(remoteRenderer));
+                        }).toList(),
+                      ],
+                    )
                   : Center(),
               Positioned(
                   child: isRemoteUserOnline
                       ? Container(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height,
-                    decoration:
-                    const BoxDecoration(color: Colors.black54),
-                    child: RTCVideoView(_remoteVideoRenderer),
-                  )
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          decoration:
+                              const BoxDecoration(color: Colors.black54),
+                          child: RTCVideoView(_remoteVideoRenderer),
+                        )
                       : Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                       CircularProgressIndicator(strokeWidth: 3),
-                       SizedBox(height: 20,),
-                       Center(child: CustomTextWidget(text: callingStatus))
-            ])),
-            isVideoEnable
-            ? Positioned(
-            bottom: 150.0,
-            right: 20.0,
-            child: Container(
-            width: 105.0,
-            height: 140.0,
-            decoration: const BoxDecoration(color: Colors.black54),
-            child: RTCVideoView(_localVideoRenderer),
-            ),
-            )
-                : const Center(),
-            videoCallBottomButtonWidget()
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                              CircularProgressIndicator(strokeWidth: 3),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Center(
+                                  child: CustomTextWidget(text: callingStatus))
+                            ])),
+              isVideoEnable
+                  ? Positioned(
+                      bottom: 150.0,
+                      right: 20.0,
+                      child: Container(
+                        width: 105.0,
+                        height: 140.0,
+                        decoration: const BoxDecoration(color: Colors.black54),
+                        child: RTCVideoView(_localVideoRenderer),
+                      ),
+                    )
+                  : const Center(),
+              videoCallBottomButtonWidget()
             ]);
-            })),
+          })),
     );
   }
 }

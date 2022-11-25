@@ -9,13 +9,15 @@ import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:hnh_flutter/widget/error_message.dart';
 
 import '../../custom_style/colors.dart';
+import '../../database/model/call_history_table.dart';
 import '../../repository/model/request/chat_user.dart';
 import '../../repository/model/response/contact_list.dart';
 import '../../utils/controller.dart';
 import '../../view_models/chat_vm.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../videocall/video_call_screen.dart';
-import 'component/contact_list_item_widget.dart';
+import 'component/call_history_list_widget.dart';
+import 'component/contact_list_widget.dart';
 import 'component/conversation_list_item_widget.dart';
 
 class ConversationScreen extends StatefulWidget {
@@ -76,13 +78,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   List<User> contactList = [];
   List<User> filteredContactList = [];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     chatViewModel = ChatViewModel();
-    chatViewModel.getContactList();
     chatViewModel.addListener(() {
       var checkErrorApiStatus = chatViewModel.getIsErrorRecevied();
       if (checkErrorApiStatus) {
@@ -95,11 +97,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
           }
         });
       } else {
-            setState(() {
-                  _errorMsg = "";
-                  contactList = chatViewModel.listUser;
-                  filteredContactList = contactList;
-            });
+        setState(() {
+          _errorMsg = "";
+          //  contactList = chatViewModel.listUser;
+          //filteredContactList = contactList;
+        });
       }
     });
   }
@@ -110,7 +112,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
         appBar: AppBar(
           title: const Text("Video Chat"),
         ),
-        body: selectedTab == 0 ? setConversationList() : setContactList(),
+        body: selectedTab == 0
+            ? setConversationList()
+            : selectedTab == 1
+                ? setContactList()
+                : setCallHistoryList(),
         bottomNavigationBar: BottomNavigationBar(
             onTap: (int index) {
               setState(() {
@@ -193,7 +199,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Widget setContactList() {
-
     return Padding(
       padding: const EdgeInsets.all(0),
       child: Column(
@@ -202,71 +207,73 @@ class _ConversationScreenState extends State<ConversationScreen> {
             padding: const EdgeInsets.all(10),
             child: CustomEditTextWidget(
               text: "Search...",
-              onTextChanged: (text){
+              onTextChanged: (text) {
                 print("filter texting ==> ${filteredContactList.length}");
-                onSearchTextChanged(text);
+                searchFromContactList(text);
               },
             ),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: filteredContactList.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: filteredContactList.length,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(top: 16),
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return ContactListItem(
-                          name: filteredContactList[index].fullName.toString(),
-                          imageUrl: filteredContactList[index].picture.toString(),
-                          onUserItemClick: (){
-                           var targetId= filteredContactList[index].id.toString();
-                           print("target Id: $targetId");
-                           Get.to(() => VideoCallScreen(tragetID: targetId));
-                          },
-                        );
-                      },
-                    )
-                  : const Expanded(
-
-                      child: ErrorMessageWidget(
-                        label: "No Contact Found",
-                      ),
-                    ),
-            ),
-          ),
+          filteredContactList.isEmpty ?
+          FutureBuilder(
+                  future:getContactList(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Expanded(child: ErrorMessageWidget(label: "${snapshot.error}"));
+                    } else if (snapshot.hasData) {
+                      contactList = snapshot.data as List<User>;
+                      filteredContactList = snapshot.data as List<User>;
+                      return showContactListItems(filteredContactList);
+                    } else {
+                      return Expanded(
+                          child: Center(child: CircularProgressIndicator()));
+                    }
+                  })
+              : showContactListItems(filteredContactList),
         ],
       ),
     );
   }
 
+  Future<Object> getContactList() async
+  {
+    return contactList.isEmpty?chatViewModel.getContactList():contactList;
+  }
 
 
-  onSearchTextChanged(String text) async {
-    print("texting ==> ${contactList.length}");
-    filteredContactList.clear();
+  Widget showContactListItems(List<User> filteredContactList) {
+    return Expanded(
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child:
+
+        ContactListItem(filteredContactList:filteredContactList)
+
+      ),
+    );
+  }
+
+  Widget setCallHistoryList() {
+    return Padding(
+        padding: const EdgeInsets.all(0),
+        child: CallHistoryListWidget(futureFunction: chatViewModel.getCallHistoryList()));
+  }
+
+  searchFromContactList(String text) async {
+
+ //  filteredContactList.clear();
     if (text.isEmpty) {
       setState(() {
-        filteredContactList.clear();
+        filteredContactList  = contactList;
       });
       return;
     }
     setState(() {
       filteredContactList = contactList
-          .where((string) => string.fullName.toString().toLowerCase().contains(text.toLowerCase()))
+          .where((string) => string.fullName
+              .toString()
+              .toLowerCase()
+              .contains(text.toLowerCase()))
           .toList();
     });
-    /*for (var userDetail in contactList)
-    {
-      if (userDetail.fullName.toString().contains(text)) {
-        setState(() {
-          filteredContactList.add(userDetail);
-        });
-      }
-    }*/
-
-
   }
 }

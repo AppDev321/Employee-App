@@ -30,34 +30,37 @@ class _AddAttendanceState extends State<AddAttendance> {
   String uploadId = "";
 
   late CameraController cameraController;
-  late Future<void> cameraValue;
+
+  late List<CameraDescription> cameras;
+  bool showCameraPreview = false;
+
+
+
+
 
   void startCamera()async{
     _progressDialog?.showLoadingDialog();
     cameraController.takePicture().then((XFile file) {
       if(mounted){
-        if(file!=null){
-          print("Image is saved in ${file.path}");
+        if(file != null){
+
           userPicturePath=file.path;
           if (userPicturePath.isNotEmpty) {
             var profileViewModel = ProfileViewModel();
             profileViewModel.uploadImageToServer(
                 context, File(userPicturePath), (isUploaded) {}, (imageUrl) {
               print("image=== $imageUrl");
+              _progressDialog?.hideOpenDialog();
               setState(() {
-
                 uploadId = imageUrl;
-
               });
-
             },
                 requestType: "qr_scan",
                 isReturnPath: false,
                 showUploadAlertMsg: false);
           }
-
         }
-      } _progressDialog?.hideOpenDialog();
+      }
     });
   }
 
@@ -83,7 +86,6 @@ class _AddAttendanceState extends State<AddAttendance> {
           builder: (context) => AiBarcodeScanner(
             onScan: (String value) {
               print("barcode text recevied: $value");
-              uploadId = "${DateTime.now().millisecondsSinceEpoch}";
               _progressDialog?.showLoadingDialog();
               attendanceViewModel.markAttendanceRequest(
                   value, widget.attendanceType!, uploadId);
@@ -99,12 +101,26 @@ class _AddAttendanceState extends State<AddAttendance> {
     }
   }
 
+
+  Future<void> getCameras() async{
+    cameras = await availableCameras();
+    cameraController = CameraController(cameras[1], ResolutionPreset.medium);
+    return cameraController.initialize();
+  }
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    cameraController = CameraController(cameras[1], ResolutionPreset.high);
-    cameraValue = cameraController.initialize();
+
+    getCameras().then((value){
+      setState(() {
+        showCameraPreview = true;
+      });
+    });
+
+
     attendanceViewModel = AttendanceViewModel();
    // attendanceViewModel.takeUserPictureWithoutPreview();
     attendanceViewModel.addListener(() {
@@ -163,6 +179,7 @@ class _AddAttendanceState extends State<AddAttendance> {
       appBar: AppBar(
         title: const Text(menuAttandance),
       ),
+
       floatingActionButton: Padding(
           padding: const EdgeInsets.all(15.0),
           child: SizedBox(
@@ -191,48 +208,45 @@ class _AddAttendanceState extends State<AddAttendance> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        body: Stack(
+        body:
+        Stack(
         children: [
+          showCameraPreview?
           uploadId.isEmpty?
           FutureBuilder(
-              future: cameraValue,
+              future: cameraController.initialize(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return Container(
+                  return SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
                       child: CameraPreview(cameraController));
                 } else {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
               })
-              :Center(),
-          // uploadId.isEmpty?    Center(
-          //   child: Positioned(
-          //       child:
-          //       Container(
-          //         height: 500,
-          //        width: 500,
-          //
-          //         decoration: BoxDecoration(
-          //           border: Border.all( //<-- SEE HERE
-          //             width: 500,
-          //           ),
-          //         ),
-          //
-          //       )
-          //   ),
-          // ):Center(),
-          Positioned(
+              :const Center()
+          :const Center(),
+          uploadId.isEmpty?
+          Image.asset(
+
+            'assets/images/frame_user.png',
+            height: Get.mediaQuery.size.height,
+            width: Get.mediaQuery.size.width,
+
+            fit: BoxFit.fitWidth,
+          ):Center(),
+
+            Positioned(
             top:20,right: 0,left: 0,
             child:  Column(
               children: [
                 Container(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  'Scan QR-Code',
+                  uploadId.isEmpty?'Picture Capturing':'Scan QR-Code',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: colorText,
@@ -244,7 +258,7 @@ class _AddAttendanceState extends State<AddAttendance> {
           Container(
                 padding: const EdgeInsets.fromLTRB(50.0, 5.0, 50.0, 20.0),
                 child: Text(
-                  'Please give access to your Camera so that we can scan and provide you what is inside the code',
+                  uploadId.isEmpty?'W take your picture before attendance for verification purposes':    'Please give access to your Camera so that we can scan and provide you what is inside the code',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     height: 1.4,

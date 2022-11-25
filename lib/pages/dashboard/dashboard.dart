@@ -20,6 +20,8 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
+import '../../database/app_database.dart';
+import '../../database/database_single_instance.dart';
 import '../../main.dart';
 import '../../provider/theme_provider.dart';
 import '../../repository/model/request/socket_message_model.dart';
@@ -87,6 +89,7 @@ class _DashboardState extends State<Dashboard> {
     APIWebService().postTokenToServer(map);
 
     _dashBoardViewModel = DashBoardViewModel();
+
     _dashBoardViewModel.initFireBaseConfig();
     _dashBoardViewModel.getDashBoardData();
     _dashBoardViewModel.isAppUpdated().then((value) {
@@ -130,7 +133,7 @@ class _DashboardState extends State<Dashboard> {
                 Controller.PREF_KEY_USER_OBJECT, userDashboard);
 
             chatService = SocketService(
-                Controller.webSocketURL + userDashboard.id.toString());
+                "${Controller.webSocketURL}${userDashboard.id}&device=emp");
           }
 
           Controller().setUserProfilePic(profileImageUrl);
@@ -204,7 +207,7 @@ class _DashboardState extends State<Dashboard> {
 
           if(msgType == SocketMessageType.OfferReceived.displayTitle)
           {
-           // _dashBoardViewModel.handleSocketMessage(SocketMessageType.OfferReceived,message);
+            _dashBoardViewModel.handleSocketMessage(SocketMessageType.OfferReceived,message);
 
           }
 
@@ -787,7 +790,7 @@ class _DashboardState extends State<Dashboard> {
                   setState(() {
                     var id = _textFieldController.text.toString();
                    // Get.to(() => ConversationScreen());
-                   Get.to(() => VideoCallScreen(tragetID: id));
+                 //  Get.to(() => VideoCallScreen(targetUserID: id));
                  //   Get.to(()=>AudioCallScreen(tragetID: id));
                     Navigator.pop(context);
                   });

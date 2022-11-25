@@ -3,11 +3,9 @@ import 'dart:convert';
 
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_incoming_call/flutter_incoming_call.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 
 import '../../repository/model/request/socket_message_model.dart';
 import '../../repository/model/response/get_dashboard.dart';
@@ -15,18 +13,26 @@ import '../../utils/controller.dart';
 import '../../utils/size_config.dart';
 import '../../websocket/audio_video_call.dart';
 import '../../widget/custom_text_widget.dart';
-import '../../widget/dial_button.dart';
 import '../../widget/dial_user_pic.dart';
-import '../../widget/rounded_button.dart';
 
 
 class AudioCallScreen extends StatefulWidget {
-  final String tragetID;
 
-  AudioCallScreen({Key? key, required this.tragetID}) : super(key: key);
+  final String targetUserID;
+
+  final bool isIncommingCall;
+  final SocketMessageModel? socketMessageModel;
+
+  AudioCallScreen({
+    Key? key,
+    required this.targetUserID,
+    this.isIncommingCall = false,
+    this.socketMessageModel,
+  }) : super(key: key);
 
   @override
   _AudioCallScreenState createState() => _AudioCallScreenState();
+
 }
 
 class _AudioCallScreenState extends State<AudioCallScreen> {
@@ -41,16 +47,17 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
   bool isSpeakerEnabled = true;
   bool isRemoteUserOnline = false;
   String callTime = "Calling...";
-
+  SocketMessageModel? socketMessageModel;
+  bool isIncomingCall = false;
 
   late AudioVideoCall audioVideoCall;
 
-  void endCall(bool isUserClosedCall) async {
+  void endCall(bool isUserClosedCall,{bool isFromDialog =false}) async {
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
     audioVideoCall.endCall(isUserClosedCall);
 
-    Navigator.of(context).pop(true);
+  //  Navigator.of(context).pop(true);
   }
 
   void switchCamera() {
@@ -81,6 +88,11 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
         .getObjectPreference(Controller.PREF_KEY_USER_OBJECT));
     setState(() {
       userObject = userData;
+      targetUserId = widget.targetUserID;
+      isIncomingCall = widget.isIncommingCall;
+      socketMessageModel = widget.socketMessageModel;
+
+
 
       audioVideoCall = AudioVideoCall();
       audioVideoCall.targetUserId = targetUserId;
@@ -106,13 +118,36 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
         });
       });
       audioVideoCall.initializeState();
+      audioVideoCall.peerConnectionStatus=()
+      {
+
+        if (isIncomingCall) {
+          if (socketMessageModel != null) {
+            if (socketMessageModel!.type
+                .toString()
+                .contains(SocketMessageType.OfferReceived.displayTitle)) {
+              audioVideoCall.startTimer();
+              audioVideoCall .setRemoteDescription(jsonEncode(socketMessageModel?.data));
+              audioVideoCall.answerCall(socketMessageModel!);
+              setState(() {
+                isRemoteUserOnline = true;
+              });
+
+            }
+          }
+        }
+        else
+        {
+          audioVideoCall.checkUserIsOnline();
+        }
+      };
     });
   }
 
   @override
   void initState() {
     loadPreferenceUserData();
-    targetUserId = widget.tragetID;
+
     initRenderers();
     handleSocketBroadCasting();
     super.initState();
@@ -204,8 +239,9 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  endCall(true);
-                  Navigator.of(context).pop(false);
+                  Navigator.of(context).pop(true);
+                  endCall(true,isFromDialog: true);
+
                 },
                 child: const Text('Yes'),
               ),
@@ -280,7 +316,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Expanded(
+        /*  Expanded(
             flex: 1,
             child: RawMaterialButton(
               onPressed: () {
@@ -296,7 +332,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
                 size: 20.0,
               ),
             ),
-          ),
+          ),*/
           Expanded(
             flex: 1,
             child: RawMaterialButton(
