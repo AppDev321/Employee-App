@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../custom_style/colors.dart';
 import '../../../voice_record_animation/audio_encoder_type.dart';
 import '../../../voice_record_animation/screen/social_media_recorder.dart';
@@ -226,7 +224,6 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         backgroundColor: Colors.transparent,
         context: context,
         builder: (builder) => attachmentMenuBox());
-
     focusNode.unfocus();
   }
 
@@ -320,10 +317,10 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                     width: 40,
                   ),
                   iconCreation(Icons.location_pin, Colors.teal, menus[4]),
-                  /*SizedBox(
+                  SizedBox(
                     width: 40,
-                  ),*/
-                  //   iconCreation(Icons.person, Colors.blue,menus[5]),
+                  ),
+                    iconCreation(Icons.person, Colors.blue,menus[5]),
                 ],
               ),
             ],

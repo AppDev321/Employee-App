@@ -96,7 +96,6 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
 
       audioVideoCall.onAddRemoteStream = ((stream) {
         setState(() {
-
           _remoteVideoRenderer.srcObject = stream;
         });
       });
@@ -116,9 +115,6 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
     targetUserId = widget.tragetID;
     initRenderers();
     handleSocketBroadCasting();
-
-
-
     super.initState();
   }
 
@@ -159,7 +155,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
             setState(() {
               isRemoteUserOnline = true;
             });
-            audioVideoCall.startTimer();
+            audioVideoCall.startTimmer();
            audioVideoCall.speakerPhoneAction(false);
           }
         });
@@ -170,7 +166,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
 
       } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-        audioVideoCall.startTimer();
+        audioVideoCall.startTimmer();
         setState(() {
           isRemoteUserOnline = true;
         });
@@ -288,7 +284,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
             flex: 1,
             child: RawMaterialButton(
               onPressed: () {
-                audioVideoCall.checkUserIsOnline();
+                // audioVideoCall.checkUserIsOnline();
               },
               shape: const CircleBorder(),
               elevation: 2.0,

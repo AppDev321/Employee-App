@@ -137,7 +137,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                 });
           } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
              audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-          audioVideoCall.startTimer();
+          audioVideoCall.startTimmer();
             setState(() {
               isRemoteUserOnline = true;
             });
@@ -172,7 +172,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
             flex: 1,
             child: RawMaterialButton(
               onPressed: () {
-                audioVideoCall.checkUserIsOnline();
+                // audioVideoCall.checkUserIsOnline();
               },
               shape: const CircleBorder(),
               elevation: 2.0,

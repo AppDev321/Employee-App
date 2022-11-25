@@ -41,8 +41,6 @@ class _ChatDetailPageState extends State<ChatDetailPage>
 
   }
 
-
-
   @override
   void dispose() {
     controller.dispose();
@@ -107,36 +105,37 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                   Icons.call,
                   color: Colors.white,
                 ),
-
               ],
             ),
           ),
         ),
       ),
-      body: Stack(
-        children: <Widget>[
-           getChatList(),
-
-
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Container(
-                padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
-                width: double.infinity,
-                child: ChatInputBox(recordingFinishedCallback: (path){
-                  print("audio file : $path");
-                },
-                onTextMessageSent: (msg){
-                  print("Text Msg: $msg");
-                },)),
-          ),
-        ],
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: <Widget>[
+             getChatList(),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                  padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
+                  width: double.infinity,
+                  child: ChatInputBox(recordingFinishedCallback: (path){
+                    print("audio file : $path");
+                  },
+                  onTextMessageSent: (msg){
+                    print("Text Msg: $msg");
+                  },)),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget getChatList() {
-    return ListView.builder(
+    return
+      ListView.builder(
       itemCount: messages.length,
       shrinkWrap: true,
       padding: const EdgeInsets.only(top: 10, bottom: 10),
