@@ -208,9 +208,7 @@ uploadId = "${DateTime.now().millisecondsSinceEpoch}";
           width: double.infinity,
           child: FloatingActionButton.extended(
             onPressed: () {
-
                 scanAttendanceCode();
-
             },
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),

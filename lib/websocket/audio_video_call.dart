@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter_dtmf/dtmf.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hnh_flutter/websocket/service/socket_service.dart';
-//import 'package:sdp_transform/sdp_transform.dart';
+
 
 import '../repository/model/request/socket_message_model.dart';
 import '../utils/controller.dart';
@@ -65,7 +65,7 @@ class AudioVideoCall{
   };
 
 
-  void startTimer() {
+  void startTimmer() {
     var oneSec = const Duration(seconds: 1);
     _timmerInstance = Timer.periodic(
         oneSec,
@@ -75,7 +75,7 @@ class AudioVideoCall{
           } else {
             _start = _start + 1;
             _timmer = getTimerTime(_start);
-         timerCount(_timmer);
+            timerCount(_timmer);
           }
         });
   }
@@ -121,7 +121,7 @@ class AudioVideoCall{
     pc.onIceCandidate = (e) {
       if (e.candidate != null) {
         HashMap<String, dynamic> candidate = HashMap.of({
-          'candidate': e.candidate.toString(),
+          'sdpCandidate': e.candidate.toString(),
           'sdpMid': e.sdpMid.toString(),
           'sdpMLineIndex': e.sdpMlineIndex,
         });
@@ -221,15 +221,7 @@ class AudioVideoCall{
       _timmerInstance?.cancel();
     }
   }
-  void checkUserIsOnline() async {
 
-      var createOffer = SocketMessageModel(
-          type: SocketMessageType.StartCall.displayTitle,
-          sendTo: targetUserId,
-          sendFrom: currentUserId,
-          data: 0);
-      socketService.sendMessageToWebSocket(createOffer);
-  }
 
   void createOffer() async {
 
@@ -242,17 +234,17 @@ class AudioVideoCall{
       _offer = true;
       _peerConnection!.setLocalDescription(description);
 
-      //var sdpSession = parse(description.sdp.toString());
-      //var type = parse(description.type.toString());
+      // var sdpSession = parse(description.sdp.toString());
+      // var type = parse(description.type.toString());
 
-      HashMap<String, dynamic> offerData =
-      HashMap.of({"type": "offer", "sdp": description.sdp.toString()});
+      // HashMap<String, dynamic> offerData =
+      // HashMap.of({"type": type, "sdp": sdpSession});
 
       var createOffer = SocketMessageModel(
           type: SocketMessageType.CreateOffer.displayTitle,
           sendTo: targetUserId,
           sendFrom: currentUserId,
-          data: offerData);
+        );
 
       socketService.sendMessageToWebSocket(createOffer);
     }
@@ -271,43 +263,39 @@ class AudioVideoCall{
     // .createAnswer({'offerToReceiveVideo': 1, 'offerToReceiveAudio': 1});
         .createAnswer(isVideoCall? offerVideoCallConstraints: offerAudioConstraints);
     _peerConnection!.setLocalDescription(description);
-
-    //var sdpSession = parse(description.sdp!); //parse(description.sdp!);
-    //var type = parse(description.type!); //parse(description.type!);
-    HashMap<String, dynamic> offerData =
-    HashMap.of({"type": "answer", "sdp": description.sdp.toString()});
+    //
+    // var sdpSession = parse(description.sdp!); //parse(description.sdp!);
+    // var type = parse(description.type!); //parse(description.type!);
+    // HashMap<String, dynamic> offerData =
+    // HashMap.of({"type": type, "sdp": sdpSession});
     var answerCall = SocketMessageModel(
         type: SocketMessageType.AnswerCall.displayTitle,
         sendTo: targetUserId,
         sendFrom: currentUserId,
-        data: offerData);
+       );
 
     socketService.sendMessageToWebSocket(answerCall);
   }
 
   void setRemoteDescription(String jsonString) async {
-    final body = json.decode(jsonString);
+    dynamic session = await jsonDecode(jsonString);
 
-   // dynamic session = await jsonDecode(jsonString);
+    // String sdp = write(session, null);
 
+    // RTCSessionDescription description =
+    // RTCSessionDescription(sdp, _offer ? 'answer' : 'offer');
 
-    //String sdp = write(session, null);
-
-    RTCSessionDescription description =
-    RTCSessionDescription(body['sdp'], _offer ? 'answer' : 'offer');
-
-    await _peerConnection!.setRemoteDescription(description);
+    // await _peerConnection!.setRemoteDescription(description);
   }
 
   void addCandidate(String jsonString) async {
     dynamic session = await jsonDecode(jsonString);
 
     dynamic candidate = RTCIceCandidate(
-        session['candidate'], session['sdpMid'], session['sdpMLineIndex']);
+        session['sdpCandidate'], session['sdpMid'], session['sdpMLineIndex']);
     await _peerConnection!.addCandidate(candidate);
 
   }
-
 
   void endCall(bool isUserClosedCall) async{
     await _localStream.dispose();

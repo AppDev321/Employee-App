@@ -75,9 +75,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
   var selectedTab = 0;
   late ChatViewModel chatViewModel;
   String? _errorMsg = "";
-
+  late List<ChatUsers> filteredChatList;
   List<User> contactList = [];
   List<User> filteredContactList = [];
+  TextEditingController messagesController = TextEditingController();
+  TextEditingController callController = TextEditingController();
+
 
   @override
   void initState() {
@@ -104,6 +107,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    messagesController.dispose();
+    callController.dispose();
   }
 
   @override
@@ -137,6 +148,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Widget setConversationList() {
+    filteredChatList = searchFromMessageList(messagesController.text);
     return Padding(
       padding: const EdgeInsets.all(0),
       child: NestedScrollView(
@@ -164,8 +176,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
               padding: const EdgeInsets.all(10),
               child: CustomEditTextWidget(
                 text: "Search...",
+                controller: messagesController,
+                onTextChanged: (value) {
+                setState(() {
+                });
+                },
               ),
             ),
+
+            filteredChatList.isNotEmpty?
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -173,25 +192,51 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     ListView.builder(
-                      itemCount: chatUsers.length,
+                      itemCount: filteredChatList.length,
                       shrinkWrap: true,
                       padding: const EdgeInsets.only(top: 16),
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return ConversationList(
-                          name: chatUsers[index].name,
-                          messageText: chatUsers[index].messageText,
-                          imageUrl: chatUsers[index].imageURL,
-                          time: chatUsers[index].time,
-                          isMessageRead:
-                              (index == 0 || index == 3) ? true : false,
-                        );
+                        var item = filteredChatList[index];
+                        // String name=chatUsers[index].name;
+                        // if(messagesController.text.isEmpty){
+                          return
+                            ConversationList(
+                            name: item.name.toString(),
+                            messageText: item.messageText,
+                            imageUrl: item.imageURL,
+                            time: item.time,
+                            isMessageRead:
+                            (index == 0 || index == 3) ? true : false,
+                          );
+                        // }
+                        // else if(name.toLowerCase().contains(messagesController.text.toLowerCase())){
+                        //   return ConversationList(
+                        //     name: chatUsers[index].name,
+                        //     messageText: chatUsers[index].messageText,
+                        //     imageUrl: chatUsers[index].imageURL,
+                        //     time: chatUsers[index].time,
+                        //     isMessageRead:
+                        //     (index == 0 || index == 3) ? true : false,
+                        //   );
+                        // }
+                        // else {
+                        //   return Center(
+                        //     // child: Text("data"),
+                        //   );
+                        // }
                       },
-                    ),
+                    )
                   ],
                 ),
               ),
-            ),
+            ):
+            Expanded(
+                child: Center(
+                  child: ErrorMessageWidget(
+                    label: "No Contact Found",
+                  ),
+                ))
           ],
         ),
       ),
@@ -206,10 +251,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: CustomEditTextWidget(
+              controller: callController,
               text: "Search...",
               onTextChanged: (text) {
-                print("filter texting ==> ${filteredContactList.length}");
-                searchFromContactList(text);
+                setState(() {
+                  //Just for updateing view not any else
+                });
               },
             ),
           ),
@@ -242,11 +289,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Widget showContactListItems(List<User> filteredContactList) {
     return Expanded(
+
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child:
-
-        ContactListItem(filteredContactList:filteredContactList)
+        ContactListItem(filteredContactList:filteredContactList,controller: callController,)
 
       ),
     );
@@ -255,25 +302,24 @@ class _ConversationScreenState extends State<ConversationScreen> {
   Widget setCallHistoryList() {
     return Padding(
         padding: const EdgeInsets.all(0),
-        child: CallHistoryListWidget(futureFunction: chatViewModel.getCallHistoryList()));
+        child: CallHistoryListWidget(futureFunction: chatViewModel.getCallHistoryList())
+    );
   }
 
-  searchFromContactList(String text) async {
-
- //  filteredContactList.clear();
+  searchFromMessageList(String text)  {
+    //  filteredContactList.clear();
     if (text.isEmpty) {
-      setState(() {
-        filteredContactList  = contactList;
-      });
-      return;
+      filteredChatList  = chatUsers;
     }
-    setState(() {
-      filteredContactList = contactList
-          .where((string) => string.fullName
+    else {
+      filteredChatList = chatUsers
+          .where((string) =>
+          string.name
               .toString()
               .toLowerCase()
               .contains(text.toLowerCase()))
           .toList();
-    });
+    }
+    return filteredChatList;
   }
 }

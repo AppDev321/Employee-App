@@ -29,10 +29,7 @@ class ProfileViewModel extends BaseViewModel {
 
    setProfileStatus(bool error) async {
      isProfileUpdate = error;
-
    }
-
-
    String userProfileImage="";
 
   Future<void> changePasswordRequest(ChangePasswordRequest request) async {
@@ -160,10 +157,7 @@ Future<void> getUserImageURLPreferecne() async{
                             imageFile(value);
                         }
                         );
-
                        Navigator.of(context).pop();
-
-
                      },
                    ),
                  ],
@@ -185,7 +179,6 @@ Future<void> getUserImageURLPreferecne() async{
      }
    }
 
-
    uploadImageToServer(
        BuildContext context,
        File imageFile,
@@ -199,13 +192,11 @@ Future<void> getUserImageURLPreferecne() async{
 
   ) async {
 
-
      var stream = http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
      var length = await imageFile.length();
      var uri = Uri.parse("${Controller.appBaseURL}/upload");
      Controller controller = Controller();
      String? userToken = await controller.getAuthToken();
-
      var request = http.MultipartRequest("POST", uri);
      request.headers['Authorization'] = "Bearer $userToken";
      request.headers['Content-Type']="application/json";
@@ -221,7 +212,6 @@ Future<void> getUserImageURLPreferecne() async{
      response.stream.transform(utf8.decoder).listen((value) {
        print("response = $value");
        final parsedJson = jsonDecode(value);
-
        print("parsedJson = $parsedJson");
        isUpload(true);
        if(parsedJson['code'].toString()=="200")
@@ -237,9 +227,7 @@ Future<void> getUserImageURLPreferecne() async{
                {
                  imageURL(request.fields['upload_id']!);
                }
-
            }
-
          }
        else {
 
@@ -253,8 +241,6 @@ Future<void> getUserImageURLPreferecne() async{
            }
          }
        }
-
      });
    }
-
 }

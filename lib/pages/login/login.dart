@@ -5,6 +5,7 @@ import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/utils/controller.dart';
 import 'package:hnh_flutter/widget/error_message.dart';
+import 'package:local_auth/local_auth.dart';
 import '../../custom_style/progress_hud.dart';
 import '../../view_models/login_view_model.dart';
 import '../../widget/custom_edit_text_widget.dart';
@@ -28,12 +29,13 @@ class LoginClassStateful extends State<LoginClass> {
   bool _isApiError = false;
   String _errorMsg = "";
   BuildContext? _dialogContext;
-
+  final LocalAuthentication localAuthentication = LocalAuthentication();
   final LoginViewModel _loginViewModel = LoginViewModel();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   // final isAvailable =  Controller.hasBiometrics();
   var isBiometericEnable = false;
+  var authAvailable=false;
 
   @override
   void initState() {
@@ -61,13 +63,17 @@ class LoginClassStateful extends State<LoginClass> {
 
         _loginViewModel.setResponseStatus(false);
       }
+
     });
-
-    _loginViewModel.getFinerPrintStatus().then((value) {
+    _loginViewModel.authenticateIsAvailable().then((value) {
       setState(() {
-        isBiometericEnable = value;
+        authAvailable=value;
       });
-
+      _loginViewModel.getFinerPrintStatus().then((value) {
+        setState(() {
+          isBiometericEnable = value;
+        });
+      });
     });
 
   }
@@ -181,7 +187,7 @@ class LoginClassStateful extends State<LoginClass> {
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(10),
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async{
                             if (_emailController.text.isEmpty) {
                               setState(() {
                                 _isApiError = true;
@@ -221,7 +227,9 @@ class LoginClassStateful extends State<LoginClass> {
                           child: const Text(_loginText),
                         )),
                     const SizedBox(height: 10),
-                    isBiometericEnable || _loginViewModel.authenticateIsAvailable() == true
+
+                     isBiometericEnable && authAvailable == true
+
                         ? Padding(
                           padding: const EdgeInsets.only(right: 10.0),
                           child: Center(
