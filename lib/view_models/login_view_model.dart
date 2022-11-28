@@ -34,15 +34,21 @@ class LoginViewModel extends BaseViewModel {
       return false;
     }
   }
+
   Future<bool> authenticateIsAvailable() async {
     final isAvailable = await localAuthentication.canCheckBiometrics;
     final isDeviceSupported = await localAuthentication.isDeviceSupported();
-    return isAvailable && isDeviceSupported;
+    print('DEVICE IS AVAILABLE'+isAvailable.toString());
+    return isAvailable;
   }
+
   Future<bool> authenticateWithBiometrics() async {
     bool isAuthenticated = false;
+    final isAvailable = await localAuthentication.canCheckBiometrics;
+    final isDeviceSupported = await localAuthentication.isDeviceSupported();
+
       try {
-        if(await authenticateIsAvailable())
+        if(isAvailable && isDeviceSupported)
         isAuthenticated = await localAuthentication.authenticate(
           localizedReason: 'Please complete the biometrics to proceed.',
           options:
@@ -83,8 +89,6 @@ class LoginViewModel extends BaseViewModel {
         //Save user login details
         if(results.data!.token!.isNotEmpty) {
           Controller().setAuthToken(results.data!.token!);
-
-
 
           Codec<String, String> stringToBase64 = utf8.fuse(base64);
           String encyptedEmail = stringToBase64.encode(body.email.toString());
