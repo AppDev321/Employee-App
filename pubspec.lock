@@ -71,13 +71,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.10"
-  audioplayers:
-    dependency: transitive
-    description:
-      name: audioplayers
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.20.1"
   barcode_scan2:
     dependency: "direct main"
     description:
@@ -531,6 +524,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
+  flutter_dtmf:
+    dependency: "direct main"
+    description:
+      name: flutter_dtmf
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -1407,13 +1407,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "20.3.49"
-  syncfusion_flutter_sliders:
-    dependency: transitive
-    description:
-      name: syncfusion_flutter_sliders
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "20.3.49"
   synchronized:
     dependency: transitive
     description:
@@ -1575,13 +1568,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.3"
-  voice_message_package:
-    dependency: "direct main"
-    description:
-      name: voice_message_package
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.74"
   watcher:
     dependency: transitive
     description:

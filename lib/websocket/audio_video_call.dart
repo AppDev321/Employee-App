@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:flutter_dtmf/dtmf.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hnh_flutter/websocket/service/socket_service.dart';
 //import 'package:sdp_transform/sdp_transform.dart';
@@ -343,6 +344,22 @@ class AudioVideoCall{
 
   void speakerPhoneAction(bool isSpeakerPhone) {
     _localStream.getAudioTracks()[0].enableSpeakerphone(isSpeakerPhone);
+
+  }
+
+  void createDTMFTone() async
+  {
+    /*RTCRtpSender? m_audioSender = null;
+    var listSender = await _peerConnection?.getSenders() as List<RTCRtpSender>;
+    for (var sender in listSender) {
+
+        if (sender.track?.kind.toString()=="audio") {
+        m_audioSender = sender;
+        }
+  }
+
+    RTCDTMFSender dtmfSender = m_audioSender?.dtmfSender as RTCDTMFSender;
+    dtmfSender.insertDTMF(, 50, 50);*/
 
   }
 }

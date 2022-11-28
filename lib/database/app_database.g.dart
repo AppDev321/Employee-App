@@ -85,7 +85,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `CallHistoryTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `userPicUrl` TEXT NOT NULL, `callerName` TEXT NOT NULL, `callType` TEXT NOT NULL, `isIncomingCall` INTEGER NOT NULL, `isMissedCall` INTEGER NOT NULL, `date` TEXT NOT NULL, `callTime` TEXT NOT NULL, `endCallTime` TEXT NOT NULL, `totalCallTime` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `CallHistoryTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `callerID` TEXT NOT NULL, `userPicUrl` TEXT NOT NULL, `callerName` TEXT NOT NULL, `callType` TEXT NOT NULL, `isIncomingCall` INTEGER NOT NULL, `isMissedCall` INTEGER NOT NULL, `date` TEXT NOT NULL, `callTime` TEXT NOT NULL, `endCallTime` TEXT NOT NULL, `totalCallTime` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -110,6 +110,7 @@ class _$CallHistoryDAO extends CallHistoryDAO {
             'CallHistoryTable',
             (CallHistoryTable item) => <String, Object?>{
                   'id': item.id,
+                  'callerID': item.callerID,
                   'userPicUrl': item.userPicUrl,
                   'callerName': item.callerName,
                   'callType': item.callType,
@@ -126,6 +127,7 @@ class _$CallHistoryDAO extends CallHistoryDAO {
             ['id'],
             (CallHistoryTable item) => <String, Object?>{
                   'id': item.id,
+                  'callerID': item.callerID,
                   'userPicUrl': item.userPicUrl,
                   'callerName': item.callerName,
                   'callType': item.callType,
@@ -151,6 +153,7 @@ class _$CallHistoryDAO extends CallHistoryDAO {
   Future<List<CallHistoryTable>> getAllCallHistory() async {
     return _queryAdapter.queryList('SELECT * FROM CallHistoryTable',
         mapper: (Map<String, Object?> row) => CallHistoryTable(
+            row['callerID'] as String,
             row['userPicUrl'] as String,
             row['callerName'] as String,
             row['callType'] as String,
@@ -163,18 +166,10 @@ class _$CallHistoryDAO extends CallHistoryDAO {
   }
 
   @override
-  Future<CallHistoryTable?> getCallHistoryDetail(int id) async {
-    return _queryAdapter.query('SELECT * FROM CallHistoryTable WHERE id = ?1',
-        mapper: (Map<String, Object?> row) => CallHistoryTable(
-            row['userPicUrl'] as String,
-            row['callerName'] as String,
-            row['callType'] as String,
-            (row['isIncomingCall'] as int) != 0,
-            (row['isMissedCall'] as int) != 0,
-            row['date'] as String,
-            row['callTime'] as String,
-            row['endCallTime'] as String,
-            row['totalCallTime'] as String),
+  Future<CallHistoryTable?> getLastSingleCallHistoryRecord(String id) async {
+    return _queryAdapter.query(
+        'SELECT * FROM CallHistoryTable WHERE callerID = ?1 order by id desc limit 1',
+        mapper: (Map<String, Object?> row) => CallHistoryTable(row['callerID'] as String, row['userPicUrl'] as String, row['callerName'] as String, row['callType'] as String, (row['isIncomingCall'] as int) != 0, (row['isMissedCall'] as int) != 0, row['date'] as String, row['callTime'] as String, row['endCallTime'] as String, row['totalCallTime'] as String),
         arguments: [id]);
   }
 

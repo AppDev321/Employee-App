@@ -50,7 +50,7 @@ class ReportsViewModel extends BaseViewModel {
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
-          errorString += results.errors![i].message! + "\n";
+          errorString += "${results.errors![i].message!}\n";
         }
         setErrorMsg(errorString);
         setIsErrorReceived(true);
@@ -74,7 +74,7 @@ class ReportsViewModel extends BaseViewModel {
     } else {
       if (results.code == 200) {
         setIsErrorReceived(false);
-        if(results.data!.attendance!.length > 0)
+        if(results.data!.attendance!.isNotEmpty)
         {
           attandenceList =results.data!.attendance!;
         }
@@ -90,7 +90,7 @@ class ReportsViewModel extends BaseViewModel {
       else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {
-          errorString += results.errors![i].message! + "\n";
+          errorString += "${results.errors![i].message!}\n";
         }
         setErrorMsg(errorString);
         setIsErrorReceived(true);

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   late ChatViewModel chatViewModel;
 
   void endCall(bool isUserClosedCall, {bool isFromDialog = false}) async {
+    chatViewModel.insertCallEndDetailInDB(socketMessageModel!, targetUserId);
+
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
     audioVideoCall.endCall(isUserClosedCall);
@@ -157,7 +160,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
           });
 
           audioVideoCall.createOffer();
-          chatViewModel.insertCallDetailInDB(message, false);
+          chatViewModel.insertCallDetailInDB(message);
         } else {
           setState(() {
             callingStatus = "Calling";
@@ -182,6 +185,10 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
           isRemoteUserOnline = true;
         });
       } else if (msgType == SocketMessageType.ICECandidate.displayTitle) {
+        //Just save data for database in call history
+        socketMessageModel = message;
+        // ********************************
+
         audioVideoCall.addCandidate(jsonEncode(message.data));
       } else if (msgType == SocketMessageType.CallClosed.displayTitle) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

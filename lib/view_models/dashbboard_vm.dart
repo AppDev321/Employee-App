@@ -75,15 +75,17 @@ class DashBoardViewModel extends BaseViewModel {
 
     var now =  DateTime.now();
     final db =  await AFJDatabaseInstance.instance.afjDatabase;
-    final personDao = db?.callHistoryDAO as CallHistoryDAO;
-    var data = CallHistoryTable("", socketMessageModel.callerName.toString(), socketMessageModel.callType.toString(),
+    final callHisoryDAO = db?.callHistoryDAO as CallHistoryDAO;
+
+
+    var data = CallHistoryTable(socketMessageModel.sendFrom.toString(),"", socketMessageModel.callerName.toString(), socketMessageModel.callType.toString(),
         true,
         isMissed,
         Controller().getConvertedDate(now),
         Controller().getConvertedTime(now),
         "",
         "0");
-    await personDao.insertCallHistoryRecord(data);
+    await callHisoryDAO.insertCallHistoryRecord(data);
   }
 
 
@@ -308,6 +310,9 @@ class DashBoardViewModel extends BaseViewModel {
     switch (type) {
       case SocketMessageType.OfferReceived:
         makeIncomingCall(message);
+        break;
+      case SocketMessageType.CallAlreadyAnswer:
+        BilltechIncomingCall.endAllCalls();
         break;
     }
   }

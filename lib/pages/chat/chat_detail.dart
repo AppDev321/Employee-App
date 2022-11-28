@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/pages/chat/component/chat_bubble.dart';
-import 'package:hnh_flutter/pages/chat/whatsapp_chat_bubble_widget/bubble.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
-import 'package:voice_message_package/voice_message_package.dart';
-
 
 import '../../custom_style/colors.dart';
 import '../../repository/model/request/chat_messge.dart';
-import '../../voice_record_animation/audio_encoder_type.dart';
-import '../../voice_record_animation/screen/social_media_recorder.dart';
 import 'component/chat_input_box.dart';
 
 class ChatDetailPage extends StatefulWidget {
