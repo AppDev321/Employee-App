@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -7,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../custom_style/colors.dart';
 import '../../../voice_record_animation/audio_encoder_type.dart';
 import '../../../voice_record_animation/screen/social_media_recorder.dart';
+
 
 typedef onVoiceMessageCallBack = void Function(String);
 
@@ -334,11 +336,21 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     return InkWell(
       onTap: () {
         Get.back();
-        if (text.contains(menus[1])) {
+        if(text.contains(menus[0])){
+          pickFile(FileType.media, (value) {
+          });
+        }
+
+      else  if (text.contains(menus[1])) {
           pickImageFile(ImageSource.camera, (value) {});
         } else if (text.contains(menus[2])) {
           pickImageFile(ImageSource.gallery, (value) {});
         }
+
+        else if (text.contains(menus[3])) {
+          pickFile(FileType.audio, (value) {});
+        }
+
       },
       child: Column(
         children: [
@@ -365,6 +377,18 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         ],
       ),
     );
+  }
+
+
+  pickFile(FileType type,ValueChanged<PlatformFile> imageFiles) async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: true,type: type);
+
+    if (result != null) {
+      final file = result!.files.first;
+      imageFiles(file);
+      // openFile(file);
+      print("file path issssssss${file.path}");
+    };
   }
 
   pickImageFile(ImageSource type, ValueChanged<File> imageFiles) async {

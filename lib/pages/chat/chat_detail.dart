@@ -105,40 +105,41 @@ class _ChatDetailPageState extends State<ChatDetailPage>
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: <Widget>[
-             getChatList(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Container(
-                  padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
-                  width: double.infinity,
-                  child: ChatInputBox(recordingFinishedCallback: (path){
-                    print("audio file : $path");
-                  },
-                  onTextMessageSent: (msg){
-                    print("Text Msg: $msg");
-                  },)),
-            ),
-          ],
-        ),
-      ),
+      body: Stack(children: [
+
+        getChatList(),
+        Positioned(
+            child:
+        Container(
+            padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
+            width: double.infinity,
+            child: ChatInputBox(recordingFinishedCallback: (path){
+              print("audio file : $path");
+            },
+              onTextMessageSent: (msg){
+                print("Text Msg: $msg");
+              },)))],)
+
+      // Container(height: MediaQuery.of(context).size.height,
+      // width: MediaQuery.of(context).size.width,color: Colors.black,),
+      // body: Stack(
+      //   children: <Widget>[
+      //      getChatList(),
+
+      //     ),
+      //   ],
+      // ),
     );
   }
 
   Widget getChatList() {
-    return
-      ListView.builder(
+    return ListView.builder(
       itemCount: messages.length,
       shrinkWrap: true,
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        return
-
-       ChatBubble(true, 1,voice: true,);
+        return ChatBubble(true, 1,voice: true,);
        // ChatBubble(true, 2);
        // ChatBubble(false, 3,voice: true,);
 
