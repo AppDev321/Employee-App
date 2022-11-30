@@ -38,7 +38,7 @@ class LoginViewModel extends BaseViewModel {
   Future<bool> authenticateIsAvailable() async {
     final isAvailable = await localAuthentication.canCheckBiometrics;
     final isDeviceSupported = await localAuthentication.isDeviceSupported();
-    print('DEVICE IS AVAILABLE'+isAvailable.toString());
+
     return isAvailable;
   }
 
