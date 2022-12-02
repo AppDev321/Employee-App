@@ -10,6 +10,7 @@ import 'package:hnh_flutter/widget/error_message.dart';
 
 import '../../custom_style/colors.dart';
 import '../../database/model/call_history_table.dart';
+import '../../database/model/user_table.dart';
 import '../../repository/model/request/chat_user.dart';
 import '../../repository/model/response/contact_list.dart';
 import '../../utils/controller.dart';
@@ -29,55 +30,27 @@ class ConversationScreen extends StatefulWidget {
 
 class _ConversationScreenState extends State<ConversationScreen> {
   List<ChatUsers> chatUsers = [
-    ChatUsers("Jane Russel", "Awesome Setup", "images/userImage1.jpeg", "Now"),
-    ChatUsers("Glady's Murphy", "That's Great", "images/userImage2.jpeg",
+    ChatUsers("Jane Russel", "Awesome Setup", "", "Now"),
+    ChatUsers("Glady's Murphy", "That's Great", "",
         "Yesterday"),
-    ChatUsers("Jorge Henry", "Hey where are you?", "images/userImage3.jpeg",
+    ChatUsers("Jorge Henry", "Hey where are you?", "",
         "31 Mar"),
     ChatUsers("Philip Fox", "Busy! Call me in 20 mins",
-        "images/userImage4.jpeg", "28 Mar"),
+        "", "28 Mar"),
     ChatUsers("Debra Hawkins", "Thankyou, It's awesome",
-        "images/userImage5.jpeg", "23 Mar"),
+        "", "23 Mar"),
     ChatUsers("Jacob Pena", "will update you in evening",
-        "images/userImage6.jpeg", "17 Mar"),
+        "", "17 Mar"),
     ChatUsers("Andrey Jones", "Can you please share the file?",
-        "images/userImage7.jpeg", "24 Feb"),
-    ChatUsers("John Wick", "How are you?", "images/userImage8.jpeg", "18 Feb"),
-    ChatUsers("Jane Russel", "Awesome Setup", "images/userImage1.jpeg", "Now"),
-    ChatUsers("Glady's Murphy", "That's Great", "images/userImage2.jpeg",
-        "Yesterday"),
-    ChatUsers("Jorge Henry", "Hey where are you?", "images/userImage3.jpeg",
-        "31 Mar"),
-    ChatUsers("Philip Fox", "Busy! Call me in 20 mins",
-        "images/userImage4.jpeg", "28 Mar"),
-    ChatUsers("Debra Hawkins", "Thankyou, It's awesome",
-        "images/userImage5.jpeg", "23 Mar"),
-    ChatUsers("Jacob Pena", "will update you in evening",
-        "images/userImage6.jpeg", "17 Mar"),
-    ChatUsers("Andrey Jones", "Can you please share the file?",
-        "images/userImage7.jpeg", "24 Feb"),
-    ChatUsers("John Wick", "How are you?", "images/userImage8.jpeg", "18 Feb"),
-    ChatUsers("Jane Russel", "Awesome Setup", "images/userImage1.jpeg", "Now"),
-    ChatUsers("Glady's Murphy", "That's Great", "images/userImage2.jpeg",
-        "Yesterday"),
-    ChatUsers("Jorge Henry", "Hey where are you?", "images/userImage3.jpeg",
-        "31 Mar"),
-    ChatUsers("Philip Fox", "Busy! Call me in 20 mins",
-        "images/userImage4.jpeg", "28 Mar"),
-    ChatUsers("Debra Hawkins", "Thankyou, It's awesome",
-        "images/userImage5.jpeg", "23 Mar"),
-    ChatUsers("Jacob Pena", "will update you in evening",
-        "images/userImage6.jpeg", "17 Mar"),
-    ChatUsers("Andrey Jones", "Can you please share the file?",
-        "images/userImage7.jpeg", "24 Feb"),
-    ChatUsers("John Wick", "How are you?", "images/userImage8.jpeg", "18 Feb"),
+        "", "24 Feb"),
+
   ];
   var selectedTab = 0;
   late ChatViewModel chatViewModel;
   String? _errorMsg = "";
   late List<ChatUsers> filteredChatList;
-  List<User> contactList = [];
-  List<User> filteredContactList = [];
+  List<UserTable> contactList = [];
+  List<UserTable> filteredContactList = [];
   TextEditingController messagesController = TextEditingController();
   TextEditingController callController = TextEditingController();
 
@@ -88,6 +61,19 @@ class _ConversationScreenState extends State<ConversationScreen> {
     super.initState();
 
     chatViewModel = ChatViewModel();
+
+
+    getContactList().then((value) {
+      setState(() {
+        var data = value as List<UserTable>;
+        contactList = data;
+        filteredContactList = data;
+        print("list size = ${data.length}");
+
+      });
+    }) ;
+
+
     chatViewModel.addListener(() {
       var checkErrorApiStatus = chatViewModel.getIsErrorRecevied();
       if (checkErrorApiStatus) {
@@ -261,20 +247,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             ),
           ),
           filteredContactList.isEmpty ?
-          FutureBuilder(
-                  future:getContactList(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Expanded(child: ErrorMessageWidget(label: "${snapshot.error}"));
-                    } else if (snapshot.hasData) {
-                      contactList = snapshot.data as List<User>;
-                      filteredContactList = snapshot.data as List<User>;
-                      return showContactListItems(filteredContactList);
-                    } else {
-                      return Expanded(
-                          child: Center(child: CircularProgressIndicator()));
-                    }
-                  })
+              const ErrorMessageWidget(label: "No contact found")
               : showContactListItems(filteredContactList),
         ],
       ),
@@ -283,11 +256,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Future<Object> getContactList() async
   {
-    return contactList.isEmpty?chatViewModel.getContactList():contactList;
+
+    return contactList.isEmpty? chatViewModel.getContactDBList() :contactList;
   }
 
 
-  Widget showContactListItems(List<User> filteredContactList) {
+  Widget showContactListItems(List<UserTable> filteredContactList) {
     return Expanded(
 
       child: SingleChildScrollView(

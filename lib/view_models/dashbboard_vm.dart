@@ -13,13 +13,16 @@ import 'package:hnh_flutter/pages/videocall/audio_call_screen.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
+import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 import '../database/app_database.dart';
+import '../database/dao/user_dao.dart';
 import '../database/database_single_instance.dart';
+import '../database/model/user_table.dart';
 import '../notification/firebase_notification.dart';
 import '../pages/videocall/video_call_screen.dart';
 import '../repository/model/request/socket_message_model.dart';
@@ -128,6 +131,10 @@ class DashBoardViewModel extends BaseViewModel {
     getNotificationCount();
 
     getEventsListResponse();
+    //Get Contact list and stored in database
+    ChatViewModel chatViewModel = ChatViewModel();
+    chatViewModel.getContactList();
+    //*********************
   }
 
   Future<void> getNotificationCount() async {
@@ -279,6 +286,7 @@ class DashBoardViewModel extends BaseViewModel {
 
   Future<void> getEventsListResponse() async {
     setLoading(true);
+
     final results = await APIWebService().getEventsList();
 
     if (results == null) {
@@ -303,6 +311,9 @@ class DashBoardViewModel extends BaseViewModel {
     setResponseStatus(true);
     setLoading(false);
     notifyListeners();
+
+
+
   }
 
   //handle socketMessages

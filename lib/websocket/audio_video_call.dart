@@ -1,45 +1,42 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:flutter_dtmf/dtmf.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hnh_flutter/websocket/service/socket_service.dart';
-//import 'package:sdp_transform/sdp_transform.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../repository/model/request/socket_message_model.dart';
 import '../utils/controller.dart';
-
 
 typedef StreamStateCallback = void Function(MediaStream stream);
 typedef SreamTimerCallback = void Function(String timer);
 typedef PeerConnectionCreatedSuccessfully = void Function();
 
-
-
-class AudioVideoCall{
+class AudioVideoCall {
   late StreamStateCallback onLocalStream;
   late StreamStateCallback onAddRemoteStream;
   late PeerConnectionCreatedSuccessfully peerConnectionStatus;
   bool isVideoCall = true;
-
 
   late SreamTimerCallback timerCount;
 
   final List _remoteRenderers = [];
   var targetUserId = "";
   var currentUserId = "";
-  Timer? _timmerInstance ;
+  Timer? _timmerInstance;
+
   int _start = 0;
   String _timmer = '';
   late MediaStream _localStream;
-
 
   RTCPeerConnection? _peerConnection;
 
   bool _offer = false;
   SocketService socketService = SocketService();
-
+  AudioPlayer? player;
 
   final Map<String, dynamic> offerVideoCallConstraints = {
     "mandatory": {
@@ -52,11 +49,9 @@ class AudioVideoCall{
     ],
   };
 
-
   final Map<String, dynamic> offerAudioConstraints = {
     "mandatory": {
       "OfferToReceiveAudio": true,
-
     },
     "optional": [
       {"DtlsSrtpKeyAgreement": true},
@@ -64,20 +59,17 @@ class AudioVideoCall{
     ],
   };
 
-
   void startTimer() {
     var oneSec = const Duration(seconds: 1);
-    _timmerInstance = Timer.periodic(
-        oneSec,
-            (Timer timer){
-          if (_start < 0) {
-            _timmerInstance?.cancel();
-          } else {
-            _start = _start + 1;
-            _timmer = getTimerTime(_start);
-            timerCount(_timmer);
-          }
-        });
+    _timmerInstance = Timer.periodic(oneSec, (Timer timer) {
+      if (_start < 0) {
+        _timmerInstance?.cancel();
+      } else {
+        _start = _start + 1;
+        _timmer = getTimerTime(_start);
+        timerCount(_timmer);
+      }
+    });
   }
 
   String getTimerTime(int start) {
@@ -113,8 +105,8 @@ class AudioVideoCall{
 
     _localStream = await getUserMedia();
 
-    RTCPeerConnection pc =
-    await createPeerConnection(configuration, isVideoCall? offerVideoCallConstraints: offerAudioConstraints);
+    RTCPeerConnection pc = await createPeerConnection(configuration,
+        isVideoCall ? offerVideoCallConstraints : offerAudioConstraints);
 
     pc.addStream(_localStream);
 
@@ -139,12 +131,12 @@ class AudioVideoCall{
     };
 
     pc.onAddStream = (stream) {
+      stopCallerTone();
       onAddRemoteStream(stream);
       /*  setState(() {
         _remoteVideoRenderer.srcObject = stream;
       });*/
     };
-
 
     /*  pc.onTrack = (event) async {
       if (event.track.kind == 'video' && event.streams.isNotEmpty) {
@@ -180,13 +172,14 @@ class AudioVideoCall{
 
     return pc;
   }
+
   getUserMedia() async {
     final Map<String, dynamic> mediaConstraints = {
       'audio': true,
       'video': {
         'mandatory': {
           'minWidth':
-          '640', // Provide your own width, height and frame rate here
+              '640', // Provide your own width, height and frame rate here
           'minHeight': '480',
           'minFrameRate': '30',
         },
@@ -195,7 +188,7 @@ class AudioVideoCall{
     };
 
     MediaStream stream =
-    await navigator.mediaDevices.getUserMedia(mediaConstraints);
+        await navigator.mediaDevices.getUserMedia(mediaConstraints);
     onLocalStream(stream);
     /*   setState(() {
       _localVideoRenderer.srcObject = stream;
@@ -204,25 +197,30 @@ class AudioVideoCall{
   }
 
   void initializeState() {
+    player = AudioPlayer();
+    //player?.setAsset('caller_tone.mp3');
+
     _createPeerConnection().then((pc) {
       _peerConnection = pc;
       peerConnectionStatus();
+
+
     });
   }
 
-
   void disposeAudioVideoCall() async {
+  stopCallerTone();
     _localStream.dispose();
-
+    await player?.dispose();
     if (_peerConnection != null) {
       _peerConnection?.close();
     }
-    if(_timmerInstance!= null) {
+    if (_timmerInstance != null) {
       _timmerInstance?.cancel();
     }
   }
-  void checkUserIsOnline() async {
 
+  void checkUserIsOnline() async {
     var createOffer = SocketMessageModel(
         type: SocketMessageType.StartCall.displayTitle,
         sendTo: targetUserId,
@@ -232,21 +230,19 @@ class AudioVideoCall{
   }
 
   void createOffer() async {
-
     try {
+      startCallerTone();
+
       RTCSessionDescription description = await _peerConnection!
-      //  .createOffer({'offerToReceiveVideo': 1, 'offerToReceiveAudio': 1});
+          //  .createOffer({'offerToReceiveVideo': 1, 'offerToReceiveAudio': 1});
           .createOffer(
-          isVideoCall ? offerVideoCallConstraints : offerAudioConstraints);
+              isVideoCall ? offerVideoCallConstraints : offerAudioConstraints);
 
       _offer = true;
       _peerConnection!.setLocalDescription(description);
 
-      //var sdpSession = parse(description.sdp.toString());
-      //var type = parse(description.type.toString());
-
       HashMap<String, dynamic> offerData =
-      HashMap.of({"type": "offer", "sdp": description.sdp.toString()});
+          HashMap.of({"type": "offer", "sdp": description.sdp.toString()});
 
       var createOffer = SocketMessageModel(
           type: SocketMessageType.CreateOffer.displayTitle,
@@ -255,11 +251,11 @@ class AudioVideoCall{
           data: offerData);
 
       socketService.sendMessageToWebSocket(createOffer);
-    }
-    catch(exception )
-    {
+    } catch (exception) {
       print("Offer create exception == $exception");
-      if(exception.toString().contains("Offer called when PeerConnection is closed")) {
+      if (exception
+          .toString()
+          .contains("Offer called when PeerConnection is closed")) {
         initializeState();
         createOffer();
       }
@@ -268,18 +264,20 @@ class AudioVideoCall{
 
   void answerCall(SocketMessageModel answer) async {
     RTCSessionDescription description = await _peerConnection!
-    // .createAnswer({'offerToReceiveVideo': 1, 'offerToReceiveAudio': 1});
-        .createAnswer(isVideoCall? offerVideoCallConstraints: offerAudioConstraints);
+        // .createAnswer({'offerToReceiveVideo': 1, 'offerToReceiveAudio': 1});
+        .createAnswer(
+            isVideoCall ? offerVideoCallConstraints : offerAudioConstraints);
     _peerConnection!.setLocalDescription(description);
 
     //var sdpSession = parse(description.sdp!); //parse(description.sdp!);
     //var type = parse(description.type!); //parse(description.type!);
     HashMap<String, dynamic> offerData =
-    HashMap.of({"type": "answer", "sdp": description.sdp.toString()});
+        HashMap.of({"type": "answer", "sdp": description.sdp.toString()});
     var answerCall = SocketMessageModel(
         type: SocketMessageType.AnswerCall.displayTitle,
         sendTo: targetUserId,
         sendFrom: currentUserId,
+        offerConnectionId: answer.offerConnectionId,
         data: offerData);
 
     socketService.sendMessageToWebSocket(answerCall);
@@ -290,11 +288,10 @@ class AudioVideoCall{
 
     // dynamic session = await jsonDecode(jsonString);
 
-
     //String sdp = write(session, null);
 
     RTCSessionDescription description =
-    RTCSessionDescription(body['sdp'], _offer ? 'answer' : 'offer');
+        RTCSessionDescription(body['sdp'], _offer ? 'answer' : 'offer');
 
     await _peerConnection!.setRemoteDescription(description);
   }
@@ -305,22 +302,18 @@ class AudioVideoCall{
     dynamic candidate = RTCIceCandidate(
         session['candidate'], session['sdpMid'], session['sdpMLineIndex']);
     await _peerConnection!.addCandidate(candidate);
-
   }
 
-
-  void endCall(bool isUserClosedCall) async{
+  void endCall(bool isUserClosedCall) async {
     await _localStream.dispose();
-    if(_timmerInstance != null)
-    {
+    if (_timmerInstance != null) {
       _timmerInstance?.cancel();
     }
 
     if (_peerConnection != null) {
       _peerConnection?.close();
     }
-    if(isUserClosedCall)
-    {
+    if (isUserClosedCall) {
       var endCall = SocketMessageModel(
           type: SocketMessageType.CallEnd.displayTitle,
           sendTo: targetUserId,
@@ -344,22 +337,20 @@ class AudioVideoCall{
 
   void speakerPhoneAction(bool isSpeakerPhone) {
     _localStream.getAudioTracks()[0].enableSpeakerphone(isSpeakerPhone);
-
   }
 
-  void createDTMFTone() async
-  {
-    /*RTCRtpSender? m_audioSender = null;
-    var listSender = await _peerConnection?.getSenders() as List<RTCRtpSender>;
-    for (var sender in listSender) {
+  void startCallerTone() async {
+    String audioasset = "assets/sounds/caller_tone.mp3";
+    await player?.setAsset(audioasset).then((value) {
+      player?.setVolume(0.1);
+      player?.setLoopMode(LoopMode.all);
+      player?.play();
+    });
 
-        if (sender.track?.kind.toString()=="audio") {
-        m_audioSender = sender;
-        }
+    // player?.play();
   }
 
-    RTCDTMFSender dtmfSender = m_audioSender?.dtmfSender as RTCDTMFSender;
-    dtmfSender.insertDTMF(, 50, 50);*/
-
+  void stopCallerTone() {
+    player?.stop();
   }
 }

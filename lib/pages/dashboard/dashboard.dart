@@ -81,17 +81,20 @@ class _DashboardState extends State<Dashboard> {
 
   SocketService? chatService = null;
 
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
 
     APIWebService().postTokenToServer(map);
 
     _dashBoardViewModel = DashBoardViewModel();
 
     _dashBoardViewModel.initFireBaseConfig();
-    _dashBoardViewModel.getDashBoardData();
+  //  _dashBoardViewModel.getDashBoardData();
     _dashBoardViewModel.isAppUpdated().then((value) {
       if (value != null) {
         _dashBoardViewModel.showVersionDialog(
@@ -100,7 +103,7 @@ class _DashboardState extends State<Dashboard> {
     });
 
     _dashBoardViewModel.getBackgroundFCMNotificaiton();
-    _dashBoardViewModel.getEventsListResponse();
+  //  _dashBoardViewModel.getEventsListResponse();
     _dashBoardViewModel.addListener(() {
       attendance = _dashBoardViewModel.attendance;
       isCheckInOut = _dashBoardViewModel.isCheckInOut;
@@ -133,7 +136,7 @@ class _DashboardState extends State<Dashboard> {
                 Controller.PREF_KEY_USER_OBJECT, userDashboard);
 
             chatService = SocketService(
-                "${Controller.webSocketURL}${userDashboard.id}&device=emp");
+                "${Controller.webSocketURL}${userDashboard.id}&device=emp",context);
           }
 
           Controller().setUserProfilePic(profileImageUrl);
@@ -153,7 +156,11 @@ class _DashboardState extends State<Dashboard> {
                 "assets/icons/overtime_icon.svg",
                 Colors.deepPurple));
           }
+
+
         });
+
+
       }
     });
 
@@ -229,7 +236,9 @@ class _DashboardState extends State<Dashboard> {
           var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
 
           if (isVisibleScreen) {
-            _dashBoardViewModel.getDashBoardData();
+
+              _dashBoardViewModel.getDashBoardData();
+
           }
         },
         child: Scaffold(

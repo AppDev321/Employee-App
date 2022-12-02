@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
+import 'package:hnh_flutter/database/model/user_table.dart';
 
 import '../../../repository/model/response/contact_list.dart';
 import '../../../widget/error_message.dart';
 import '../../videocall/video_call_screen.dart';
 
 class ContactListItem extends StatefulWidget {
-  List<User> filteredContactList;
+  List<UserTable> filteredContactList;
   TextEditingController controller ;
 
   ContactListItem(
@@ -19,8 +20,8 @@ class ContactListItem extends StatefulWidget {
 }
 
 class _ContactListItemState extends State<ContactListItem> {
-  late List<User> contactList;
-  late List<User> filteredContactList;
+  late List<UserTable> contactList;
+  late List<UserTable> filteredContactList;
   late final TextEditingController callController=widget.controller;
 
 
@@ -73,7 +74,7 @@ class _ContactListItemState extends State<ContactListItem> {
   return filteredContactList;
   }
 
-  Widget createItem(User item)
+  Widget createItem(UserTable item)
   {
    return GestureDetector(
       onTap: () {},
@@ -106,7 +107,7 @@ class _ContactListItemState extends State<ContactListItem> {
                         InkWell(
                           onTap: () {
                             Get.to(() => VideoCallScreen(
-                                targetUserID: item.id.toString()));
+                                targetUserID: item.userID.toString()));
                           },
                           child: SizedBox(
                               height: 45,

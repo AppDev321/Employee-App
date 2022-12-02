@@ -62,6 +62,7 @@ class Data {
 }
 
 class Profile {
+  String? id;
   String? firstName;
   String? middleName;
   String? lastName;

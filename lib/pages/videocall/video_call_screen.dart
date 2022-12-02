@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 
+
 import '../../repository/model/request/socket_message_model.dart';
 import '../../repository/model/response/get_dashboard.dart';
 import '../../utils/controller.dart';
@@ -143,6 +144,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
     chatViewModel = ChatViewModel();
 
+
+
     super.initState();
   }
 
@@ -155,18 +158,35 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
       var msgType = message.type.toString();
 
       if (msgType == SocketMessageType.CallResponse.displayTitle) {
-        if (message.data == true) {
-          setState(() {
-            callingStatus = "Ringing";
-          });
+        dynamic jsonData =  jsonEncode(message.data);
+        var body = jsonDecode(jsonData);
 
-          audioVideoCall.createOffer();
-          chatViewModel.insertCallDetailInDB(message);
+        UserCallingStatus userCallingStatus = UserCallingStatus.fromJson(body);
+
+        if (userCallingStatus.isOnline== true) {
+          if(userCallingStatus.isBusy == true)
+            {
+              setState(() {
+                callingStatus = "User is busy";
+              });
+
+            }
+          else {
+            setState(() {
+              callingStatus = "Ringing";
+            });
+
+            audioVideoCall.createOffer();
+          }
+
+
         } else {
           setState(() {
             callingStatus = "Calling";
           });
         }
+        chatViewModel.insertCallDetailInDB(message);
+
       } else if (msgType == SocketMessageType.OfferReceived.displayTitle) {
         /*audioVideoCall.setRemoteDescription(jsonEncode(message.data));
         Controller().showConfirmationMsgDialog(
@@ -203,11 +223,18 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   @override
   void dispose() async {
+
+
+
+    audioVideoCall.disposeAudioVideoCall();
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
-    audioVideoCall.disposeAudioVideoCall();
+
     super.dispose();
   }
+
+
+
 
   Widget videoCallBottomButtonWidget() {
     return Container(
