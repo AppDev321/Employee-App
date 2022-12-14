@@ -3,17 +3,24 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/database/model/user_table.dart';
+import 'package:hnh_flutter/view_models/chat_vm.dart';
+import 'package:hnh_flutter/websocket/audio_video_call.dart';
 
 import '../../../repository/model/response/contact_list.dart';
+import '../../../utils/controller.dart';
 import '../../../widget/error_message.dart';
 import '../../videocall/video_call_screen.dart';
+import '../chat_detail.dart';
+
+typedef onBackConversationData = void Function(dynamic);
 
 class ContactListItem extends StatefulWidget {
   List<UserTable> filteredContactList;
-  TextEditingController controller ;
+  TextEditingController controller;
+  onBackConversationData callBack;
 
   ContactListItem(
-      {required this.filteredContactList,required this.controller});
+      {required this.filteredContactList, required this.controller,required this.callBack});
 
   @override
   _ContactListItemState createState() => _ContactListItemState();
@@ -22,8 +29,11 @@ class ContactListItem extends StatefulWidget {
 class _ContactListItemState extends State<ContactListItem> {
   late List<UserTable> contactList;
   late List<UserTable> filteredContactList;
-  late final TextEditingController callController=widget.controller;
-
+  late final TextEditingController callController = widget.controller;
+  int? senderID;
+  late User userObject;
+  late AudioVideoCall audioVideoCall;
+  var chatViewModel = ChatViewModel();
 
   @override
   void initState() {
@@ -31,8 +41,18 @@ class _ContactListItemState extends State<ContactListItem> {
     super.initState();
     filteredContactList = widget.filteredContactList;
     contactList = widget.filteredContactList;
+    loadPreferenceUserData();
   }
 
+  loadPreferenceUserData() async {
+    User userData = User.fromJson(await Controller()
+        .getObjectPreference(Controller.PREF_KEY_USER_OBJECT));
+
+    setState(() {
+      userObject = userData;
+      senderID = int.parse(userObject.id.toString());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +66,10 @@ class _ContactListItemState extends State<ContactListItem> {
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               var item = filteredContactList[index];
-               return createItem(item);
+              return createItem(item);
             },
           )
-        : Expanded(
+        : const Expanded(
             child: Center(
             child: ErrorMessageWidget(
               label: "No Contact Found",
@@ -104,18 +124,51 @@ class _ContactListItemState extends State<ContactListItem> {
                           item.fullName.toString(),
                           style: const TextStyle(fontSize: 16),
                         ),
-                        InkWell(
-                          onTap: () {
-                            Get.to(() => VideoCallScreen(
-                                targetUserID: item.userID.toString()));
-                          },
-                          child: SizedBox(
-                              height: 45,
-                              width: 45,
-                              child: Icon(
-                                Icons.call,
-                                color: primaryColor,
-                              )),
+                        Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+
+                                chatViewModel.insertConversationData(
+                                    senderID, item.userID!, (object) {
+                                  widget.callBack(object);
+                                  chatViewModel
+                                      .getSingleUserRecord(
+                                          object.receiverID.toString())
+                                      .then((userData) {
+                                    var data = CustomMessageObject(
+                                        userName: userData!.fullName.toString(),
+                                        conversationId: object.id!,
+                                        senderId: object.senderID!,
+                                        receiverid: object.receiverID!,
+                                        userPicture:
+                                            userData!.picture.toString());
+                                    Get.to(() => ChatDetailPage(item: data));
+                                  });
+                                });
+                              },
+                              child: SizedBox(
+                                  height: 45,
+                                  width: 45,
+                                  child: Icon(
+                                    Icons.message,
+                                    color: primaryColor,
+                                  )),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Get.to(() => VideoCallScreen(
+                                    targetUserID: item.userID.toString()));
+                              },
+                              child: SizedBox(
+                                  height: 45,
+                                  width: 45,
+                                  child: Icon(
+                                    Icons.call,
+                                    color: primaryColor,
+                                  )),
+                            ),
+                          ],
                         )
                       ],
                     ),

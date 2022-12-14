@@ -59,10 +59,7 @@ class _NotificationListState extends State<NotificationList> {
         setState(() {
           _isErrorInApi = checkErrorApiStatus;
           _errorMsg = "";
-
-
           notificationList = _notificationViewModel.notifications!;
-
         });
       }
     });
@@ -110,9 +107,7 @@ class _NotificationListState extends State<NotificationList> {
                                                 setState(() {
                                                   _notificationViewModel.deleteNotificationStatus(notificationList[index].id.toString());
                                                   notificationList.remove(notificationList[index]);
-
                                                   FBroadcast.instance().broadcast(Controller().notificationBroadCast, value: Controller().fcmMsgValue);
-
                                                 });
                                               },
                                               backgroundColor:  const Color(0xFFFE4A49),
@@ -127,91 +122,89 @@ class _NotificationListState extends State<NotificationList> {
                                     }),
                               )
                             : const ErrorMessageWidget(
-                                label: "No Notification Found"),
-                      )
-          ],
-        ));
+                                label: "No Notification Found"),)],));
   }
 
   Widget makeListTile(NotificationData notificationData, int index) {
     var item = notificationData.notificationData!;
 
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      leading: Container(
-        padding: EdgeInsets.zero,
-        /*  decoration: new BoxDecoration(
-              border: new Border(
-                  right: new BorderSide(width: 1.0, color: Colors.grey))),*/
+    return InkWell(
+      onTap: (){
+      setState(() {
+        _notificationViewModel.updateNotificationStatus(notificationData.id.toString());
+        notificationData.isRead = 1;
+        notificationList[index] = notificationData;
+        FBroadcast
+            .instance()
+            .broadcast(
+            Controller().notificationBroadCast,
+            value: Controller().fcmMsgValue);
 
-        child: Column(
+      });
+
+      if (notificationData.type.toString() == 'TEXT') {
+        var screenName = item.activity ?? 'N/A';
+        if (!screenName
+            .toString()
+            .toLowerCase()
+            .contains("dashboard")) {
+          LocalNotificationService().navigateFCMScreen(screenName);
+        }
+      }
+
+      },
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        leading: Container(
+          padding: EdgeInsets.zero,
+          /*  decoration: new BoxDecoration(
+                border: new Border(
+                    right: new BorderSide(width: 1.0, color: Colors.grey))),*/
+
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const <Widget>[
+                Icon(
+                  Icons.notifications_rounded,
+                  size: 30,
+                ),
+              ]),
+        ),
+        title: CustomTextWidget(
+            text: item.title.toString(), fontWeight: FontWeight.bold),
+        subtitle: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            CustomTextWidget(
+              text: Controller()
+                  .getServerDateFormated(notificationData.createdAt.toString()),
+              color: Colors.grey,
+              size: 10,
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            CustomTextWidget(
+              text: item.body.toString(),
+              color: Colors.grey,
+              size: 12,
+            ),
+          ],
+        ),
+        trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const <Widget>[
-              Icon(
-                Icons.notifications_rounded,
-                size: 30,
-              ),
-            ]),
-      ),
-      title: CustomTextWidget(
-          text: item.title.toString(), fontWeight: FontWeight.bold),
-      subtitle: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          CustomTextWidget(
-            text: Controller()
-                .getServerDateFormated(notificationData.createdAt.toString()),
-            color: Colors.grey,
-            size: 10,
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          CustomTextWidget(
-            text: item.body.toString(),
-            color: Colors.grey,
-            size: 12,
-          ),
-        ],
-      ),
-      trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            InkWell(
-              child: const Icon(
+            children: <Widget>[
+              const Icon(
                 Icons.keyboard_arrow_right,
                 color: Colors.grey,
                 size: 30.0,
-              ),
-              onTap: () {
-                setState(() {
-                  _notificationViewModel.updateNotificationStatus(notificationData.id.toString());
-                  notificationData.isRead = 1;
-                  notificationList[index] = notificationData;
-                  FBroadcast
-                      .instance()
-                      .broadcast(
-                      Controller().notificationBroadCast,
-                      value: Controller().fcmMsgValue);
-
-                });
-
-                if (notificationData.type.toString() == 'TEXT') {
-                  var screenName = item.activity ?? 'N/A';
-                  if (!screenName
-                      .toString()
-                      .toLowerCase()
-                      .contains("dashboard")) {
-                    LocalNotificationService().navigateFCMScreen(screenName);
-                  }
-                }
-              },
-            )
-          ]),
+              )
+            ]),
+      ),
     );
   }
 

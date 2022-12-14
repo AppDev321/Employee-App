@@ -9,6 +9,5 @@ class UserTable {
   String? email;
   String? picture;
 
-
-  UserTable({this.userID, this.fullName, this.email, this.picture});
+  UserTable({this.id,this.userID, this.fullName, this.email, this.picture});
 }

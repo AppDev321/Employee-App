@@ -14,6 +14,7 @@ abstract class CallHistoryDAO {
 
   @insert
   Future<void> insertCallHistoryRecord(CallHistoryTable callHistoryTable);
+
   @update
   Future<void> updateCallHistoryRecord(CallHistoryTable callHistoryTable);
 }

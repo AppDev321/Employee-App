@@ -92,6 +92,25 @@ class DashBoardViewModel extends BaseViewModel {
   }
 
 
+  void insertMessageDetailInDB(SocketMessageModel socketMessageModel,bool isMissed) async
+  {
+
+    var now =  DateTime.now();
+    final db =  await AFJDatabaseInstance.instance.afjDatabase;
+    final callHisoryDAO = db?.callHistoryDAO as CallHistoryDAO;
+
+
+    var data = CallHistoryTable(socketMessageModel.sendFrom.toString(),"", socketMessageModel.callerName.toString(), socketMessageModel.callType.toString(),
+        true,
+        isMissed,
+        Controller().getConvertedDate(now),
+        Controller().getConvertedTime(now),
+        "",
+        "0");
+    await callHisoryDAO.insertCallHistoryRecord(data);
+  }
+
+
   Future<void> getDashBoardData() async {
     setLoading(true);
     final results = await APIWebService().getDashBoardData();

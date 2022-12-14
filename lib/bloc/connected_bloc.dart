@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fbroadcast/fbroadcast.dart';
@@ -7,7 +6,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/utils/controller.dart';
-
 import '../notification/firebase_notification.dart';
 import '../repository/model/request/socket_message_model.dart';
 import '../websocket/service/socket_service.dart';
@@ -48,9 +46,8 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
       (String errorMsg) {
         print("Socket Message parsing issue: $errorMsg");
       },
-    );*/
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    );
+*/    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
@@ -99,7 +96,8 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
     return super.close();
   }
 
-//Notificaiton
+
+  //Notificaiton
   void firebaseMessaging(BuildContext context) {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
@@ -111,7 +109,6 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
           print("message.data22 ${message.data['title']}");
           print("message.data22 ${message.data['body']}");
         }
-
         LocalNotificationService.createandDisplayNotification(message);
       }
     });

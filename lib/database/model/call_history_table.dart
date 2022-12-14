@@ -3,7 +3,7 @@ import 'package:floor/floor.dart';
 @entity
 class CallHistoryTable {
   @PrimaryKey(autoGenerate: true)
-  int? id;
+   int? id;
    String callerID;
    String userPicUrl;
    String callerName;

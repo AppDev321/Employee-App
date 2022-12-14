@@ -35,15 +35,11 @@ class _AddAttendanceState extends State<AddAttendance> {
   bool showCameraPreview = false;
 
 
-
-
-
   void startCamera()async{
     _progressDialog?.showLoadingDialog();
     cameraController.takePicture().then((XFile file) {
       if(mounted){
         if(file != null){
-
           userPicturePath=file.path;
           if (userPicturePath.isNotEmpty) {
             var profileViewModel = ProfileViewModel();
@@ -258,7 +254,7 @@ class _AddAttendanceState extends State<AddAttendance> {
           Container(
                 padding: const EdgeInsets.fromLTRB(50.0, 5.0, 50.0, 20.0),
                 child: Text(
-                  uploadId.isEmpty?'W take your picture before attendance for verification purposes':    'Please give access to your Camera so that we can scan and provide you what is inside the code',
+                  uploadId.isEmpty?'We take your picture before attendance for verification purposes':    'Please give access to your Camera so that we can scan and provide you what is inside the code',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     height: 1.4,

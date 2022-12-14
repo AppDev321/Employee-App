@@ -1,29 +1,38 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:hnh_flutter/pages/chat/component/chat_bubble.dart';
-import 'package:hnh_flutter/widget/custom_text_widget.dart';
+import 'dart:convert';
 
-import '../../custom_style/colors.dart';
-import '../../repository/model/request/chat_messge.dart';
+import 'package:fbroadcast/fbroadcast.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:get/get.dart';
+import 'package:hnh_flutter/database/model/messages_table.dart';
+import 'package:hnh_flutter/view_models/chat_vm.dart';
+import 'package:hnh_flutter/widget/custom_text_widget.dart';
+import '../../repository/model/request/socket_message_model.dart';
+import '../../utils/controller.dart';
+import '../../websocket/service/socket_service.dart';
 import 'component/chat_input_box.dart';
+import 'component/own_message_box.dart';
+import 'component/reply_message_box.dart';
 
 class ChatDetailPage extends StatefulWidget {
+  final CustomMessageObject item;
+
+  ChatDetailPage({
+    Key? key,
+    required this.item,
+  }) : super(key: key);
+
   @override
   _ChatDetailPageState createState() => _ChatDetailPageState();
 }
 
 class _ChatDetailPageState extends State<ChatDetailPage>
     with SingleTickerProviderStateMixin {
-
-
   late AnimationController controller;
-  List<ChatMessage> messages = [
-    ChatMessage("Hello, Will", "receiver"),
-    ChatMessage("How have you been?", "receiver"),
-    ChatMessage("Hey Kriss, I am doing fine dude. wbu?", "sender"),
-    ChatMessage("ehhhh, doing OK.", "receiver"),
-    ChatMessage("Is there any thing wrong?", "sender"),
-  ];
+  ChatViewModel chatViewModel = ChatViewModel();
+  List<MessagesTable> messagesList = [];
+  ScrollController _scrollController = ScrollController();
+  SocketService socketService = SocketService();
 
   @override
   void initState() {
@@ -34,6 +43,37 @@ class _ChatDetailPageState extends State<ChatDetailPage>
       duration: const Duration(milliseconds: 600),
     );
 
+    chatViewModel.getMessagesList(widget.item.conversationId).then((value) {
+      setState(() {
+        var data = value as List<MessagesTable>;
+        messagesList = data;
+        _scrollDown();
+      });
+    });
+
+    //Handle web socket msg
+    FBroadcast.instance().register(Controller().socketMessageBroadCast,
+        (socketMessage, callback) {
+
+      var message = socketMessage as SocketMessageModel;
+      var msgType = message.type.toString();
+      var body = json.encode(message.data);
+
+      var  body2= json.decode(body);
+
+      if (msgType == SocketMessageType.Received.displayTitle) {
+
+        var item =   MessagesTable.fromJson(body2);
+        var newObject = item;
+        newObject.isMine = false;
+        newObject.senderID = item.receiverID;
+        newObject.receiverID = item.senderID;
+        chatViewModel .insertMessagesData( messageRecord: newObject);
+         setState(() {
+          messagesList.add(newObject);
+         });
+      }
+    });
   }
 
   @override
@@ -45,130 +85,133 @@ class _ChatDetailPageState extends State<ChatDetailPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        flexibleSpace: SafeArea(
-          child: Container(
-            padding: const EdgeInsets.only(right: 16),
-            child: Row(
-              children: <Widget>[
-                IconButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                ),
-                const SizedBox(
-                  width: 2,
-                ),
-                const CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      "https://randomuser.me/api/portraits/men/5.jpg"),
-                  maxRadius: 20,
-                ),
-                const SizedBox(
-                  width: 12,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const CustomTextWidget(
-                          text: "Kriss Benwat",
-                          size: 16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600),
-                      const SizedBox(
-                        height: 6,
-                      ),
-                      CustomTextWidget(
-                          text: "Online",
-                          size: 13,
-                          color: Colors.grey.shade100,
-                          fontWeight: FontWeight.w600),
-                    ],
+        appBar: AppBar(
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          flexibleSpace: SafeArea(
+            child: Container(
+              padding: const EdgeInsets.only(right: 16),
+              child: Row(
+                children: <Widget>[
+                  IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
                   ),
-                ),
-                const Icon(
-                  Icons.videocam,
-                  color: Colors.white,
-                ),
-                SizedBox(width: 20,),
-                const Icon(
-                  Icons.call,
-                  color: Colors.white,
-                ),
-              ],
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(widget.item.userPicture),
+                    maxRadius: 20,
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CustomTextWidget(
+                            text: widget.item.userName,
+                            size: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600),
+                        const SizedBox(
+                          height: 6,
+                        ),
+                        CustomTextWidget(
+                            text: "Online",
+                            size: 13,
+                            color: Colors.grey.shade100,
+                            fontWeight: FontWeight.w600),
+                      ],
+                    ),
+                  ),
+                  const Icon(
+                    Icons.videocam,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  const Icon(
+                    Icons.call,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      body: Stack(children: [
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              Expanded(child: getChatList()),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ChatInputBox(
+                    item: widget.item,
+                    recordingFinishedCallback: (path) {
+                    },
+                    onTextMessageSent: (msg) {
+                      _scrollDown();
+                      setState(() {
+                        messagesList.add(msg);
+                        var message = SocketMessageModel(
+                            type: SocketMessageType.Send.displayTitle,
+                            sendTo: widget.item.receiverid.toString(),
+                            sendFrom: widget.item.senderId.toString(),
+                            data: msg
+                        );
+                        socketService.sendMessageToWebSocket(message);
 
-        getChatList(),
-        Positioned(
-            child:
-        Container(
-            padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
-            width: double.infinity,
-            child: ChatInputBox(recordingFinishedCallback: (path){
-              print("audio file : $path");
-            },
-              onTextMessageSent: (msg){
-                print("Text Msg: $msg");
-              },)))],)
+                      });
+                    },
+                  ))
+            ],
+          ),
+        ));
+  }
 
-      // Container(height: MediaQuery.of(context).size.height,
-      // width: MediaQuery.of(context).size.width,color: Colors.black,),
-      // body: Stack(
-      //   children: <Widget>[
-      //      getChatList(),
-
-      //     ),
-      //   ],
-      // ),
-    );
+  void _scrollDown() {
+    SchedulerBinding.instance?.addPostFrameCallback((_) {
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 1),
+          curve: Curves.easeOut);
+    });
   }
 
   Widget getChatList() {
     return ListView.builder(
-      itemCount: messages.length,
+      itemCount: messagesList.length,
       shrinkWrap: true,
+      physics: BouncingScrollPhysics(),
+      controller: _scrollController,
       padding: const EdgeInsets.only(top: 10, bottom: 10),
-      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        return ChatBubble(true, 1,voice: true,);
-       // ChatBubble(true, 2);
-       // ChatBubble(false, 3,voice: true,);
-
-          Container(
-          padding:
-              const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
-          child: Align(
-            alignment: (messages[index].messageType == "receiver"
-                ? Alignment.topLeft
-                : Alignment.topRight),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: (messages[index].messageType == "receiver"
-                    ? cardDarkThemeBg
-                    : primaryColor),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: CustomTextWidget(
-                text: messages[index].messageContent,
-                size: 15,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        );
+        var item = messagesList[index];
+        if (index == messagesList.length) {
+          return Container(
+            height: 70,
+          );
+        }
+        if (item.isMine == true) {
+          return OwnMessageCard(
+            message: item.content.toString(),
+            time: item.time.toString(),
+          );
+        } else {
+          return ReplyCard(
+            message: item.content.toString(),
+            time: item.time.toString(),
+          );
+        }
       },
     );
   }
-
-
 }

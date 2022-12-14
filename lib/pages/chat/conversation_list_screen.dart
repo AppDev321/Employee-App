@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
+import 'package:hnh_flutter/database/model/conversation_table.dart';
 import 'package:hnh_flutter/widget/custom_edit_text_widget.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:hnh_flutter/widget/error_message.dart';
@@ -29,46 +30,53 @@ class ConversationScreen extends StatefulWidget {
 }
 
 class _ConversationScreenState extends State<ConversationScreen> {
-  List<ChatUsers> chatUsers = [
-    ChatUsers("Jane Russel", "Awesome Setup", "", "Now"),
-    ChatUsers("Glady's Murphy", "That's Great", "",
-        "Yesterday"),
-    ChatUsers("Jorge Henry", "Hey where are you?", "",
-        "31 Mar"),
-    ChatUsers("Philip Fox", "Busy! Call me in 20 mins",
-        "", "28 Mar"),
-    ChatUsers("Debra Hawkins", "Thankyou, It's awesome",
-        "", "23 Mar"),
-    ChatUsers("Jacob Pena", "will update you in evening",
-        "", "17 Mar"),
-    ChatUsers("Andrey Jones", "Can you please share the file?",
-        "", "24 Feb"),
-
-  ];
+  // List<ConversationTable> chatUsers = [
+  //   // ChatUsers("Jane Russel", "Awesome Setup", "", "Now"),
+  //   // ChatUsers("Glady's Murphy", "That's Great", "",
+  //   //     "Yesterday"),
+  //   // ChatUsers("Jorge Henry", "Hey where are you?", "",
+  //   //     "31 Mar"),
+  //   // ChatUsers("Philip Fox", "Busy! Call me in 20 mins",
+  //   //     "", "28 Mar"),
+  //   // ChatUsers("Debra Hawkins", "Thankyou, It's awesome",
+  //   //     "", "23 Mar"),
+  //   // ChatUsers("Jacob Pena", "will update you in evening",
+  //   //     "", "17 Mar"),
+  //   // ChatUsers("Andrey Jones", "Can you please share the file?",
+  //   //     "", "24 Feb"),
+  // ];
   var selectedTab = 0;
   late ChatViewModel chatViewModel;
   String? _errorMsg = "";
-  late List<ChatUsers> filteredChatList;
   List<UserTable> contactList = [];
   List<UserTable> filteredContactList = [];
   TextEditingController messagesController = TextEditingController();
   TextEditingController callController = TextEditingController();
+  List<ConversationTable> conversationList=[] ;
+  List<ConversationTable> filteredConversationList =[];
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     chatViewModel = ChatViewModel();
-
 
     getContactList().then((value) {
       setState(() {
         var data = value as List<UserTable>;
         contactList = data;
         filteredContactList = data;
-        print("list size = ${data.length}");
+
+      });
+    }) ;
+
+
+    getConversationList().then((value) {
+      setState(() {
+        var data = value as List<ConversationTable>;
+        conversationList = data;
+        filteredConversationList = data;
 
       });
     }) ;
@@ -134,7 +142,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Widget setConversationList() {
-    filteredChatList = searchFromMessageList(messagesController.text);
+    filteredConversationList = searchFromMessageList(messagesController.text);
     return Padding(
       padding: const EdgeInsets.all(0),
       child: NestedScrollView(
@@ -150,7 +158,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       text: "Conversation",
                       size: 32,
                       fontWeight: FontWeight.bold),
-                  TextColorContainer(label: "Add New", color: Colors.red),
+                  // TextColorContainer(label: "Add New", color: Colors.red),
                 ],
               ),
             ),
@@ -169,8 +177,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 },
               ),
             ),
-
-            filteredChatList.isNotEmpty?
+            filteredConversationList.isNotEmpty?
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -178,39 +185,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     ListView.builder(
-                      itemCount: filteredChatList.length,
+                      itemCount: filteredConversationList.length,
                       shrinkWrap: true,
                       padding: const EdgeInsets.only(top: 16),
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        var item = filteredChatList[index];
-                        // String name=chatUsers[index].name;
-                        // if(messagesController.text.isEmpty){
+                        var item = filteredConversationList[index];
                           return
                             ConversationList(
-                            name: item.name.toString(),
-                            messageText: item.messageText,
-                            imageUrl: item.imageURL,
-                            time: item.time,
-                            isMessageRead:
-                            (index == 0 || index == 3) ? true : false,
+                              conversationData: item,
                           );
-                        // }
-                        // else if(name.toLowerCase().contains(messagesController.text.toLowerCase())){
-                        //   return ConversationList(
-                        //     name: chatUsers[index].name,
-                        //     messageText: chatUsers[index].messageText,
-                        //     imageUrl: chatUsers[index].imageURL,
-                        //     time: chatUsers[index].time,
-                        //     isMessageRead:
-                        //     (index == 0 || index == 3) ? true : false,
-                        //   );
-                        // }
-                        // else {
-                        //   return Center(
-                        //     // child: Text("data"),
-                        //   );
-                        // }
                       },
                     )
                   ],
@@ -240,9 +224,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
               controller: callController,
               text: "Search...",
               onTextChanged: (text) {
-                setState(() {
-                  //Just for updateing view not any else
-                });
+                setState(() {});
               },
             ),
           ),
@@ -254,21 +236,29 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
+  Future getConversationList()async{
+    return chatViewModel.getConversationList();
+  }
+
   Future<Object> getContactList() async
   {
-
     return contactList.isEmpty? chatViewModel.getContactDBList() :contactList;
   }
 
 
   Widget showContactListItems(List<UserTable> filteredContactList) {
     return Expanded(
-
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child:
-        ContactListItem(filteredContactList:filteredContactList,controller: callController,)
-
+        ContactListItem(filteredContactList:filteredContactList,controller: callController, callBack: (data) {
+          var conversationDAta = data as ConversationTable;
+          setState(() {
+            conversationList.add(conversationDAta);
+            //filteredConversationList.add(conversationDAta);
+          });
+        },
+        )
       ),
     );
   }
@@ -283,17 +273,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
   searchFromMessageList(String text)  {
     //  filteredContactList.clear();
     if (text.isEmpty) {
-      filteredChatList  = chatUsers;
+      filteredConversationList  = conversationList;
     }
     else {
-      filteredChatList = chatUsers
+      filteredConversationList = conversationList
           .where((string) =>
-          string.name
+          string.id
               .toString()
               .toLowerCase()
               .contains(text.toLowerCase()))
           .toList();
     }
-    return filteredChatList;
+    return filteredConversationList;
   }
 }

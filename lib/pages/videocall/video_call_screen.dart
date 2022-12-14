@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
-
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -52,9 +50,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   late ChatViewModel chatViewModel;
 
   void endCall(bool isUserClosedCall, {bool isFromDialog = false}) async {
-    if(socketMessageModel != null) {
-      chatViewModel.insertCallEndDetailInDB(socketMessageModel!, targetUserId);
-    }
+    chatViewModel.insertCallEndDetailInDB(socketMessageModel!, targetUserId);
+
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
     audioVideoCall.endCall(isUserClosedCall);
@@ -95,7 +92,6 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
       targetUserId = widget.targetUserID;
       isIncomingCall = widget.isIncommingCall;
       socketMessageModel = widget.socketMessageModel;
-
       audioVideoCall = AudioVideoCall();
       audioVideoCall.targetUserId = targetUserId;
       audioVideoCall.currentUserId = userObject.id.toString();
@@ -212,11 +208,10 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
         audioVideoCall.addCandidate(jsonEncode(message.data));
       } else if (msgType == SocketMessageType.CallClosed.displayTitle) {
-        endCall(false);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(message.data),
         ));
-
+        endCall(false);
       }
     });
   }
@@ -244,11 +239,11 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-            Expanded(
+          /*  Expanded(
             flex: 1,
             child: RawMaterialButton(
               onPressed: () {
-                //audioVideoCall.checkUserIsOnline();
+                audioVideoCall.checkUserIsOnline();
               },
               shape: const CircleBorder(),
               elevation: 2.0,
@@ -260,7 +255,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                 size: 20.0,
               ),
             ),
-          ),
+          ),*/
           Expanded(
             flex: 1,
             child: RawMaterialButton(

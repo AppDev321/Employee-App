@@ -1,14 +1,17 @@
 import 'dart:io';
+
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:hnh_flutter/database/model/messages_table.dart';
+import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../../../custom_style/colors.dart';
 import '../../../voice_record_animation/audio_encoder_type.dart';
 import '../../../voice_record_animation/screen/social_media_recorder.dart';
-
 
 typedef onVoiceMessageCallBack = void Function(String);
 
@@ -16,11 +19,13 @@ class ChatInputBox extends StatefulWidget {
   const ChatInputBox(
       {Key? key,
       required this.recordingFinishedCallback,
-      required this.onTextMessageSent})
+      required this.onTextMessageSent,
+      required this.item})
       : super(key: key);
 
   final onVoiceMessageCallBack recordingFinishedCallback;
-  final ValueChanged<String> onTextMessageSent;
+  final ValueChanged<MessagesTable> onTextMessageSent;
+  final CustomMessageObject item;
 
   @override
   _ChatInputBoxState createState() => _ChatInputBoxState();
@@ -32,7 +37,9 @@ class _ChatInputBoxState extends State<ChatInputBox> {
   bool isVoiceMessage = true;
   bool hideTextBoxView = false;
   bool showEmoji = false;
+  bool isMine = true;
   FocusNode focusNode = FocusNode();
+  ChatViewModel chatViewModel = ChatViewModel();
 
   List<String> menus = [
     "Document",
@@ -112,6 +119,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                                 Expanded(
                                   child: TextField(
                                     focusNode: focusNode,
+
                                     controller: inputMessageBox,
                                     maxLines: 3,
                                     minLines: 1,
@@ -144,8 +152,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                                 color: primaryColor, shape: BoxShape.circle),
                             child: InkWell(
                               onTap: () {
-                                widget.onTextMessageSent(
-                                    inputMessageBox.text.toString());
+                                sentMessage("Text");
                               },
                               child: Icon(
                                 iconSendMsg,
@@ -398,6 +405,22 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
       imageFiles(imageFile);
+    }
+  }
+
+  void sentMessage(String type) {
+    switch (type) {
+      case 'Text':
+        chatViewModel
+            .insertMessagesData(
+                msg: inputMessageBox.text,
+                customMessageObject: widget.item,
+                isMine: isMine)
+            .then((value) {
+          inputMessageBox.clear();
+          widget.onTextMessageSent(value);
+        });
+        break;
     }
   }
 }

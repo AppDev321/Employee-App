@@ -139,7 +139,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
         }
         else
         {
-          audioVideoCall.checkUserIsOnline();
+          // audioVideoCall.checkUserIsOnline();
         }
       };
     });
