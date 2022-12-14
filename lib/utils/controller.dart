@@ -13,13 +13,13 @@ import '../pages/login/login.dart';
 
 class Controller {
   static const String appBaseURL = "http://vmi808920.contaboserver.net/api";
- //"http://192.168.18.69:8000/api";
+//"http://192.168.18.69:8000/api";
      // "http://afjdemo.hnhtechpk.com/api";
 
   //  "http://afjdev.hnhtechpk.com/api";
 
-//static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
- static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
+ static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
+// static const String webSocketURL  = "ws://192.168.18.69:6001/video-call?token=";
 
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
@@ -415,7 +415,6 @@ enum SocketMessageType {
   SendIceCandidate,
   RejectCall,
   CallEnd,
-  Send,
 
   //From Web to App
 
@@ -426,7 +425,6 @@ enum SocketMessageType {
   CallClosed,
   ICECandidate,
   CallAlreadyAnswer,
-  Received,
 
 }
 
@@ -447,8 +445,6 @@ extension MessageTypeExtention on SocketMessageType {
         return 'offer_reject';
       case SocketMessageType.CallEnd:
         return 'call_end';
-      case SocketMessageType.Send:
-        return 'send';
 
 
 
@@ -466,8 +462,8 @@ extension MessageTypeExtention on SocketMessageType {
         return 'ice_receive_candidate';
       case SocketMessageType.CallAlreadyAnswer:
         return 'call_already_answered';
-      case SocketMessageType.Received:
-        return 'received';
+
+
 
       default:
         return '';
