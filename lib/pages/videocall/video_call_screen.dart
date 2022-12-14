@@ -3,9 +3,11 @@ import 'dart:convert';
 
 
 import 'package:fbroadcast/fbroadcast.dart';
+import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
+import 'package:wakelock/wakelock.dart';
 
 
 import '../../repository/model/request/socket_message_model.dart';
@@ -31,7 +33,8 @@ class VideoCallScreen extends StatefulWidget {
   _VideoCallScreenState createState() => _VideoCallScreenState();
 }
 
-class _VideoCallScreenState extends State<VideoCallScreen> {
+class _VideoCallScreenState extends State<VideoCallScreen>  {
+
   late User userObject;
   final _localVideoRenderer = RTCVideoRenderer();
   final _remoteVideoRenderer = RTCVideoRenderer();
@@ -52,6 +55,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   late ChatViewModel chatViewModel;
 
   void endCall(bool isUserClosedCall, {bool isFromDialog = false}) async {
+    Wakelock.disable();
+
     if(socketMessageModel != null) {
       chatViewModel.insertCallEndDetailInDB(socketMessageModel!, targetUserId);
     }
@@ -136,6 +141,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   @override
   void initState() {
+
+    Wakelock.enable();
     loadPreferenceUserData();
 
     initRenderers();
@@ -223,9 +230,6 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   @override
   void dispose() async {
-
-
-
     audioVideoCall.disposeAudioVideoCall();
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
@@ -347,6 +351,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
               ),
               TextButton(
                 onPressed: () {
+
                   Navigator.of(context).pop(true);
                   endCall(true, isFromDialog: true);
                 },
@@ -367,54 +372,79 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
             title: const Text("Video Call"),
           ),
           body: OrientationBuilder(builder: (context, orientation) {
-            return Stack(children: <Widget>[
-              _remoteRenderers.isNotEmpty
-                  ? Row(
-                      children: [
-                        ..._remoteRenderers.map((remoteRenderer) {
-                          return SizedBox(
-                              width: 160,
-                              height: 120,
-                              child: RTCVideoView(remoteRenderer));
-                        }).toList(),
-                      ],
-                    )
-                  : Center(),
-              Positioned(
-                  child: isRemoteUserOnline
-                      ? Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          decoration:
-                              const BoxDecoration(color: Colors.black54),
-                          child: RTCVideoView(_remoteVideoRenderer),
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                              CircularProgressIndicator(strokeWidth: 3),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Center(
-                                  child: CustomTextWidget(text: callingStatus))
-                            ])),
-              isVideoEnable
-                  ? Positioned(
-                      bottom: 150.0,
-                      right: 20.0,
-                      child: Container(
-                        width: 105.0,
-                        height: 140.0,
-                        decoration: const BoxDecoration(color: Colors.black54),
-                        child: RTCVideoView(_localVideoRenderer),
-                      ),
-                    )
-                  : const Center(),
-              videoCallBottomButtonWidget()
-            ]);
+            return
+ showVideoPreviewScreen(true);
+
+
+
+
           })),
     );
+  }
+
+
+  Widget showVideoPreviewScreen(bool isPipMode)
+  {
+    return isPipMode
+    ?Stack(children: <Widget>[
+
+      _remoteRenderers.isNotEmpty
+          ? Row(
+        children: [
+          ..._remoteRenderers.map((remoteRenderer) {
+            return SizedBox(
+                width: 160,
+                height: 120,
+                child: RTCVideoView(remoteRenderer));
+          }).toList(),
+        ],
+      )
+          : Center(),
+      Positioned(
+          child: isRemoteUserOnline
+              ? Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration:
+            const BoxDecoration(color: Colors.black54),
+            child: RTCVideoView(_remoteVideoRenderer),
+          )
+              : Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(strokeWidth: 3),
+                SizedBox(
+                  height: 20,
+                ),
+                Center(
+                    child: CustomTextWidget(text: callingStatus))
+              ])),
+      isVideoEnable
+          ? Positioned(
+        bottom: 150.0,
+        right: 20.0,
+        child: Container(
+          width: 105.0,
+          height: 140.0,
+          decoration: const BoxDecoration(color: Colors.black54),
+          child: RTCVideoView(_localVideoRenderer),
+        ),
+      )
+          : const Center(),
+      videoCallBottomButtonWidget()
+    ]) :
+    _remoteRenderers.isNotEmpty
+        ? Row(
+      children: [
+        ..._remoteRenderers.map((remoteRenderer) {
+          return SizedBox(
+              width: 160,
+              height: 120,
+              child: RTCVideoView(remoteRenderer));
+        }).toList(),
+      ],
+    )
+        : Center();
   }
 }

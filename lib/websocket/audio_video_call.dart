@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hnh_flutter/websocket/service/socket_service.dart';
 import 'package:just_audio/just_audio.dart';
@@ -59,7 +58,22 @@ class AudioVideoCall {
     ],
   };
 
-  void startTimer() {
+
+  var secret =  "8f60119eb0b51b511bf4b0fb7838e36c";//"d130e4a5701c5f287a1506c974544631a774cc3370325aa6570e56e95bd8cfe6";
+
+  var uuID = ((DateTime.now().millisecond/1000) + (12 * 3600)).toString();
+
+  dynamic generateSHA1MAC( String value,  String secretKEy)
+  {
+    var key = utf8.encode(secretKEy);
+    var bytes = utf8.encode(value);
+    var hmacSha256 = Hmac(sha256, key);
+    var digest = hmacSha256.convert(bytes);
+
+  return digest.bytes.toString();
+}
+
+void startTimer() {
     var oneSec = const Duration(seconds: 1);
     _timmerInstance = Timer.periodic(oneSec, (Timer timer) {
       if (_start < 0) {
@@ -94,13 +108,21 @@ class AudioVideoCall {
 
   _createPeerConnection() async {
     Map<String, dynamic> configuration = {
-      "iceServers": [
-        {"url": "stun:iphone-stun.strato-iphone.de:3478"},
-        {"url": "stun:openrelay.metered.ca:80"},
-        {"url": "stun:openrelay.metered.ca:443"},
-        {"url": "stun:openrelay.metered.ca:443"},
-        {"url": "stun:stun.l.google.com:19302"},
+      "iceServers":
+      [
+            {
+           "url": "stun:vmi808920.contaboserver.net:3479"
+          // "url": "stun:gotcha.im:8000"
+            },
+
+           {
+        // 'url': 'turn:gotcha.im:8000',
+         'url': 'turn:vmi808920.contaboserver.net:3479',
+            'username': uuID,
+            'credential': generateSHA1MAC(uuID,secret)
+           }
       ]
+
     };
 
     _localStream = await getUserMedia();
@@ -301,6 +323,7 @@ class AudioVideoCall {
 
     dynamic candidate = RTCIceCandidate(
         session['candidate'], session['sdpMid'], session['sdpMLineIndex']);
+
     await _peerConnection!.addCandidate(candidate);
   }
 
