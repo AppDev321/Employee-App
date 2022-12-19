@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/database/dao/attachments_dao.dart';
@@ -8,6 +7,7 @@ import 'package:hnh_flutter/database/dao/user_dao.dart';
 import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/database/model/conversation_table.dart';
 import 'package:hnh_flutter/database/model/user_table.dart';
+import 'package:hnh_flutter/pages/chat/component/audio_chat_bubble.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:intl/intl.dart';
@@ -17,7 +17,6 @@ import '../database/dao/messages_dao.dart';
 import '../database/database_single_instance.dart';
 import '../database/model/call_history_table.dart';
 import '../database/model/messages_table.dart';
-import '../pages/chat/component/audio_chat_bubble.dart';
 import '../repository/model/request/socket_message_model.dart';
 import '../repository/model/response/contact_list.dart';
 import '../utils/controller.dart';
@@ -31,10 +30,10 @@ class CustomMessageObject {
 
   CustomMessageObject(
       {required this.userName,
-        required this.userPicture,
-        required this.senderId,
-        required this.receiverid,
-        required this.conversationId});
+      required this.userPicture,
+      required this.senderId,
+      required this.receiverid,
+      required this.conversationId});
 }
 
 class ChatViewModel extends BaseViewModel {
@@ -62,9 +61,9 @@ class ChatViewModel extends BaseViewModel {
       senderid, recieverid, Function(ConversationTable) callback) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final conversationTableDao =
-    db?.conversationTableDAO as ConversationTableDAO;
+        db?.conversationTableDAO as ConversationTableDAO;
     var userData =
-    ConversationTable(senderID: senderid, receiverID: recieverid);
+        ConversationTable(senderID: senderid, receiverID: recieverid);
     conversationTableDao.getReceiverRecord(recieverid).then((value) {
       if (value != null) {
         userData = value;
@@ -83,17 +82,17 @@ class ChatViewModel extends BaseViewModel {
   Future<List<ConversationTable>> getConversationList() async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final conversationTableDAO =
-    db?.conversationTableDAO as ConversationTableDAO;
+        db?.conversationTableDAO as ConversationTableDAO;
     return await conversationTableDAO.getAllConversation();
   }
 
 //inserting data on messages table
   Future<MessagesTable> insertMessagesData(
       {String? msg,
-        CustomMessageObject? customMessageObject,
-        bool? isMine,
-        bool? hasAttachment = false,
-        MessagesTable? messageRecord}) async {
+      CustomMessageObject? customMessageObject,
+      bool? isMine,
+      bool? hasAttachment = false,
+      MessagesTable? messageRecord}) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
     var now = DateTime.now();
@@ -124,16 +123,17 @@ class ChatViewModel extends BaseViewModel {
 
   //insert data to attachment table
 
-  Future<AttachmentsTable> insertAttachmentsData(AttachmentsTable item,int receiverId) async {
+  Future<AttachmentsTable> insertAttachmentsData(AttachmentsTable item,int receiverId,Function(int) msgID) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
 
-    var latestMessage = await messagesTableDAO
-        .getLastMessageRecordByReceiverID(receiverId);
-    if (latestMessage != null) {
-      item.messageID = latestMessage.id;
-    }
+      var latestMessage = await messagesTableDAO
+          .getLastMessageRecordByReceiverID(receiverId);
+      if (latestMessage != null) {
+        item.messageID = latestMessage.id;
+        msgID(latestMessage.id!);
+      }
     await attachmentsTableDAO.insertAttachmentsRecord(item);
     return item;
   }
@@ -166,6 +166,12 @@ class ChatViewModel extends BaseViewModel {
     final userTableDao = db?.userTableDAO as UserTableDAO;
     return await userTableDao.getUserRecord(id);
   }
+  Future<AttachmentsTable?> getSingleAttachmentByMsgID(int messageID) async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
+    return await attachmentsTableDAO.getAttachmentByMsgId(messageID);
+  }
+
 
   void insertCallDetailInDB(SocketMessageModel socketMessageModel) async {
     var now = DateTime.now();
@@ -226,41 +232,25 @@ class ChatViewModel extends BaseViewModel {
         ),
       );
     } else {
+
       return
         FutureBuilder(
-            future: getSingleAttachmentByMsgID(item.id!),
+          future: getSingleAttachmentByMsgID(item.id!) ,
             builder:
-                (context,snap)
+            (context,snap)
+        {
+          if(snap.hasData)
             {
-              if(snap.hasData)
-              {
-                var data = snap.data as AttachmentsTable;
+              var data = snap.data as AttachmentsTable;
+              return AudioBubble(filepath: data.attachmentUrl.toString());
+            }
+          else
+            {
+              return Container();
+            }
+        });
 
-                return
-                data.attachmentType==ChatMessageType.image.name?
-                    Container(
-                      height: MediaQuery.of(context).size.height/3.5,
-                      width: MediaQuery.of(context).size.width/1.8,
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),),
-                      child: Card(margin: EdgeInsets.all(1),shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),child: Image.file(
-                        File(data.attachmentUrl.toString())
-                      ),),
-                    ):
-                  AudioBubble(filepath: data.attachmentUrl.toString());
-              }
-              else
-              {
-                return Container();
-              }
-            });
+
     }
-  }
-
-  Future<AttachmentsTable?> getSingleAttachmentByMsgID(int messageID) async {
-    final db = await AFJDatabaseInstance.instance.afjDatabase;
-    final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
-    return await attachmentsTableDAO.getAttachmentByMsgId(messageID);
   }
 }
