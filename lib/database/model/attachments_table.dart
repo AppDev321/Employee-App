@@ -8,6 +8,7 @@ class AttachmentsTable {
   String? attachmentUrl;
   String? thumbnailUrl;
   String? attachmentType;
+  int? downloadID;
 
-  AttachmentsTable({this.id,this.messageID, this.attachmentUrl,this.thumbnailUrl,this.attachmentType });
+  AttachmentsTable({this.id,this.messageID, this.attachmentUrl,this.thumbnailUrl,this.attachmentType,this.downloadID });
 }

@@ -313,6 +313,66 @@ static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video
     return outputDate;
   }
 
+  // Image Preview Dialog
+
+  Widget imageDialog(text,  path, BuildContext buildContext, {bool? isNetwork = false}) {
+    return Dialog(
+      // backgroundColor: Colors.transparent,
+      elevation: 10,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Preview',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 40),
+                IconButton(
+                  onPressed: () {
+                    // Get.back();
+                    Navigator.pop(buildContext);
+                  },
+                  icon: Icon(Icons.close_rounded),
+                  color: Colors.redAccent,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: Get.mediaQuery.size.width / 2,
+            height: Get.mediaQuery.size.height / 2,
+            child: isNetwork == true ? Image.network(
+              '$path',
+              fit: BoxFit.cover,
+              loadingBuilder: (BuildContext context, Widget child,
+                  ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: primaryColor,
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
+            ) : Image.file(
+                File(path),
+
+                fit: BoxFit.cover
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   String capitalize(String str) => str[0].toUpperCase() + str.substring(1);
 
   showConfirmationMsgDialog(BuildContext context, String title, String msg,
