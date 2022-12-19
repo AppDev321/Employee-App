@@ -7,6 +7,7 @@ import 'package:hnh_flutter/database/dao/user_dao.dart';
 import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/database/model/conversation_table.dart';
 import 'package:hnh_flutter/database/model/user_table.dart';
+import 'package:hnh_flutter/pages/chat/component/audio_chat_bubble.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:intl/intl.dart';
@@ -122,7 +123,7 @@ class ChatViewModel extends BaseViewModel {
 
   //insert data to attachment table
 
-  Future<AttachmentsTable> insertAttachmentsData(AttachmentsTable item,int receiverId) async {
+  Future<AttachmentsTable> insertAttachmentsData(AttachmentsTable item,int receiverId,Function(int) msgID) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
@@ -131,6 +132,7 @@ class ChatViewModel extends BaseViewModel {
           .getLastMessageRecordByReceiverID(receiverId);
       if (latestMessage != null) {
         item.messageID = latestMessage.id;
+        msgID(latestMessage.id!);
       }
     await attachmentsTableDAO.insertAttachmentsRecord(item);
     return item;
@@ -164,6 +166,12 @@ class ChatViewModel extends BaseViewModel {
     final userTableDao = db?.userTableDAO as UserTableDAO;
     return await userTableDao.getUserRecord(id);
   }
+  Future<AttachmentsTable?> getSingleAttachmentByMsgID(int messageID) async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
+    return await attachmentsTableDAO.getAttachmentByMsgId(messageID);
+  }
+
 
   void insertCallDetailInDB(SocketMessageModel socketMessageModel) async {
     var now = DateTime.now();
@@ -224,7 +232,25 @@ class ChatViewModel extends BaseViewModel {
         ),
       );
     } else {
-      return Container();
+
+      return
+        FutureBuilder(
+          future: getSingleAttachmentByMsgID(item.id!) ,
+            builder:
+            (context,snap)
+        {
+          if(snap.hasData)
+            {
+              var data = snap.data as AttachmentsTable;
+              return AudioBubble(filepath: data.attachmentUrl.toString());
+            }
+          else
+            {
+              return Container();
+            }
+        });
+
+
     }
   }
 }

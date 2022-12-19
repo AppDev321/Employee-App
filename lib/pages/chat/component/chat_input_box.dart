@@ -418,7 +418,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         });
         break;
       case ChatMessageType.audio:
-        await chatViewModel.insertMessagesData(
+       var msgData =  await chatViewModel.insertMessagesData(
             msg: "",
             hasAttachment: true,
             customMessageObject: widget.item,
@@ -427,8 +427,10 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         var attachmentData = AttachmentsTable(
             attachmentType: ChatMessageType.audio.name,
             attachmentUrl: attachmentURl);
-        var data = await chatViewModel.insertAttachmentsData(
-            attachmentData, widget.item.receiverid);
+        var data = await chatViewModel.insertAttachmentsData( attachmentData, widget.item.receiverid,(msgID){
+          msgData.id = msgID;
+          widget.onTextMessageSent(msgData);
+        });
         widget.attachmentInsertedCallback(data);
 
         break;
