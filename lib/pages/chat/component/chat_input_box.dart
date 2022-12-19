@@ -11,20 +11,21 @@ import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../custom_style/colors.dart';
+import '../../../database/model/attachments_table.dart';
 import '../../../voice_record_animation/audio_encoder_type.dart';
 import '../../../voice_record_animation/screen/social_media_recorder.dart';
 
-typedef onVoiceMessageCallBack = void Function(String);
+typedef onAttachmentMessageCallBack = void Function(dynamic);
 
 class ChatInputBox extends StatefulWidget {
   const ChatInputBox(
       {Key? key,
-      required this.recordingFinishedCallback,
+      required this.attachmentInsertedCallback,
       required this.onTextMessageSent,
       required this.item})
       : super(key: key);
 
-  final onVoiceMessageCallBack recordingFinishedCallback;
+  final onAttachmentMessageCallBack attachmentInsertedCallback;
   final ValueChanged<MessagesTable> onTextMessageSent;
   final CustomMessageObject item;
 
@@ -120,7 +121,6 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                                 Expanded(
                                   child: TextField(
                                     focusNode: focusNode,
-
                                     controller: inputMessageBox,
                                     maxLines: 3,
                                     minLines: 1,
@@ -191,8 +191,8 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                                   setState(() {
                                     hideTextBoxView = false;
                                   });
-                                  widget.recordingFinishedCallback(
-                                      soundFile.path);
+
+                                  sentMessage(ChatMessageType.audio, attachmentURl: soundFile.path);
                                 },
                                 encode: AudioEncoderType.AAC,
                                 hideBottomView: (bool) {
@@ -330,7 +330,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                   SizedBox(
                     width: 40,
                   ),
-                    iconCreation(Icons.person, Colors.blue,menus[5]),
+                  iconCreation(Icons.person, Colors.blue, menus[5]),
                 ],
               ),
             ],
@@ -344,21 +344,15 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     return InkWell(
       onTap: () {
         Get.back();
-        if(text.contains(menus[0])){
-          pickFile(FileType.media, (value) {
-          });
-        }
-
-      else  if (text.contains(menus[1])) {
+        if (text.contains(menus[0])) {
+          pickFile(FileType.media, (value) {});
+        } else if (text.contains(menus[1])) {
           pickImageFile(ImageSource.camera, (value) {});
         } else if (text.contains(menus[2])) {
           pickImageFile(ImageSource.gallery, (value) {});
-        }
-
-        else if (text.contains(menus[3])) {
+        } else if (text.contains(menus[3])) {
           pickFile(FileType.audio, (value) {});
         }
-
       },
       child: Column(
         children: [
@@ -387,16 +381,17 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     );
   }
 
-
-  pickFile(FileType type,ValueChanged<PlatformFile> imageFiles) async {
-    final result = await FilePicker.platform.pickFiles(allowMultiple: true,type: type);
+  pickFile(FileType type, ValueChanged<PlatformFile> imageFiles) async {
+    final result =
+        await FilePicker.platform.pickFiles(allowMultiple: true, type: type);
 
     if (result != null) {
       final file = result!.files.first;
       imageFiles(file);
       // openFile(file);
       print("file path issssssss${file.path}");
-    };
+    }
+    ;
   }
 
   pickImageFile(ImageSource type, ValueChanged<File> imageFiles) async {
@@ -409,7 +404,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     }
   }
 
-  void sentMessage(ChatMessageType type) {
+  void sentMessage(ChatMessageType type, {String? attachmentURl}) async {
     switch (type) {
       case ChatMessageType.text:
         chatViewModel
@@ -421,6 +416,21 @@ class _ChatInputBoxState extends State<ChatInputBox> {
           inputMessageBox.clear();
           widget.onTextMessageSent(value);
         });
+        break;
+      case ChatMessageType.audio:
+        await chatViewModel.insertMessagesData(
+            msg: "",
+            hasAttachment: true,
+            customMessageObject: widget.item,
+            isMine: isMine);
+
+        var attachmentData = AttachmentsTable(
+            attachmentType: ChatMessageType.audio.name,
+            attachmentUrl: attachmentURl);
+        var data = await chatViewModel.insertAttachmentsData(
+            attachmentData, widget.item.receiverid);
+        widget.attachmentInsertedCallback(data);
+
         break;
     }
   }

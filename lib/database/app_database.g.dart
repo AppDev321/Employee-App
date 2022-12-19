@@ -416,6 +416,15 @@ class _$MessagesTableDAO extends MessagesTableDAO {
   }
 
   @override
+  Future<MessagesTable?> getLastMessageRecordByReceiverID(
+      int targetUserID) async {
+    return _queryAdapter.query(
+        'SELECT * FROM MessagesTable WHERE receiverID = ?1 order by 1 desc limit 1',
+        mapper: (Map<String, Object?> row) => MessagesTable(id: row['id'] as int?, conversationID: row['conversationID'] as int?, senderID: row['senderID'] as int?, receiverID: row['receiverID'] as int?, content: row['content'] as String?, date: row['date'] as String?, time: row['time'] as String?, isMine: row['isMine'] == null ? null : (row['isMine'] as int) != 0, isAttachments: row['isAttachments'] == null ? null : (row['isAttachments'] as int) != 0, deliveryStatus: row['deliveryStatus'] == null ? null : (row['deliveryStatus'] as int) != 0),
+        arguments: [targetUserID]);
+  }
+
+  @override
   Future<void> deleteMessagesRecord(int id) async {
     await _queryAdapter.queryNoReturn('DELETE FROM MessagesTable WHERE id = ?1',
         arguments: [id]);
