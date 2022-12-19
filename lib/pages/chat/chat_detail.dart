@@ -203,21 +203,16 @@ class _ChatDetailPageState extends State<ChatDetailPage>
         }
         if (item.isMine == true) {
           return OwnMessageCard(
-            message: item.content.toString(),
-            time: item.time.toString(),
+          item:item,
           );
         } else {
           return ReplyCard(
-            message: item.content.toString(),
-            time: item.time.toString(),
+            item:item,
           );
         }
       },
     );
   }
 
-  Widget showAttachmentTypeMessage()
-  {
-    return Center();
-  }
+
 }

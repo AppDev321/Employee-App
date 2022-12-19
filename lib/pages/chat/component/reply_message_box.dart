@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../../database/model/messages_table.dart';
+
 class ReplyCard extends StatelessWidget {
-  const ReplyCard({Key? key, required this.message, required this.time}) : super(key: key);
-  final String message;
-  final String time;
+
+
+
+  const ReplyCard({Key? key,required this.item})
+      : super(key: key);
+
+  final MessagesTable item;
 
   @override
   Widget build(BuildContext context) {
@@ -27,18 +33,13 @@ class ReplyCard extends StatelessWidget {
                   top: 5,
                   bottom: 10,
                 ),
-                child: Text(
-                  message,
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+                child:  showContentItem(item),
               ),
               Positioned(
                 bottom: 4,
                 right: 10,
-                child: Text(
-                  time,
+                child:  Text(
+                  item.time.toString(),
                   style: TextStyle(
                     fontSize: 8,
                     color: Colors.grey[600],
@@ -50,5 +51,18 @@ class ReplyCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget showContentItem(MessagesTable item) {
+    if (item.isAttachments == false) {
+      return Text(
+        item.content.toString(),
+        style: const TextStyle(
+          fontSize: 16,
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }
