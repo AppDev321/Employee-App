@@ -1,11 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
-class CameraViewPage extends StatelessWidget {
-  const CameraViewPage({Key? key,required this.path}) : super(key: key);
+class CameraViewPage extends StatefulWidget {
+  const CameraViewPage({Key? key,required this.path
+     ,required this.callBack
+  }) : super(key: key);
   final String path;
+  final Function callBack;
 
+  @override
+  State<CameraViewPage> createState() => _CameraViewPageState();
+}
+
+class _CameraViewPageState extends State<CameraViewPage> {
+  // final void callBack;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +33,7 @@ class CameraViewPage extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height - 150,
               child: Image.file(
-                File(path),
+                File(widget.path),
                 fit: BoxFit.cover,
               ),
             ),
@@ -51,13 +62,18 @@ class CameraViewPage extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 17,
                       ),
-                      suffixIcon: CircleAvatar(
-                        radius: 27,
-
-                        child: Icon(
-                          Icons.check,
-                          color: Colors.white,
-                          size: 27,
+                      suffixIcon: InkWell(
+                        onTap: (){
+                          Get.back();
+                          widget.callBack();
+                        },
+                        child: CircleAvatar(
+                          radius: 27,
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 27,
+                          ),
                         ),
                       )),
                 ),

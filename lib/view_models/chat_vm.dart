@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/database/dao/attachments_dao.dart';
@@ -128,12 +129,12 @@ class ChatViewModel extends BaseViewModel {
     final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
 
-      var latestMessage = await messagesTableDAO
-          .getLastMessageRecordByReceiverID(receiverId);
-      if (latestMessage != null) {
-        item.messageID = latestMessage.id;
-        msgID(latestMessage.id!);
-      }
+    var latestMessage =
+        await messagesTableDAO.getLastMessageRecordByReceiverID(receiverId);
+    if (latestMessage != null) {
+      item.messageID = latestMessage.id;
+      msgID(latestMessage.id!);
+    }
     await attachmentsTableDAO.insertAttachmentsRecord(item);
     return item;
   }
@@ -232,25 +233,38 @@ class ChatViewModel extends BaseViewModel {
         ),
       );
     } else {
-
-      return
-        FutureBuilder(
-          future: getSingleAttachmentByMsgID(item.id!) ,
-            builder:
-            (context,snap)
-        {
-          if(snap.hasData)
-            {
+      return FutureBuilder(
+          future: getSingleAttachmentByMsgID(item.id!),
+          builder: (context, snap) {
+            if (snap.hasData) {
               var data = snap.data as AttachmentsTable;
-              return AudioBubble(filepath: data.attachmentUrl.toString());
+              final type = data.attachmentType.toString();
+              if (type == ChatMessageType.image.name) {
+                return Container(
+                  height: MediaQuery.of(context).size.height / 3.5,
+                  width: MediaQuery.of(context).size.width / 1.8,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Card(
+                    margin: EdgeInsets.all(1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Image.file(
+                        File(data.attachmentUrl.toString())
+                    ,fit: BoxFit.cover,),
+                  ),
+                );
+              } else if (type == ChatMessageType.audio.name) {
+                return AudioBubble(filepath: data.attachmentUrl.toString());
+              } else {
+                return Container();
+              }
+            } else {
+              return CircularProgressIndicator();
             }
-          else
-            {
-              return Container();
-            }
-        });
-
-
+          });
     }
   }
 }

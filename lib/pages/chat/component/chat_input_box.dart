@@ -14,15 +14,16 @@ import '../../../custom_style/colors.dart';
 import '../../../database/model/attachments_table.dart';
 import '../../../voice_record_animation/audio_encoder_type.dart';
 import '../../../voice_record_animation/screen/social_media_recorder.dart';
+import 'camera_view.dart';
 
 typedef onAttachmentMessageCallBack = void Function(dynamic);
 
 class ChatInputBox extends StatefulWidget {
   const ChatInputBox(
       {Key? key,
-      required this.attachmentInsertedCallback,
-      required this.onTextMessageSent,
-      required this.item})
+        required this.attachmentInsertedCallback,
+        required this.onTextMessageSent,
+        required this.item})
       : super(key: key);
 
   final onAttachmentMessageCallBack attachmentInsertedCallback;
@@ -97,116 +98,120 @@ class _ChatInputBoxState extends State<ChatInputBox> {
               hideTextBoxView
                   ? const Center()
                   : Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(35.0),
-                              boxShadow: const [
-                                BoxShadow(
-                                    offset: Offset(1, 1),
-                                    blurRadius: 1,
-                                    color: Colors.grey)
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                IconButton(
-                                    icon: Icon(
-                                      showEmoji ? Icons.keyboard : Icons.mood,
-                                      color: Colors.grey,
-                                    ),
-                                    onPressed: () => callEmoji()),
-                                Expanded(
-                                  child: TextField(
-                                    focusNode: focusNode,
-                                    controller: inputMessageBox,
-                                    maxLines: 3,
-                                    minLines: 1,
-                                    style: const TextStyle(color: Colors.black),
-                                    decoration: const InputDecoration(
-                                        hintText: "Message",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                        border: InputBorder.none),
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.attach_file,
-                                      color: Colors.grey),
-                                  onPressed: () => callAttachFile(),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.photo_camera,
-                                      color: Colors.grey),
-                                  onPressed: () => callCamera(),
-                                ),
-                              ],
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(35.0),
+                        boxShadow: const [
+                          BoxShadow(
+                              offset: Offset(1, 1),
+                              blurRadius: 1,
+                              color: Colors.grey)
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          IconButton(
+                              icon: Icon(
+                                showEmoji ? Icons.keyboard : Icons.mood,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () => callEmoji()),
+                          Expanded(
+                            child: TextField(
+                              focusNode: focusNode,
+                              controller: inputMessageBox,
+                              maxLines: 3,
+                              minLines: 1,
+                              style: const TextStyle(color: Colors.black),
+                              decoration: const InputDecoration(
+                                  hintText: "Message",
+                                  hintStyle:
+                                  TextStyle(color: Colors.grey),
+                                  border: InputBorder.none),
                             ),
                           ),
+                          IconButton(
+                            icon: const Icon(Icons.attach_file,
+                                color: Colors.grey),
+                            onPressed: () => callAttachFile(),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.photo_camera,
+                                color: Colors.grey),
+                            onPressed: () => callCamera(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Container(
+                      padding: const EdgeInsets.all(15.0),
+                      decoration: BoxDecoration(
+                          color: primaryColor, shape: BoxShape.circle),
+                      child: InkWell(
+                        onTap: () {
+
+                          sentMessage(ChatMessageType.text);
+                        },
+                        child: Icon(
+                          iconSendMsg,
+                          color: Colors.white,
                         ),
-                        const SizedBox(width: 5),
-                        Container(
-                            padding: const EdgeInsets.all(15.0),
-                            decoration: BoxDecoration(
-                                color: primaryColor, shape: BoxShape.circle),
-                            child: InkWell(
-                              onTap: () {
-                                sentMessage(ChatMessageType.text);
-                              },
+                      )),
+                  const SizedBox(width: 5),
+                ],
+              ),
+              isVoiceMessage
+                  ? Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      //padding: const EdgeInsets.only(top: 140, left: 4, right: 4),
+                      padding: const EdgeInsets.only(
+                          top: 7, left: 7, right: 7),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: SocialMediaRecorder(
+                          cancelText: "Cancel",
+                          slideToCancelText: "Slide to cancel",
+                          recordIconWhenLockBackGroundColor: primaryColor,
+                          recordIcon: Container(
+                              decoration: BoxDecoration(
+                                  color: primaryColor,
+                                  shape: BoxShape.circle),
                               child: Icon(
                                 iconSendMsg,
                                 color: Colors.white,
-                              ),
-                            )),
-                        const SizedBox(width: 5),
-                      ],
-                    ),
-              isVoiceMessage
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            //padding: const EdgeInsets.only(top: 140, left: 4, right: 4),
-                            padding: const EdgeInsets.only(
-                                top: 7, left: 7, right: 7),
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: SocialMediaRecorder(
-                                cancelText: "Cancel",
-                                slideToCancelText: "Slide to cancel",
-                                recordIconWhenLockBackGroundColor: primaryColor,
-                                recordIcon: Container(
-                                    decoration: BoxDecoration(
-                                        color: primaryColor,
-                                        shape: BoxShape.circle),
-                                    child: Icon(
-                                      iconSendMsg,
-                                      color: Colors.white,
-                                    )),
-                                sendRequestFunction: (soundFile) {
-                                  setState(() {
-                                    hideTextBoxView = false;
-                                  });
+                              )),
+                          sendRequestFunction: (soundFile) {
+                            setState(() {
+                              hideTextBoxView = false;
+                            });
 
-                                  sentMessage(ChatMessageType.audio, attachmentURl: soundFile.path);
-                                },
-                                encode: AudioEncoderType.AAC,
-                                hideBottomView: (bool) {
-                                  setState(() {
-                                    hideTextBoxView = bool;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
+
+
+                            sentMessage(ChatMessageType.audio,
+                                attachmentURl: soundFile.path);
+                          },
+                          encode: AudioEncoderType.AAC,
+                          hideBottomView: (bool) {
+                            setState(() {
+                              hideTextBoxView = bool;
+                            });
+                          },
                         ),
-                        const SizedBox(width: 5),
-                      ],
-                    )
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                ],
+              )
                   : const Center(),
             ],
           ),
@@ -293,7 +298,10 @@ class _ChatInputBoxState extends State<ChatInputBox> {
   Widget attachmentMenuBox() {
     return Container(
       height: 278,
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       child: Card(
         margin: const EdgeInsets.all(18.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -383,7 +391,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
 
   pickFile(FileType type, ValueChanged<PlatformFile> imageFiles) async {
     final result =
-        await FilePicker.platform.pickFiles(allowMultiple: true, type: type);
+    await FilePicker.platform.pickFiles(allowMultiple: true, type: type);
 
     if (result != null) {
       final file = result!.files.first;
@@ -396,44 +404,56 @@ class _ChatInputBoxState extends State<ChatInputBox> {
 
   pickImageFile(ImageSource type, ValueChanged<File> imageFiles) async {
     final XFile? pickedImage =
-        await ImagePicker().pickImage(source: type, imageQuality: 60);
+    await ImagePicker().pickImage(source: type, imageQuality: 60);
 
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
       imageFiles(imageFile);
+      Get.to(() =>
+          CameraViewPage(
+            path: pickedImage.path,
+            callBack: () {
+              sentMessage(
+                  ChatMessageType.image, attachmentURl: pickedImage.path);
+            },
+          ));
     }
   }
 
   void sentMessage(ChatMessageType type, {String? attachmentURl}) async {
+
     switch (type) {
       case ChatMessageType.text:
         chatViewModel
             .insertMessagesData(
-                msg: inputMessageBox.text,
-                customMessageObject: widget.item,
-                isMine: isMine)
+            msg: inputMessageBox.text,
+            customMessageObject: widget.item,
+            isMine: isMine)
             .then((value) {
           inputMessageBox.clear();
+
           widget.onTextMessageSent(value);
         });
         break;
+      case ChatMessageType.image:
       case ChatMessageType.audio:
-       var msgData =  await chatViewModel.insertMessagesData(
+        var msgData = await chatViewModel.insertMessagesData(
             msg: "",
             hasAttachment: true,
             customMessageObject: widget.item,
             isMine: isMine);
 
         var attachmentData = AttachmentsTable(
-            attachmentType: ChatMessageType.audio.name,
+            attachmentType: type.name,
             attachmentUrl: attachmentURl);
-        var data = await chatViewModel.insertAttachmentsData( attachmentData, widget.item.receiverid,(msgID){
+        var data = await chatViewModel.insertAttachmentsData(
+            attachmentData, widget.item.receiverid, (msgID) {
           msgData.id = msgID;
           widget.onTextMessageSent(msgData);
         });
         widget.attachmentInsertedCallback(data);
-
         break;
     }
   }
 }
+
