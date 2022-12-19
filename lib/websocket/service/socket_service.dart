@@ -14,8 +14,6 @@ class SocketService {
   SocketService._(String socketUrl) {
     print("socket URl = $socketUrl");
     webSocket = WebSocket(socketUrl);
-
-
     listenWebSocketMessage();
   }
 

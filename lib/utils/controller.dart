@@ -18,8 +18,9 @@ class Controller {
 
   //  "http://afjdev.hnhtechpk.com/api";
 
-//static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
- static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
+static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
+//static const String webSocketURL  = "ws://192.168.18.69:6001/video-call?token=";
+ //static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
 
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";

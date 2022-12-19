@@ -254,11 +254,9 @@ class _ChatInputBoxState extends State<ChatInputBox> {
       height: 250,
       child: EmojiPicker(
         textEditingController: inputMessageBox,
-        // pass here the same [TextEditingController] that is connected to your input field, usually a [TextFormField]
-        config: Config(
+         config: Config(
           columns: 7,
           emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1.0),
-          // Issue: https://github.com/flutter/flutter/issues/28894
           verticalSpacing: 0,
           horizontalSpacing: 0,
           gridPadding: EdgeInsets.zero,
@@ -394,7 +392,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
       final file = result!.files.first;
       imageFiles(file);
       // openFile(file);
-      print("file path issssssss${file.path}");
+      print("file path => ${file.path}");
     };
   }
 
