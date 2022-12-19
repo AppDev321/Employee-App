@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
@@ -359,7 +361,14 @@ static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video
     return (Get.isDarkMode ? primaryColor : blackThemeTextColor);
   }
 
+  Future<File> getImageFileFromAssets(String path) async {
+    final byteData = await rootBundle.load('assets/$path');
 
+    final file = File('${(await getTemporaryDirectory()).path}/$path');
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
+  }
 }
 enum FingerPrintOption {
   ENABLE,

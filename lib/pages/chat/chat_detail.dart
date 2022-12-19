@@ -184,14 +184,14 @@ class _ChatDetailPageState extends State<ChatDetailPage>
   void _scrollDown() {
     SchedulerBinding.instance?.addPostFrameCallback((_) {
       _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 1),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut);
     });
   }
 
   Widget getChatList() {
     return ListView.builder(
-      itemCount: messagesList.length,
+      itemCount: messagesList.length + 1,
       shrinkWrap: true,
       physics: const BouncingScrollPhysics(),
       controller: _scrollController,
