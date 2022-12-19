@@ -201,10 +201,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 ),
               ),
             ):
-            Expanded(child:
-            Center(
-                child: CustomTextWidget(text:
-                ConstantData.noDataFound,textAlign: TextAlign.center)))
+            Expanded(
+                child: Center(
+                  child: ErrorMessageWidget(
+                    label: "No Contact Found",
+                  ),
+                ))
           ],
         ),
       ),
@@ -248,7 +250,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
     return Expanded(
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        child: ContactListItem(filteredContactList:filteredContactList,controller: callController, callBack: (data) {
+        child:
+        ContactListItem(filteredContactList:filteredContactList,controller: callController, callBack: (data) {
           var conversationDAta = data as ConversationTable;
           setState(() {
             conversationList.add(conversationDAta);

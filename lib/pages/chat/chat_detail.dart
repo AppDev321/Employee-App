@@ -157,6 +157,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                   child: ChatInputBox(
                     item: widget.item,
                     recordingFinishedCallback: (path) {
+                      debugPrint("Sound Path : $path");
                     },
                     onTextMessageSent: (msg) {
                       _scrollDown();
@@ -190,7 +191,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
     return ListView.builder(
       itemCount: messagesList.length,
       shrinkWrap: true,
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       controller: _scrollController,
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       itemBuilder: (context, index) {
@@ -213,5 +214,10 @@ class _ChatDetailPageState extends State<ChatDetailPage>
         }
       },
     );
+  }
+
+  Widget showAttachmentTypeMessage()
+  {
+    return Center();
   }
 }
