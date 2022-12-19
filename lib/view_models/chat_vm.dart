@@ -127,14 +127,15 @@ class ChatViewModel extends BaseViewModel {
 
   //insert data to attachment table
 
-  Future<AttachmentsTable> insertAttachmentsData(int? id,String type) async {
+
+
+  Future<AttachmentsTable> insertAttachmentsData(int? id) async {
 
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
 
     var userData = AttachmentsTable(
       messageID: id,
-      attachmentType: type
      );
 
     await attachmentsTableDAO.insertAttachmentsRecord(userData);
@@ -147,6 +148,8 @@ class ChatViewModel extends BaseViewModel {
   //   final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
   //   return await attachmentsTableDAO.getAllAttachments(attachmentsID);
   // }
+
+
 
   //insert data in contacts table
   void insertContactList(List<User> contactList) async {

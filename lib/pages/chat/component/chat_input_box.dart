@@ -13,7 +13,6 @@ import 'package:image_picker/image_picker.dart';
 import '../../../custom_style/colors.dart';
 import '../../../voice_record_animation/audio_encoder_type.dart';
 import '../../../voice_record_animation/screen/social_media_recorder.dart';
-import 'camera_view.dart';
 
 typedef onVoiceMessageCallBack = void Function(String);
 
@@ -352,15 +351,14 @@ class _ChatInputBoxState extends State<ChatInputBox> {
 
       else  if (text.contains(menus[1])) {
           pickImageFile(ImageSource.camera, (value) {});
-        }
-
-      else if (text.contains(menus[2])) {
+        } else if (text.contains(menus[2])) {
           pickImageFile(ImageSource.gallery, (value) {});
         }
 
         else if (text.contains(menus[3])) {
           pickFile(FileType.audio, (value) {});
         }
+
       },
       child: Column(
         children: [
@@ -408,8 +406,6 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
       imageFiles(imageFile);
-      Get.to(()=>CameraViewPage(path: pickedImage.path,
-      ));
     }
   }
 
@@ -424,15 +420,6 @@ class _ChatInputBoxState extends State<ChatInputBox> {
             .then((value) {
           inputMessageBox.clear();
           widget.onTextMessageSent(value);
-        });
-        break;
-
-      case ChatMessageType.image:
-        chatViewModel
-            .insertAttachmentsData(
-          widget.item.conversationId,
-            ChatMessageType.image.toString()
-           ).then((value) {
         });
         break;
     }

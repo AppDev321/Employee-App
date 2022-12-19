@@ -4,6 +4,7 @@ import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
+import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/database/model/messages_table.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
@@ -156,8 +157,9 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                   alignment: Alignment.bottomCenter,
                   child: ChatInputBox(
                     item: widget.item,
-                    recordingFinishedCallback: (path) {
-                      debugPrint("Sound Path : $path");
+                    attachmentInsertedCallback: (path) {
+                      var attachmentData = path as AttachmentsTable;
+                      debugPrint("Sound Path : ${attachmentData.attachmentUrl}");
                     },
                     onTextMessageSent: (msg) {
                       _scrollDown();
