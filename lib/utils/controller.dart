@@ -11,6 +11,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
 
+
+
+enum ChatMessageType { text, audio, image, video, file }
+
+
 class Controller {
   static const String appBaseURL = "http://vmi808920.contaboserver.net/api";
  //"http://192.168.18.69:8000/api";

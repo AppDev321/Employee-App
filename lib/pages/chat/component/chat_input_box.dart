@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/database/model/messages_table.dart';
+import 'package:hnh_flutter/utils/controller.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -152,7 +153,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                                 color: primaryColor, shape: BoxShape.circle),
                             child: InkWell(
                               onTap: () {
-                                sentMessage("Text");
+                                sentMessage(ChatMessageType.text);
                               },
                               child: Icon(
                                 iconSendMsg,
@@ -408,9 +409,9 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     }
   }
 
-  void sentMessage(String type) {
+  void sentMessage(ChatMessageType type) {
     switch (type) {
-      case 'Text':
+      case ChatMessageType.text:
         chatViewModel
             .insertMessagesData(
                 msg: inputMessageBox.text,

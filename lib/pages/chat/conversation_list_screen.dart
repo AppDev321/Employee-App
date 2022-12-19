@@ -62,24 +62,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
     super.initState();
     chatViewModel = ChatViewModel();
 
-    getContactList().then((value) {
-      setState(() {
-        var data = value as List<UserTable>;
-        contactList = data;
-        filteredContactList = data;
 
-      });
-    }) ;
+    getDataFromDB();
 
-
-    getConversationList().then((value) {
-      setState(() {
-        var data = value as List<ConversationTable>;
-        conversationList = data;
-        filteredConversationList = data;
-
-      });
-    }) ;
 
 
     chatViewModel.addListener(() {
@@ -103,6 +88,24 @@ class _ConversationScreenState extends State<ConversationScreen> {
     });
   }
 
+  Future getDataFromDB() async{
+    var data =  contactList.isEmpty?  await  chatViewModel.getContactDBList() :contactList;
+   var listConversation = await  chatViewModel.getConversationList();
+
+   print("Contact size = ${data.length}");
+    print("Conversation size = ${listConversation.length}");
+
+    setState((){
+    contactList = data;
+    filteredContactList = data;
+    conversationList = listConversation;
+    filteredConversationList = listConversation;
+    });
+
+
+  }
+
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -117,11 +120,18 @@ class _ConversationScreenState extends State<ConversationScreen> {
         appBar: AppBar(
           title: const Text("Video Chat"),
         ),
-        body: selectedTab == 0
-            ? setConversationList()
-            : selectedTab == 1
+        body:
+        Column(
+          children: [
+            Expanded(child:
+            selectedTab == 0
+                ? setConversationList()
+                : selectedTab == 1
                 ? setContactList()
-                : setCallHistoryList(),
+                : setCallHistoryList()),
+          ],
+        ),
+
         bottomNavigationBar: BottomNavigationBar(
             onTap: (int index) {
               setState(() {
@@ -153,8 +163,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
               padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  const CustomTextWidget(
+                children: const <Widget>[
+                  CustomTextWidget(
                       text: "Conversation",
                       size: 32,
                       fontWeight: FontWeight.bold),
@@ -201,7 +211,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 ),
               ),
             ):
-            Expanded(
+            const Expanded(
                 child: Center(
                   child: ErrorMessageWidget(
                     label: "No Contact Found",
@@ -236,14 +246,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
-  Future getConversationList()async{
-    return chatViewModel.getConversationList();
-  }
 
-  Future<Object> getContactList() async
-  {
-    return contactList.isEmpty? chatViewModel.getContactDBList() :contactList;
-  }
+
 
 
   Widget showContactListItems(List<UserTable> filteredContactList) {
@@ -251,9 +255,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child:
-        ContactListItem(filteredContactList:filteredContactList,controller: callController, callBack: (data) {
+        ContactListItem(
+          filteredContactList:filteredContactList,
+          controller: callController,
+          callBack: (data) {
           var conversationDAta = data as ConversationTable;
           setState(() {
+
             conversationList.add(conversationDAta);
             //filteredConversationList.add(conversationDAta);
           });
