@@ -160,6 +160,8 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                     attachmentInsertedCallback: (path) {
                       var attachmentData = path as AttachmentsTable;
                       debugPrint("Sound Path : ${attachmentData.attachmentUrl}");
+
+
                     },
                     onTextMessageSent: (msg) {
                       _scrollDown();
