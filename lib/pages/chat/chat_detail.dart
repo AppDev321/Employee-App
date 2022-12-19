@@ -48,7 +48,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
       setState(() {
         var data = value as List<MessagesTable>;
         messagesList = data;
-        _scrollDown();
+        // _scrollDown();
       });
     });
 
@@ -159,10 +159,10 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                     item: widget.item,
                     attachmentInsertedCallback: (path) {
                       var attachmentData = path as AttachmentsTable;
-                      debugPrint("Sound Path : ${attachmentData.attachmentUrl}");
+                      debugPrint(" Path : ${attachmentData.attachmentUrl}");
                     },
                     onTextMessageSent: (msg) {
-                      _scrollDown();
+
                       setState(() {
                         messagesList.add(msg);
                         var message = SocketMessageModel(

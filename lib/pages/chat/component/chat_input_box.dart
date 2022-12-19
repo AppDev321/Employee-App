@@ -154,6 +154,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                           color: primaryColor, shape: BoxShape.circle),
                       child: InkWell(
                         onTap: () {
+
                           sentMessage(ChatMessageType.text);
                         },
                         child: Icon(
@@ -192,7 +193,11 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                             setState(() {
                               hideTextBoxView = false;
                             });
-                            sentMessage(ChatMessageType.audio, attachmentURl: soundFile.path);
+
+
+
+                            sentMessage(ChatMessageType.audio,
+                                attachmentURl: soundFile.path);
                           },
                           encode: AudioEncoderType.AAC,
                           hideBottomView: (bool) {
@@ -293,7 +298,10 @@ class _ChatInputBoxState extends State<ChatInputBox> {
   Widget attachmentMenuBox() {
     return Container(
       height: 278,
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       child: Card(
         margin: const EdgeInsets.all(18.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -401,19 +409,19 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
       imageFiles(imageFile);
-      Get.to(()=>
+      Get.to(() =>
           CameraViewPage(
             path: pickedImage.path,
-            callBack: (){
-
-              sentMessage(ChatMessageType.image,attachmentURl: pickedImage.path);
-              },
+            callBack: () {
+              sentMessage(
+                  ChatMessageType.image, attachmentURl: pickedImage.path);
+            },
           ));
-
     }
   }
 
   void sentMessage(ChatMessageType type, {String? attachmentURl}) async {
+
     switch (type) {
       case ChatMessageType.text:
         chatViewModel
@@ -423,41 +431,29 @@ class _ChatInputBoxState extends State<ChatInputBox> {
             isMine: isMine)
             .then((value) {
           inputMessageBox.clear();
+
           widget.onTextMessageSent(value);
         });
         break;
-
-      case ChatMessageType.audio:
-       var msgData =  await chatViewModel.insertMessagesData(
-            msg: "",
-            hasAttachment: true,
-            customMessageObject: widget.item,
-            isMine: isMine);
-
-        var attachmentData = AttachmentsTable(
-            attachmentType: ChatMessageType.audio.name,
-            attachmentUrl: attachmentURl);
-        var data = await chatViewModel.insertAttachmentsData( attachmentData, widget.item.receiverid,(msgID){
-          msgData.id = msgID;
-          widget.onTextMessageSent(msgData);
-        });
-        widget.attachmentInsertedCallback(data);
-        break;
-
       case ChatMessageType.image:
+      case ChatMessageType.audio:
         var msgData = await chatViewModel.insertMessagesData(
             msg: "",
             hasAttachment: true,
             customMessageObject: widget.item,
             isMine: isMine);
-        widget.onTextMessageSent(msgData);
+
         var attachmentData = AttachmentsTable(
-            attachmentType: ChatMessageType.image.name,
+            attachmentType: type.name,
             attachmentUrl: attachmentURl);
         var data = await chatViewModel.insertAttachmentsData(
-            attachmentData, widget.item.receiverid);
+            attachmentData, widget.item.receiverid, (msgID) {
+          msgData.id = msgID;
+          widget.onTextMessageSent(msgData);
+        });
         widget.attachmentInsertedCallback(data);
         break;
     }
   }
 }
+

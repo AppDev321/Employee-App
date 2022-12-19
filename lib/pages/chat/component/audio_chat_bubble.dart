@@ -103,7 +103,7 @@ class _AudioBubbleState extends State<AudioBubble> {
 
                                   ),
                                 ),
-                                 CustomTextWidget(text: prettyDuration(duration!),size: 10)
+                                 CustomTextWidget(text: duration!=null?prettyDuration(duration!):"00:00",size: 10)
 
                               ],
                             ),
