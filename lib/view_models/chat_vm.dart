@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:hnh_flutter/database/dao/attachments_dao.dart';
 import 'package:hnh_flutter/database/dao/conversation_dao.dart';
 import 'package:hnh_flutter/database/dao/user_dao.dart';
@@ -221,5 +222,19 @@ class ChatViewModel extends BaseViewModel {
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+  }
+
+
+  Widget showMessageContentView(MessagesTable item) {
+    if (item.isAttachments == false) {
+      return Text(
+        item.content.toString(),
+        style: const TextStyle(
+          fontSize: 16,
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }

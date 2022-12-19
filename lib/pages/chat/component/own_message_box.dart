@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../database/model/messages_table.dart';
+import '../../../view_models/chat_vm.dart';
 
 class OwnMessageCard extends StatelessWidget {
-  const OwnMessageCard({Key? key, required this.item}) : super(key: key);
+   OwnMessageCard({Key? key, required this.item}) : super(key: key);
 
   final MessagesTable item;
+  final ChatViewModel chatModel = ChatViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class OwnMessageCard extends StatelessWidget {
                     top: 5,
                     bottom: 20,
                   ),
-                  child: showContentItem(item),
+                  child: chatModel.showMessageContentView(item),
                 ),
                 Positioned(
                   bottom: 4,
@@ -63,16 +65,5 @@ class OwnMessageCard extends StatelessWidget {
     );
   }
 
-  Widget showContentItem(MessagesTable item) {
-    if (item.isAttachments == false) {
-      return Text(
-        item.content.toString(),
-        style: const TextStyle(
-          fontSize: 16,
-        ),
-      );
-    } else {
-      return Container();
-    }
-  }
+
 }
