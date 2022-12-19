@@ -1,6 +1,6 @@
 import 'dart:async';
+import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/database/dao/attachments_dao.dart';
 import 'package:hnh_flutter/database/dao/conversation_dao.dart';
@@ -17,6 +17,7 @@ import '../database/dao/messages_dao.dart';
 import '../database/database_single_instance.dart';
 import '../database/model/call_history_table.dart';
 import '../database/model/messages_table.dart';
+import '../pages/chat/component/audio_chat_bubble.dart';
 import '../repository/model/request/socket_message_model.dart';
 import '../repository/model/response/contact_list.dart';
 import '../utils/controller.dart';
@@ -30,10 +31,10 @@ class CustomMessageObject {
 
   CustomMessageObject(
       {required this.userName,
-      required this.userPicture,
-      required this.senderId,
-      required this.receiverid,
-      required this.conversationId});
+        required this.userPicture,
+        required this.senderId,
+        required this.receiverid,
+        required this.conversationId});
 }
 
 class ChatViewModel extends BaseViewModel {
@@ -57,65 +58,61 @@ class ChatViewModel extends BaseViewModel {
     return await callHistoryDao.getAllCallHistory();
   }
 
-  void insertConversationData(senderid, recieverid,Function(ConversationTable) callback) async {
+  void insertConversationData(
+      senderid, recieverid, Function(ConversationTable) callback) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
-    final conversationTableDao = db?.conversationTableDAO as ConversationTableDAO;
-    var userData = ConversationTable(senderID: senderid, receiverID: recieverid);
-     conversationTableDao.getReceiverRecord(recieverid).then((value) {
+    final conversationTableDao =
+    db?.conversationTableDAO as ConversationTableDAO;
+    var userData =
+    ConversationTable(senderID: senderid, receiverID: recieverid);
+    conversationTableDao.getReceiverRecord(recieverid).then((value) {
       if (value != null) {
         userData = value;
         callback(value);
-      }
-      else {
-         conversationTableDao.insertConversationRecord(userData).then((value) {
-           conversationTableDao.getReceiverRecord(recieverid).then((newRecord) {
-             userData = newRecord!;
-             callback(newRecord);
-           });
-         });
+      } else {
+        conversationTableDao.insertConversationRecord(userData).then((value) {
+          conversationTableDao.getReceiverRecord(recieverid).then((newRecord) {
+            userData = newRecord!;
+            callback(newRecord);
+          });
+        });
       }
     });
-
-
   }
 
   Future<List<ConversationTable>> getConversationList() async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final conversationTableDAO =
-        db?.conversationTableDAO as ConversationTableDAO;
+    db?.conversationTableDAO as ConversationTableDAO;
     return await conversationTableDAO.getAllConversation();
   }
 
 //inserting data on messages table
   Future<MessagesTable> insertMessagesData(
-  {String? msg,
-      CustomMessageObject? customMessageObject,
-      bool? isMine,
-      MessagesTable? messageRecord}
-      ) async {
+      {String? msg,
+        CustomMessageObject? customMessageObject,
+        bool? isMine,
+        bool? hasAttachment = false,
+        MessagesTable? messageRecord}) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
     var now = DateTime.now();
     String formattedDate = Controller().getConvertedDate(now);
     String formattedTime = Controller().getConvertedTime(now);
 
-    var userData =
-        messageRecord == null ?
-    MessagesTable(
-        conversationID: customMessageObject!.conversationId,
-        content: msg,
-        senderID: customMessageObject.senderId,
-        receiverID: customMessageObject.receiverid,
-        date: formattedDate,
-        time: formattedTime,
-        isMine: isMine,
-        isAttachments: false,
-        deliveryStatus: false)
-    : messageRecord;
-
+    var userData = messageRecord ??
+        MessagesTable(
+            conversationID: customMessageObject!.conversationId,
+            content: msg,
+            senderID: customMessageObject.senderId,
+            receiverID: customMessageObject.receiverid,
+            date: formattedDate,
+            time: formattedTime,
+            isMine: isMine,
+            isAttachments: hasAttachment,
+            deliveryStatus: false);
 
     await messagesTableDAO.insertMessagesRecord(userData);
-
     return userData;
   }
 
@@ -127,29 +124,25 @@ class ChatViewModel extends BaseViewModel {
 
   //insert data to attachment table
 
-
-
-  Future<AttachmentsTable> insertAttachmentsData(int? id) async {
-
+  Future<AttachmentsTable> insertAttachmentsData(AttachmentsTable item,int receiverId) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
+    final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
 
-    var userData = AttachmentsTable(
-      messageID: id,
-     );
-
-    await attachmentsTableDAO.insertAttachmentsRecord(userData);
-    return userData;
+    var latestMessage = await messagesTableDAO
+        .getLastMessageRecordByReceiverID(receiverId);
+    if (latestMessage != null) {
+      item.messageID = latestMessage.id;
+    }
+    await attachmentsTableDAO.insertAttachmentsRecord(item);
+    return item;
   }
-
 
   // Future<List<AttachmentsTable>> getAttachmentsList(int attachmentsID) async {
   //   final db = await AFJDatabaseInstance.instance.afjDatabase;
   //   final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
   //   return await attachmentsTableDAO.getAllAttachments(attachmentsID);
   // }
-
-
 
   //insert data in contacts table
   void insertContactList(List<User> contactList) async {
@@ -224,7 +217,6 @@ class ChatViewModel extends BaseViewModel {
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
-
   Widget showMessageContentView(MessagesTable item) {
     if (item.isAttachments == false) {
       return Text(
@@ -234,7 +226,41 @@ class ChatViewModel extends BaseViewModel {
         ),
       );
     } else {
-      return Container();
+      return
+        FutureBuilder(
+            future: getSingleAttachmentByMsgID(item.id!),
+            builder:
+                (context,snap)
+            {
+              if(snap.hasData)
+              {
+                var data = snap.data as AttachmentsTable;
+
+                return
+                data.attachmentType==ChatMessageType.image.name?
+                    Container(
+                      height: MediaQuery.of(context).size.height/3.5,
+                      width: MediaQuery.of(context).size.width/1.8,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),),
+                      child: Card(margin: EdgeInsets.all(1),shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),child: Image.file(
+                        File(data.attachmentUrl.toString())
+                      ),),
+                    ):
+                  AudioBubble(filepath: data.attachmentUrl.toString());
+              }
+              else
+              {
+                return Container();
+              }
+            });
     }
+  }
+
+  Future<AttachmentsTable?> getSingleAttachmentByMsgID(int messageID) async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
+    return await attachmentsTableDAO.getAttachmentByMsgId(messageID);
   }
 }

@@ -615,6 +615,19 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
   }
 
   @override
+  Future<AttachmentsTable?> getAttachmentByMsgId(int messageID) async {
+    return _queryAdapter.query(
+        'SELECT * FROM AttachmentsTable WHERE messageID = ?1',
+        mapper: (Map<String, Object?> row) => AttachmentsTable(
+            id: row['id'] as int?,
+            messageID: row['messageID'] as int?,
+            attachmentUrl: row['attachmentUrl'] as String?,
+            thumbnailUrl: row['thumbnailUrl'] as String?,
+            attachmentType: row['attachmentType'] as String?),
+        arguments: [messageID]);
+  }
+
+  @override
   Future<void> deleteAttachmentsRecord(int id) async {
     await _queryAdapter.queryNoReturn(
         'DELETE FROM AttachmentsTable WHERE id = ?1',

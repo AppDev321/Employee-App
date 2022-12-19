@@ -54,27 +54,27 @@ class _ChatDetailPageState extends State<ChatDetailPage>
 
     //Handle web socket msg
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
-        (socketMessage, callback) {
+            (socketMessage, callback) {
 
-      var message = socketMessage as SocketMessageModel;
-      var msgType = message.type.toString();
-      var body = json.encode(message.data);
+          var message = socketMessage as SocketMessageModel;
+          var msgType = message.type.toString();
+          var body = json.encode(message.data);
 
-      var  body2= json.decode(body);
+          var  body2= json.decode(body);
 
-      if (msgType == SocketMessageType.Received.displayTitle) {
+          if (msgType == SocketMessageType.Received.displayTitle) {
 
-        var item =   MessagesTable.fromJson(body2);
-        var newObject = item;
-        newObject.isMine = false;
-        newObject.senderID = item.receiverID;
-        newObject.receiverID = item.senderID;
-        chatViewModel .insertMessagesData( messageRecord: newObject);
-         setState(() {
-          messagesList.add(newObject);
-         });
-      }
-    });
+            var item =   MessagesTable.fromJson(body2);
+            var newObject = item;
+            newObject.isMine = false;
+            newObject.senderID = item.receiverID;
+            newObject.receiverID = item.senderID;
+            chatViewModel .insertMessagesData( messageRecord: newObject);
+            setState(() {
+              messagesList.add(newObject);
+            });
+          }
+        });
   }
 
   @override
@@ -205,7 +205,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
         }
         if (item.isMine == true) {
           return OwnMessageCard(
-          item:item,
+            item:item,
           );
         } else {
           return ReplyCard(

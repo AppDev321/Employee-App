@@ -11,6 +11,10 @@ abstract class AttachmentsTableDAO {
   Future<List<AttachmentsTable>> getAllAttachments();
   @Query('SELECT * FROM AttachmentsTable WHERE id = :id')
   Future<AttachmentsTable?> getAttachmentsRecord(String id);
+
+  @Query('SELECT * FROM AttachmentsTable WHERE messageID = :messageID')
+  Future<AttachmentsTable?> getAttachmentByMsgId(int messageID);
+
   @Query('DELETE FROM AttachmentsTable WHERE id = :id')
   Future<void> deleteAttachmentsRecord(int id);
 

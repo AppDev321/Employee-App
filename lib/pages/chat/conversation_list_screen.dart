@@ -55,7 +55,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
   List<ConversationTable> conversationList=[] ;
   List<ConversationTable> filteredConversationList =[];
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -101,8 +100,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
     conversationList = listConversation;
     filteredConversationList = listConversation;
     });
-
-
   }
 
 
