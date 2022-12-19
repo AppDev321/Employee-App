@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/database/model/messages_table.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../custom_style/colors.dart';
 import '../../../voice_record_animation/audio_encoder_type.dart';
 import '../../../voice_record_animation/screen/social_media_recorder.dart';
+import 'camera_view.dart';
 
 typedef onVoiceMessageCallBack = void Function(String);
 
@@ -20,6 +22,7 @@ class ChatInputBox extends StatefulWidget {
       {Key? key,
       required this.recordingFinishedCallback,
       required this.onTextMessageSent,
+
       required this.item})
       : super(key: key);
 
@@ -40,6 +43,9 @@ class _ChatInputBoxState extends State<ChatInputBox> {
   bool isMine = true;
   FocusNode focusNode = FocusNode();
   ChatViewModel chatViewModel = ChatViewModel();
+  late PlatformFile fileSend;
+  late final ValueChanged<AttachmentsTable> onAttachmentsMessageSent;
+  late MessagesTable messagesTable;
 
   List<String> menus = [
     "Document",
@@ -64,6 +70,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     inputMessageBox.addListener(msgInputBoxAction);
   }
 
+
   msgInputBoxAction() {
     if (inputMessageBox.text.isNotEmpty) {
       setState(() {
@@ -78,10 +85,12 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return bottomBox();
   }
+
 
   Widget bottomBox() {
     return Container(
@@ -119,7 +128,6 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                                 Expanded(
                                   child: TextField(
                                     focusNode: focusNode,
-
                                     controller: inputMessageBox,
                                     maxLines: 3,
                                     minLines: 1,
@@ -152,7 +160,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                                 color: primaryColor, shape: BoxShape.circle),
                             child: InkWell(
                               onTap: () {
-                                sentMessage("Text");
+                                sentMessage("URL");
                               },
                               child: Icon(
                                 iconSendMsg,
@@ -241,7 +249,8 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     focusNode.unfocus();
 
     pickImageFile(ImageSource.camera, (value) {
-      print("camera file : $value");
+      print("camera file value: $value");
+
     });
   }
 
@@ -345,11 +354,17 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         Get.back();
         if(text.contains(menus[0])){
           pickFile(FileType.media, (value) {
+            setState(() {
+              value=fileSend;
+              print("valueeeeeeeee${value}");
+            });
           });
         }
 
       else  if (text.contains(menus[1])) {
-          pickImageFile(ImageSource.camera, (value) {});
+          pickImageFile(ImageSource.camera, (value) {
+            print("picked imgae file source${value}");
+          });
         } else if (text.contains(menus[2])) {
           pickImageFile(ImageSource.gallery, (value) {});
         }
@@ -393,7 +408,8 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     if (result != null) {
       final file = result!.files.first;
       imageFiles(file);
-      // openFile(file);
+
+      sentMessage("URL");
       print("file path issssssss${file.path}");
     };
   }
@@ -405,6 +421,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
       imageFiles(imageFile);
+      Get.to(() => CameraViewPage(path: pickedImage.path,));
     }
   }
 
@@ -421,6 +438,13 @@ class _ChatInputBoxState extends State<ChatInputBox> {
           widget.onTextMessageSent(value);
         });
         break;
+      // case 'URL':
+      //   chatViewModel
+      //       .insertAttachmentsData()
+      //       .then((value) {
+      //     onAttachmentsMessageSent(value);
+      //   });
+      //   break;
     }
   }
 }

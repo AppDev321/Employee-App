@@ -7,7 +7,7 @@ import '../model/user_table.dart';
 abstract class UserTableDAO {
   @Query('SELECT * FROM UserTable')
   Future<List<UserTable>> getAllUser();
-  @Query('SELECT * FROM UserTable WHERE id = :id')
+  @Query('SELECT * FROM UserTable WHERE userID = :id')
   Future<UserTable?> getUserRecord(String id);
   @Query('DELETE FROM UserTable WHERE id = :id')
   Future<void> deleteUserRecord(int id);

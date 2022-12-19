@@ -357,7 +357,6 @@ class Controller {
   }
 
 
-
 }
 enum FingerPrintOption {
   ENABLE,
@@ -400,10 +399,6 @@ extension ScreenNameExtention on Screen {
     }
   }
 }
-
-
-
-
 
 
 enum SocketMessageType {
@@ -474,5 +469,3 @@ extension MessageTypeExtention on SocketMessageType {
     }
   }
 }
-
-

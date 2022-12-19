@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:hnh_flutter/database/dao/attachments_dao.dart';
 import 'package:hnh_flutter/database/dao/conversation_dao.dart';
 import 'package:hnh_flutter/database/dao/user_dao.dart';
+import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/database/model/conversation_table.dart';
 import 'package:hnh_flutter/database/model/user_table.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
@@ -120,6 +123,32 @@ class ChatViewModel extends BaseViewModel {
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
     return await messagesTableDAO.getAllMessages(conversationID);
   }
+
+  //insert data to attachment table
+
+
+
+  Future<AttachmentsTable> insertAttachmentsData(int? id) async {
+
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
+
+    var userData = AttachmentsTable(
+      messageID: id,
+     );
+
+    await attachmentsTableDAO.insertAttachmentsRecord(userData);
+    return userData;
+  }
+
+
+  // Future<List<AttachmentsTable>> getAttachmentsList(int attachmentsID) async {
+  //   final db = await AFJDatabaseInstance.instance.afjDatabase;
+  //   final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
+  //   return await attachmentsTableDAO.getAllAttachments(attachmentsID);
+  // }
+
+
 
   //insert data in contacts table
   void insertContactList(List<User> contactList) async {
