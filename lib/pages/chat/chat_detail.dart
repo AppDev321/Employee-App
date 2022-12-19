@@ -8,6 +8,7 @@ import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/database/model/messages_table.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
+
 import '../../repository/model/request/socket_message_model.dart';
 import '../../utils/controller.dart';
 import '../../websocket/service/socket_service.dart';
@@ -29,7 +30,6 @@ class ChatDetailPage extends StatefulWidget {
 
 class _ChatDetailPageState extends State<ChatDetailPage>
     with SingleTickerProviderStateMixin {
-  late AnimationController controller;
   ChatViewModel chatViewModel = ChatViewModel();
   List<MessagesTable> messagesList = [];
   ScrollController _scrollController = ScrollController();
@@ -39,16 +39,12 @@ class _ChatDetailPageState extends State<ChatDetailPage>
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
 
     chatViewModel.getMessagesList(widget.item.conversationId).then((value) {
       setState(() {
         var data = value as List<MessagesTable>;
         messagesList = data;
-        // _scrollDown();
+        _scrollDown();
       });
     });
 
@@ -79,7 +75,6 @@ class _ChatDetailPageState extends State<ChatDetailPage>
 
   @override
   void dispose() {
-    controller.dispose();
     super.dispose();
   }
 
@@ -162,19 +157,18 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                       debugPrint(" Path : ${attachmentData.attachmentUrl}");
                     },
                     onTextMessageSent: (msg) {
-
                       setState(() {
                         messagesList.add(msg);
                         var message = SocketMessageModel(
                             type: SocketMessageType.Send.displayTitle,
                             sendTo: widget.item.receiverid.toString(),
                             sendFrom: widget.item.senderId.toString(),
-                            data: msg
-                        );
+                            data: msg);
                         socketService.sendMessageToWebSocket(message);
-
+                        _scrollDown();
                       });
-                    },
+                    }
+
                   ))
             ],
           ),
@@ -191,26 +185,27 @@ class _ChatDetailPageState extends State<ChatDetailPage>
 
   Widget getChatList() {
     return ListView.builder(
-      itemCount: messagesList.length,
+      itemCount: messagesList.length + 1,
       shrinkWrap: true,
       physics: const BouncingScrollPhysics(),
       controller: _scrollController,
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       itemBuilder: (context, index) {
-        var item = messagesList[index];
         if (index == messagesList.length) {
           return Container(
-            height: 70,
-          );
-        }
-        if (item.isMine == true) {
-          return OwnMessageCard(
-            item:item,
+            height: 20,
           );
         } else {
-          return ReplyCard(
-            item:item,
-          );
+          var item = messagesList[index];
+          if (item.isMine == true) {
+            return OwnMessageCard(
+              item: item,
+            );
+          } else {
+            return ReplyCard(
+              item: item,
+            );
+          }
         }
       },
     );

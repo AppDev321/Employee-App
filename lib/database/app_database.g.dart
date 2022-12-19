@@ -71,6 +71,8 @@ class _$AppDatabase extends AppDatabase {
 
   AttachmentsTableDAO? _attachmentTableDAOInstance;
 
+  DownloadTableDAO? _downloadTableDAOInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -101,7 +103,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ConversationTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lastMessageID` INTEGER, `senderID` INTEGER, `receiverID` INTEGER, `time` TEXT, `date` TEXT)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `AttachmentsTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `messageID` INTEGER, `attachmentUrl` TEXT, `thumbnailUrl` TEXT, `attachmentType` TEXT)');
+            'CREATE TABLE IF NOT EXISTS `AttachmentsTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `messageID` INTEGER, `attachmentUrl` TEXT, `thumbnailUrl` TEXT, `attachmentType` TEXT, `downloadID` INTEGER)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `DownloadStatusTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `type` TEXT, `percentage` REAL, `isCompleted` INTEGER, `fileSize` REAL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -136,6 +140,12 @@ class _$AppDatabase extends AppDatabase {
   AttachmentsTableDAO get attachmentTableDAO {
     return _attachmentTableDAOInstance ??=
         _$AttachmentsTableDAO(database, changeListener);
+  }
+
+  @override
+  DownloadTableDAO get downloadTableDAO {
+    return _downloadTableDAOInstance ??=
+        _$DownloadTableDAO(database, changeListener);
   }
 }
 
@@ -567,7 +577,8 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
                   'messageID': item.messageID,
                   'attachmentUrl': item.attachmentUrl,
                   'thumbnailUrl': item.thumbnailUrl,
-                  'attachmentType': item.attachmentType
+                  'attachmentType': item.attachmentType,
+                  'downloadID': item.downloadID
                 }),
         _attachmentsTableUpdateAdapter = UpdateAdapter(
             database,
@@ -578,7 +589,8 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
                   'messageID': item.messageID,
                   'attachmentUrl': item.attachmentUrl,
                   'thumbnailUrl': item.thumbnailUrl,
-                  'attachmentType': item.attachmentType
+                  'attachmentType': item.attachmentType,
+                  'downloadID': item.downloadID
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -599,7 +611,8 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
             messageID: row['messageID'] as int?,
             attachmentUrl: row['attachmentUrl'] as String?,
             thumbnailUrl: row['thumbnailUrl'] as String?,
-            attachmentType: row['attachmentType'] as String?));
+            attachmentType: row['attachmentType'] as String?,
+            downloadID: row['downloadID'] as int?));
   }
 
   @override
@@ -610,7 +623,8 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
             messageID: row['messageID'] as int?,
             attachmentUrl: row['attachmentUrl'] as String?,
             thumbnailUrl: row['thumbnailUrl'] as String?,
-            attachmentType: row['attachmentType'] as String?),
+            attachmentType: row['attachmentType'] as String?,
+            downloadID: row['downloadID'] as int?),
         arguments: [id]);
   }
 
@@ -623,7 +637,8 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
             messageID: row['messageID'] as int?,
             attachmentUrl: row['attachmentUrl'] as String?,
             thumbnailUrl: row['thumbnailUrl'] as String?,
-            attachmentType: row['attachmentType'] as String?),
+            attachmentType: row['attachmentType'] as String?,
+            downloadID: row['downloadID'] as int?),
         arguments: [messageID]);
   }
 
@@ -652,5 +667,103 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
       AttachmentsTable attachmentsTable) async {
     await _attachmentsTableUpdateAdapter.update(
         attachmentsTable, OnConflictStrategy.abort);
+  }
+}
+
+class _$DownloadTableDAO extends DownloadTableDAO {
+  _$DownloadTableDAO(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _downloadStatusTableInsertionAdapter = InsertionAdapter(
+            database,
+            'DownloadStatusTable',
+            (DownloadStatusTable item) => <String, Object?>{
+                  'id': item.id,
+                  'type': item.type,
+                  'percentage': item.percentage,
+                  'isCompleted': item.isCompleted == null
+                      ? null
+                      : (item.isCompleted! ? 1 : 0),
+                  'fileSize': item.fileSize
+                }),
+        _downloadStatusTableUpdateAdapter = UpdateAdapter(
+            database,
+            'DownloadStatusTable',
+            ['id'],
+            (DownloadStatusTable item) => <String, Object?>{
+                  'id': item.id,
+                  'type': item.type,
+                  'percentage': item.percentage,
+                  'isCompleted': item.isCompleted == null
+                      ? null
+                      : (item.isCompleted! ? 1 : 0),
+                  'fileSize': item.fileSize
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<DownloadStatusTable>
+      _downloadStatusTableInsertionAdapter;
+
+  final UpdateAdapter<DownloadStatusTable> _downloadStatusTableUpdateAdapter;
+
+  @override
+  Future<List<DownloadStatusTable>> getAllDonwloads() async {
+    return _queryAdapter.queryList('SELECT * FROM DownloadStatusTable',
+        mapper: (Map<String, Object?> row) => DownloadStatusTable(
+            id: row['id'] as int?,
+            type: row['type'] as String?,
+            percentage: row['percentage'] as double?,
+            isCompleted: row['isCompleted'] == null
+                ? null
+                : (row['isCompleted'] as int) != 0,
+            fileSize: row['fileSize'] as double?));
+  }
+
+  @override
+  Future<DownloadStatusTable?> getDownloadRecord(int id) async {
+    return _queryAdapter.query(
+        'SELECT * FROM DownloadStatusTable WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => DownloadStatusTable(
+            id: row['id'] as int?,
+            type: row['type'] as String?,
+            percentage: row['percentage'] as double?,
+            isCompleted: row['isCompleted'] == null
+                ? null
+                : (row['isCompleted'] as int) != 0,
+            fileSize: row['fileSize'] as double?),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteDownloadRecord(int id) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM DownloadStatusTable WHERE id = ?1',
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteAllDownloads() async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM DownloadStatusTable where id>0');
+  }
+
+  @override
+  Future<void> insertDownloadRecord(
+      DownloadStatusTable downloadStatusTable) async {
+    await _downloadStatusTableInsertionAdapter.insert(
+        downloadStatusTable, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> updateDownloadRecord(
+      DownloadStatusTable downloadStatusTable) async {
+    await _downloadStatusTableUpdateAdapter.update(
+        downloadStatusTable, OnConflictStrategy.abort);
   }
 }

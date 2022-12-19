@@ -19,14 +19,17 @@ import 'camera_view.dart';
 typedef onAttachmentMessageCallBack = void Function(dynamic);
 
 class ChatInputBox extends StatefulWidget {
-  const ChatInputBox(
+   ChatInputBox(
       {Key? key,
-        required this.attachmentInsertedCallback,
-        required this.onTextMessageSent,
-        required this.item})
+      required this.attachmentInsertedCallback,
+      required this.onTextMessageSent,
+      required this.item
+      })
       : super(key: key);
 
   final onAttachmentMessageCallBack attachmentInsertedCallback;
+
+
   final ValueChanged<MessagesTable> onTextMessageSent;
   final CustomMessageObject item;
 
@@ -437,21 +440,24 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         break;
       case ChatMessageType.image:
       case ChatMessageType.audio:
-        var msgData = await chatViewModel.insertMessagesData(
-            msg: "",
-            hasAttachment: true,
-            customMessageObject: widget.item,
-            isMine: isMine);
 
-        var attachmentData = AttachmentsTable(
-            attachmentType: type.name,
-            attachmentUrl: attachmentURl);
-        var data = await chatViewModel.insertAttachmentsData(
-            attachmentData, widget.item.receiverid, (msgID) {
-          msgData.id = msgID;
-          widget.onTextMessageSent(msgData);
-        });
-        widget.attachmentInsertedCallback(data);
+      var msgData = await chatViewModel.insertMessagesData(
+          msg: "",
+          hasAttachment: true,
+          customMessageObject: widget.item,
+          isMine: isMine);
+
+      var attachmentData = AttachmentsTable(attachmentType: type.name, attachmentUrl: attachmentURl);
+      var data = await chatViewModel.insertAttachmentsData(
+          attachmentData, widget.item.receiverid, (msgID) {
+        msgData.id = msgID;
+        widget.onTextMessageSent(msgData);
+      });
+      widget.attachmentInsertedCallback(data);
+
+
+
+
         break;
     }
   }

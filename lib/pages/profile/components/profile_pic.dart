@@ -37,7 +37,7 @@ class ProfilePic extends StatelessWidget {
               if (!profileImageUrl.isEmpty) {
                 showDialog(
                     context: context,
-                    builder: (_) => imageDialog("", profileImageUrl, context));
+                    builder: (_) => Controller().imageDialog("", profileImageUrl, context,isNetwork: true));
               }
             },
             child: Container(
@@ -92,57 +92,5 @@ class ProfilePic extends StatelessWidget {
     );
   }
 
-  Widget imageDialog(text,  path, BuildContext context) {
-    return Dialog(
-      // backgroundColor: Colors.transparent,
-      elevation: 10,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  'Preview',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height:40),
-               /* IconButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  icon: Icon(Icons.close_rounded),
-                  color: Colors.redAccent,
-                ),*/
-              ],
-            ),
-          ),
-          SizedBox(
-            width: Get.mediaQuery.size.width / 2,
-            height: Get.mediaQuery.size.height / 2,
-            child: Image.network(
-              '$path',
-              fit: BoxFit.cover,
-              loadingBuilder: (BuildContext context, Widget child,
-                  ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null,
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 }
