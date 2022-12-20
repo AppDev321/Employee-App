@@ -95,10 +95,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
     print("Conversation size = ${listConversation.length}");
 
     setState((){
-    contactList = data;
-    filteredContactList = data;
-    conversationList = listConversation;
-    filteredConversationList = listConversation;
+      if(data.isNotEmpty) {
+        contactList = data;
+        filteredContactList = data;
+        conversationList = listConversation;
+        filteredConversationList = listConversation;
+      }
     });
   }
 

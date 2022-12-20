@@ -4,6 +4,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/database/model/conversation_table.dart';
 import 'package:hnh_flutter/database/model/user_table.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
+
+import '../../../database/model/messages_table.dart';
 import '../chat_detail.dart';
 
 class ConversationList extends StatefulWidget {
@@ -18,6 +20,7 @@ class ConversationList extends StatefulWidget {
 class _ConversationListState extends State<ConversationList> {
   late ConversationTable conversationTable;
   late UserTable? userData;
+  String lastMessageData = '';
 
   ChatViewModel chatViewModel = ChatViewModel();
   bool isDataExit = false;
@@ -26,28 +29,33 @@ class _ConversationListState extends State<ConversationList> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    conversationTable = widget.conversationData as ConversationTable;
+    conversationTable = widget.conversationData;
+    getRecordFromDB();
+  }
 
+  getRecordFromDB() async {
     var receiverID = conversationTable.receiverID.toString();
 
-    chatViewModel.getSingleUserRecord(receiverID).then((value) {
-      userData = value;
-        setState(() {
-          isDataExit = true;
-        });
+    userData = await chatViewModel.getSingleUserRecord(receiverID);
+    if (conversationTable.lastMessageID != null) {
+     var messageData = await chatViewModel
+          .getSingleMessageRecord(conversationTable.lastMessageID!) as MessagesTable;
+     lastMessageData = messageData.content??'';
+    }
+    setState(() {
+      isDataExit = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return
-      isDataExit?
-    GestureDetector(
-      onTap: () {
-        var data = CustomMessageObject(userName: userData!.fullName.toString(),
-            conversationId: conversationTable.id!,
-            senderId: conversationTable.senderID!,
+    return isDataExit
+        ? GestureDetector(
+            onTap: () {
+              var data = CustomMessageObject(
+                  userName: userData!.fullName.toString(),
+                  conversationId: conversationTable.id!,
+                  senderId: conversationTable.senderID!,
         receiverid: conversationTable.receiverID!,
         userPicture: userData!.picture.toString());
         Get.to(() =>  ChatDetailPage(item: data));
@@ -75,8 +83,14 @@ class _ConversationListState extends State<ConversationList> {
                         children: <Widget>[
                           Text(userData!.fullName.toString(), style: const TextStyle(fontSize: 16),),
                           const SizedBox(height: 6,),
-                          Text(userData!.email.toString(),style: TextStyle(fontSize: 13,color: Colors.grey.shade600, ),),
-                        ],
+                         Text(
+                            lastMessageData,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                )
+                              ],
                       ),
                     ),
                   ),

@@ -75,6 +75,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
 
   @override
   void dispose() {
+
     super.dispose();
   }
 
@@ -158,7 +159,11 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                     },
                     onTextMessageSent: (msg) {
                       setState(() {
+
+                        chatViewModel.insertLastMessageIDConversation(widget.item.receiverid);
+
                         messagesList.add(msg);
+
                         var message = SocketMessageModel(
                             type: SocketMessageType.Send.displayTitle,
                             sendTo: widget.item.receiverid.toString(),
@@ -210,6 +215,4 @@ class _ChatDetailPageState extends State<ChatDetailPage>
       },
     );
   }
-
-
 }
