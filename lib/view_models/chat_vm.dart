@@ -334,7 +334,6 @@ class ChatViewModel extends BaseViewModel {
               var data = snap.data as AttachmentsTable;
               final type = data.attachmentType.toString();
               if (type == ChatMessageType.image.name) {
-
                   return InkWell(
                     onTap: () {
                       showDialog(
