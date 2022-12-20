@@ -442,7 +442,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
       case ChatMessageType.audio:
 
       var msgData = await chatViewModel.insertMessagesData(
-          msg: "",
+          msg: type.name,
           hasAttachment: true,
           customMessageObject: widget.item,
           isMine: isMine);

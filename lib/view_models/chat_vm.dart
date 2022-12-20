@@ -1,25 +1,24 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:hnh_flutter/database/dao/download_status_dao.dart';
-import 'package:hnh_flutter/repository/retrofit/multipart_request.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:async/async.dart';
+import 'package:flutter/material.dart';
 import 'package:hnh_flutter/database/dao/attachments_dao.dart';
 import 'package:hnh_flutter/database/dao/conversation_dao.dart';
+import 'package:hnh_flutter/database/dao/download_status_dao.dart';
 import 'package:hnh_flutter/database/dao/user_dao.dart';
 import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/database/model/conversation_table.dart';
 import 'package:hnh_flutter/database/model/user_table.dart';
 import 'package:hnh_flutter/pages/chat/component/audio_chat_bubble.dart';
+import 'package:hnh_flutter/repository/retrofit/multipart_request.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 
-import '../custom_style/colors.dart';
 import '../database/dao/call_history_dao.dart';
 import '../database/dao/messages_dao.dart';
 import '../database/database_single_instance.dart';
@@ -88,6 +87,22 @@ class ChatViewModel extends BaseViewModel {
     });
   }
 
+  void insertLastMessageIDConversation(int recieverid) async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final conversationTableDao =
+        db?.conversationTableDAO as ConversationTableDAO;
+    final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
+    var record = await conversationTableDao.getReceiverRecord(recieverid);
+    if (record != null) {
+      var latestMessage =
+          await messagesTableDAO.getLastMessageRecordByReceiverID(recieverid);
+      if (latestMessage != null) {
+        record.lastMessageID = latestMessage.id;
+       await conversationTableDao.updateConversationRecord(record);
+      }
+    }
+  }
+
   Future<List<ConversationTable>> getConversationList() async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final conversationTableDAO =
@@ -123,7 +138,11 @@ class ChatViewModel extends BaseViewModel {
     await messagesTableDAO.insertMessagesRecord(userData);
     return userData;
   }
-
+  Future<MessagesTable?> getSingleMessageRecord(int id) async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
+    return await messagesTableDAO.getMessagesRecord("$id");
+  }
   Future<List<MessagesTable>> getMessagesList(int conversationID) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
@@ -333,6 +352,8 @@ class ChatViewModel extends BaseViewModel {
             if (snap.hasData) {
               var data = snap.data as AttachmentsTable;
               final type = data.attachmentType.toString();
+
+
               if (type == ChatMessageType.image.name) {
                   return InkWell(
                     onTap: () {
