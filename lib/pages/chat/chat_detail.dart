@@ -44,7 +44,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
       setState(() {
         var data = value;
         messagesList = data;
-        _scrollDown();
+      //  _scrollDown();
       });
     });
 
@@ -228,7 +228,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
     return ListView.builder(
       itemCount: messagesList.length + 1,
       shrinkWrap: true,
-      physics: const BouncingScrollPhysics(),
+      //physics: const BouncingScrollPhysics(),
       controller: _scrollController,
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       itemBuilder: (context, index) {

@@ -83,7 +83,7 @@ class DownloadManager {
       var downloadRecord =
           await getSingleDownloadRecord(attachmentId) as DownloadStatusTable;
       if (downloadRecord != null) {
-        downloadRecord.percentage = percentage;
+        downloadRecord.percentage = percentage*100;
         await insertDownloadRecord(downloadRecord, isUpdateRecord: true);
       }
       percent(percentage);
@@ -127,7 +127,7 @@ class DownloadManager {
     print(request.fields.toString());
     var response = await request.send();
     response.stream.transform(utf8.decoder).listen((value) {
-      print("response = $value");
+    //  print("response = $value");
       final parsedJson = jsonDecode(value);
       print("parsedJson = $parsedJson");
       isUploadCompleted(true);

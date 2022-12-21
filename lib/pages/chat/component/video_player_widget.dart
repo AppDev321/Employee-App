@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   final String path;
+  final ValueChanged<String> onPathGet;
 
-  const VideoPlayerScreen({Key? key, required this.path}) : super(key: key);
+  const VideoPlayerScreen({Key? key, required this.path, required this.onPathGet}) : super(key: key);
 
   @override
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
@@ -18,10 +22,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset(widget.path);
+    _controller = VideoPlayerController.file(File(widget.path));
+
 
     // Initialize the controller and store the Future for later use.
     _initializeVideoPlayerFuture = _controller.initialize();
+
+
 
     // Use the controller to loop the video.
     _controller.setLooping(true);
@@ -51,13 +58,27 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                 future: _initializeVideoPlayerFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
-                    // If the VideoPlayerController has finished initialization, use
-                    // the data it provides to limit the aspect ratio of the video.
-                    return AspectRatio(
-                      aspectRatio: _controller.value.aspectRatio,
-                      // Use the VideoPlayer widget to display the video.
-                      child: VideoPlayer(_controller),
-                    );
+
+                    return Stack(
+                      children:[
+                        AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: VideoPlayer(_controller),
+                      ),
+                        Align(
+                          alignment: Alignment.center,
+                          child:  ElevatedButton(
+                              onPressed: () {
+                                _controller.play();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  primary: Colors.lightGreen,
+                                  fixedSize: const Size(80, 80)),
+                              child: const Icon(Icons.play_arrow)),
+                        )
+
+                  ] );
                   } else {
                     // If the VideoPlayerController is still initializing, show a
                     // loading spinner.
@@ -93,7 +114,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                           fontSize: 17,
                         ),
                         suffixIcon: InkWell(
-                          onTap: (){},
+                          onTap: (){
+                           widget.onPathGet(widget.path);
+                            Get.back();
+                          },
                           child:const CircleAvatar(
                             radius: 27,
                             child: Icon(

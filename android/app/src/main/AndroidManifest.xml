@@ -48,6 +48,7 @@
         android:name="${applicationName}"
         android:icon="@drawable/ic_launcher"
         android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true"
         >
 
         <activity
@@ -106,10 +107,14 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
+            tools:replace="android:authorities"
             android:grantUriPermissions="true">
             <meta-data
+                tools:replace="android:resource"
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_file" />
         </provider>
+
+
     </application>
 </manifest>

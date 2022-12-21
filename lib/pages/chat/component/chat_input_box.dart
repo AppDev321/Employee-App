@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/database/model/messages_table.dart';
+import 'package:hnh_flutter/pages/chat/component/video_player_widget.dart';
 import 'package:hnh_flutter/utils/controller.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:image_picker/image_picker.dart';
@@ -356,9 +357,13 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         Get.back();
         if (text.contains(menus[0])) {
           pickFile(FileType.video, (value) {
-            sentMessage(
-                ChatMessageType.video, attachmentURl: value.path);
+            Get.to(() =>
+                VideoPlayerScreen(path: value.path.toString(), onPathGet: (videoPath) {
+                  sentMessage(
+                      ChatMessageType.video, attachmentURl: value.path);
+                }));
           });
+
         } else if (text.contains(menus[1])) {
           pickImageFile(ImageSource.camera, (value) {
             Get.to(() =>

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/pages/chat/component/audio_chat_bubble.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
+
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../../custom_style/colors.dart';
@@ -41,12 +42,11 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
         : widget.item.attachmentUrl.toString();
 
     setState(() {
-      if (widget.item.attachmentType == ChatMessageType.image.name ||
-          widget.item.attachmentType == ChatMessageType.video.name) {
-        view = SizedBox(height: height, width: width);
-      } else {
+      if (widget.item.attachmentType == ChatMessageType.audio.name) {
         double width = Get.mediaQuery.size.width / 5;
         double height = 2;
+        view = SizedBox(height: height, width: width);
+      }  else {
         view = SizedBox(height: height, width: width);
       }
     });
@@ -57,6 +57,11 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
       handleDownloadManager(widget.item.attachmentType!);
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void handleDownloadManager(attachmentType) {
@@ -74,6 +79,8 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
               } else if (attachmentType == ChatMessageType.audio.name) {
                 view =
                     AudioBubble(filepath: widget.item.attachmentUrl.toString());
+              } else {
+                view = containerVideoView(widget.item.attachmentUrl ?? path);
               }
             });
           }
@@ -83,19 +90,8 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
         setState(() {
           if (attachmentType == ChatMessageType.image.name) {
             view = showBlurImage(path, progress, true);
-          } else if (attachmentType == ChatMessageType.audio.name) {
-            view = CircularPercentIndicator(
-              radius: 30.0,
-              lineWidth: 3.0,
-              percent: 1.0,
-              center: Text(
-                "${(progress).round()}%",
-                style: const TextStyle(color: Colors.black, fontSize: 10),
-              ),
-              progressColor: primaryColor,
-              backgroundColor: Colors.grey,
-              circularStrokeCap: CircularStrokeCap.round,
-            );
+          } else {
+            view = circularProgressIndicator(progress);
           }
         });
       },
@@ -114,23 +110,21 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
   void handleUploadFileManager(attachmentType) {
     var downloadMgr = DownloadManager();
     downloadMgr.uploadFile(id, path, context, (isUploaded) {
-      if (mounted) {
-        if (isUploaded == true) {
+      if (isUploaded == true) {
+        if (mounted) {
           setState(() {
             if (attachmentType == ChatMessageType.image.name) {
               view = showImageContainer(context, path);
-            } else if (attachmentType == ChatMessageType.video.name) {
-              view = AudioBubble(filepath: path);
             } else if (attachmentType == ChatMessageType.audio.name) {
               view = AudioBubble(filepath: path);
+            } else {
+              view = containerVideoView(widget.item.attachmentUrl ?? path);
             }
           });
         } else {
           setState(() {
             if (attachmentType == ChatMessageType.image.name) {
               view = showBlurImage(path, 0, true);
-            } else if (attachmentType == ChatMessageType.audio.name) {
-              //   view =  AudioBubble(filepath:path);
             }
           });
         }
@@ -139,19 +133,8 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
       setState(() {
         if (attachmentType == ChatMessageType.image.name) {
           view = showBlurImage(path, progress, true);
-        } else if (attachmentType == ChatMessageType.audio.name) {
-          view = CircularPercentIndicator(
-            radius: 30.0,
-            lineWidth: 3.0,
-            percent: 1.0,
-            center: Text(
-              "${(progress).round()}%",
-              style: const TextStyle(color: Colors.white, fontSize: 10),
-            ),
-            progressColor: primaryColor,
-            backgroundColor: Colors.grey,
-            circularStrokeCap: CircularStrokeCap.round,
-          );
+        } else {
+          view = circularProgressIndicator(progress);
         }
       });
     }, (uploadUrl) async {
@@ -185,6 +168,50 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
     );
   }
 
+  Widget circularProgressIndicator(double progress) {
+    return CircularPercentIndicator(
+      radius: 30.0,
+      lineWidth: 3.0,
+      percent: progress/100,
+      center: Text(
+        "${(progress).round()}%",
+        style: const TextStyle(color: Colors.black, fontSize: 10),
+      ),
+      progressColor: primaryColor,
+      backgroundColor: Colors.grey,
+      circularStrokeCap: CircularStrokeCap.round,
+    );
+  }
+
+  Widget containerVideoView(String videoPath) {
+    return SizedBox(
+      width: width,
+      height: height,
+      child: Stack(fit: StackFit.expand, children: [
+        // VideoPlayer(videoPlayerController),
+        ClipRRect(
+          // Clip it cleanly.
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              color: Colors.grey.withOpacity(0.1),
+              alignment: Alignment.center,
+              child: ElevatedButton(
+                  onPressed: () {
+
+                  },
+                  style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      primary: Colors.lightGreen,
+                      fixedSize: const Size(40, 40)),
+                  child: const Icon(Icons.play_arrow)),
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+
   Widget showBlurVideo(String imageURL, double progress,
       [bool isNetworkImage = false]) {
     return SizedBox(
@@ -209,18 +236,7 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
               child: Container(
                 color: Colors.grey.withOpacity(0.1),
                 alignment: Alignment.center,
-                child: CircularPercentIndicator(
-                  radius: 30.0,
-                  lineWidth: 3.0,
-                  percent: 1.0,
-                  center: Text(
-                    "${(progress).round()}%",
-                    style: const TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                  progressColor: primaryColor,
-                  backgroundColor: Colors.grey,
-                  circularStrokeCap: CircularStrokeCap.round,
-                ),
+                child:circularProgressIndicator(progress),
               ),
             ),
           ),
@@ -253,18 +269,7 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
               child: Container(
                 color: Colors.grey.withOpacity(0.1),
                 alignment: Alignment.center,
-                child: CircularPercentIndicator(
-                  radius: 30.0,
-                  lineWidth: 3.0,
-                  percent: 1.0,
-                  center: Text(
-                    "${(progress).round()}%",
-                    style: const TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                  progressColor: primaryColor,
-                  backgroundColor: Colors.grey,
-                  circularStrokeCap: CircularStrokeCap.round,
-                ),
+                child: circularProgressIndicator(progress),
               ),
             ),
           ),

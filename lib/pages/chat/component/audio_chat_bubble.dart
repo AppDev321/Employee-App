@@ -49,8 +49,7 @@ class _AudioBubbleState extends State<AudioBubble> {
                   onTap: player.play,
                   child:  const Icon(Icons.play_arrow),
                 );
-              } else if (processingState !=
-                  ProcessingState.completed) {
+              } else if (processingState != ProcessingState.completed) {
                 return GestureDetector(
 
                   onTap: player.pause,
