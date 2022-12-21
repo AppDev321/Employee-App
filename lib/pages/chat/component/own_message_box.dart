@@ -4,9 +4,14 @@ import '../../../database/model/messages_table.dart';
 import '../../../view_models/chat_vm.dart';
 
 class OwnMessageCard extends StatelessWidget {
-   OwnMessageCard({Key? key, required this.item}) : super(key: key);
+   OwnMessageCard({
+     Key? key,
+     required this.item
+   }) : super(key: key);
 
   final MessagesTable item;
+
+
   final ChatViewModel chatModel = ChatViewModel();
 
   @override
@@ -20,8 +25,8 @@ class OwnMessageCard extends StatelessWidget {
         child: Card(
           elevation: 1,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          color: Color(0xffdcf8c6),
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          color: const Color(0xffdcf8c6),
+          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: Stack(
@@ -47,10 +52,10 @@ class OwnMessageCard extends StatelessWidget {
                           color: Colors.grey[600],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
-                      Icon(
+                      const Icon(
                         Icons.done_all,
                         size: 15,
                       )

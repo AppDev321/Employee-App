@@ -88,11 +88,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Future getDataFromDB() async{
-    var data =  contactList.isEmpty?  await  chatViewModel.getContactDBList() :contactList;
+   var data =  contactList.isEmpty ?  await  chatViewModel.getContactDBList() : contactList;
    var listConversation = await  chatViewModel.getConversationList();
-
-    print("Contact size = ${data.length}");
-    print("Conversation size = ${listConversation.length}");
 
     setState((){
       if(data.isNotEmpty) {

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../custom_style/colors.dart';
 import '../pages/login/login.dart';
@@ -21,9 +22,9 @@ class Controller {
 
   //  "http://afjdev.hnhtechpk.com/api";
 
-static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
+//static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
 //static const String webSocketURL  = "ws://192.168.18.69:6001/video-call?token=";
- //static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
+ static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
 
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
@@ -420,7 +421,14 @@ static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video
     return (Get.isDarkMode ? primaryColor : blackThemeTextColor);
   }
 
+  Future<File> getImageFileFromAssets(String path) async {
+    final byteData = await rootBundle.load('assets/$path');
 
+    final file = File('${(await getTemporaryDirectory()).path}/$path');
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
+  }
 }
 enum FingerPrintOption {
   ENABLE,
@@ -475,7 +483,7 @@ enum SocketMessageType {
   RejectCall,
   CallEnd,
   Send,
-
+  SendAttachment,
   //From Web to App
 
   CallResponse,
@@ -486,6 +494,7 @@ enum SocketMessageType {
   ICECandidate,
   CallAlreadyAnswer,
   Received,
+  ReceivedAttachment,
 
 }
 
@@ -508,7 +517,8 @@ extension MessageTypeExtention on SocketMessageType {
         return 'call_end';
       case SocketMessageType.Send:
         return 'send';
-
+      case SocketMessageType.SendAttachment:
+        return 'send-attachment';
 
 
       case SocketMessageType.CallResponse:
@@ -527,6 +537,9 @@ extension MessageTypeExtention on SocketMessageType {
         return 'call_already_answered';
       case SocketMessageType.Received:
         return 'received';
+      case SocketMessageType.ReceivedAttachment:
+        return 'received-attachment';
+
 
       default:
         return '';

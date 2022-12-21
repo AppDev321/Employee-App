@@ -197,10 +197,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                               hideTextBoxView = false;
                             });
 
-
-
-                            sentMessage(ChatMessageType.audio,
-                                attachmentURl: soundFile.path);
+                            sentMessage(ChatMessageType.audio, attachmentURl: soundFile.path);
                           },
                           encode: AudioEncoderType.AAC,
                           hideBottomView: (bool) {
@@ -236,7 +233,6 @@ class _ChatInputBoxState extends State<ChatInputBox> {
   }
 
   void callAttachFile() {
-    print('Attach File Icon Pressed...');
 
     showModalBottomSheet(
         backgroundColor: Colors.transparent,
@@ -246,17 +242,20 @@ class _ChatInputBoxState extends State<ChatInputBox> {
   }
 
   void callCamera() {
-    print('Camera Icon Pressed...');
     focusNode.unfocus();
-
     pickImageFile(ImageSource.camera, (value) {
-      print("camera file : $value");
+      Get.to(() =>
+          CameraViewPage(
+            path: value.path,
+            callBack: () {
+              sentMessage(
+                  ChatMessageType.image, attachmentURl: value.path);
+            },
+          ));
     });
   }
 
-  void callVoice() {
-    print('Voice Icon Pressed...');
-  }
+
 
   Widget emojiContainer() {
     return SizedBox(
@@ -356,13 +355,38 @@ class _ChatInputBoxState extends State<ChatInputBox> {
       onTap: () {
         Get.back();
         if (text.contains(menus[0])) {
-          pickFile(FileType.media, (value) {});
+          pickFile(FileType.video, (value) {
+            sentMessage(
+                ChatMessageType.video, attachmentURl: value.path);
+          });
         } else if (text.contains(menus[1])) {
-          pickImageFile(ImageSource.camera, (value) {});
+          pickImageFile(ImageSource.camera, (value) {
+            Get.to(() =>
+                CameraViewPage(
+                  path: value.path,
+                  callBack: () {
+                    sentMessage(
+                        ChatMessageType.image, attachmentURl: value.path);
+                  },
+                ));
+          });
         } else if (text.contains(menus[2])) {
-          pickImageFile(ImageSource.gallery, (value) {});
+          pickImageFile(ImageSource.gallery, (value) {
+            Get.to(() =>
+                CameraViewPage(
+                  path: value.path,
+                  callBack: () {
+                    sentMessage(
+                        ChatMessageType.image, attachmentURl: value.path);
+                  },
+                ));
+          });
         } else if (text.contains(menus[3])) {
-          pickFile(FileType.audio, (value) {});
+          pickFile(FileType.audio, (value) {
+
+            sentMessage(
+                ChatMessageType.audio, attachmentURl: value.path);
+          });
         }
       },
       child: Column(
@@ -399,10 +423,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     if (result != null) {
       final file = result!.files.first;
       imageFiles(file);
-      // openFile(file);
-      print("file path issssssss${file.path}");
     }
-    ;
   }
 
   pickImageFile(ImageSource type, ValueChanged<File> imageFiles) async {
@@ -412,14 +433,6 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
       imageFiles(imageFile);
-      Get.to(() =>
-          CameraViewPage(
-            path: pickedImage.path,
-            callBack: () {
-              sentMessage(
-                  ChatMessageType.image, attachmentURl: pickedImage.path);
-            },
-          ));
     }
   }
 
@@ -440,7 +453,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         break;
       case ChatMessageType.image:
       case ChatMessageType.audio:
-
+      case ChatMessageType.video:
       var msgData = await chatViewModel.insertMessagesData(
           msg: type.name,
           hasAttachment: true,

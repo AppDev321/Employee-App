@@ -5,8 +5,6 @@ import '../../../view_models/chat_vm.dart';
 
 class ReplyCard extends StatelessWidget {
 
-
-
    ReplyCard({Key? key,required this.item})
       : super(key: key);
 
@@ -34,7 +32,7 @@ class ReplyCard extends StatelessWidget {
                   top: 5,
                   bottom: 10,
                 ),
-                child: chatModel.showMessageContentView(item),
+                child: chatModel.showMessageContentView(item,false),
               ),
               Positioned(
                 bottom: 4,

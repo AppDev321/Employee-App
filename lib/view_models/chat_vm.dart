@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
-import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/database/dao/attachments_dao.dart';
 import 'package:hnh_flutter/database/dao/conversation_dao.dart';
@@ -11,13 +8,9 @@ import 'package:hnh_flutter/database/dao/user_dao.dart';
 import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/database/model/conversation_table.dart';
 import 'package:hnh_flutter/database/model/user_table.dart';
-import 'package:hnh_flutter/pages/chat/component/audio_chat_bubble.dart';
-import 'package:hnh_flutter/repository/retrofit/multipart_request.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
 
 import '../database/dao/call_history_dao.dart';
 import '../database/dao/messages_dao.dart';
@@ -25,6 +18,8 @@ import '../database/database_single_instance.dart';
 import '../database/model/attachment_file_status_table.dart';
 import '../database/model/call_history_table.dart';
 import '../database/model/messages_table.dart';
+import '../pages/chat/component/attachment_box_widget.dart';
+
 import '../repository/model/request/socket_message_model.dart';
 import '../repository/model/response/contact_list.dart';
 import '../utils/controller.dart';
@@ -95,12 +90,18 @@ class ChatViewModel extends BaseViewModel {
     var record = await conversationTableDao.getReceiverRecord(recieverid);
     if (record != null) {
       var latestMessage =
-          await messagesTableDAO.getLastMessageRecordByReceiverID(recieverid);
+          await getLastMessageIDByReceiver(recieverid);
       if (latestMessage != null) {
         record.lastMessageID = latestMessage.id;
-       await conversationTableDao.updateConversationRecord(record);
+        await conversationTableDao.updateConversationRecord(record);
       }
     }
+  }
+
+  Future<MessagesTable?> getLastMessageIDByReceiver(int recieverid) async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
+    return  await messagesTableDAO.getLastMessageRecordByReceiverID(recieverid);
   }
 
   Future<List<ConversationTable>> getConversationList() async {
@@ -110,7 +111,7 @@ class ChatViewModel extends BaseViewModel {
     return await conversationTableDAO.getAllConversation();
   }
 
-//inserting data on messages table
+  //inserting data on messages table
   Future<MessagesTable> insertMessagesData(
       {String? msg,
       CustomMessageObject? customMessageObject,
@@ -123,8 +124,9 @@ class ChatViewModel extends BaseViewModel {
     String formattedDate = Controller().getConvertedDate(now);
     String formattedTime = Controller().getConvertedTime(now);
 
-    var userData = messageRecord ??
-        MessagesTable(
+
+
+    var userData = messageRecord ??   MessagesTable(
             conversationID: customMessageObject!.conversationId,
             content: msg,
             senderID: customMessageObject.senderId,
@@ -135,14 +137,18 @@ class ChatViewModel extends BaseViewModel {
             isAttachments: hasAttachment,
             deliveryStatus: false);
 
+
+
     await messagesTableDAO.insertMessagesRecord(userData);
     return userData;
   }
+
   Future<MessagesTable?> getSingleMessageRecord(int id) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
     return await messagesTableDAO.getMessagesRecord("$id");
   }
+
   Future<List<MessagesTable>> getMessagesList(int conversationID) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
@@ -151,13 +157,12 @@ class ChatViewModel extends BaseViewModel {
 
   //insert data to attachment table
 
-  Future<AttachmentsTable> insertAttachmentsData(AttachmentsTable item,int receiverId,Function(int) msgID) async {
+  Future<AttachmentsTable> insertAttachmentsData(
+      AttachmentsTable item, int receiverId, Function(int) msgID) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
-    final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
 
-    var latestMessage =
-        await messagesTableDAO.getLastMessageRecordByReceiverID(receiverId);
+    var latestMessage =  await getLastMessageIDByReceiver(receiverId);
     if (latestMessage != null) {
       item.messageID = latestMessage.id;
       msgID(latestMessage.id!);
@@ -165,12 +170,6 @@ class ChatViewModel extends BaseViewModel {
     await attachmentsTableDAO.insertAttachmentsRecord(item);
     return item;
   }
-
-  // Future<List<AttachmentsTable>> getAttachmentsList(int attachmentsID) async {
-  //   final db = await AFJDatabaseInstance.instance.afjDatabase;
-  //   final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
-  //   return await attachmentsTableDAO.getAllAttachments(attachmentsID);
-  // }
 
   //insert data in contacts table
   void insertContactList(List<User> contactList) async {
@@ -194,11 +193,21 @@ class ChatViewModel extends BaseViewModel {
     final userTableDao = db?.userTableDAO as UserTableDAO;
     return await userTableDao.getUserRecord(id);
   }
+
   Future<AttachmentsTable?> getSingleAttachmentByMsgID(int messageID) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
     return await attachmentsTableDAO.getAttachmentByMsgId(messageID);
   }
+
+ Future<AttachmentsTable> updateAttachment(AttachmentsTable item) async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
+  await attachmentsTableDAO.updateAttachmentsRecord(item);
+
+    return item;
+  }
+
 
 
   void insertCallDetailInDB(SocketMessageModel socketMessageModel) async {
@@ -251,92 +260,22 @@ class ChatViewModel extends BaseViewModel {
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
-
   void insertDownloadFileData(int downloadID) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final downloadDao = db?.downloadTableDAO as DownloadTableDAO;
     downloadDao.getDownloadRecord(downloadID).then((value) {
       if (value != null) {
-
       } else {
-
-        var downloadData = DownloadStatusTable(type:"upload",percentage: 0.0,isCompleted: false,fileSize: 0);
-        downloadDao.insertDownloadRecord(downloadData).then((value) {
-
-        });
-      }
-    });
-  }
-
-
-  uploadFileToServer(
-      BuildContext context,
-      File filePath,
-      ValueChanged<bool> isUploadCompleted,
-      ValueChanged<String> fileUrl,
-      ValueChanged<double> percentage,
-      {bool isReturnPath = true,
-      bool showUploadAlertMsg = true}) async {
-    isUploadCompleted(false);
-
-    var stream = http.ByteStream(DelegatingStream.typed(filePath.openRead()));
-    var length = await filePath.length();
-    var uri = Uri.parse("${Controller.appBaseURL}/media-upload");
-    Controller controller = Controller();
-    String? userToken = await controller.getAuthToken();
-
-    final request = MultipartRequest(
-      'POST',
-      uri,
-      onProgress: (int bytes, int total) {
-        final progress = bytes / total;
-        percentage(progress);
-      },
-    );
-
-    request.headers['Authorization'] = "Bearer $userToken";
-    request.headers['Content-Type'] = "application/json";
-    request.headers['Accept'] = "application/json";
-
-    var multipartFile = http.MultipartFile('file', stream, length,
-        filename: basename(filePath.path));
-    request.files.add(multipartFile);
-    // request.fields['type']=requestType;
-
-    print(request.fields.toString());
-    var response = await request.send();
-    response.stream.transform(utf8.decoder).listen((value) {
-      print("response = $value");
-      final parsedJson = jsonDecode(value);
-      print("parsedJson = $parsedJson");
-      isUploadCompleted(true);
-      if (parsedJson['code'].toString() == "200") {
-        var data = parsedJson['data'];
-        if (data != null) {
-          var convertedURL = data['original_complete_url'];
-          if (isReturnPath) {
-            fileUrl(convertedURL);
-          }
-        }
-      } else {
-        if (showUploadAlertMsg == true) {
-          var error = parsedJson['errors'][0]['message'];
-          if (error != null) {
-            Controller().showToastMessage(context, error);
-          } else {
-            Controller().showToastMessage(context,
-                "There is some issue in uploading please try again later");
-          }
-        }
+        var downloadData = DownloadStatusTable(
+            type: "upload", percentage: 0.0, isCompleted: false, fileSize: 0);
+        downloadDao.insertDownloadRecord(downloadData).then((value) {});
       }
     });
   }
 
 
 
-
-
-  Widget showMessageContentView(MessagesTable item) {
+  Widget showMessageContentView(MessagesTable item,[bool isMineSide = true]) {
     if (item.isAttachments == false) {
       return Text(
         item.content.toString(),
@@ -349,65 +288,18 @@ class ChatViewModel extends BaseViewModel {
           future: getSingleAttachmentByMsgID(item.id!),
           builder: (context, snap)
           {
+
             if (snap.hasData) {
               var data = snap.data as AttachmentsTable;
               final type = data.attachmentType.toString();
+              return isMineSide? AttachmentWidget(item: data,isDonwload: false) :AttachmentWidget(item: data,isDonwload: true);
 
-
-              if (type == ChatMessageType.image.name) {
-
-                  return InkWell(
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (buildContext) => Controller().imageDialog(
-                              "", data.attachmentUrl.toString(), buildContext));
-                    },
-                    child: Container(
-                      height: MediaQuery.of(context).size.height / 3.5,
-                      width: MediaQuery.of(context).size.width / 2,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Card(
-                        margin: EdgeInsets.all(1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Image.file(
-                          File(data.attachmentUrl.toString()),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  );
-              } else if (type == ChatMessageType.audio.name) {
-                return AudioBubble(filepath: data.attachmentUrl.toString());
-              } else {
-                return Container();
-              }
             } else {
               return CircularProgressIndicator();
             }
           });
     }
   }
-
-   checkAttachmentStatus(
-           String attachmentURl,
-           BuildContext context,
-           Function(bool) isUploadCompleted,
-           Function(double) percnt)
-   {
-    uploadFileToServer(context, File(attachmentURl.toString()),
-        (uploadStatus) {
-              isUploadCompleted(uploadStatus);
-        }, (url) async {
-        }, (percentage) {
-          percnt(percentage);
-        });
-  }
-
 
 
 }

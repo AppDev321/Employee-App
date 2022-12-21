@@ -42,40 +42,74 @@ class _ChatDetailPageState extends State<ChatDetailPage>
 
     chatViewModel.getMessagesList(widget.item.conversationId).then((value) {
       setState(() {
-        var data = value as List<MessagesTable>;
+        var data = value;
         messagesList = data;
         _scrollDown();
       });
     });
 
+    handleSocketCallbackMessage();
+  }
+
+  handleSocketCallbackMessage() {
     //Handle web socket msg
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
-            (socketMessage, callback) {
-
+            (socketMessage, callback)
+        async {
           var message = socketMessage as SocketMessageModel;
           var msgType = message.type.toString();
           var body = json.encode(message.data);
 
-          var  body2= json.decode(body);
+          var body2 = json.decode(body);
+
 
           if (msgType == SocketMessageType.Received.displayTitle) {
+            var item = MessagesTable.fromJson(body2);
+            var senderID = item.receiverID;
+            var receiverID = item.senderID;
 
-            var item =   MessagesTable.fromJson(body2);
             var newObject = item;
             newObject.isMine = false;
-            newObject.senderID = item.receiverID;
-            newObject.receiverID = item.senderID;
-            chatViewModel .insertMessagesData( messageRecord: newObject);
+            newObject.senderID = senderID;
+            newObject.receiverID = receiverID;
+          await  chatViewModel.insertMessagesData(messageRecord: newObject);
             setState(() {
               messagesList.add(newObject);
             });
           }
-        });
+          else if(msgType == SocketMessageType.ReceivedAttachment.displayTitle)
+          {
+            var msgTable = body2['messageTable'];
+            var attachmentTable = body2['attachmentTable'];
+
+            var item = MessagesTable.fromJson(msgTable);
+            var senderID = item.receiverID;
+            var receiverID = item.senderID;
+
+
+            var newObject = item;
+            newObject.isMine = false;
+            newObject.senderID = senderID;
+            newObject.receiverID = receiverID;
+
+            await  chatViewModel.insertMessagesData(messageRecord: newObject);
+
+            var itemAttachment = AttachmentsTable.fromJson(attachmentTable);
+            await chatViewModel.insertAttachmentsData( itemAttachment, widget.item.receiverid, (msgID) {
+              setState(() {
+                newObject.id = msgID;
+                messagesList.add(newObject);
+              });
+            });
+
+          }
+        } ,context: this);
   }
 
   @override
   void dispose() {
 
+    FBroadcast.instance().unregister(this);
     super.dispose();
   }
 
@@ -152,29 +186,32 @@ class _ChatDetailPageState extends State<ChatDetailPage>
               Align(
                   alignment: Alignment.bottomCenter,
                   child: ChatInputBox(
-                    item: widget.item,
-                    attachmentInsertedCallback: (path) {
-                      var attachmentData = path as AttachmentsTable;
-                      debugPrint(" Path : ${attachmentData.attachmentUrl}");
-                    },
-                    onTextMessageSent: (msg) {
-                      setState(() {
+                      item: widget.item,
+                      attachmentInsertedCallback: (path) {
+                        var attachmentData = path as AttachmentsTable;
+                        debugPrint(" Path : ${attachmentData.attachmentUrl}");
+                      },
+                      onTextMessageSent: (msg) {
+                        setState(() {
+                          chatViewModel.insertLastMessageIDConversation(
+                              widget.item.receiverid);
+                          messagesList.add(msg);
+                          _scrollDown();
 
-                        chatViewModel.insertLastMessageIDConversation(widget.item.receiverid);
+                          if(msg.isAttachments== false) {
+                            var message = SocketMessageModel(
+                                type: SocketMessageType.Send.displayTitle,
+                                sendTo: widget.item.receiverid.toString(),
+                                sendFrom: widget.item.senderId.toString(),
+                                data: msg);
 
-                        messagesList.add(msg);
+                            socketService.sendMessageToWebSocket(message);
+                          }
 
-                        var message = SocketMessageModel(
-                            type: SocketMessageType.Send.displayTitle,
-                            sendTo: widget.item.receiverid.toString(),
-                            sendFrom: widget.item.senderId.toString(),
-                            data: msg);
-                        socketService.sendMessageToWebSocket(message);
-                        _scrollDown();
-                      });
-                    }
 
-                  ))
+
+                        });
+                      }))
             ],
           ),
         ));
@@ -183,8 +220,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
   void _scrollDown() {
     SchedulerBinding.instance?.addPostFrameCallback((_) {
       _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 1),
-          curve: Curves.easeOut);
+          duration: const Duration(milliseconds: 1), curve: Curves.easeOut);
     });
   }
 
@@ -207,6 +243,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
               item: item,
             );
           } else {
+
             return ReplyCard(
               item: item,
             );

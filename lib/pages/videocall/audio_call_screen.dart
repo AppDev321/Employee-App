@@ -53,6 +53,9 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
   late AudioVideoCall audioVideoCall;
 
   void endCall(bool isUserClosedCall,{bool isFromDialog =false}) async {
+
+
+
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
     audioVideoCall.endCall(isUserClosedCall);
@@ -217,11 +220,12 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
         ));
         endCall(false);
       }
-    });
+    },context:  this);
   }
 
   @override
   void dispose() async {
+    FBroadcast.instance().unregister(this);
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
     audioVideoCall.disposeAudioVideoCall();
