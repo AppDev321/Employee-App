@@ -66,15 +66,17 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
       path,
       (downloadCompleted) {
         if (downloadCompleted == true) {
-          setState(() {
-            if (attachmentType == ChatMessageType.image.name) {
-              view = showImageContainer(
-                  context, widget.item.attachmentUrl ?? path);
-            } else if (attachmentType == ChatMessageType.audio.name) {
-              view = AudioBubble(filepath:  widget.item.attachmentUrl.toString());
-            }
-
-          });
+          if (mounted) {
+            setState(() {
+              if (attachmentType == ChatMessageType.image.name) {
+                view = showImageContainer(
+                    context, widget.item.attachmentUrl ?? path);
+              } else if (attachmentType == ChatMessageType.audio.name) {
+                view =
+                    AudioBubble(filepath: widget.item.attachmentUrl.toString());
+              }
+            });
+          }
         }
       },
       (progress) {
@@ -112,26 +114,26 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
   void handleUploadFileManager(attachmentType) {
     var downloadMgr = DownloadManager();
     downloadMgr.uploadFile(id, path, context, (isUploaded) {
-      if (isUploaded == true) {
-        setState(() {
-          if (attachmentType == ChatMessageType.image.name) {
-            view = showImageContainer(context, path);
-          }
-          else if (attachmentType == ChatMessageType.video.name) {
-            view = AudioBubble(filepath: path);
-          }
-          else if (attachmentType == ChatMessageType.audio.name) {
-            view = AudioBubble(filepath: path);
-          }
-        });
-      } else {
-        setState(() {
-          if (attachmentType == ChatMessageType.image.name) {
-            view = showBlurImage(path, 0, true);
-          } else if (attachmentType == ChatMessageType.audio.name) {
-            //   view =  AudioBubble(filepath:path);
-          }
-        });
+      if (mounted) {
+        if (isUploaded == true) {
+          setState(() {
+            if (attachmentType == ChatMessageType.image.name) {
+              view = showImageContainer(context, path);
+            } else if (attachmentType == ChatMessageType.video.name) {
+              view = AudioBubble(filepath: path);
+            } else if (attachmentType == ChatMessageType.audio.name) {
+              view = AudioBubble(filepath: path);
+            }
+          });
+        } else {
+          setState(() {
+            if (attachmentType == ChatMessageType.image.name) {
+              view = showBlurImage(path, 0, true);
+            } else if (attachmentType == ChatMessageType.audio.name) {
+              //   view =  AudioBubble(filepath:path);
+            }
+          });
+        }
       }
     }, (progress) {
       setState(() {
@@ -152,15 +154,15 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
           );
         }
       });
-    },
-            (uploadUrl) async {
+    }, (uploadUrl) async {
       var downloadData =
           await downloadMgr.getSingleDownloadRecord(widget.item.id!);
       widget.item.downloadID = downloadData!.id;
       widget.item.serverFileUrl = uploadUrl;
       var chatModel = ChatViewModel();
       var attachmentTable = await chatModel.updateAttachment(widget.item);
-      var msgTable =   await chatModel.getSingleMessageRecord(widget.item.messageID!);
+      var msgTable =
+          await chatModel.getSingleMessageRecord(widget.item.messageID!);
 
       //After upload completed
       SocketService socketService = SocketService();
@@ -183,10 +185,8 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
     );
   }
 
-
   Widget showBlurVideo(String imageURL, double progress,
       [bool isNetworkImage = false]) {
-
     return SizedBox(
       height: height,
       width: width,
@@ -195,13 +195,13 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
         children: [
           isNetworkImage == false
               ? Image.file(
-            File(path),
-            fit: BoxFit.cover,
-          )
+                  File(path),
+                  fit: BoxFit.cover,
+                )
               : Image.network(
-            imageURL,
-            fit: BoxFit.cover,
-          ),
+                  imageURL,
+                  fit: BoxFit.cover,
+                ),
           ClipRRect(
             // Clip it cleanly.
             child: BackdropFilter(
@@ -228,9 +228,6 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
       ),
     );
   }
-
-
-
 
   Widget showBlurImage(String imageURL, double progress,
       [bool isNetworkImage = false]) {
