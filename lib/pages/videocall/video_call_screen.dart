@@ -225,11 +225,12 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
         ));
 
       }
-    });
+    },context: this);
   }
 
   @override
   void dispose() async {
+    FBroadcast.instance().unregister(this);
     audioVideoCall.disposeAudioVideoCall();
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();

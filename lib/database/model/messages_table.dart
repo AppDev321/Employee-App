@@ -22,13 +22,9 @@ class MessagesTable {
     //id = json["id"];
 
     conversationID = json["conversationID"];
-
     senderID = json["senderID"];
     receiverID = json["receiverID"];
     content = json["content"];
-
-
-
     date = json["date"];
     time = json["time"];
     isMine = json["isMine"];

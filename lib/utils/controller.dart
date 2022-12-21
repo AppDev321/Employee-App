@@ -22,9 +22,9 @@ class Controller {
 
   //  "http://afjdev.hnhtechpk.com/api";
 
-static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
+//static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
 //static const String webSocketURL  = "ws://192.168.18.69:6001/video-call?token=";
- //static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
+ static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
 
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
@@ -483,7 +483,7 @@ enum SocketMessageType {
   RejectCall,
   CallEnd,
   Send,
-
+  SendAttachment,
   //From Web to App
 
   CallResponse,
@@ -494,6 +494,7 @@ enum SocketMessageType {
   ICECandidate,
   CallAlreadyAnswer,
   Received,
+  ReceivedAttachment,
 
 }
 
@@ -516,7 +517,8 @@ extension MessageTypeExtention on SocketMessageType {
         return 'call_end';
       case SocketMessageType.Send:
         return 'send';
-
+      case SocketMessageType.SendAttachment:
+        return 'send-attachment';
 
 
       case SocketMessageType.CallResponse:
@@ -535,6 +537,9 @@ extension MessageTypeExtention on SocketMessageType {
         return 'call_already_answered';
       case SocketMessageType.Received:
         return 'received';
+      case SocketMessageType.ReceivedAttachment:
+        return 'received-attachment';
+
 
       default:
         return '';

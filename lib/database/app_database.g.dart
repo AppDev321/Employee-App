@@ -103,9 +103,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ConversationTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lastMessageID` INTEGER, `senderID` INTEGER, `receiverID` INTEGER, `time` TEXT, `date` TEXT)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `AttachmentsTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `messageID` INTEGER, `attachmentUrl` TEXT, `thumbnailUrl` TEXT, `attachmentType` TEXT, `downloadID` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `AttachmentsTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `messageID` INTEGER, `attachmentUrl` TEXT, `thumbnailUrl` TEXT, `attachmentType` TEXT, `downloadID` INTEGER, `serverFileUrl` TEXT)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `DownloadStatusTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `type` TEXT, `percentage` REAL, `isCompleted` INTEGER, `fileSize` REAL)');
+            'CREATE TABLE IF NOT EXISTS `DownloadStatusTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `attachmentId` INTEGER, `type` TEXT, `percentage` REAL, `isCompleted` INTEGER, `fileSize` REAL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -578,7 +578,8 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
                   'attachmentUrl': item.attachmentUrl,
                   'thumbnailUrl': item.thumbnailUrl,
                   'attachmentType': item.attachmentType,
-                  'downloadID': item.downloadID
+                  'downloadID': item.downloadID,
+                  'serverFileUrl': item.serverFileUrl
                 }),
         _attachmentsTableUpdateAdapter = UpdateAdapter(
             database,
@@ -590,7 +591,8 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
                   'attachmentUrl': item.attachmentUrl,
                   'thumbnailUrl': item.thumbnailUrl,
                   'attachmentType': item.attachmentType,
-                  'downloadID': item.downloadID
+                  'downloadID': item.downloadID,
+                  'serverFileUrl': item.serverFileUrl
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -612,11 +614,12 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
             attachmentUrl: row['attachmentUrl'] as String?,
             thumbnailUrl: row['thumbnailUrl'] as String?,
             attachmentType: row['attachmentType'] as String?,
-            downloadID: row['downloadID'] as int?));
+            downloadID: row['downloadID'] as int?,
+            serverFileUrl: row['serverFileUrl'] as String?));
   }
 
   @override
-  Future<AttachmentsTable?> getAttachmentsRecord(String id) async {
+  Future<AttachmentsTable?> getAttachmentsRecord(int id) async {
     return _queryAdapter.query('SELECT * FROM AttachmentsTable WHERE id = ?1',
         mapper: (Map<String, Object?> row) => AttachmentsTable(
             id: row['id'] as int?,
@@ -624,7 +627,8 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
             attachmentUrl: row['attachmentUrl'] as String?,
             thumbnailUrl: row['thumbnailUrl'] as String?,
             attachmentType: row['attachmentType'] as String?,
-            downloadID: row['downloadID'] as int?),
+            downloadID: row['downloadID'] as int?,
+            serverFileUrl: row['serverFileUrl'] as String?),
         arguments: [id]);
   }
 
@@ -638,7 +642,8 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
             attachmentUrl: row['attachmentUrl'] as String?,
             thumbnailUrl: row['thumbnailUrl'] as String?,
             attachmentType: row['attachmentType'] as String?,
-            downloadID: row['downloadID'] as int?),
+            downloadID: row['downloadID'] as int?,
+            serverFileUrl: row['serverFileUrl'] as String?),
         arguments: [messageID]);
   }
 
@@ -680,6 +685,7 @@ class _$DownloadTableDAO extends DownloadTableDAO {
             'DownloadStatusTable',
             (DownloadStatusTable item) => <String, Object?>{
                   'id': item.id,
+                  'attachmentId': item.attachmentId,
                   'type': item.type,
                   'percentage': item.percentage,
                   'isCompleted': item.isCompleted == null
@@ -693,6 +699,7 @@ class _$DownloadTableDAO extends DownloadTableDAO {
             ['id'],
             (DownloadStatusTable item) => <String, Object?>{
                   'id': item.id,
+                  'attachmentId': item.attachmentId,
                   'type': item.type,
                   'percentage': item.percentage,
                   'isCompleted': item.isCompleted == null
@@ -717,6 +724,7 @@ class _$DownloadTableDAO extends DownloadTableDAO {
     return _queryAdapter.queryList('SELECT * FROM DownloadStatusTable',
         mapper: (Map<String, Object?> row) => DownloadStatusTable(
             id: row['id'] as int?,
+            attachmentId: row['attachmentId'] as int?,
             type: row['type'] as String?,
             percentage: row['percentage'] as double?,
             isCompleted: row['isCompleted'] == null
@@ -726,18 +734,19 @@ class _$DownloadTableDAO extends DownloadTableDAO {
   }
 
   @override
-  Future<DownloadStatusTable?> getDownloadRecord(int id) async {
+  Future<DownloadStatusTable?> getDownloadRecord(int attachmentId) async {
     return _queryAdapter.query(
-        'SELECT * FROM DownloadStatusTable WHERE id = ?1',
+        'SELECT * FROM DownloadStatusTable WHERE attachmentId = ?1',
         mapper: (Map<String, Object?> row) => DownloadStatusTable(
             id: row['id'] as int?,
+            attachmentId: row['attachmentId'] as int?,
             type: row['type'] as String?,
             percentage: row['percentage'] as double?,
             isCompleted: row['isCompleted'] == null
                 ? null
                 : (row['isCompleted'] as int) != 0,
             fileSize: row['fileSize'] as double?),
-        arguments: [id]);
+        arguments: [attachmentId]);
   }
 
   @override
