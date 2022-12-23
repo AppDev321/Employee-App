@@ -43,8 +43,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      Scaffold(
+    return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.black,
@@ -60,25 +59,25 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   if (snapshot.connectionState == ConnectionState.done) {
 
                     return Stack(
-                      children:[
-                        AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: VideoPlayer(_controller),
-                      ),
-                        Align(
-                          alignment: Alignment.center,
-                          child:  ElevatedButton(
-                              onPressed: () {
-                                _controller.play();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  primary: Colors.lightGreen,
-                                  fixedSize: const Size(80, 80)),
-                              child: const Icon(Icons.play_arrow)),
-                        )
+                        children:[
+                          AspectRatio(
+                            aspectRatio: _controller.value.aspectRatio,
+                            child: VideoPlayer(_controller),
+                          ),
+                          Align(
+                            alignment: Alignment.center,
+                            child:  ElevatedButton(
+                                onPressed: () {
+                                  _controller.play();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    shape: const CircleBorder(),
+                                    primary: Colors.lightGreen,
+                                    fixedSize: const Size(80, 80)),
+                                child: const Icon(Icons.play_arrow)),
+                          )
 
-                  ] );
+                        ] );
                   } else {
                     // If the VideoPlayerController is still initializing, show a
                     // loading spinner.
@@ -115,7 +114,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                         ),
                         suffixIcon: InkWell(
                           onTap: (){
-                           widget.onPathGet(widget.path);
+                            widget.onPathGet(widget.path);
                             Get.back();
                           },
                           child:const CircleAvatar(
@@ -134,7 +133,5 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           ),
         ),
       );
-
-
   }
 }

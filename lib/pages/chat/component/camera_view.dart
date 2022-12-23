@@ -33,7 +33,7 @@ class _CameraViewPageState extends State<CameraViewPage> {
               height: MediaQuery.of(context).size.height - 150,
               child: Image.file(
                 File(widget.path),
-                fit: BoxFit.cover,
+                fit: BoxFit.fitWidth,
               ),
             ),
             Positioned(
@@ -63,8 +63,9 @@ class _CameraViewPageState extends State<CameraViewPage> {
                       ),
                       suffixIcon: InkWell(
                         onTap: (){
+
                           Get.back();
-                          widget.callBack();
+                           widget.callBack();
                         },
                         child: CircleAvatar(
                           radius: 27,
