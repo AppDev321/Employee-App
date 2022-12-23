@@ -20,8 +20,10 @@ class ReplyCard extends StatelessWidget {
        padding: const EdgeInsets.symmetric(vertical: 7.0),
        child:
        Row(
+         crossAxisAlignment: CrossAxisAlignment.end ,
          children: <Widget>[
            Column(
+
              crossAxisAlignment: CrossAxisAlignment.start,
              children: <Widget>[
                Container(
@@ -41,7 +43,7 @@ class ReplyCard extends StatelessWidget {
 
              ],
            ),
-           SizedBox(width: 15),
+
            Text(
              item.time.toString(),
              style: TextStyle(

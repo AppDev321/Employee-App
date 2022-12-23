@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -85,6 +86,21 @@ class _ConversationScreenState extends State<ConversationScreen> {
         });
       }
     });
+
+
+    //Handle web socket msg
+    FBroadcast.instance().register(Controller().socketMessageBroadCast,
+            (socketMessage, callback)
+        async {
+          chatViewModel.handleSocketCallbackMessage(socketMessage,(data){
+            setState(() {
+             // messagesList.add(data);
+            });
+          });
+        } ,context: this);
+
+
+
   }
 
   Future getDataFromDB() async{

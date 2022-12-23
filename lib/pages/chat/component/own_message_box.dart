@@ -15,22 +15,26 @@ class OwnMessageCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end ,
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          Text(
+         /* Text(
             item.time.toString(),
             style: TextStyle(
               fontSize: 8,
               color: Colors.grey[600],
             ),
-          ),
-          SizedBox(width: 15),
+          )*/
+
+          seenWithTime(true, item.time.toString()),
+
+       SizedBox(width: 5,),
           Container(
             constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * .6),
             padding: const EdgeInsets.all(15.0),
-            decoration: BoxDecoration(
-              color: const Color(0xffdcf8c6),
+            decoration: const BoxDecoration(
+              color:  Color(0xffdcf8c6),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(25),
                 topRight: Radius.circular(25),
@@ -43,4 +47,27 @@ class OwnMessageCard extends StatelessWidget {
       ),
     );
   }
+
+
+
+  Widget seenWithTime(bool me,String time) => Column(
+    crossAxisAlignment: CrossAxisAlignment.end,
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      if (me)
+        Icon(
+          Icons.done_all_outlined,
+          color: Colors.grey[600],
+          size: 10,
+        ),
+      Text(
+        time,
+        style: const TextStyle(
+          fontSize: 10,
+        ),
+
+      ),
+      SizedBox(height: 2)
+    ],
+  );
 }
