@@ -43,7 +43,6 @@ class ReplyCard extends StatelessWidget {
 
              ],
            ),
-
            Text(
              item.time.toString(),
              style: TextStyle(
