@@ -150,6 +150,7 @@ class MyApp extends StatelessWidget {
         ],
         child:  Consumer<ThemeModel>(
                 builder: (context, ThemeModel themeNotifier, child) {
+
                    primaryColor =  themeNotifier.isDark ? primaryDarkColor : primaryBlueColor;
                    cardThemeBaseColor =  themeNotifier.isDark ? Colors.black : Colors.white;
                    borderColor = themeNotifier.isDark ? blackThemeTextColor  : textFielBoxBorderColor;
@@ -180,3 +181,4 @@ class MyApp extends StatelessWidget {
     primarySwatch: primaryColorTheme,
   );
 }
+

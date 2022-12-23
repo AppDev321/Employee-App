@@ -317,28 +317,28 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                 children: [
                   iconCreation(
                       Icons.insert_drive_file, Colors.indigo, menus[0]),
-              const    SizedBox(
+                  SizedBox(
                     width: 40,
                   ),
                   iconCreation(Icons.camera_alt, Colors.pink, menus[1]),
-                const  SizedBox(
+                  SizedBox(
                     width: 40,
                   ),
                   iconCreation(Icons.insert_photo, Colors.purple, menus[2]),
                 ],
               ),
-           const   SizedBox(
+              SizedBox(
                 height: 30,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   iconCreation(Icons.headset, Colors.orange, menus[3]),
-               const   SizedBox(
+                  SizedBox(
                     width: 40,
                   ),
                   iconCreation(Icons.location_pin, Colors.teal, menus[4]),
-               const   SizedBox(
+                  SizedBox(
                     width: 40,
                   ),
                   iconCreation(Icons.person, Colors.blue, menus[5]),
@@ -406,12 +406,12 @@ class _ChatInputBoxState extends State<ChatInputBox> {
               color: Colors.white,
             ),
           ),
-         const SizedBox(
+          SizedBox(
             height: 5,
           ),
           Text(
             text,
-            style:const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               // fontWeight: FontWeight.w100,
             ),
@@ -472,6 +472,10 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         widget.onTextMessageSent(msgData);
       });
       widget.attachmentInsertedCallback(data);
+
+
+
+
         break;
     }
   }

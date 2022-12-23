@@ -48,68 +48,32 @@ class _ChatDetailPageState extends State<ChatDetailPage>
       });
     });
 
-    handleSocketCallbackMessage();
-  }
-
-  handleSocketCallbackMessage() {
     //Handle web socket msg
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
-            (socketMessage, callback)
-        async {
-          var message = socketMessage as SocketMessageModel;
-          var msgType = message.type.toString();
-          var body = json.encode(message.data);
-
-          var body2 = json.decode(body);
-
-
-          if (msgType == SocketMessageType.Received.displayTitle) {
-            var item = MessagesTable.fromJson(body2);
-            var senderID = item.receiverID;
-            var receiverID = item.senderID;
-
-            var newObject = item;
-            newObject.isMine = false;
-            newObject.senderID = senderID;
-            newObject.receiverID = receiverID;
-          await  chatViewModel.insertMessagesData(messageRecord: newObject);
-            setState(() {
-              messagesList.add(newObject);
-            });
-          }
-          else if(msgType == SocketMessageType.ReceivedAttachment.displayTitle)
-          {
-            var msgTable = body2['messageTable'];
-            var attachmentTable = body2['attachmentTable'];
-
-            var item = MessagesTable.fromJson(msgTable);
-            var senderID = item.receiverID;
-            var receiverID = item.senderID;
+          (socketMessage, callback)
+      async {
+        chatViewModel.handleSocketCallbackMessage(socketMessage,(data){
+          setState(() {
+            messagesList.add(data);
+          });
+        });
+      } ,context: this);
 
 
-            var newObject = item;
-            newObject.isMine = false;
-            newObject.senderID = senderID;
-            newObject.receiverID = receiverID;
+    //tgy
 
-            await  chatViewModel.insertMessagesData(messageRecord: newObject);
-
-            var itemAttachment = AttachmentsTable.fromJson(attachmentTable);
-            await chatViewModel.insertAttachmentsData( itemAttachment, widget.item.receiverid, (msgID) {
-              setState(() {
-                newObject.id = msgID;
-                messagesList.add(newObject);
-              });
-            });
-
-          }
-        } ,context: this);
   }
+
+
 
   @override
   void dispose() {
 
     FBroadcast.instance().unregister(this);
+
+    chatViewModel.insertLastMessageIDConversation(
+        widget.item.receiverid);
+
     super.dispose();
   }
 
@@ -226,11 +190,12 @@ class _ChatDetailPageState extends State<ChatDetailPage>
 
   Widget getChatList() {
     return ListView.builder(
+
       itemCount: messagesList.length + 1,
       shrinkWrap: true,
       //physics: const BouncingScrollPhysics(),
       controller: _scrollController,
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      padding: const EdgeInsets.only(left: 5,right: 5),
       itemBuilder: (context, index) {
         if (index == messagesList.length) {
           return Container(
