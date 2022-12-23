@@ -59,9 +59,6 @@ class _ChatDetailPageState extends State<ChatDetailPage>
         });
       } ,context: this);
 
-
-    //tgy
-
   }
 
 
