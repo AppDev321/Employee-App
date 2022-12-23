@@ -210,7 +210,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             const Expanded(
                 child: Center(
                   child: ErrorMessageWidget(
-                    label: "No Contact Found",
+                    label: ConstantData.noDataFound,
                   ),
                 ))
           ],
@@ -235,7 +235,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             ),
           ),
           filteredContactList.isEmpty ?
-              const ErrorMessageWidget(label: "No contact found")
+              const ErrorMessageWidget(label: ConstantData.noDataFound)
               : showContactListItems(filteredContactList),
         ],
       ),

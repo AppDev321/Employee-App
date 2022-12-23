@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/pages/chat/component/audio_chat_bubble.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
+import 'package:open_filex/open_filex.dart';
 
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -46,7 +47,12 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
         double width = Get.mediaQuery.size.width / 5;
         double height = 2;
         view = SizedBox(height: height, width: width);
-      }  else {
+      } else if (widget.item.attachmentType == ChatMessageType.video.name) {
+         width = 80;
+         height = 80;
+        view = SizedBox(height: height, width: width);
+      }
+      else{
         view = SizedBox(height: height, width: width);
       }
     });
@@ -198,7 +204,7 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
               alignment: Alignment.center,
               child: ElevatedButton(
                   onPressed: () {
-
+                    OpenFilex.open(videoPath);
                   },
                   style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),

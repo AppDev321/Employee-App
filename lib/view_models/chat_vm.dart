@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hnh_flutter/database/dao/attachments_dao.dart';
@@ -60,20 +61,20 @@ class ChatViewModel extends BaseViewModel {
     return await callHistoryDao.getAllCallHistory();
   }
 
-  void insertConversationData(
-      senderid, recieverid, Function(ConversationTable) callback) async {
+  void insertConversationData( int? senderID,int? receiverID, Function(ConversationTable) callback) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final conversationTableDao =
         db?.conversationTableDAO as ConversationTableDAO;
     var userData =
-        ConversationTable(senderID: senderid, receiverID: recieverid);
-    conversationTableDao.getReceiverRecord(recieverid).then((value) {
+        ConversationTable(senderID: senderID, receiverID: receiverID);
+    conversationTableDao.getReceiverRecord(receiverID!).then((value) {
+
       if (value != null) {
         userData = value;
         callback(value);
       } else {
         conversationTableDao.insertConversationRecord(userData).then((value) {
-          conversationTableDao.getReceiverRecord(recieverid).then((newRecord) {
+          conversationTableDao.getReceiverRecord(receiverID).then((newRecord) {
             userData = newRecord!;
             callback(newRecord);
           });
@@ -273,7 +274,49 @@ class ChatViewModel extends BaseViewModel {
     });
   }
 
+  handleSocketCallbackMessage(SocketMessageModel message, ValueChanged<MessagesTable> messageTable) {
+    var msgType = message.type.toString();
+    var body = json.encode(message.data);
+    var body2 = json.decode(body);
+    if (msgType == SocketMessageType.Received.displayTitle) {
+      var item = MessagesTable.fromJson(body2);
+      var senderID = item.receiverID;
+      var receiverID = item.senderID;
+      var newObject = item;
+      newObject.isMine = false;
+      newObject.senderID = senderID;
+      newObject.receiverID = receiverID;
+     insertConversationData(senderID, receiverID, (conversationData) async{
+        newObject.conversationID = conversationData.id;
+        await  insertMessagesData(messageRecord: newObject);
+          messageTable(newObject);
+      });
+    }
+    else if(msgType == SocketMessageType.ReceivedAttachment.displayTitle)
+    {
+      var msgTable = body2['messageTable'];
+      var attachmentTable = body2['attachmentTable'];
+      var item = MessagesTable.fromJson(msgTable);
+      var senderID = item.receiverID;
+      var receiverID = item.senderID;
+      var newObject = item;
+      newObject.isMine = false;
+      newObject.senderID = senderID;
+      newObject.receiverID = receiverID;
+      //First check conversation is exits or not then use its id in message table
+     insertConversationData(senderID, receiverID, (conversationData) async{
+        newObject.conversationID = conversationData.id;
+        await insertMessagesData(messageRecord: newObject);
+        //Secondly create attachment table using message id
+        var itemAttachment = AttachmentsTable.fromJson(attachmentTable);
+        await insertAttachmentsData( itemAttachment,receiverID!, (msgID) {
+            newObject.id = msgID;
+            messageTable(newObject);
+        });
+      });
+    }
 
+  }
 
   Widget showMessageContentView(MessagesTable item,[bool isMineSide = true]) {
     if (item.isAttachments == false) {

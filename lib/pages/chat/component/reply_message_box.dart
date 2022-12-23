@@ -10,46 +10,49 @@ class ReplyCard extends StatelessWidget {
 
   final MessagesTable item;
   final ChatViewModel chatModel = ChatViewModel();
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width - 45,
-        ),
-        child: Card(
-          elevation: 1,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          // color: Color(0xffdcf8c6),
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 8,
-                  right: 50,
-                  top: 5,
-                  bottom: 10,
-                ),
-                child: chatModel.showMessageContentView(item,false),
-              ),
-              Positioned(
-                bottom: 4,
-                right: 10,
-                child:  Text(
-                  item.time.toString(),
-                  style: TextStyle(
-                    fontSize: 8,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+
+
+
+
+   @override
+   Widget build(BuildContext context) {
+     return Padding(
+       padding: const EdgeInsets.symmetric(vertical: 7.0),
+       child:
+       Row(
+         children: <Widget>[
+           Column(
+             crossAxisAlignment: CrossAxisAlignment.start,
+             children: <Widget>[
+               Container(
+                 constraints: BoxConstraints(
+                     maxWidth: MediaQuery.of(context).size.width * .6),
+                 padding: const EdgeInsets.all(15.0),
+                 decoration: const BoxDecoration(
+                   color: Color(0xc9e1dfdf),
+                   borderRadius: BorderRadius.only(
+                     topRight: Radius.circular(25),
+                     bottomLeft: Radius.circular(25),
+                     bottomRight: Radius.circular(25),
+                   ),
+                 ),
+                 child: chatModel.showMessageContentView(item),
+               ),
+
+             ],
+           ),
+           SizedBox(width: 15),
+           Text(
+             item.time.toString(),
+             style: TextStyle(
+               fontSize: 8,
+               color: Colors.grey[600],
+             ),
+           ),
+         ],
+       ),
+     );
+   }
+
 
 }
