@@ -98,4 +98,29 @@ class LocalNotificationService
     }
   }
 
+
+  static void customNotification(int notificationID,String message,String title) async {
+    try {
+      final id =notificationID ;//DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      const NotificationDetails notificationDetails = NotificationDetails(
+        android: AndroidNotificationDetails(
+          "pushnotificationapp",
+          "pushnotificationappchannel",
+          importance: Importance.max,
+          priority: Priority.high,
+        ),
+      );
+
+      await _notificationsPlugin.show(
+        id,
+        title,
+        message,
+        notificationDetails,
+
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
 }

@@ -7,7 +7,6 @@ import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/pages/chat/component/audio_chat_bubble.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:open_filex/open_filex.dart';
-
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../../custom_style/colors.dart';
@@ -48,11 +47,10 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
         double height = 2;
         view = SizedBox(height: height, width: width);
       } else if (widget.item.attachmentType == ChatMessageType.video.name) {
-         width = 80;
-         height = 80;
+        width = 80;
+        height = 80;
         view = SizedBox(height: height, width: width);
-      }
-      else{
+      } else {
         view = SizedBox(height: height, width: width);
       }
     });
@@ -93,13 +91,15 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
         }
       },
       (progress) {
-        setState(() {
-          if (attachmentType == ChatMessageType.image.name) {
-            view = showBlurImage(path, progress, true);
-          } else {
-            view = circularProgressIndicator(progress);
-          }
-        });
+        if (mounted) {
+          setState(() {
+            if (attachmentType == ChatMessageType.image.name) {
+              view = showBlurImage(path, progress, true);
+            } else {
+              view = circularProgressIndicator(progress);
+            }
+          });
+        }
       },
       (storagePath) async {
         path = storagePath;
@@ -128,21 +128,25 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
             }
           });
         } else {
-          setState(() {
-            if (attachmentType == ChatMessageType.image.name) {
-              view = showBlurImage(path, 0, true);
-            }
-          });
+          if (mounted) {
+            setState(() {
+              if (attachmentType == ChatMessageType.image.name) {
+                view = showBlurImage(path, 0, true);
+              }
+            });
+          }
         }
       }
     }, (progress) {
-      setState(() {
-        if (attachmentType == ChatMessageType.image.name) {
-          view = showBlurImage(path, progress, true);
-        } else {
-          view = circularProgressIndicator(progress);
-        }
-      });
+      if (mounted) {
+        setState(() {
+          if (attachmentType == ChatMessageType.image.name) {
+            view = showBlurImage(path, progress, true);
+          } else {
+            view = circularProgressIndicator(progress);
+          }
+        });
+      }
     }, (uploadUrl) async {
       var downloadData =
           await downloadMgr.getSingleDownloadRecord(widget.item.id!);
@@ -178,7 +182,7 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
     return CircularPercentIndicator(
       radius: 30.0,
       lineWidth: 3.0,
-      percent: progress/100,
+      percent: progress / 100,
       center: Text(
         "${(progress).round()}%",
         style: const TextStyle(color: Colors.black, fontSize: 10),
@@ -242,7 +246,7 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
               child: Container(
                 color: Colors.grey.withOpacity(0.1),
                 alignment: Alignment.center,
-                child:circularProgressIndicator(progress),
+                child: circularProgressIndicator(progress),
               ),
             ),
           ),

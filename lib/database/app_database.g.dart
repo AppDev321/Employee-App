@@ -101,7 +101,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `MessagesTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `conversationID` INTEGER, `senderID` INTEGER, `receiverID` INTEGER, `content` TEXT, `date` TEXT, `time` TEXT, `isMine` INTEGER, `isAttachments` INTEGER, `deliveryStatus` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ConversationTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lastMessageID` INTEGER, `senderID` INTEGER, `receiverID` INTEGER, `time` TEXT, `date` TEXT)');
+            'CREATE TABLE IF NOT EXISTS `ConversationTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lastMessageID` INTEGER, `senderID` INTEGER, `receiverID` INTEGER, `time` TEXT, `date` TEXT, `isNewMessage` INTEGER)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `AttachmentsTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `messageID` INTEGER, `attachmentUrl` TEXT, `thumbnailUrl` TEXT, `attachmentType` TEXT, `downloadID` INTEGER, `serverFileUrl` TEXT)');
         await database.execute(
@@ -472,7 +472,10 @@ class _$ConversationTableDAO extends ConversationTableDAO {
                   'senderID': item.senderID,
                   'receiverID': item.receiverID,
                   'time': item.time,
-                  'date': item.date
+                  'date': item.date,
+                  'isNewMessage': item.isNewMessage == null
+                      ? null
+                      : (item.isNewMessage! ? 1 : 0)
                 }),
         _conversationTableUpdateAdapter = UpdateAdapter(
             database,
@@ -484,7 +487,10 @@ class _$ConversationTableDAO extends ConversationTableDAO {
                   'senderID': item.senderID,
                   'receiverID': item.receiverID,
                   'time': item.time,
-                  'date': item.date
+                  'date': item.date,
+                  'isNewMessage': item.isNewMessage == null
+                      ? null
+                      : (item.isNewMessage! ? 1 : 0)
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -506,7 +512,10 @@ class _$ConversationTableDAO extends ConversationTableDAO {
             senderID: row['senderID'] as int?,
             receiverID: row['receiverID'] as int?,
             time: row['time'] as String?,
-            date: row['date'] as String?));
+            date: row['date'] as String?,
+            isNewMessage: row['isNewMessage'] == null
+                ? null
+                : (row['isNewMessage'] as int) != 0));
   }
 
   @override
@@ -518,7 +527,10 @@ class _$ConversationTableDAO extends ConversationTableDAO {
             senderID: row['senderID'] as int?,
             receiverID: row['receiverID'] as int?,
             time: row['time'] as String?,
-            date: row['date'] as String?),
+            date: row['date'] as String?,
+            isNewMessage: row['isNewMessage'] == null
+                ? null
+                : (row['isNewMessage'] as int) != 0),
         arguments: [id]);
   }
 
@@ -532,7 +544,10 @@ class _$ConversationTableDAO extends ConversationTableDAO {
             senderID: row['senderID'] as int?,
             receiverID: row['receiverID'] as int?,
             time: row['time'] as String?,
-            date: row['date'] as String?),
+            date: row['date'] as String?,
+            isNewMessage: row['isNewMessage'] == null
+                ? null
+                : (row['isNewMessage'] as int) != 0),
         arguments: [receiverID]);
   }
 

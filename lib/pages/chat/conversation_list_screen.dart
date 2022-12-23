@@ -2,23 +2,18 @@ import 'dart:ui';
 
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/database/model/conversation_table.dart';
 import 'package:hnh_flutter/widget/custom_edit_text_widget.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:hnh_flutter/widget/error_message.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../custom_style/colors.dart';
-import '../../database/model/call_history_table.dart';
 import '../../database/model/user_table.dart';
-import '../../repository/model/request/chat_user.dart';
-import '../../repository/model/response/contact_list.dart';
+import '../../notification/firebase_notification.dart';
 import '../../utils/controller.dart';
 import '../../view_models/chat_vm.dart';
-import '../../widget/color_text_round_widget.dart';
-import '../videocall/video_call_screen.dart';
 import 'component/call_history_list_widget.dart';
 import 'component/contact_list_widget.dart';
 import 'component/conversation_list_item_widget.dart';
@@ -31,21 +26,7 @@ class ConversationScreen extends StatefulWidget {
 }
 
 class _ConversationScreenState extends State<ConversationScreen> {
-  // List<ConversationTable> chatUsers = [
-  //   // ChatUsers("Jane Russel", "Awesome Setup", "", "Now"),
-  //   // ChatUsers("Glady's Murphy", "That's Great", "",
-  //   //     "Yesterday"),
-  //   // ChatUsers("Jorge Henry", "Hey where are you?", "",
-  //   //     "31 Mar"),
-  //   // ChatUsers("Philip Fox", "Busy! Call me in 20 mins",
-  //   //     "", "28 Mar"),
-  //   // ChatUsers("Debra Hawkins", "Thankyou, It's awesome",
-  //   //     "", "23 Mar"),
-  //   // ChatUsers("Jacob Pena", "will update you in evening",
-  //   //     "", "17 Mar"),
-  //   // ChatUsers("Andrey Jones", "Can you please share the file?",
-  //   //     "", "24 Feb"),
-  // ];
+
   var selectedTab = 0;
   late ChatViewModel chatViewModel;
   String? _errorMsg = "";
@@ -63,7 +44,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     chatViewModel = ChatViewModel();
 
 
-    getDataFromDB();
+   // getDataFromDB();
 
 
 
@@ -88,33 +69,38 @@ class _ConversationScreenState extends State<ConversationScreen> {
     });
 
 
-    //Handle web socket msg
-    FBroadcast.instance().register(Controller().socketMessageBroadCast,
-            (socketMessage, callback)
-        async {
-          chatViewModel.handleSocketCallbackMessage(socketMessage,(data){
-            setState(() {
-             // messagesList.add(data);
-            });
-          });
-        } ,context: this);
+
 
 
 
   }
 
   Future getDataFromDB() async{
+    //Handle web socket msg
+    FBroadcast.instance().register(Controller().socketMessageBroadCast,
+            (socketMessage, callback)
+        async {
+
+          chatViewModel.handleSocketCallbackMessage(socketMessage,conversationTable: (conversationData) async{
+            var conv = conversationData as ConversationTable;
+            await chatViewModel.insertLastMessageIDConversation(conv.receiverID!,isNewMessage: true).then((value){
+              getDataFromDB();
+            } );
+            LocalNotificationService.customNotification(conv.receiverID!,"Chat Message","New chat message arrived");
+          });
+        } ,context: this);
+
+
    var data =  contactList.isEmpty ?  await  chatViewModel.getContactDBList() : contactList;
    var listConversation = await  chatViewModel.getConversationList();
-
-    setState((){
       if(data.isNotEmpty) {
-        contactList = data;
-        filteredContactList = data;
-        conversationList = listConversation;
-        filteredConversationList = listConversation;
+        setState((){
+            contactList = data;
+            filteredContactList = data;
+            conversationList = listConversation;
+            filteredConversationList = listConversation;
+        });
       }
-    });
   }
 
 
@@ -122,8 +108,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+
+
     messagesController.dispose();
     callController.dispose();
+
   }
 
   @override
@@ -133,15 +122,30 @@ class _ConversationScreenState extends State<ConversationScreen> {
           title: const Text("Video Chat"),
         ),
         body:
-        Column(
-          children: [
-            Expanded(child:
-            selectedTab == 0
-                ? setConversationList()
-                : selectedTab == 1
-                ? setContactList()
-                : setCallHistoryList()),
-          ],
+        VisibilityDetector(
+          key: const Key('conversation-widget'),
+          onVisibilityChanged: (VisibilityInfo info) {
+            var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
+            if (isVisibleScreen) {
+                getDataFromDB();
+            }
+            else
+              {
+                FBroadcast.instance().unregister(this);
+              }
+          },
+          child: Column(
+            children: [
+              Expanded(
+                  child:
+                    selectedTab == 0
+                        ? setConversationList()
+                        : selectedTab == 1
+                        ? setContactList()
+                        : setCallHistoryList()
+              ),
+            ],
+          ),
         ),
 
         bottomNavigationBar: BottomNavigationBar(
@@ -213,8 +217,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         var item = filteredConversationList[index];
-                          return
-                            ConversationList(
+                          return ConversationList(
                               conversationData: item,
                           );
                       },

@@ -52,6 +52,9 @@ class _ConversationListState extends State<ConversationList> {
     return isDataExit
         ? GestureDetector(
             onTap: () {
+
+
+
               var data = CustomMessageObject(
                   userName: userData!.fullName.toString(),
                   conversationId: conversationTable.id!,
@@ -68,6 +71,17 @@ class _ConversationListState extends State<ConversationList> {
             Expanded(
               child: Row(
                 children: <Widget>[
+
+                  conversationTable.isNewMessage ==true?
+                  Container(
+                    padding:const EdgeInsets.all(6),
+                    decoration:const BoxDecoration(shape: BoxShape.circle, color: Colors.red),
+                    alignment: Alignment.center,
+                    child: Center()
+                  ):Center(),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   CircleAvatar(
                     backgroundImage: NetworkImage(userData?.picture ?? ""),
                     maxRadius: 30,

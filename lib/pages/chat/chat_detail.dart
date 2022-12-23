@@ -9,6 +9,7 @@ import 'package:hnh_flutter/database/model/messages_table.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
+import '../../notification/firebase_notification.dart';
 import '../../repository/model/request/socket_message_model.dart';
 import '../../utils/controller.dart';
 import '../../websocket/service/socket_service.dart';
@@ -52,10 +53,19 @@ class _ChatDetailPageState extends State<ChatDetailPage>
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
           (socketMessage, callback)
       async {
-        chatViewModel.handleSocketCallbackMessage(socketMessage,(data){
-          setState(() {
-            messagesList.add(data);
-          });
+        chatViewModel.handleSocketCallbackMessage(socketMessage, messageTable: (msgData){
+          var data = msgData as MessagesTable;
+          if(data.receiverID == widget.item.receiverid) {
+            setState(() {
+              messagesList.add(data);
+            });
+          }
+          else
+            {
+              LocalNotificationService.customNotification(data.receiverID! ,"Chat Message","New chat message arrived");
+            }
+        },conversationTable: (conversationData) async{
+          await chatViewModel.insertLastMessageIDConversation(conversationData.receiverID!,isNewMessage: true);
         });
       } ,context: this);
 

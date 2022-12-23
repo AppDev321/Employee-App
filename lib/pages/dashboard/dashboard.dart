@@ -6,13 +6,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
-import 'package:hnh_flutter/pages/videocall/audio_call_screen.dart';
+import 'package:hnh_flutter/pages/chat/conversation_list_screen.dart';
 import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
 import 'package:hnh_flutter/pages/overtime/overtime_list.dart';
 import 'package:hnh_flutter/pages/profile/setting_screen.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
-import 'package:hnh_flutter/pages/chat/conversation_list_screen.dart';
-import 'package:hnh_flutter/pages/videocall/video_call_screen.dart';
 import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +18,6 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
-import '../../database/app_database.dart';
-import '../../database/database_single_instance.dart';
 import '../../main.dart';
 import '../../provider/theme_provider.dart';
 import '../../repository/model/request/socket_message_model.dart';
@@ -38,7 +34,6 @@ import '../../widget/internet_not_available.dart';
 import '../../widget/name_icon_badge.dart';
 import '../../widget/navigation_drawer_new.dart';
 import '../attandence/add_attendance.dart';
-
 import '../notification_history/notification_list.dart';
 import '../overtime/add_overtime.dart';
 import '../profile/components/profile_pic.dart';
@@ -81,20 +76,17 @@ class _DashboardState extends State<Dashboard> {
 
   SocketService? chatService = null;
 
-
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
 
     APIWebService().postTokenToServer(map);
 
     _dashBoardViewModel = DashBoardViewModel();
 
     _dashBoardViewModel.initFireBaseConfig();
-  //  _dashBoardViewModel.getDashBoardData();
+    //  _dashBoardViewModel.getDashBoardData();
     _dashBoardViewModel.isAppUpdated().then((value) {
       if (value != null) {
         _dashBoardViewModel.showVersionDialog(
@@ -103,7 +95,7 @@ class _DashboardState extends State<Dashboard> {
     });
 
     _dashBoardViewModel.getBackgroundFCMNotificaiton();
-  //  _dashBoardViewModel.getEventsListResponse();
+    //  _dashBoardViewModel.getEventsListResponse();
     _dashBoardViewModel.addListener(() {
       attendance = _dashBoardViewModel.attendance;
       isCheckInOut = _dashBoardViewModel.isCheckInOut;
@@ -136,7 +128,8 @@ class _DashboardState extends State<Dashboard> {
                 Controller.PREF_KEY_USER_OBJECT, userDashboard);
 
             chatService = SocketService(
-                "${Controller.webSocketURL}${userDashboard.id}&device=emp",context);
+                "${Controller.webSocketURL}${userDashboard.id}&device=emp",
+                context);
           }
 
           Controller().setUserProfilePic(profileImageUrl);
@@ -156,11 +149,7 @@ class _DashboardState extends State<Dashboard> {
                 "assets/icons/overtime_icon.svg",
                 Colors.deepPurple));
           }
-
-
         });
-
-
       }
     });
 
@@ -201,28 +190,24 @@ class _DashboardState extends State<Dashboard> {
               profileImageUrl = value;
               Controller().setUserProfilePic(value);
             }),
-
       },
     );
 
-     //Handle web socket msg
-    FBroadcast.instance().register(
-        Controller().socketMessageBroadCast,
-            (socketMessage, callback) {
-          var message = socketMessage as SocketMessageModel;
-          var msgType = message.type.toString();
+    //Handle web socket msg
+    FBroadcast.instance().register(Controller().socketMessageBroadCast,
+        (socketMessage, callback) {
+      var message = socketMessage as SocketMessageModel;
+      var msgType = message.type.toString();
 
-          if(msgType == SocketMessageType.OfferReceived.displayTitle )
-          {
-            _dashBoardViewModel.handleSocketMessage(SocketMessageType.OfferReceived,message);
+      if (msgType == SocketMessageType.OfferReceived.displayTitle) {
+        _dashBoardViewModel.handleSocketMessage(
+            SocketMessageType.OfferReceived, message);
+      } else if (msgType == SocketMessageType.CallAlreadyAnswer.displayTitle) {
+        _dashBoardViewModel.handleSocketMessage(
+            SocketMessageType.CallAlreadyAnswer, message);
+      }
+    });
 
-          }else if(msgType == SocketMessageType.CallAlreadyAnswer.displayTitle)
-            {
-              _dashBoardViewModel.handleSocketMessage(SocketMessageType.CallAlreadyAnswer,message);
-            }
-            }
-
-    );
   }
 
   @override
@@ -234,11 +219,8 @@ class _DashboardState extends State<Dashboard> {
         key: const Key('Dashboard-widget'),
         onVisibilityChanged: (VisibilityInfo info) {
           var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
-
           if (isVisibleScreen) {
-
-              _dashBoardViewModel.getDashBoardData();
-
+            _dashBoardViewModel.getDashBoardData();
           }
         },
         child: Scaffold(
@@ -500,7 +482,6 @@ class _DashboardState extends State<Dashboard> {
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
                                   childAspectRatio: 2 / 2,
-
                                   crossAxisCount: 3,
                                 ),
                                 itemBuilder: (ctx, i) {
@@ -801,9 +782,9 @@ class _DashboardState extends State<Dashboard> {
                 onPressed: () {
                   setState(() {
                     var id = _textFieldController.text.toString();
-                   // Get.to(() => ConversationScreen());
-                 //  Get.to(() => VideoCallScreen(targetUserID: id));
-                 //   Get.to(()=>AudioCallScreen(tragetID: id));
+                    // Get.to(() => ConversationScreen());
+                    //  Get.to(() => VideoCallScreen(targetUserID: id));
+                    //   Get.to(()=>AudioCallScreen(tragetID: id));
                     Navigator.pop(context);
                   });
                 },

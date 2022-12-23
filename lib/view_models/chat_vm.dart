@@ -66,7 +66,14 @@ class ChatViewModel extends BaseViewModel {
     final conversationTableDao =
         db?.conversationTableDAO as ConversationTableDAO;
     var userData =
-        ConversationTable(senderID: senderID, receiverID: receiverID);
+        ConversationTable(senderID: senderID, receiverID: receiverID,);
+
+    var now = DateTime.now();
+    String formattedDate = Controller().getConvertedDate(now);
+    String formattedTime = Controller().getConvertedTime(now);
+    userData.date = formattedDate;
+    userData.time = formattedTime;
+
     conversationTableDao.getReceiverRecord(receiverID!).then((value) {
 
       if (value != null) {
@@ -83,17 +90,26 @@ class ChatViewModel extends BaseViewModel {
     });
   }
 
-  void insertLastMessageIDConversation(int recieverid) async {
+  Future<void> insertLastMessageIDConversation(int recieverid,{bool? isNewMessage=false}) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final conversationTableDao =
         db?.conversationTableDAO as ConversationTableDAO;
-    final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
+
     var record = await conversationTableDao.getReceiverRecord(recieverid);
     if (record != null) {
-      var latestMessage =
-          await getLastMessageIDByReceiver(recieverid);
+      var latestMessage = await getLastMessageIDByReceiver(recieverid);
       if (latestMessage != null) {
         record.lastMessageID = latestMessage.id;
+        record.isNewMessage = isNewMessage;
+
+
+
+        var now = DateTime.now();
+        String formattedDate = Controller().getConvertedDate(now);
+        String formattedTime = Controller().getConvertedTime(now);
+        record.date = formattedDate;
+        record.time = formattedTime;
+
         await conversationTableDao.updateConversationRecord(record);
       }
     }
@@ -274,7 +290,7 @@ class ChatViewModel extends BaseViewModel {
     });
   }
 
-  handleSocketCallbackMessage(SocketMessageModel message, ValueChanged<MessagesTable> messageTable) {
+  handleSocketCallbackMessage(SocketMessageModel message, {ValueChanged<dynamic>? messageTable,ValueChanged<dynamic>? conversationTable}) {
     var msgType = message.type.toString();
     var body = json.encode(message.data);
     var body2 = json.decode(body);
@@ -288,8 +304,14 @@ class ChatViewModel extends BaseViewModel {
       newObject.receiverID = receiverID;
      insertConversationData(senderID, receiverID, (conversationData) async{
         newObject.conversationID = conversationData.id;
+
         await  insertMessagesData(messageRecord: newObject);
+        if(messageTable!=null) {
           messageTable(newObject);
+        }
+        if(conversationTable != null) {
+          conversationTable(conversationData);
+        }
       });
     }
     else if(msgType == SocketMessageType.ReceivedAttachment.displayTitle)
@@ -309,10 +331,19 @@ class ChatViewModel extends BaseViewModel {
         await insertMessagesData(messageRecord: newObject);
         //Secondly create attachment table using message id
         var itemAttachment = AttachmentsTable.fromJson(attachmentTable);
+
         await insertAttachmentsData( itemAttachment,receiverID!, (msgID) {
             newObject.id = msgID;
-            messageTable(newObject);
+
+            if(messageTable!=null) {
+              messageTable(newObject);
+            }
+            if(conversationTable != null) {
+              conversationTable!(conversationData);
+            }
+
         });
+
       });
     }
 
