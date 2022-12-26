@@ -9,9 +9,10 @@ class ConversationTable {
   int? receiverID;
   String? time;
   String? date;
+  String? receiverName;
   bool? isNewMessage;
 
-  ConversationTable({this.id,this.lastMessageID, this.senderID,this.receiverID,this.time,this.date,this.isNewMessage});
+  ConversationTable({this.id,this.lastMessageID, this.senderID,this.receiverID,this.time,this.date,this.receiverName,this.isNewMessage});
 
 
 
@@ -22,6 +23,7 @@ class ConversationTable {
     lastMessageID = json["lastMessageID"];
     date = json["date"];
     time = json["time"];
+    receiverName = json['receiverName'];
     isNewMessage = json['isNewMessage'];
 
   }
@@ -34,6 +36,7 @@ class ConversationTable {
     data["lastMessageID"] = this.lastMessageID;
     data["date"] = this.date;
     data["time"] = this.time;
+    data['receiverName'] = this.receiverName;
     data['isNewMessage'] = this.isNewMessage;
     return data;
   }

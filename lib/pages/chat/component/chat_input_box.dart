@@ -185,6 +185,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                           cancelText: "Cancel",
                           slideToCancelText: "Slide to cancel",
                           recordIconWhenLockBackGroundColor: primaryColor,
+
                           recordIcon: Container(
                               decoration: BoxDecoration(
                                   color: primaryColor,

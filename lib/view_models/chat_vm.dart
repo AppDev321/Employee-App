@@ -32,6 +32,7 @@ class CustomMessageObject {
   int receiverid;
   int conversationId;
 
+
   CustomMessageObject(
       {required this.userName,
       required this.userPicture,
@@ -41,6 +42,10 @@ class CustomMessageObject {
 }
 
 class ChatViewModel extends BaseViewModel {
+
+  static bool showNotificationFromDashboard = true;
+
+
   Future<List<UserTable>> getContactDBList() async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final userDAO = db?.userTableDAO as UserTableDAO;
@@ -113,7 +118,17 @@ class ChatViewModel extends BaseViewModel {
         await conversationTableDao.updateConversationRecord(record);
       }
     }
+
   }
+
+  Future<void> updateConversationData(ConversationTable table) async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final conversationTableDao =
+    db?.conversationTableDAO as ConversationTableDAO;
+    await conversationTableDao.updateConversationRecord(table);
+  }
+
+
 
   Future<MessagesTable?> getLastMessageIDByReceiver(int recieverid) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;

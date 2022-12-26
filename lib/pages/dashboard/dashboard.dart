@@ -11,6 +11,7 @@ import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
 import 'package:hnh_flutter/pages/overtime/overtime_list.dart';
 import 'package:hnh_flutter/pages/profile/setting_screen.dart';
 import 'package:hnh_flutter/pages/shift/shift_list.dart';
+import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,9 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../bloc/connected_bloc.dart';
 import '../../custom_style/strings.dart';
+import '../../database/model/conversation_table.dart';
 import '../../main.dart';
+import '../../notification/firebase_notification.dart';
 import '../../provider/theme_provider.dart';
 import '../../repository/model/request/socket_message_model.dart';
 import '../../repository/model/response/events_list.dart';
@@ -28,6 +31,7 @@ import '../../repository/model/response/report_attendance_response.dart';
 import '../../utils/controller.dart';
 import '../../webservices/APIWebServices.dart';
 import '../../websocket/service/socket_service.dart';
+import '../../widget/awsome_banner_notification.dart';
 import '../../widget/color_text_round_widget.dart';
 import '../../widget/image_slider.dart';
 import '../../widget/internet_not_available.dart';
@@ -206,9 +210,53 @@ class _DashboardState extends State<Dashboard> {
         _dashBoardViewModel.handleSocketMessage(
             SocketMessageType.CallAlreadyAnswer, message);
       }
-    });
+      else{
+        ChatViewModel chatViewModel = ChatViewModel();
+        chatViewModel.handleSocketCallbackMessage(socketMessage,
+            conversationTable: (conversationData) async {
+              var conv = conversationData as ConversationTable;
+              await chatViewModel
+                  .insertLastMessageIDConversation(conv.receiverID!,
+                  isNewMessage: true)
+                  .then((value) {
+              });
+              if(ChatViewModel.showNotificationFromDashboard) {
+                LocalNotificationService.customNotification(conv.receiverID!);
+                final materialBanner = MaterialBanner(
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                  forceActionsBelow: true,
+                  content: AwesomeSnackbarContent(
+                    title: 'Message',
+                    message: 'A new message received',
+                    contentType: ContentType.success,
+                    // to configure for material banner
+                    inMaterialBanner: true,
+                    onCrossClick: (_) {
+
+                    },
+                  ),
+                  actions: const [SizedBox.shrink()],
+                );
+
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentMaterialBanner()
+                  ..showMaterialBanner(materialBanner);
+              }
+            });
+      }
+    }
+
+    );
+
+
+
 
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -222,6 +270,7 @@ class _DashboardState extends State<Dashboard> {
           if (isVisibleScreen) {
             _dashBoardViewModel.getDashBoardData();
           }
+
         },
         child: Scaffold(
           drawer: NavigationDrawer(),
@@ -291,6 +340,7 @@ class _DashboardState extends State<Dashboard> {
                   return Container();
                 }
               }),
+
               Expanded(
                 child: RefreshIndicator(
                   key: _refreshIndicatorKey,

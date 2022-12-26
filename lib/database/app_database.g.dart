@@ -101,7 +101,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `MessagesTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `conversationID` INTEGER, `senderID` INTEGER, `receiverID` INTEGER, `content` TEXT, `date` TEXT, `time` TEXT, `isMine` INTEGER, `isAttachments` INTEGER, `deliveryStatus` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ConversationTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lastMessageID` INTEGER, `senderID` INTEGER, `receiverID` INTEGER, `time` TEXT, `date` TEXT, `isNewMessage` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `ConversationTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lastMessageID` INTEGER, `senderID` INTEGER, `receiverID` INTEGER, `time` TEXT, `date` TEXT, `receiverName` TEXT, `isNewMessage` INTEGER)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `AttachmentsTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `messageID` INTEGER, `attachmentUrl` TEXT, `thumbnailUrl` TEXT, `attachmentType` TEXT, `downloadID` INTEGER, `serverFileUrl` TEXT)');
         await database.execute(
@@ -473,6 +473,7 @@ class _$ConversationTableDAO extends ConversationTableDAO {
                   'receiverID': item.receiverID,
                   'time': item.time,
                   'date': item.date,
+                  'receiverName': item.receiverName,
                   'isNewMessage': item.isNewMessage == null
                       ? null
                       : (item.isNewMessage! ? 1 : 0)
@@ -488,6 +489,7 @@ class _$ConversationTableDAO extends ConversationTableDAO {
                   'receiverID': item.receiverID,
                   'time': item.time,
                   'date': item.date,
+                  'receiverName': item.receiverName,
                   'isNewMessage': item.isNewMessage == null
                       ? null
                       : (item.isNewMessage! ? 1 : 0)
@@ -505,7 +507,8 @@ class _$ConversationTableDAO extends ConversationTableDAO {
 
   @override
   Future<List<ConversationTable>> getAllConversation() async {
-    return _queryAdapter.queryList('SELECT * FROM ConversationTable',
+    return _queryAdapter.queryList(
+        'SELECT * FROM ConversationTable order by isNewMessage desc,id desc',
         mapper: (Map<String, Object?> row) => ConversationTable(
             id: row['id'] as int?,
             lastMessageID: row['lastMessageID'] as int?,
@@ -513,6 +516,7 @@ class _$ConversationTableDAO extends ConversationTableDAO {
             receiverID: row['receiverID'] as int?,
             time: row['time'] as String?,
             date: row['date'] as String?,
+            receiverName: row['receiverName'] as String?,
             isNewMessage: row['isNewMessage'] == null
                 ? null
                 : (row['isNewMessage'] as int) != 0));
@@ -528,6 +532,7 @@ class _$ConversationTableDAO extends ConversationTableDAO {
             receiverID: row['receiverID'] as int?,
             time: row['time'] as String?,
             date: row['date'] as String?,
+            receiverName: row['receiverName'] as String?,
             isNewMessage: row['isNewMessage'] == null
                 ? null
                 : (row['isNewMessage'] as int) != 0),
@@ -545,6 +550,7 @@ class _$ConversationTableDAO extends ConversationTableDAO {
             receiverID: row['receiverID'] as int?,
             time: row['time'] as String?,
             date: row['date'] as String?,
+            receiverName: row['receiverName'] as String?,
             isNewMessage: row['isNewMessage'] == null
                 ? null
                 : (row['isNewMessage'] as int) != 0),

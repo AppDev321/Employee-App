@@ -35,6 +35,23 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
 
   @override
   void initState() {
+
+    super.initState();
+    generateViewUsingCheckSum();
+  }
+  @override
+  void didUpdateWidget(covariant AttachmentWidget oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+
+    generateViewUsingCheckSum();
+
+  }
+
+
+  generateViewUsingCheckSum()
+  {
+
     isDownload = widget.isDonwload;
     id = widget.item.id!;
     path = isDownload
@@ -60,7 +77,6 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
     } else {
       handleDownloadManager(widget.item.attachmentType!);
     }
-    super.initState();
   }
 
   @override

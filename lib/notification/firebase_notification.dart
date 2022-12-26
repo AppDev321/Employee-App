@@ -99,7 +99,7 @@ class LocalNotificationService
   }
 
 
-  static void customNotification(int notificationID,String message,String title) async {
+  static void customNotification(int notificationID,{String? message="A new message arrived",String? title="AFJ Message"}) async {
     try {
       final id =notificationID ;//DateTime.now().millisecondsSinceEpoch ~/ 1000;
       const NotificationDetails notificationDetails = NotificationDetails(

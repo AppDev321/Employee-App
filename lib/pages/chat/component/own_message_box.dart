@@ -18,16 +18,7 @@ class OwnMessageCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end ,
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-         /* Text(
-            item.time.toString(),
-            style: TextStyle(
-              fontSize: 8,
-              color: Colors.grey[600],
-            ),
-          )*/
-
           seenWithTime(true, item.time.toString()),
-
        SizedBox(width: 5,),
           Container(
             constraints: BoxConstraints(
@@ -47,8 +38,6 @@ class OwnMessageCard extends StatelessWidget {
       ),
     );
   }
-
-
 
   Widget seenWithTime(bool me,String time) => Column(
     crossAxisAlignment: CrossAxisAlignment.end,

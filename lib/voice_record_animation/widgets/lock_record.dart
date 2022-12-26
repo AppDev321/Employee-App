@@ -57,7 +57,7 @@ class _LockRecordState extends State<LockRecord> with TickerProviderStateMixin {
                               opacity: widget.soundRecorderState.second % 2 != 0
                                   ? 0
                                   : 1,
-                              child: const Icon(Icons.lock_outline_rounded)),
+                              child: const Icon(Icons.lock_outline_rounded,color: Colors.white,)),
                         ),
                         Align(
                           alignment: Alignment.topCenter,
@@ -67,7 +67,7 @@ class _LockRecordState extends State<LockRecord> with TickerProviderStateMixin {
                               opacity: widget.soundRecorderState.second % 2 == 0
                                   ? 0
                                   : 1,
-                              child: const Icon(Icons.lock_open_rounded)),
+                              child: const Icon(Icons.lock_open_rounded,color: Colors.white)),
                         ),
                       ],
                     ),

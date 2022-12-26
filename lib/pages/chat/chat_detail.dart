@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/database/model/messages_table.dart';
+import 'package:hnh_flutter/pages/videocall/audio_call_screen.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 
@@ -13,6 +14,7 @@ import '../../notification/firebase_notification.dart';
 import '../../repository/model/request/socket_message_model.dart';
 import '../../utils/controller.dart';
 import '../../websocket/service/socket_service.dart';
+import '../videocall/video_call_screen.dart';
 import 'component/chat_input_box.dart';
 import 'component/own_message_box.dart';
 import 'component/reply_message_box.dart';
@@ -45,7 +47,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
       setState(() {
         var data = value;
         messagesList = data;
-      //  _scrollDown();
+
       });
     });
 
@@ -59,10 +61,11 @@ class _ChatDetailPageState extends State<ChatDetailPage>
             setState(() {
               messagesList.add(data);
             });
+
           }
           else
             {
-              LocalNotificationService.customNotification(data.receiverID! ,"Chat Message","New chat message arrived");
+              LocalNotificationService.customNotification(data.receiverID! );
             }
         },conversationTable: (conversationData) async{
           await chatViewModel.insertLastMessageIDConversation(conversationData.receiverID!,isNewMessage: true);
@@ -132,16 +135,31 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                       ],
                     ),
                   ),
-                  const Icon(
-                    Icons.videocam,
-                    color: Colors.white,
+                  InkWell(
+                    onTap: (){
+                      Get.to(() => VideoCallScreen(
+                      targetUserID: widget.item.receiverid.toString()));
+                      },
+
+                    child: const Icon(
+                      Icons.videocam,
+                      color: Colors.white,
+                    ),
                   ),
                   SizedBox(
                     width: 20,
                   ),
-                  const Icon(
-                    Icons.call,
-                    color: Colors.white,
+                  InkWell(
+                    onTap: (){
+                      Get.to(() => AudioCallScreen(
+                          targetUserID: widget.item.receiverid.toString()));
+                    },
+
+
+                    child: const Icon(
+                      Icons.call,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
               ),
@@ -167,7 +185,6 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                           chatViewModel.insertLastMessageIDConversation(
                               widget.item.receiverid);
                           messagesList.add(msg);
-                          _scrollDown();
 
                           if(msg.isAttachments== false) {
                             var message = SocketMessageModel(
@@ -188,22 +205,24 @@ class _ChatDetailPageState extends State<ChatDetailPage>
         ));
   }
 
-  void _scrollDown() {
-    SchedulerBinding.instance?.addPostFrameCallback((_) {
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 1), curve: Curves.easeOut);
-    });
-  }
+
 
   Widget getChatList() {
     return ListView.builder(
-
+      reverse: messagesList.length >5 ?true:false,
       itemCount: messagesList.length + 1,
       shrinkWrap: true,
       //physics: const BouncingScrollPhysics(),
       controller: _scrollController,
       padding: const EdgeInsets.only(left: 5,right: 5),
-      itemBuilder: (context, index) {
+      itemBuilder: (context, index1) {
+        var index =index1;
+        if(messagesList.length >5)
+          {
+            int itemCount = messagesList.length + 1;
+            index= itemCount - 1 - index1;
+          }
+
         if (index == messagesList.length) {
           return Container(
             height: 20,

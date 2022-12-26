@@ -26,7 +26,6 @@ class ConversationScreen extends StatefulWidget {
 }
 
 class _ConversationScreenState extends State<ConversationScreen> {
-
   var selectedTab = 0;
   late ChatViewModel chatViewModel;
   String? _errorMsg = "";
@@ -34,19 +33,18 @@ class _ConversationScreenState extends State<ConversationScreen> {
   List<UserTable> filteredContactList = [];
   TextEditingController messagesController = TextEditingController();
   TextEditingController callController = TextEditingController();
-  List<ConversationTable> conversationList=[] ;
-  List<ConversationTable> filteredConversationList =[];
+  List<ConversationTable> conversationList = [];
+
+  List<ConversationTable> filteredConversationList = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    ChatViewModel.showNotificationFromDashboard = false;
     chatViewModel = ChatViewModel();
 
-
-   // getDataFromDB();
-
-
+    // getDataFromDB();
 
     chatViewModel.addListener(() {
       var checkErrorApiStatus = chatViewModel.getIsErrorRecevied();
@@ -67,52 +65,51 @@ class _ConversationScreenState extends State<ConversationScreen> {
         });
       }
     });
-
-
-
-
-
-
   }
 
-  Future getDataFromDB() async{
+  Future getDataFromDB() async {
     //Handle web socket msg
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
-            (socketMessage, callback)
-        async {
-
-          chatViewModel.handleSocketCallbackMessage(socketMessage,conversationTable: (conversationData) async{
-            var conv = conversationData as ConversationTable;
-            await chatViewModel.insertLastMessageIDConversation(conv.receiverID!,isNewMessage: true).then((value){
-              getDataFromDB();
-            } );
-            LocalNotificationService.customNotification(conv.receiverID!,"Chat Message","New chat message arrived");
-          });
-        } ,context: this);
-
-
-   var data =  contactList.isEmpty ?  await  chatViewModel.getContactDBList() : contactList;
-   var listConversation = await  chatViewModel.getConversationList();
-      if(data.isNotEmpty) {
-        setState((){
-            contactList = data;
-            filteredContactList = data;
-            conversationList = listConversation;
-            filteredConversationList = listConversation;
+        (socketMessage, callback) async {
+      chatViewModel.handleSocketCallbackMessage(socketMessage,
+          conversationTable: (conversationData) async {
+        var conv = conversationData as ConversationTable;
+        await chatViewModel
+            .insertLastMessageIDConversation(conv.receiverID!,
+                isNewMessage: true)
+            .then((value) {
+          getDataFromDB();
         });
-      }
-  }
+        LocalNotificationService.customNotification(
+            conv.receiverID!);
+      });
+    }, context: this);
 
+    var data = contactList.isEmpty
+        ? await chatViewModel.getContactDBList()
+        : contactList;
+    var listConversation = await chatViewModel.getConversationList();
+    if (data.isNotEmpty) {
+      setState(() {
+        contactList = data;
+        filteredContactList = data;
+        conversationList = listConversation;
+        filteredConversationList = listConversation;
+
+      });
+    }
+    setState(() {});
+  }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
 
-
     messagesController.dispose();
     callController.dispose();
 
+    ChatViewModel.showNotificationFromDashboard = true;
   }
 
   @override
@@ -121,33 +118,27 @@ class _ConversationScreenState extends State<ConversationScreen> {
         appBar: AppBar(
           title: const Text("Video Chat"),
         ),
-        body:
-        VisibilityDetector(
+        body: VisibilityDetector(
           key: const Key('conversation-widget'),
           onVisibilityChanged: (VisibilityInfo info) {
             var isVisibleScreen = info.visibleFraction == 1.0 ? true : false;
             if (isVisibleScreen) {
-                getDataFromDB();
+              getDataFromDB();
+            } else {
+              FBroadcast.instance().unregister(this);
             }
-            else
-              {
-                FBroadcast.instance().unregister(this);
-              }
           },
           child: Column(
             children: [
               Expanded(
-                  child:
-                    selectedTab == 0
-                        ? setConversationList()
-                        : selectedTab == 1
-                        ? setContactList()
-                        : setCallHistoryList()
-              ),
+                  child: selectedTab == 0
+                      ? setConversationList()
+                      : selectedTab == 1
+                          ? setContactList()
+                          : setCallHistoryList()),
             ],
           ),
         ),
-
         bottomNavigationBar: BottomNavigationBar(
             onTap: (int index) {
               setState(() {
@@ -198,40 +189,36 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 text: "Search...",
                 controller: messagesController,
                 onTextChanged: (value) {
-                setState(() {
-                });
+                  setState(() {});
                 },
               ),
             ),
-            filteredConversationList.isNotEmpty?
-            Expanded(
-              child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    ListView.builder(
-                      itemCount: filteredConversationList.length,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(top: 16),
-
-                      itemBuilder: (context, index) {
-                        var item = filteredConversationList[index];
-                          return ConversationList(
-                              conversationData: item,
-                          );
-                      },
-                    )
-                  ],
-                ),
-              ),
-            ):
-            const Expanded(
-                child: Center(
-                  child: ErrorMessageWidget(
-                    label: ConstantData.noDataFound,
-                  ),
-                ))
+            filteredConversationList.isNotEmpty
+                ? Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          ListView.builder(
+                            itemCount: filteredConversationList.length,
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.only(top: 16),
+                            itemBuilder: (context, index) {
+                              var item = filteredConversationList[index];
+                              return ConversationList(conversationData: item);
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                : const Expanded(
+                    child: Center(
+                    child: ErrorMessageWidget(
+                      label: ConstantData.noDataFound,
+                    ),
+                  ))
           ],
         ),
       ),
@@ -253,58 +240,47 @@ class _ConversationScreenState extends State<ConversationScreen> {
               },
             ),
           ),
-          filteredContactList.isEmpty ?
-              const ErrorMessageWidget(label: ConstantData.noDataFound)
+          filteredContactList.isEmpty
+              ? const ErrorMessageWidget(label: ConstantData.noDataFound)
               : showContactListItems(filteredContactList),
         ],
       ),
     );
   }
 
-
-
-
-
   Widget showContactListItems(List<UserTable> filteredContactList) {
     return Expanded(
       child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child:
-        ContactListItem(
-          filteredContactList:filteredContactList,
-          controller: callController,
-          callBack: (data) {
-          var conversationDAta = data as ConversationTable;
-          setState(() {
-
-            conversationList.add(conversationDAta);
-            //filteredConversationList.add(conversationDAta);
-          });
-        },
-        )
-      ),
+          physics: const BouncingScrollPhysics(),
+          child: ContactListItem(
+            filteredContactList: filteredContactList,
+            controller: callController,
+            callBack: (data) {
+              var conversationDAta = data as ConversationTable;
+              setState(() {
+                conversationList.add(conversationDAta);
+                //filteredConversationList.add(conversationDAta);
+              });
+            },
+          )),
     );
   }
 
   Widget setCallHistoryList() {
     return Padding(
         padding: const EdgeInsets.all(0),
-        child: CallHistoryListWidget(futureFunction: chatViewModel.getCallHistoryList())
-    );
+        child: CallHistoryListWidget(
+            futureFunction: chatViewModel.getCallHistoryList()));
   }
 
-  searchFromMessageList(String text)  {
+  searchFromMessageList(String text) {
     //  filteredContactList.clear();
     if (text.isEmpty) {
-      filteredConversationList  = conversationList;
-    }
-    else {
+      filteredConversationList = conversationList;
+    } else {
       filteredConversationList = conversationList
-          .where((string) =>
-          string.id
-              .toString()
-              .toLowerCase()
-              .contains(text.toLowerCase()))
+          .where((item) =>
+          item.receiverName.toString().toLowerCase().contains(text.toLowerCase()))
           .toList();
     }
     return filteredConversationList;

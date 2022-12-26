@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:wakelock/wakelock.dart';
 
 import '../../repository/model/request/socket_message_model.dart';
 import '../../repository/model/response/get_dashboard.dart';
 import '../../utils/controller.dart';
 import '../../utils/size_config.dart';
+import '../../view_models/chat_vm.dart';
 import '../../websocket/audio_video_call.dart';
 import '../../widget/custom_text_widget.dart';
 import '../../widget/dial_user_pic.dart';
@@ -52,15 +54,24 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
 
   late AudioVideoCall audioVideoCall;
 
+  late ChatViewModel chatViewModel;
+
   void endCall(bool isUserClosedCall,{bool isFromDialog =false}) async {
 
 
+    Wakelock.disable();
+
+    if(socketMessageModel != null) {
+      chatViewModel.insertCallEndDetailInDB(socketMessageModel!, targetUserId);
+    }
 
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
     audioVideoCall.endCall(isUserClosedCall);
 
-  //  Navigator.of(context).pop(true);
+    if (!isFromDialog) {
+      Navigator.of(context).pop(true);
+    }
   }
 
   void switchCamera() {
@@ -150,6 +161,8 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
 
   @override
   void initState() {
+    chatViewModel = ChatViewModel();
+
     loadPreferenceUserData();
 
     initRenderers();
@@ -177,6 +190,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
               });
 
               audioVideoCall.createOffer();
+
             }
           else
             {
@@ -184,7 +198,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
                 callTime = "Calling";
               });
             }
-
+          chatViewModel.insertCallDetailInDB(message);
         }
       else if (msgType == SocketMessageType.OfferReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
