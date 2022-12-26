@@ -6,7 +6,7 @@ import '../model/user_table.dart';
 
 @dao
 abstract class ConversationTableDAO {
-  @Query('SELECT * FROM ConversationTable')//orderbydecendent
+  @Query('SELECT * FROM ConversationTable order by isNewMessage desc,id desc ')//orderbydecendent
   Future<List<ConversationTable>> getAllConversation();
   @Query('SELECT * FROM ConversationTable WHERE id = :id')
   Future<ConversationTable?> getConversationRecord(String id);

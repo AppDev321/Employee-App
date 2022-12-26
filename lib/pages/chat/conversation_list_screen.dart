@@ -206,7 +206,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             filteredConversationList.isNotEmpty?
             Expanded(
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -214,7 +214,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       itemCount: filteredConversationList.length,
                       shrinkWrap: true,
                       padding: const EdgeInsets.only(top: 16),
-                      physics: const NeverScrollableScrollPhysics(),
+
                       itemBuilder: (context, index) {
                         var item = filteredConversationList[index];
                           return ConversationList(
