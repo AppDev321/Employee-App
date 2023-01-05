@@ -112,6 +112,7 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
       });
 
       audioVideoCall.onAddRemoteStream = ((stream) {
+      debugPrint("remote stream coming==>>");
         setState(() {
           _remoteVideoRenderer.srcObject = stream;
         });
@@ -120,17 +121,15 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
       audioVideoCall.peerConnectionStatus = () {
         if (isIncomingCall) {
           if (socketMessageModel != null) {
-            if (socketMessageModel!.type
-                .toString()
-                .contains(SocketMessageType.OfferReceived.displayTitle)) {
-              audioVideoCall
-                  .setRemoteDescription(jsonEncode(socketMessageModel?.data));
-              audioVideoCall.answerCall(socketMessageModel!);
 
-              setState(() {
-                isRemoteUserOnline = true;
-              });
+
+            if (socketMessageModel!.type.toString().contains(SocketMessageType.IncomingCall.displayTitle)) {
+                audioVideoCall.joinCall(socketMessageModel!);
+                setState(() {
+                  callingStatus = "Connecting...";
+                });
             }
+
           }
         } else {
           audioVideoCall.checkUserIsOnline();
@@ -141,18 +140,11 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
 
   @override
   void initState() {
-
     Wakelock.enable();
     loadPreferenceUserData();
-
     initRenderers();
-
     handleSocketBroadCasting();
-
     chatViewModel = ChatViewModel();
-
-
-
     super.initState();
   }
 
@@ -161,7 +153,7 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
         (socketMessage, callback) {
       var message = socketMessage as SocketMessageModel;
-      print("Message Received Socket: ${message.toJson()}");
+      debugPrint("Message Received Socket -- video call: ${message.toJson()}");
       var msgType = message.type.toString();
 
       if (msgType == SocketMessageType.CallResponse.displayTitle) {
@@ -195,17 +187,14 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
         chatViewModel.insertCallDetailInDB(message);
 
       } else if (msgType == SocketMessageType.OfferReceived.displayTitle) {
-        /*audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-        Controller().showConfirmationMsgDialog(
-            context, message.callerName.toString(), "Incoming Call", "Answer",
-            (value) {
-          if (value) {
-            audioVideoCall.answerCall(message);
-            setState(() {
-              isRemoteUserOnline = true;
-            });
-          }
-        });*/
+        audioVideoCall.setRemoteDescription(jsonEncode(message.data));
+
+
+        audioVideoCall.answerCall(message);
+        setState(() {
+          isRemoteUserOnline = true;
+        });
+
       } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
         audioVideoCall.startTimer();
@@ -234,7 +223,6 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
     audioVideoCall.disposeAudioVideoCall();
     await _remoteVideoRenderer.dispose();
     await _localVideoRenderer.dispose();
-
     super.dispose();
   }
 
@@ -254,6 +242,7 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
             child: RawMaterialButton(
               onPressed: () {
                 //audioVideoCall.checkUserIsOnline();
+               // audioVideoCall.sendIceCandidatesToSocket();
               },
               shape: const CircleBorder(),
               elevation: 2.0,

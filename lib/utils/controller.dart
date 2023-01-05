@@ -21,9 +21,10 @@ class Controller {
      // "http://afjdemo.hnhtechpk.com/api";
   //  "http://afjdev.hnhtechpk.com/api";
 
-//static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
-//static const String webSocketURL  = "ws://192.168.18.69:6001/video-call?token=";
- static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
+  static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
+  //static const String webSocketURL  = "ws://192.168.18.69:6001/video-call?token=";
+  //static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
+
 
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
@@ -476,15 +477,20 @@ enum SocketMessageType {
 
   //From App to Web
   StartCall,
+  JoinCall,
   CreateOffer,
   AnswerCall,
   SendIceCandidate,
+  SendCandidate,
   RejectCall,
   CallEnd,
   Send,
   SendAttachment,
-  //From Web to App
 
+
+
+  //From Web to App
+  IncomingCall,
   CallResponse,
   AnswerReceived,
   OfferReceived,
@@ -504,36 +510,50 @@ extension MessageTypeExtention on SocketMessageType {
     switch (this) {
       case SocketMessageType.StartCall:
         return 'is-client-ready';
+      case SocketMessageType.JoinCall:
+        return 'join-call';
       case SocketMessageType.CreateOffer:
-        return 'store_offer';
+        return 'store-offer';
       case SocketMessageType.AnswerCall:
-        return 'send_answer';
+        return 'send-answer';
       case SocketMessageType.SendIceCandidate:
-        return 'store_candidate';
+        return 'store-candidate';
+      case SocketMessageType.SendCandidate:
+        return 'send-candidate';
       case SocketMessageType.RejectCall:
-        return 'offer_reject';
+        return 'offer-reject';
       case SocketMessageType.CallEnd:
-        return 'call_end';
+        return 'end-call';
+
       case SocketMessageType.Send:
         return 'send';
       case SocketMessageType.SendAttachment:
         return 'send-attachment';
 
 
+
+      /*      WEB to Mobile         */
+
+
       case SocketMessageType.CallResponse:
-        return 'call_response';
+        return 'client-status';
+      case SocketMessageType.IncomingCall:
+        return 'incoming-call';
       case SocketMessageType.AnswerReceived:
-        return 'answer';
+        return 'answer-received';
       case SocketMessageType.OfferReceived:
-        return 'offer_received';
+        return 'offer-received';
       case SocketMessageType.CallReject:
-        return 'call_reject';
+        return 'call-reject';
       case SocketMessageType.CallClosed:
-        return 'call_closed';
+        return 'end-call';
       case SocketMessageType.ICECandidate:
-        return 'ice_receive_candidate';
+        return 'candidate';
       case SocketMessageType.CallAlreadyAnswer:
-        return 'call_already_answered';
+        return 'call-already-answered';
+
+
+
       case SocketMessageType.Received:
         return 'received';
       case SocketMessageType.ReceivedAttachment:

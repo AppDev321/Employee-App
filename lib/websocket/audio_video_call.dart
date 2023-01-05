@@ -1,14 +1,14 @@
-import 'dart:async';
-import 'dart:collection';
-import 'dart:convert';
+import "dart:async";
+import "dart:collection";
+import "dart:convert";
 
-import 'package:crypto/crypto.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:hnh_flutter/websocket/service/socket_service.dart';
-import 'package:just_audio/just_audio.dart';
+import "package:crypto/crypto.dart";
+import "package:flutter_webrtc/flutter_webrtc.dart";
+import "package:hnh_flutter/websocket/service/socket_service.dart";
+import "package:just_audio/just_audio.dart";
 
-import '../repository/model/request/socket_message_model.dart';
-import '../utils/controller.dart';
+import "../repository/model/request/socket_message_model.dart";
+import "../utils/controller.dart";
 
 typedef StreamStateCallback = void Function(MediaStream stream);
 typedef SreamTimerCallback = void Function(String timer);
@@ -37,6 +37,7 @@ class AudioVideoCall {
   SocketService socketService = SocketService();
   AudioPlayer? player;
 
+
   final Map<String, dynamic> offerVideoCallConstraints = {
     "mandatory": {
       "OfferToReceiveAudio": true,
@@ -59,7 +60,8 @@ class AudioVideoCall {
   };
 
 
-  var secret =  "8f60119eb0b51b511bf4b0fb7838e36c";//"d130e4a5701c5f287a1506c974544631a774cc3370325aa6570e56e95bd8cfe6";
+  var secret =  "8f60119eb0b51b511bf4b0fb7838e36c";
+ //"d130e4a5701c5f287a1506c974544631a774cc3370325aa6570e56e95bd8cfe6";
 
   var uuID = ((DateTime.now().millisecond/1000) + (12 * 3600)).toString();
 
@@ -81,7 +83,7 @@ void startTimer() {
       } else {
         _start = _start + 1;
         _timmer = getTimerTime(_start);
-        timerCount(_timmer);
+      //  timerCount(_timmer);
       }
     });
   }
@@ -90,7 +92,7 @@ void startTimer() {
     int minutes = (start ~/ 60);
     String sMinute = '';
     if (minutes.toString().length == 1) {
-      sMinute = '0$minutes';
+      sMinute = "0$minutes";
     } else {
       sMinute = minutes.toString();
     }
@@ -98,59 +100,54 @@ void startTimer() {
     int seconds = (start % 60);
     String sSeconds = '';
     if (seconds.toString().length == 1) {
-      sSeconds = '0$seconds';
+      sSeconds = "0$seconds";
     } else {
       sSeconds = seconds.toString();
     }
 
-    return '$sMinute:$sSeconds';
+    return "$sMinute:$sSeconds";
   }
 
   _createPeerConnection() async {
     Map<String, dynamic> configuration = {
       "iceServers":
       [
-            {
+          /*  {
            "url": "stun:vmi808920.contaboserver.net:3479"
           // "url": "stun:gotcha.im:8000"
-            },
+            },*/
 
-           {
-        // 'url': 'turn:gotcha.im:8000',
-         'url': 'turn:vmi808920.contaboserver.net:3479',
-            'username': uuID,
-            'credential': generateSHA1MAC(uuID,secret)
-           }
-      ]
+        {
+          "url": "stun:relay.metered.ca:80",
+        },
+        {
+          "url": "turn:relay.metered.ca:80",
+          "username": "b4d93dc44330adba2c73192a",
+          "credential": "9IdESWTGHDtWHGkg",
+        },
+        {
+          "url": "turn:relay.metered.ca:443",
+          "username": "b4d93dc44330adba2c73192a",
+          "credential": "9IdESWTGHDtWHGkg",
+        },
+        {
+          "url": "turn:relay.metered.ca:443?transport=tcp",
+          "username": "b4d93dc44330adba2c73192a",
+          "credential": "9IdESWTGHDtWHGkg",
+        },
 
+
+      ],
+      //"iceTransportPolicy": "relay",
     };
 
     _localStream = await getUserMedia();
 
+
+
     RTCPeerConnection pc = await createPeerConnection(configuration,
         isVideoCall ? offerVideoCallConstraints : offerAudioConstraints);
-
-    pc.addStream(_localStream);
-
-    pc.onIceCandidate = (e) {
-      if (e.candidate != null) {
-        HashMap<String, dynamic> candidate = HashMap.of({
-          'candidate': e.candidate.toString(),
-          'sdpMid': e.sdpMid.toString(),
-          'sdpMLineIndex': e.sdpMlineIndex,
-        });
-        var iceCandidate = SocketMessageModel(
-            type: SocketMessageType.SendIceCandidate.displayTitle,
-            sendTo: targetUserId,
-            sendFrom: currentUserId,
-            data: candidate);
-        socketService.sendMessageToWebSocket(iceCandidate);
-      }
-    };
-
-    pc.onIceConnectionState = (e) {
-      print("ice exception: $e");
-    };
+    print("configuration == ${configuration["iceServers"]}" );
 
     pc.onAddStream = (stream) {
       stopCallerTone();
@@ -160,8 +157,58 @@ void startTimer() {
       });*/
     };
 
+    pc.addStream(_localStream);
+
+    pc.onIceCandidate = (e) {
+      if (e.candidate != null) {
+        HashMap<String, dynamic> candidate = HashMap.of({
+          "candidate": e.candidate.toString(),
+          "sdpMid": e.sdpMid.toString(),
+          "sdpMLineIndex": e.sdpMlineIndex,
+        });
+        var iceCandidate = SocketMessageModel(
+            type: SocketMessageType.SendIceCandidate.displayTitle,
+            sendTo: targetUserId,
+            sendFrom: currentUserId,
+            data: candidate);
+
+        socketService.sendMessageToWebSocket(iceCandidate);
+
+        //****** Send Candidate as per backend handle logic *********
+        var sendCandidate = SocketMessageModel(
+            type: SocketMessageType.SendCandidate.displayTitle,
+            sendTo: targetUserId,
+            sendFrom: currentUserId,
+            data: candidate);
+            socketService.sendMessageToWebSocket(sendCandidate);
+        //********************************************
+
+
+      }
+    };
+
+    pc.onIceGatheringState = (RTCIceGatheringState state) {
+      print("ICE gathering state changed: $state");
+    };
+
+    pc.onConnectionState = (RTCPeerConnectionState state) {
+      print("Connection state change: $state");
+
+    };
+
+    pc.onSignalingState = (RTCSignalingState state) {
+      print("Signaling state change: $state");
+    };
+
+
+    pc.onIceConnectionState = (state) {
+      print("ICE Connection state changed: $state");
+    };
+
+
+
     /*  pc.onTrack = (event) async {
-      if (event.track.kind == 'video' && event.streams.isNotEmpty) {
+      if (event.track.kind == "video" && event.streams.isNotEmpty) {
         var renderer = RTCVideoRenderer();
         await renderer.initialize();
         renderer.srcObject = event.streams[0];
@@ -197,15 +244,15 @@ void startTimer() {
 
   getUserMedia() async {
     final Map<String, dynamic> mediaConstraints = {
-      'audio': true,
-      'video': {
-        'mandatory': {
-          'minWidth':
-              '640', // Provide your own width, height and frame rate here
-          'minHeight': '480',
-          'minFrameRate': '30',
+      "audio": true,
+      "video": {
+        "mandatory": {
+          "minWidth":
+              "640", // Provide your own width, height and frame rate here
+          "minHeight": "480",
+          "minFrameRate": "30",
         },
-        'facingMode': 'user',
+        "facingMode": "user",
       }
     };
 
@@ -220,7 +267,7 @@ void startTimer() {
 
   void initializeState() {
     player = AudioPlayer();
-    //player?.setAsset('caller_tone.mp3');
+    //player?.setAsset("caller_tone.mp3");
 
     _createPeerConnection().then((pc) {
       _peerConnection = pc;
@@ -232,7 +279,7 @@ void startTimer() {
 
   void disposeAudioVideoCall() async {
   stopCallerTone();
-    _localStream.dispose();
+    await _localStream.dispose();
     await player?.dispose();
     if (_peerConnection != null) {
       _peerConnection?.close();
@@ -256,7 +303,7 @@ void startTimer() {
       startCallerTone();
 
       RTCSessionDescription description = await _peerConnection!
-          //  .createOffer({'offerToReceiveVideo': 1, 'offerToReceiveAudio': 1});
+
           .createOffer(
               isVideoCall ? offerVideoCallConstraints : offerAudioConstraints);
 
@@ -284,9 +331,26 @@ void startTimer() {
     }
   }
 
+
+
+  void joinCall(SocketMessageModel answer) async {
+
+    var answerCall = SocketMessageModel(
+        type: SocketMessageType.JoinCall.displayTitle,
+        sendTo: targetUserId,
+        sendFrom: currentUserId,
+        offerConnectionId: answer.offerConnectionId,
+        data: true);
+    socketService.sendMessageToWebSocket(answerCall);
+
+  }
+
+
+
+
   void answerCall(SocketMessageModel answer) async {
     RTCSessionDescription description = await _peerConnection!
-        // .createAnswer({'offerToReceiveVideo': 1, 'offerToReceiveAudio': 1});
+        // .createAnswer({"offerToReceiveVideo": 1, "offerToReceiveAudio": 1});
         .createAnswer(
             isVideoCall ? offerVideoCallConstraints : offerAudioConstraints);
     _peerConnection!.setLocalDescription(description);
@@ -302,8 +366,41 @@ void startTimer() {
         offerConnectionId: answer.offerConnectionId,
         data: offerData);
 
+
     socketService.sendMessageToWebSocket(answerCall);
+
+
+    _peerConnection!.onIceCandidate = (e) {
+      if (e.candidate != null) {
+        HashMap<String, dynamic> candidate = HashMap.of({
+          "candidate": e.candidate.toString(),
+          "sdpMid": e.sdpMid.toString(),
+          "sdpMLineIndex": e.sdpMlineIndex,
+        });
+
+        var iceCandidate = SocketMessageModel(
+            type: SocketMessageType.SendIceCandidate.displayTitle,
+            sendTo: targetUserId,
+            sendFrom: currentUserId,
+            data: candidate);
+        socketService.sendMessageToWebSocket(iceCandidate);
+
+        //****** Send Candidate as per backend handle logic *********
+        var sendCandidate = SocketMessageModel(
+            type: SocketMessageType.SendCandidate.displayTitle,
+            sendTo: targetUserId,
+            sendFrom: currentUserId,
+            data: candidate);
+        socketService.sendMessageToWebSocket(sendCandidate);
+        //********************************************
+      }
+    };
+
+
   }
+
+
+
 
   void setRemoteDescription(String jsonString) async {
     final body = json.decode(jsonString);
@@ -311,18 +408,20 @@ void startTimer() {
     // dynamic session = await jsonDecode(jsonString);
 
     //String sdp = write(session, null);
-
     RTCSessionDescription description =
-        RTCSessionDescription(body['sdp'], _offer ? 'answer' : 'offer');
-
+        RTCSessionDescription(body["sdp"], _offer ? "answer" : "offer");
     await _peerConnection!.setRemoteDescription(description);
+    _peerConnection!.onAddStream = (stream) {
+      onAddRemoteStream(stream);
+    };
   }
+
 
   void addCandidate(String jsonString) async {
     dynamic session = await jsonDecode(jsonString);
 
     dynamic candidate = RTCIceCandidate(
-        session['candidate'], session['sdpMid'], session['sdpMLineIndex']);
+        session["candidate"], session["sdpMid"], session["sdpMLineIndex"]);
 
     await _peerConnection!.addCandidate(candidate);
   }
