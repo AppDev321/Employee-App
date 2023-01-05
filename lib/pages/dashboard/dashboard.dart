@@ -203,6 +203,7 @@ class _DashboardState extends State<Dashboard> {
       var message = socketMessage as SocketMessageModel;
       var msgType = message.type.toString();
 
+
       if (msgType == SocketMessageType.OfferReceived.displayTitle) {
         _dashBoardViewModel.handleSocketMessage(
             SocketMessageType.OfferReceived, message);
@@ -816,11 +817,11 @@ class _DashboardState extends State<Dashboard> {
               },
               keyboardType: TextInputType.number,
               controller: _textFieldController,
-              decoration: InputDecoration(hintText: "Enter target user id"),
+              decoration: const InputDecoration(hintText: "Enter target user id"),
             ),
             actions: <Widget>[
               ElevatedButton(
-                child: Text('CANCEL'),
+                child: const Text('CANCEL'),
                 onPressed: () {
                   setState(() {
                     Navigator.pop(context);
@@ -828,7 +829,7 @@ class _DashboardState extends State<Dashboard> {
                 },
               ),
               ElevatedButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   setState(() {
                     var id = _textFieldController.text.toString();
