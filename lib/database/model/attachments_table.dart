@@ -5,13 +5,14 @@ class AttachmentsTable {
   @PrimaryKey(autoGenerate: true)
   int? id;
   int? messageID;
+  int? conversationID;
   String? attachmentUrl;
   String? thumbnailUrl;
   String? attachmentType;
   int? downloadID;
   String? serverFileUrl;
 
-  AttachmentsTable({this.id,this.messageID, this.attachmentUrl,this.thumbnailUrl,this.attachmentType,this.downloadID,this.serverFileUrl});
+  AttachmentsTable({this.id,this.messageID, this.conversationID,this.attachmentUrl,this.thumbnailUrl,this.attachmentType,this.downloadID,this.serverFileUrl});
 
 
 

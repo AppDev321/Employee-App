@@ -20,7 +20,6 @@ import '../database/model/attachment_file_status_table.dart';
 import '../database/model/call_history_table.dart';
 import '../database/model/messages_table.dart';
 import '../pages/chat/component/attachment_box_widget.dart';
-
 import '../repository/model/request/socket_message_model.dart';
 import '../repository/model/response/contact_list.dart';
 import '../utils/controller.dart';
@@ -118,22 +117,32 @@ class ChatViewModel extends BaseViewModel {
         await conversationTableDao.updateConversationRecord(record);
       }
     }
-
   }
 
   Future<void> updateConversationData(ConversationTable table) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final conversationTableDao =
-    db?.conversationTableDAO as ConversationTableDAO;
+        db?.conversationTableDAO as ConversationTableDAO;
     await conversationTableDao.updateConversationRecord(table);
   }
 
-
+  void deleteConversation(List<ConversationTable> data) async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+    final conversationTableDAO =
+        db?.conversationTableDAO as ConversationTableDAO;
+    final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
+    final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
+    for (var item in data) {
+      await conversationTableDAO.deleteConversationRecord(item.id as int);
+      await messagesTableDAO.deleteAllConversationMessage(item.id as int);
+      await attachmentsTableDAO.deleteConversationAttachment(item.id as int);
+    }
+  }
 
   Future<MessagesTable?> getLastMessageIDByReceiver(int recieverid) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
-    return  await messagesTableDAO.getLastMessageRecordByReceiverID(recieverid);
+    return await messagesTableDAO.getLastMessageRecordByReceiverID(recieverid);
   }
 
   Future<List<ConversationTable>> getConversationList() async {
@@ -172,8 +181,12 @@ class ChatViewModel extends BaseViewModel {
 
 
     await messagesTableDAO.insertMessagesRecord(userData);
+    userData = await getLastMessageIDByReceiver(customMessageObject!.receiverid) as MessagesTable;
+
     return userData;
   }
+
+
 
   Future<MessagesTable?> getSingleMessageRecord(int id) async {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
@@ -185,6 +198,17 @@ class ChatViewModel extends BaseViewModel {
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
     return await messagesTableDAO.getAllMessages(conversationID);
+  }
+
+  void deleteMessages(List<MessagesTable> data) async {
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
+
+    final messagesTableDAO = db?.messagesTableDAO as MessagesTableDAO;
+    final attachmentsTableDAO = db?.attachmentTableDAO as AttachmentsTableDAO;
+    for (var item in data) {
+      await messagesTableDAO.deleteMessagesRecord(item.id as int);
+      await attachmentsTableDAO.deleteMessageAttachment(item.id as int);
+    }
   }
 
   //insert data to attachment table
@@ -239,8 +263,6 @@ class ChatViewModel extends BaseViewModel {
 
     return item;
   }
-
-
 
   void insertCallDetailInDB(SocketMessageModel socketMessageModel) async {
     var now = DateTime.now();

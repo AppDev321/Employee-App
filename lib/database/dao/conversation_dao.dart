@@ -6,11 +6,11 @@ import '../model/user_table.dart';
 
 @dao
 abstract class ConversationTableDAO {
-  @Query('SELECT * FROM ConversationTable order by isNewMessage desc,id desc ')//orderbydecendent
+ // @Query('SELECT * FROM ConversationTable order by isNewMessage desc,id desc ')//orderbydecendent
+  @Query('SELECT conv.* FROM ConversationTable as conv ,  messagestable as msg  where msg.id = conv.lastMessageID order by isNewMessage desc,id desc ')
   Future<List<ConversationTable>> getAllConversation();
   @Query('SELECT * FROM ConversationTable WHERE id = :id')
   Future<ConversationTable?> getConversationRecord(String id);
-
 
   @Query('SELECT * FROM ConversationTable WHERE receiverID = :receiverID limit 1')
   Future<ConversationTable?> getReceiverRecord(int receiverID);

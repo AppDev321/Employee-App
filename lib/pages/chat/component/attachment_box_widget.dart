@@ -7,7 +7,9 @@ import 'package:hnh_flutter/database/model/attachments_table.dart';
 import 'package:hnh_flutter/pages/chat/component/audio_chat_bubble.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../custom_style/colors.dart';
 import '../../../repository/model/request/socket_message_model.dart';
@@ -32,22 +34,30 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
   double width = Get.mediaQuery.size.width / 5;
   double height = Get.mediaQuery.size.height / 5.5;
   bool isDownload = false;
+  String? filename;
 
   @override
   void initState() {
 
     super.initState();
     generateViewUsingCheckSum();
+    generateThumbnail();
   }
   @override
   void didUpdateWidget(covariant AttachmentWidget oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-
     generateViewUsingCheckSum();
-
   }
 
+  void generateThumbnail() async {
+    filename = await VideoThumbnail.thumbnailFile(
+      video: widget.item.attachmentUrl!,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: ImageFormat.WEBP,
+      quality: 75,
+    );
+  }
 
   generateViewUsingCheckSum()
   {
@@ -213,14 +223,16 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
     return SizedBox(
       width: width,
       height: height,
-      child: Stack(fit: StackFit.expand, children: [
+      child: Stack(
+          fit: StackFit.expand,
+          children: [
+         Image.file(File(filename ?? "")),
         // VideoPlayer(videoPlayerController),
         ClipRRect(
           // Clip it cleanly.
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1,),
             child: Container(
-              color: Colors.grey.withOpacity(0.1),
               alignment: Alignment.center,
               child: ElevatedButton(
                   onPressed: () {

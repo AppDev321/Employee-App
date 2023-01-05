@@ -89,11 +89,9 @@ class LoginViewModel extends BaseViewModel {
         //Save user login details
         if(results.data!.token!.isNotEmpty) {
           Controller().setAuthToken(results.data!.token!);
-
           Codec<String, String> stringToBase64 = utf8.fuse(base64);
           String encyptedEmail = stringToBase64.encode(body.email.toString());
           String encyptedPassword = stringToBase64.encode(body.password.toString());
-
 
           Controller().setEmail( encyptedEmail);
           Controller().setPassword( encyptedPassword);

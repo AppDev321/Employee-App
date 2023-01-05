@@ -103,9 +103,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ConversationTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lastMessageID` INTEGER, `senderID` INTEGER, `receiverID` INTEGER, `time` TEXT, `date` TEXT, `receiverName` TEXT, `isNewMessage` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `AttachmentsTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `messageID` INTEGER, `attachmentUrl` TEXT, `thumbnailUrl` TEXT, `attachmentType` TEXT, `downloadID` INTEGER, `serverFileUrl` TEXT)');
+            'CREATE TABLE IF NOT EXISTS `AttachmentsTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `messageID` INTEGER, `conversationID` INTEGER, `attachmentUrl` TEXT, `thumbnailUrl` TEXT, `attachmentType` TEXT, `downloadID` INTEGER, `serverFileUrl` TEXT)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `DownloadStatusTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `attachmentId` INTEGER, `type` TEXT, `percentage` REAL, `isCompleted` INTEGER, `fileSize` REAL)');
+            'CREATE TABLE IF NOT EXISTS `DownloadStatusTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `attachmentId` INTEGER, `conversationId` INTEGER, `type` TEXT, `percentage` REAL, `isCompleted` INTEGER, `fileSize` REAL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -435,6 +435,13 @@ class _$MessagesTableDAO extends MessagesTableDAO {
   }
 
   @override
+  Future<void> deleteAllConversationMessage(int conversationID) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM MessagesTable WHERE conversationID = ?1',
+        arguments: [conversationID]);
+  }
+
+  @override
   Future<void> deleteMessagesRecord(int id) async {
     await _queryAdapter.queryNoReturn('DELETE FROM MessagesTable WHERE id = ?1',
         arguments: [id]);
@@ -508,7 +515,7 @@ class _$ConversationTableDAO extends ConversationTableDAO {
   @override
   Future<List<ConversationTable>> getAllConversation() async {
     return _queryAdapter.queryList(
-        'SELECT * FROM ConversationTable order by isNewMessage desc,id desc',
+        'SELECT conv.* FROM ConversationTable as conv ,  messagestable as msg  where msg.id = conv.lastMessageID order by isNewMessage desc,id desc',
         mapper: (Map<String, Object?> row) => ConversationTable(
             id: row['id'] as int?,
             lastMessageID: row['lastMessageID'] as int?,
@@ -596,6 +603,7 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
             (AttachmentsTable item) => <String, Object?>{
                   'id': item.id,
                   'messageID': item.messageID,
+                  'conversationID': item.conversationID,
                   'attachmentUrl': item.attachmentUrl,
                   'thumbnailUrl': item.thumbnailUrl,
                   'attachmentType': item.attachmentType,
@@ -609,6 +617,7 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
             (AttachmentsTable item) => <String, Object?>{
                   'id': item.id,
                   'messageID': item.messageID,
+                  'conversationID': item.conversationID,
                   'attachmentUrl': item.attachmentUrl,
                   'thumbnailUrl': item.thumbnailUrl,
                   'attachmentType': item.attachmentType,
@@ -632,6 +641,7 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
         mapper: (Map<String, Object?> row) => AttachmentsTable(
             id: row['id'] as int?,
             messageID: row['messageID'] as int?,
+            conversationID: row['conversationID'] as int?,
             attachmentUrl: row['attachmentUrl'] as String?,
             thumbnailUrl: row['thumbnailUrl'] as String?,
             attachmentType: row['attachmentType'] as String?,
@@ -645,6 +655,7 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
         mapper: (Map<String, Object?> row) => AttachmentsTable(
             id: row['id'] as int?,
             messageID: row['messageID'] as int?,
+            conversationID: row['conversationID'] as int?,
             attachmentUrl: row['attachmentUrl'] as String?,
             thumbnailUrl: row['thumbnailUrl'] as String?,
             attachmentType: row['attachmentType'] as String?,
@@ -656,15 +667,8 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
   @override
   Future<AttachmentsTable?> getAttachmentByMsgId(int messageID) async {
     return _queryAdapter.query(
-        'SELECT * FROM AttachmentsTable WHERE messageID = ?1',
-        mapper: (Map<String, Object?> row) => AttachmentsTable(
-            id: row['id'] as int?,
-            messageID: row['messageID'] as int?,
-            attachmentUrl: row['attachmentUrl'] as String?,
-            thumbnailUrl: row['thumbnailUrl'] as String?,
-            attachmentType: row['attachmentType'] as String?,
-            downloadID: row['downloadID'] as int?,
-            serverFileUrl: row['serverFileUrl'] as String?),
+        'SELECT * FROM AttachmentsTable WHERE messageID = ?1 order by id desc limit 1',
+        mapper: (Map<String, Object?> row) => AttachmentsTable(id: row['id'] as int?, messageID: row['messageID'] as int?, conversationID: row['conversationID'] as int?, attachmentUrl: row['attachmentUrl'] as String?, thumbnailUrl: row['thumbnailUrl'] as String?, attachmentType: row['attachmentType'] as String?, downloadID: row['downloadID'] as int?, serverFileUrl: row['serverFileUrl'] as String?),
         arguments: [messageID]);
   }
 
@@ -679,6 +683,39 @@ class _$AttachmentsTableDAO extends AttachmentsTableDAO {
   Future<void> deleteAllAttachments() async {
     await _queryAdapter
         .queryNoReturn('DELETE FROM AttachmentsTable where id>0');
+  }
+
+  @override
+  Future<AttachmentsTable?> deleteConversationAttachment(
+      int conversationID) async {
+    return _queryAdapter.query(
+        'DELETE FROM AttachmentsTable WHERE conversationID = ?1',
+        mapper: (Map<String, Object?> row) => AttachmentsTable(
+            id: row['id'] as int?,
+            messageID: row['messageID'] as int?,
+            conversationID: row['conversationID'] as int?,
+            attachmentUrl: row['attachmentUrl'] as String?,
+            thumbnailUrl: row['thumbnailUrl'] as String?,
+            attachmentType: row['attachmentType'] as String?,
+            downloadID: row['downloadID'] as int?,
+            serverFileUrl: row['serverFileUrl'] as String?),
+        arguments: [conversationID]);
+  }
+
+  @override
+  Future<AttachmentsTable?> deleteMessageAttachment(int messageID) async {
+    return _queryAdapter.query(
+        'DELETE FROM AttachmentsTable WHERE messageID = ?1',
+        mapper: (Map<String, Object?> row) => AttachmentsTable(
+            id: row['id'] as int?,
+            messageID: row['messageID'] as int?,
+            conversationID: row['conversationID'] as int?,
+            attachmentUrl: row['attachmentUrl'] as String?,
+            thumbnailUrl: row['thumbnailUrl'] as String?,
+            attachmentType: row['attachmentType'] as String?,
+            downloadID: row['downloadID'] as int?,
+            serverFileUrl: row['serverFileUrl'] as String?),
+        arguments: [messageID]);
   }
 
   @override
@@ -707,6 +744,7 @@ class _$DownloadTableDAO extends DownloadTableDAO {
             (DownloadStatusTable item) => <String, Object?>{
                   'id': item.id,
                   'attachmentId': item.attachmentId,
+                  'conversationId': item.conversationId,
                   'type': item.type,
                   'percentage': item.percentage,
                   'isCompleted': item.isCompleted == null
@@ -721,6 +759,7 @@ class _$DownloadTableDAO extends DownloadTableDAO {
             (DownloadStatusTable item) => <String, Object?>{
                   'id': item.id,
                   'attachmentId': item.attachmentId,
+                  'conversationId': item.conversationId,
                   'type': item.type,
                   'percentage': item.percentage,
                   'isCompleted': item.isCompleted == null
@@ -746,6 +785,7 @@ class _$DownloadTableDAO extends DownloadTableDAO {
         mapper: (Map<String, Object?> row) => DownloadStatusTable(
             id: row['id'] as int?,
             attachmentId: row['attachmentId'] as int?,
+            conversationId: row['conversationId'] as int?,
             type: row['type'] as String?,
             percentage: row['percentage'] as double?,
             isCompleted: row['isCompleted'] == null
@@ -761,6 +801,7 @@ class _$DownloadTableDAO extends DownloadTableDAO {
         mapper: (Map<String, Object?> row) => DownloadStatusTable(
             id: row['id'] as int?,
             attachmentId: row['attachmentId'] as int?,
+            conversationId: row['conversationId'] as int?,
             type: row['type'] as String?,
             percentage: row['percentage'] as double?,
             isCompleted: row['isCompleted'] == null

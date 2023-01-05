@@ -158,7 +158,6 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                           color: primaryColor, shape: BoxShape.circle),
                       child: InkWell(
                         onTap: () {
-
                           sentMessage(ChatMessageType.text);
                         },
                         child: Icon(
@@ -461,22 +460,21 @@ class _ChatInputBoxState extends State<ChatInputBox> {
       case ChatMessageType.audio:
       case ChatMessageType.video:
       var msgData = await chatViewModel.insertMessagesData(
-          msg: type.name,
-          hasAttachment: true,
-          customMessageObject: widget.item,
-          isMine: isMine);
+            msg: type.name,
+            hasAttachment: true,
+            customMessageObject: widget.item,
+            isMine: isMine);
 
-      var attachmentData = AttachmentsTable(attachmentType: type.name, attachmentUrl: attachmentURl);
-      var data = await chatViewModel.insertAttachmentsData(
-          attachmentData, widget.item.receiverid, (msgID) {
-        msgData.id = msgID;
-        widget.onTextMessageSent(msgData);
-      });
-      widget.attachmentInsertedCallback(data);
-
-
-
-
+        var attachmentData = AttachmentsTable(
+            attachmentType: type.name,
+            conversationID: widget.item.conversationId,
+            attachmentUrl: attachmentURl);
+        var data = await chatViewModel.insertAttachmentsData(
+            attachmentData, widget.item.receiverid, (msgID) {
+          msgData.id = msgID;
+          widget.onTextMessageSent(msgData);
+        });
+        widget.attachmentInsertedCallback(data);
         break;
     }
   }
