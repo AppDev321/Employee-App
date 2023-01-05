@@ -1,7 +1,10 @@
+import 'dart:collection';
 import 'dart:ui';
 
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/database/model/conversation_table.dart';
 import 'package:hnh_flutter/widget/custom_edit_text_widget.dart';
@@ -14,6 +17,7 @@ import '../../database/model/user_table.dart';
 import '../../notification/firebase_notification.dart';
 import '../../utils/controller.dart';
 import '../../view_models/chat_vm.dart';
+import 'chat_detail.dart';
 import 'component/call_history_list_widget.dart';
 import 'component/contact_list_widget.dart';
 import 'component/conversation_list_item_widget.dart';
@@ -34,8 +38,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
   TextEditingController messagesController = TextEditingController();
   TextEditingController callController = TextEditingController();
   List<ConversationTable> conversationList = [];
-
   List<ConversationTable> filteredConversationList = [];
+  HashSet<ConversationTable> selectedItem = HashSet();
+  bool isMultiSelectionEnabled = false;
+
 
   @override
   void initState() {
@@ -116,7 +122,68 @@ class _ConversationScreenState extends State<ConversationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Video Chat"),
+          title: isMultiSelectionEnabled? Text(getSelectedItemCount()): Text("Video Chat"),
+          leading: isMultiSelectionEnabled
+              ? IconButton(
+              onPressed: () {
+                selectedItem.clear();
+                isMultiSelectionEnabled = false;
+                setState(() {});
+              },
+              icon: Icon(Icons.close))
+              : null,
+          actions: [
+            Visibility(
+                visible: selectedItem.isNotEmpty,
+                child: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    Controller().showMessageDialog(context,
+                      "Are you sure you want to delete ?","Delete",
+                          (){
+                            chatViewModel.deleteConversation(selectedItem.toList());
+                            selectedItem.forEach((nature) {
+                              conversationList.remove(nature);
+                              filteredConversationList = conversationList;
+                            });
+                            isMultiSelectionEnabled = false;
+                            selectedItem.clear();
+                            setState(() {});
+                         Navigator.of(context, rootNavigator: true).pop('dialog');
+
+                      },);
+
+                  },
+                )
+            ),
+            Visibility(
+                visible: selectedItem.isNotEmpty,
+                child: IconButton(
+                  icon: Icon(Icons.share),
+                  onPressed: () {},
+                )),
+            /*Visibility(
+              visible: isMultiSelectionEnabled,
+              child: IconButton(
+                icon: Icon(
+                  Icons.select_all,
+                  color: selectedItem.length == natureList.length
+                      ? Colors.black
+                      : Colors.white,
+                ),
+                onPressed: () {
+                  if (selectedItem.length == natureList.length) {
+                    selectedItem.clear();
+                  } else {
+                    for (int index = 0; index < natureList.length; index++) {
+                      selectedItem.add(natureList[index]);
+                    }
+                  }
+                  setState(() {});
+                },
+              )),*/
+          ],
+
         ),
         body: VisibilityDetector(
           key: const Key('conversation-widget'),
@@ -206,7 +273,43 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             padding: const EdgeInsets.only(top: 16),
                             itemBuilder: (context, index) {
                               var item = filteredConversationList[index];
-                              return ConversationList(conversationData: item);
+                              return InkWell(
+                                  onTap: () {
+                                   doMultiSelection(item);
+                                  },
+                                  onLongPress: () {
+                                  setState(() {
+                                    isMultiSelectionEnabled = true;
+                                   doMultiSelection(item);
+                                  });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right:18.0),
+                                    child: Stack(
+                                      alignment: Alignment.centerRight,
+                                      children: [
+                                        ConversationList(
+                                            conversationData: item,
+
+                                          callBack: (data){
+                                              if(isMultiSelectionEnabled==false)
+                                                {
+                                                  Get.to(() => ChatDetailPage(item: data));
+                                                }
+                                          },
+                                            ),
+                                        Visibility(
+                                        visible: isMultiSelectionEnabled,
+                                        child: Icon(
+                                          selectedItem.contains(item)
+                                              ? Icons.check_circle
+                                              : Icons.radio_button_unchecked,
+                                          size: 30,
+
+                                        ))
+                                      ],
+                                    ),
+                                  ));
                             },
                           )
                         ],
@@ -264,6 +367,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
             },
           )),
     );
+  }
+
+  String getSelectedItemCount() {
+    return selectedItem.isNotEmpty
+        ? selectedItem.length.toString() + " item selected"
+        : "No item selected";
+  }
+
+  void doMultiSelection(item) {
+    if (isMultiSelectionEnabled) {
+      if (selectedItem.contains(item)) {
+        selectedItem.remove(item);
+      } else {
+        selectedItem.add(item);
+      }
+      setState(() {});
+    } else {
+      //Other logic
+    }
   }
 
   Widget setCallHistoryList() {

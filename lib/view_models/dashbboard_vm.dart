@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -166,7 +167,6 @@ class DashBoardViewModel extends BaseViewModel {
     } else {
       if (results.code == 200) {
         setIsErrorReceived(false);
-        notificationCount = results.data!.count;
       } else {
         var errorString = "";
         for (int i = 0; i < results.errors!.length; i++) {

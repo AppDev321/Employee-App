@@ -16,6 +16,10 @@ abstract class MessagesTableDAO {
   Future<MessagesTable?> getLastMessageRecordByReceiverID(int targetUserID);
 
 
+  @Query('DELETE FROM MessagesTable WHERE conversationID = :conversationID')
+  Future<void> deleteAllConversationMessage(int conversationID);
+
+
   @Query('DELETE FROM MessagesTable WHERE id = :id')
   Future<void> deleteMessagesRecord(int id);
 

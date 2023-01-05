@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:hnh_flutter/database/app_database.dart';
 import 'package:hnh_flutter/pages/dashboard/dashboard.dart';
 import 'package:hnh_flutter/pages/login/login.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
@@ -150,7 +149,6 @@ class MyApp extends StatelessWidget {
         ],
         child:  Consumer<ThemeModel>(
                 builder: (context, ThemeModel themeNotifier, child) {
-
                    primaryColor =  themeNotifier.isDark ? primaryDarkColor : primaryBlueColor;
                    cardThemeBaseColor =  themeNotifier.isDark ? Colors.black : Colors.white;
                    borderColor = themeNotifier.isDark ? blackThemeTextColor  : textFielBoxBorderColor;

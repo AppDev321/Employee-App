@@ -65,7 +65,6 @@ class Data {
 
   String? token;
   String? message;
-  int count=0;
 
 
   Data({this.token});
@@ -73,14 +72,12 @@ class Data {
   Data.fromJson(Map<String, dynamic> json) {
     token = json['token'];
     message = json['message'];
-    count = json['count'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['token'] = this.token;
     data['message'] = this.message;
-    data['count'] = this.count;
     return data;
   }
 }

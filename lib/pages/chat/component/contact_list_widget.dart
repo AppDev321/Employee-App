@@ -57,7 +57,6 @@ class _ContactListItemState extends State<ContactListItem> {
   @override
   Widget build(BuildContext context) {
     filteredContactList = searchFromContactList(callController.text);
-
     return filteredContactList.isNotEmpty
         ? ListView.builder(
             itemCount: filteredContactList.length,

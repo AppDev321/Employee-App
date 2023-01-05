@@ -38,7 +38,6 @@ import '../../widget/internet_not_available.dart';
 import '../../widget/name_icon_badge.dart';
 import '../../widget/navigation_drawer_new.dart';
 import '../attandence/add_attendance.dart';
-import '../notification_history/notification_list.dart';
 import '../overtime/add_overtime.dart';
 import '../profile/components/profile_pic.dart';
 import '../reports/attendance_report.dart';
@@ -214,49 +213,36 @@ class _DashboardState extends State<Dashboard> {
         ChatViewModel chatViewModel = ChatViewModel();
         chatViewModel.handleSocketCallbackMessage(socketMessage,
             conversationTable: (conversationData) async {
-              var conv = conversationData as ConversationTable;
-              await chatViewModel
-                  .insertLastMessageIDConversation(conv.receiverID!,
-                  isNewMessage: true)
-                  .then((value) {
-              });
-              if(ChatViewModel.showNotificationFromDashboard) {
-                LocalNotificationService.customNotification(conv.receiverID!);
-                final materialBanner = MaterialBanner(
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
-                  forceActionsBelow: true,
-                  content: AwesomeSnackbarContent(
-                    title: 'Message',
-                    message: 'A new message received',
-                    contentType: ContentType.success,
-                    // to configure for material banner
-                    inMaterialBanner: true,
-                    onCrossClick: (_) {
+          if (ChatViewModel.showNotificationFromDashboard) {
+            var conv = conversationData as ConversationTable;
+            await chatViewModel
+                .insertLastMessageIDConversation(conv.receiverID!,
+                    isNewMessage: true)
+                .then((value) {});
+            LocalNotificationService.customNotification(conv.receiverID!);
+            final materialBanner = MaterialBanner(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              forceActionsBelow: true,
+              content: AwesomeSnackbarContent(
+                title: 'Message',
+                message: 'A new message received',
+                contentType: ContentType.success,
+                // to configure for material banner
+                inMaterialBanner: true,
+                onCrossClick: (_) {},
+              ),
+              actions: const [SizedBox.shrink()],
+            );
 
-                    },
-                  ),
-                  actions: const [SizedBox.shrink()],
-                );
-
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentMaterialBanner()
-                  ..showMaterialBanner(materialBanner);
-              }
-            });
+            ScaffoldMessenger.of(context)
+              ..hideCurrentMaterialBanner()
+              ..showMaterialBanner(materialBanner);
+          }
+        });
       }
-    }
-
-    );
-
-
-
-
+    });
   }
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +256,6 @@ class _DashboardState extends State<Dashboard> {
           if (isVisibleScreen) {
             _dashBoardViewModel.getDashBoardData();
           }
-
         },
         child: Scaffold(
           drawer: NavigationDrawer(),
@@ -314,7 +299,11 @@ class _DashboardState extends State<Dashboard> {
                           })),
                   Container(
                     child: NamedIcon(
-                      onTap: () => Get.to(() => const NotificationList()),
+                      onTap: () {
+                        print(userDashboard.name);
+                      },
+
+                      // Get.to(() => const NotificationList()),
                       notificationCount: notificationCount,
                       iconData: Icons.notifications,
                       color: colorText,

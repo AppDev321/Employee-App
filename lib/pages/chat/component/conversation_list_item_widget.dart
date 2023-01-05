@@ -10,8 +10,9 @@ import '../chat_detail.dart';
 
 class ConversationList extends StatefulWidget {
   final ConversationTable conversationData;
+  ValueChanged<CustomMessageObject> callBack;
 
-  ConversationList({Key? key, required this.conversationData})
+  ConversationList({Key? key, required this.conversationData,required this.callBack})
       : super(key: key);
 
   @override
@@ -58,7 +59,9 @@ class _ConversationListState extends State<ConversationList> {
 
   @override
   Widget build(BuildContext context) {
-    return isDataExit
+    return
+      // widget.isMultiSelectionEnabled?
+      isDataExit
         ? GestureDetector(
             onTap: () {
               var data = CustomMessageObject(
@@ -67,9 +70,11 @@ class _ConversationListState extends State<ConversationList> {
                   senderId: conversationTable.senderID!,
                   receiverid: conversationTable.receiverID!,
                   userPicture: userData!.picture.toString());
-              Get.to(() => ChatDetailPage(item: data));
+              widget.callBack(data);
+             // Get.to(() => ChatDetailPage(item: data));
               //   Get.to(() =>  IndividualChats());
             },
+
             child: Container(
               padding: const EdgeInsets.only(
                   left: 16, right: 16, top: 10, bottom: 10),
@@ -92,7 +97,7 @@ class _ConversationListState extends State<ConversationList> {
                         CircleAvatar(
                           backgroundImage:
                               NetworkImage(userData?.picture ?? ""),
-                          maxRadius: 30,
+                          maxRadius: 25,
                         ),
                         const SizedBox(
                           width: 16,
@@ -129,6 +134,9 @@ class _ConversationListState extends State<ConversationList> {
               ),
             ),
           )
-        : Container();
+        : Container()
+          // :
+          // Center()
+    ;
   }
 }

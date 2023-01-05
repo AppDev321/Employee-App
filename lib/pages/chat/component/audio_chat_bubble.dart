@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:just_audio/just_audio.dart';
@@ -15,16 +16,19 @@ class AudioBubble extends StatefulWidget {
 
 class _AudioBubbleState extends State<AudioBubble> {
   final player = AudioPlayer();
-  Duration? duration;
+  Duration duration = Duration.zero;
+  AudioPlayer advancedAudioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     player.setFilePath(widget.filepath).then((value) {
       setState(() {
-        duration = value;
+        duration = value!;
       });
     });
+
+
   }
   @override
   void dispose() {
@@ -82,13 +86,32 @@ class _AudioBubbleState extends State<AudioBubble> {
                   return Column(
                     children: [
                       const SizedBox(height: 4),
-                      LinearProgressIndicator(
-                        minHeight: 2,
-                        backgroundColor:Colors.grey,
-                        value: snapshot.data!.inMilliseconds /
-                            (duration?.inMilliseconds ?? 1),
-                      ),
+                      Container(
+                        height:20,
+                        child: Slider(
+                            thumbColor: Colors.black,
+                            activeColor: Colors.black,
+                            inactiveColor: Colors.grey,
+                            value: snapshot.data!.inSeconds.toDouble() ,
+                                     // (duration.inMilliseconds ?? 1),
+                            min:0,
+                            max: duration.inSeconds.toDouble(),
+                            onChanged: (double value){
+                              setState((){
+                                changeToSecond(value.toInt());
+                              });
 
+                            }
+                            ),
+                      ),
+                      // // child:
+                      // LinearProgressIndicator(
+                      //   // semanticsLabel: ,
+                      //   minHeight: 2,
+                      //   backgroundColor:Colors.grey,
+                      //   value: snapshot.data!.inMilliseconds /
+                      //       (duration?.inMilliseconds ?? 1),
+                      // ),
                       const SizedBox(height: 6),
                       Row(
                         mainAxisAlignment:
@@ -104,7 +127,7 @@ class _AudioBubbleState extends State<AudioBubble> {
 
                             ),
                           ),
-                           CustomTextWidget(text: duration!=null?prettyDuration(duration!):"00:00",size: 10)
+                       //    CustomTextWidget(text: duration!=null?prettyDuration(duration!):"00:00",size: 10)
 
                         ],
                       ),
@@ -118,6 +141,12 @@ class _AudioBubbleState extends State<AudioBubble> {
           ),
         ],
       );
+  }
+
+  void changeToSecond(int second){
+    Duration newDuration = Duration(seconds: second);
+    player.seek(newDuration);
+    player.reactive;
   }
 
   String prettyDuration(Duration d) {

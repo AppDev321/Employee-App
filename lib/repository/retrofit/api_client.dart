@@ -25,8 +25,6 @@ import '../model/response/report_lateness_response.dart';
 import '../model/response/report_leave_response.dart';
 part 'api_client.g.dart';
 
-
-
 @RestApi(baseUrl: Controller.appBaseURL)
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String? baseUrl}) {
@@ -71,6 +69,7 @@ abstract class ApiClient {
 
   @POST('/request-overtime')
   Future<LoginApiResponse> saveOvertimeRequest(@Body() OvertimeRequest body);
+
   @POST('/overtime-request/delete?overtime_request_id={id}')
   Future<LoginApiResponse> deleteOvertimeRequest(@Path("id") String id);
 
@@ -113,10 +112,8 @@ abstract class ApiClient {
   @POST('/update-fcm-token')
   Future<String> postFcmToken(@Body() Map<String,String> body);
 
-
   @GET('/employee-dashboard')
   Future<GetDashBoardResponse> getDashboardData();
-
 
   @POST('/notification/my-notifications')
   Future<GetNotificationResponse> getNotificationList();
