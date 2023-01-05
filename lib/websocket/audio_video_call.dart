@@ -37,7 +37,6 @@ class AudioVideoCall {
   SocketService socketService = SocketService();
   AudioPlayer? player;
 
-  List<SocketMessageModel> iceCandidatesList= [];
 
   final Map<String, dynamic> offerVideoCallConstraints = {
     "mandatory": {
@@ -173,9 +172,18 @@ void startTimer() {
             sendFrom: currentUserId,
             data: candidate);
 
-        iceCandidatesList.add(iceCandidate);
-
         socketService.sendMessageToWebSocket(iceCandidate);
+
+        //****** Send Candidate as per backend handle logic *********
+        var sendCandidate = SocketMessageModel(
+            type: SocketMessageType.SendCandidate.displayTitle,
+            sendTo: targetUserId,
+            sendFrom: currentUserId,
+            data: candidate);
+            socketService.sendMessageToWebSocket(sendCandidate);
+        //********************************************
+
+
       }
     };
 
@@ -295,7 +303,7 @@ void startTimer() {
       startCallerTone();
 
       RTCSessionDescription description = await _peerConnection!
-          //  .createOffer({"offerToReceiveVideo": 1, "offerToReceiveAudio": 1});
+
           .createOffer(
               isVideoCall ? offerVideoCallConstraints : offerAudioConstraints);
 
@@ -322,6 +330,23 @@ void startTimer() {
       }
     }
   }
+
+
+
+  void joinCall(SocketMessageModel answer) async {
+
+    var answerCall = SocketMessageModel(
+        type: SocketMessageType.JoinCall.displayTitle,
+        sendTo: targetUserId,
+        sendFrom: currentUserId,
+        offerConnectionId: answer.offerConnectionId,
+        data: true);
+    socketService.sendMessageToWebSocket(answerCall);
+
+  }
+
+
+
 
   void answerCall(SocketMessageModel answer) async {
     RTCSessionDescription description = await _peerConnection!
@@ -352,13 +377,22 @@ void startTimer() {
           "sdpMid": e.sdpMid.toString(),
           "sdpMLineIndex": e.sdpMlineIndex,
         });
+
         var iceCandidate = SocketMessageModel(
             type: SocketMessageType.SendIceCandidate.displayTitle,
             sendTo: targetUserId,
             sendFrom: currentUserId,
             data: candidate);
-        iceCandidatesList.add(iceCandidate);
         socketService.sendMessageToWebSocket(iceCandidate);
+
+        //****** Send Candidate as per backend handle logic *********
+        var sendCandidate = SocketMessageModel(
+            type: SocketMessageType.SendCandidate.displayTitle,
+            sendTo: targetUserId,
+            sendFrom: currentUserId,
+            data: candidate);
+        socketService.sendMessageToWebSocket(sendCandidate);
+        //********************************************
       }
     };
 
@@ -382,17 +416,6 @@ void startTimer() {
     };
   }
 
-  void sendIceCandidatesToSocket()
-  {
-    print("ice candidate list = ${iceCandidatesList.length}");
-    for(var candidates in iceCandidatesList)
-    {
-      socketService.sendMessageToWebSocket(candidates);
-      print("sending ice-->>");
-    }
-    iceCandidatesList.clear();
-    print("ice candidate list2 = ${iceCandidatesList.length}");
-  }
 
   void addCandidate(String jsonString) async {
     dynamic session = await jsonDecode(jsonString);

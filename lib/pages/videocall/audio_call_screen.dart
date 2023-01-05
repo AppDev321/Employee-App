@@ -138,17 +138,15 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
 
         if (isIncomingCall) {
           if (socketMessageModel != null) {
-            if (socketMessageModel!.type
-                .toString()
-                .contains(SocketMessageType.OfferReceived.displayTitle)) {
-              audioVideoCall.startTimer();
-              audioVideoCall .setRemoteDescription(jsonEncode(socketMessageModel?.data));
-              audioVideoCall.answerCall(socketMessageModel!);
-              setState(() {
-                isRemoteUserOnline = true;
-              });
 
+
+            if (socketMessageModel!.type.toString().contains(SocketMessageType.IncomingCall.displayTitle)) {
+              audioVideoCall.joinCall(socketMessageModel!);
+              setState(() {
+                callTime = "Connecting...";
+              });
             }
+
           }
         }
         else
@@ -202,23 +200,18 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
         }
       else if (msgType == SocketMessageType.OfferReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-        Controller().showConfirmationMsgDialog(
-            context, message.callerName.toString(), "Incoming Call", "Answer",
-            (value) {
-          if (value) {
 
-            audioVideoCall.answerCall(message);
-            setState(() {
-              isRemoteUserOnline = true;
-            });
-            audioVideoCall.startTimer();
-           audioVideoCall.speakerPhoneAction(false);
-          }
-        });
 
       /*  DashBoardViewModel model = DashBoardViewModel();
         model.handleSocketMessage(SocketMessageType.OfferReceived, message);
         */
+
+        audioVideoCall.answerCall(message);
+        setState(() {
+          isRemoteUserOnline = true;
+        });
+        audioVideoCall.startTimer();
+        audioVideoCall.speakerPhoneAction(false);
 
       } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));

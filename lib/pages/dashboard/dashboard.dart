@@ -202,10 +202,9 @@ class _DashboardState extends State<Dashboard> {
       var message = socketMessage as SocketMessageModel;
       var msgType = message.type.toString();
 
-
-      if (msgType == SocketMessageType.OfferReceived.displayTitle) {
+      if (msgType == SocketMessageType.IncomingCall.displayTitle) {
         _dashBoardViewModel.handleSocketMessage(
-            SocketMessageType.OfferReceived, message);
+            SocketMessageType.IncomingCall, message);
       } else if (msgType == SocketMessageType.CallAlreadyAnswer.displayTitle) {
         _dashBoardViewModel.handleSocketMessage(
             SocketMessageType.CallAlreadyAnswer, message);

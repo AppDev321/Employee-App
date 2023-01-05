@@ -250,16 +250,18 @@ class DashBoardViewModel extends BaseViewModel {
 
   Future<AppData?> isAppUpdated() async {
     var appData = remoteConfig.getString("app_update_data");
+    print("Firebase Update = $appData");
     final body = json.decode(appData);
     var obj = FirebaseAppUpdate.fromJson(body);
-    for (int i = 0; i <= obj.appData!.length; i++) {
-      var data = obj.appData![i];
-      if (data.appName == "CRM") {
+    var data = obj.appData as List<AppData>;
+    for (int i = 0; i < data.length; i++) {
+      var item = data[i];
+      if (item.appName == "CRM") {
         PackageInfo packageInfo = await PackageInfo.fromPlatform();
         String version = packageInfo.version;
         //String code = packageInfo.buildNumber;
-        if (data.version != version) {
-          return data;
+        if (item.version != version) {
+          return item;
         }
       }
     }
@@ -338,7 +340,7 @@ class DashBoardViewModel extends BaseViewModel {
   //handle socketMessages
   void handleSocketMessage(SocketMessageType type, SocketMessageModel message) {
     switch (type) {
-      case SocketMessageType.OfferReceived:
+      case SocketMessageType.IncomingCall:
         makeIncomingCall(message);
         break;
       case SocketMessageType.CallAlreadyAnswer:

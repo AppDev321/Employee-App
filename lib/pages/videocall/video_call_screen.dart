@@ -121,14 +121,13 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
       audioVideoCall.peerConnectionStatus = () {
         if (isIncomingCall) {
           if (socketMessageModel != null) {
-            if (socketMessageModel!.type.toString().contains(SocketMessageType.OfferReceived.displayTitle)) {
-              audioVideoCall.setRemoteDescription(jsonEncode(socketMessageModel?.data));
-              audioVideoCall.answerCall(socketMessageModel!);
-              debugPrint("answer sending ==>>");
 
-              setState(() {
-                isRemoteUserOnline = true;
-              });
+
+            if (socketMessageModel!.type.toString().contains(SocketMessageType.IncomingCall.displayTitle)) {
+                audioVideoCall.joinCall(socketMessageModel!);
+                setState(() {
+                  callingStatus = "Connecting...";
+                });
             }
 
           }
@@ -188,20 +187,16 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
         chatViewModel.insertCallDetailInDB(message);
 
       } else if (msgType == SocketMessageType.OfferReceived.displayTitle) {
-        /*audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-        Controller().showConfirmationMsgDialog(
-            context, message.callerName.toString(), "Incoming Call", "Answer",
-            (value) {
-          if (value) {
-            audioVideoCall.answerCall(message);
-            setState(() {
-              isRemoteUserOnline = true;
-            });
-          }
-        });*/
+        audioVideoCall.setRemoteDescription(jsonEncode(message.data));
+
+
+        audioVideoCall.answerCall(message);
+        setState(() {
+          isRemoteUserOnline = true;
+        });
+
       } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
-        audioVideoCall.sendIceCandidatesToSocket();
         audioVideoCall.startTimer();
         setState(() {
           isRemoteUserOnline = true;
