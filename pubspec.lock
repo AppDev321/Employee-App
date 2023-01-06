@@ -594,13 +594,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
-  flutter_dtmf:
-    dependency: "direct main"
-    description:
-      name: flutter_dtmf
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -1716,12 +1709,19 @@ packages:
     source: hosted
     version: "1.0.1"
   web_socket_channel:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: web_socket_channel
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
+  web_socket_client:
+    dependency: "direct main"
+    description:
+      name: web_socket_client
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0-dev.1"
   win32:
     dependency: transitive
     description:

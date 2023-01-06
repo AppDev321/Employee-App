@@ -9,11 +9,11 @@ import '../../utils/controller.dart';
 class SocketService {
   static SocketService? _instance;
   static BuildContext? buildContext;
-  late WebSocket webSocket ;
+  late AFJWebSocket webSocket ;
 
   SocketService._(String socketUrl) {
     print("socket URl = $socketUrl");
-    webSocket = WebSocket(socketUrl);
+    webSocket = AFJWebSocket(socketUrl);
     listenWebSocketMessage();
   }
 
