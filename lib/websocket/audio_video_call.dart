@@ -203,6 +203,12 @@ void startTimer() {
 
     pc.onIceConnectionState = (state) {
       print("ICE Connection state changed: $state");
+
+      if (state == RTCIceConnectionState.RTCIceConnectionStateFailed) {
+        /* possibly reconfigure the connection in some way here */
+        /* then request ICE restart */
+
+      }
     };
 
 

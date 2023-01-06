@@ -141,116 +141,118 @@ class LoginClassStateful extends State<LoginClass> {
               Container(
                 margin: EdgeInsets.only(
                     top: Get.mediaQuery.size.width / 3, left: 25, right: 25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    welcomeBack,
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    subTitle,
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    CustomEditTextWidget(
-                      text: "Email",
-                      controller: _emailController,
-                    ),
-                    const SizedBox(height: 20),
-                    CustomEditTextWidget(
-                        text: "Password",
-                        controller: _passwordController,
-                        isPasswordField: true),
-                    CheckboxListTile(
-                      checkColor: Colors.white,
-                      activeColor: primaryColor,
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: const Text('Remember Me'),
-                      value: _passRemember,
-                      onChanged: (value) {
-                        setState(() {
-                          _passRemember = value!;
-                        });
-                      },
-                    ),
-                    _isApiError
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ErrorMessageWidget(
-                              label: _errorMsg,
-                              color: Colors.redAccent,
-                            ),
-                          )
-                        : const SizedBox(),
-                    Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.all(10),
-                        child: ElevatedButton(
-                          onPressed: () async{
-                            if (_emailController.text.isEmpty) {
-                              setState(() {
-                                _isApiError = true;
-                                _errorMsg = "Please enter email";
-                              });
-                            } else if (!RegExp(r'\S+@\S+\.\S+')
-                                .hasMatch(_emailController.text)) {
-                              setState(() {
-                                _isApiError = true;
-                                _errorMsg = "Enter valid Email address";
-                              });
-                            } else if (_passwordController.text.isEmpty) {
-                              setState(() {
-                                _isApiError = true;
-                                _errorMsg = "Please enter password";
-                              });
-                            } else {
-                              setState(() {
-                                _isApiError = false;
-                                _errorMsg = "";
-                              });
-                              FocusScope.of(context)
-                                  .requestFocus(new FocusNode()); //remove focus
-                              _onLoginButtonPress(_emailController.text,
-                                  _passwordController.text);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(300, 50),
-                              primary: primaryColor,
-                              padding: const EdgeInsets.all(10),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      Controller.roundCorner)),
-                              textStyle: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.normal)),
-                          child: const Text(_loginText),
-                        )),
-                    const SizedBox(height: 10),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      welcomeBack,
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      subTitle,
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      CustomEditTextWidget(
+                        text: "Email",
+                        controller: _emailController,
+                      ),
+                      const SizedBox(height: 20),
+                      CustomEditTextWidget(
+                          text: "Password",
+                          controller: _passwordController,
+                          isPasswordField: true),
+                      CheckboxListTile(
+                        checkColor: Colors.white,
+                        activeColor: primaryColor,
+                        contentPadding: EdgeInsets.zero,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        title: const Text('Remember Me'),
+                        value: _passRemember,
+                        onChanged: (value) {
+                          setState(() {
+                            _passRemember = value!;
+                          });
+                        },
+                      ),
+                      _isApiError
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ErrorMessageWidget(
+                                label: _errorMsg,
+                                color: Colors.redAccent,
+                              ),
+                            )
+                          : const SizedBox(),
+                      Container(
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.all(10),
+                          child: ElevatedButton(
+                            onPressed: () async{
+                              if (_emailController.text.isEmpty) {
+                                setState(() {
+                                  _isApiError = true;
+                                  _errorMsg = "Please enter email";
+                                });
+                              } else if (!RegExp(r'\S+@\S+\.\S+')
+                                  .hasMatch(_emailController.text)) {
+                                setState(() {
+                                  _isApiError = true;
+                                  _errorMsg = "Enter valid Email address";
+                                });
+                              } else if (_passwordController.text.isEmpty) {
+                                setState(() {
+                                  _isApiError = true;
+                                  _errorMsg = "Please enter password";
+                                });
+                              } else {
+                                setState(() {
+                                  _isApiError = false;
+                                  _errorMsg = "";
+                                });
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode()); //remove focus
+                                _onLoginButtonPress(_emailController.text,
+                                    _passwordController.text);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(300, 50),
+                                primary: primaryColor,
+                                padding: const EdgeInsets.all(10),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        Controller.roundCorner)),
+                                textStyle: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.normal)),
+                            child: const Text(_loginText),
+                          )),
+                      const SizedBox(height: 10),
 
-                     isBiometericEnable && authAvailable == true
+                       isBiometericEnable && authAvailable == true
 
-                        ? Padding(
-                          padding: const EdgeInsets.only(right: 10.0),
-                          child: Center(
-                            child: IconButton(
-                              onPressed: () {
-                                _loginViewModel
-                                    .authenticateWithBiometrics()
-                                    .then((value) {
-                                  if (value) onFingerPrintVerified();
-                                }
-                                );
-                              },
-                              icon: const Icon(
-                                Icons.fingerprint,
-                                size: 60,
+                          ? Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: Center(
+                              child: IconButton(
+                                onPressed: () {
+                                  _loginViewModel
+                                      .authenticateWithBiometrics()
+                                      .then((value) {
+                                    if (value) onFingerPrintVerified();
+                                  }
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.fingerprint,
+                                  size: 60,
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                        : const Center()
-                  ],
+                          )
+                          : const Center()
+                    ],
+                  ),
                 ),
               )
             ],
