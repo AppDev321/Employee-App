@@ -479,6 +479,7 @@ enum SocketMessageType {
   StartCall,
   JoinCall,
   CreateOffer,
+  ReconnectOffer,
   AnswerCall,
   SendIceCandidate,
   SendCandidate,
@@ -508,6 +509,9 @@ extension MessageTypeExtention on SocketMessageType {
 
   String get displayTitle {
     switch (this) {
+      case SocketMessageType.ReconnectOffer:
+        return 'reconnect-offer';
+        break;
       case SocketMessageType.StartCall:
         return 'is-client-ready';
       case SocketMessageType.JoinCall:
