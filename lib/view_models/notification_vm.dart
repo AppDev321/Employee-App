@@ -31,7 +31,7 @@ class NotificationViewModel extends BaseViewModel {
     } else {
       if (results.code == 200) {
         setIsErrorReceived(false);
-        if(results.data!.notifications!.length > 0)
+        if(results.data!.notifications!.isNotEmpty)
         {
           notifications = results.data!.notifications!;
         }

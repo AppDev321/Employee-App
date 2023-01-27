@@ -16,13 +16,13 @@ import '../pages/login/login.dart';
 enum ChatMessageType { text, audio, image, video, file }
 
 class Controller {
-  static const String appBaseURL = "http://vmi808920.contaboserver.net/api";
- //"http://192.168.18.69:8000/api";
+  static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
+  "http://192.168.18.50:8000/api";
      // "http://afjdemo.hnhtechpk.com/api";
   //  "http://afjdev.hnhtechpk.com/api";
 
-  static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
-  //static const String webSocketURL  = "ws://192.168.18.69:6001/video-call?token=";
+ // static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
+ static const String webSocketURL  = "ws://192.168.18.50:6001/video-call?token=";
   //static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
 
 
@@ -336,7 +336,7 @@ class Controller {
                 IconButton(
                   onPressed: () {
                     // Get.back();
-                    Navigator.pop(buildContext);
+                  //  Navigator.pop(buildContext);
                   },
                   icon: Icon(Icons.close_rounded),
                   color: Colors.redAccent,
