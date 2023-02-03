@@ -215,7 +215,7 @@ class _MyAccountState extends State<MyAccount> {
                                                 });
 
                                                 _profileViewModel .uploadImageToServer(context,value,   (isUploaded) {  }, (imageUrl) {
-                                                  print(imageUrl);
+                                                  Controller().printLogs(imageUrl);
                                                   setState(() {
                                                     userImageURL = imageUrl;
                                                     tryToUploadImage = false;

@@ -1,4 +1,4 @@
-package com.flutter.afj.crm
+package com.afjltd.hnhtech.employee
 
 //import io.flutter.embedding.android.FlutterActivity
 //

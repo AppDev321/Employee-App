@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:hnh_flutter/repository/model/request/socket_message_model.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 
+import '../utils/controller.dart';
+
 class AFJWebSocket {
   late WebSocket channel;
   late String webSocketUrl;
@@ -36,7 +38,7 @@ class AFJWebSocket {
         onData(webSocketServerResponse);
       },
       onDone: () {
-        print("Websocket ONDone called");
+        Controller().printLogs("Websocket ONDone called");
       },
       onError: (err) {
         onError(err.toString());
@@ -46,19 +48,19 @@ class AFJWebSocket {
 
     channel.connection.listen((state) {
       if (state is Connected) {
-        debugPrint('SocketConnectionState: Connected');
+        Controller().printLogs('SocketConnectionState: Connected');
       } else if (state is Reconnected) {
-        debugPrint('SocketConnectionState: Reconnected');
+        Controller().printLogs('SocketConnectionState: Reconnected');
       } else if (state is Disconnected) {
-        debugPrint('SocketConnectionState: Disconnected');
+        Controller().printLogs('SocketConnectionState: Disconnected');
       } else if (state is Reconnecting) {
-        debugPrint('SocketConnectionState: Reconnecting');
+        Controller().printLogs('SocketConnectionState: Reconnecting');
       }
     });
   }
 
   void sendMessage(SocketMessageModel message) {
-    print('Sending Message to Socket: ${jsonEncode(message.toJson())}');
+    Controller().printLogs('Sending Message to Socket: ${jsonEncode(message.toJson())}');
     channel.send(jsonEncode(message.toJson()));
   }
 }

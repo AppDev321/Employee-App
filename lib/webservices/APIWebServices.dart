@@ -31,6 +31,7 @@ import '../repository/model/response/report_attendance_response.dart';
 import '../repository/model/response/report_lateness_response.dart';
 import '../repository/model/response/report_leave_response.dart';
 import '../repository/retrofit/client_header.dart';
+import '../utils/controller.dart';
 
 class APIWebService {
 
@@ -43,7 +44,7 @@ class APIWebService {
       var response = await client.login(body);
      return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -56,7 +57,7 @@ class APIWebService {
       var response = await client.getShiftDataList(weeklyShiftDate);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -66,7 +67,7 @@ class APIWebService {
       var response = await client.claimOpenShift(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -77,7 +78,7 @@ class APIWebService {
       var response = await client.claimShiftHistory(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -89,7 +90,7 @@ class APIWebService {
       var response = await client.leavesListHistory(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -101,7 +102,7 @@ class APIWebService {
       var response = await client.leaveRequest(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -112,7 +113,7 @@ class APIWebService {
       var response = await client.getOvertimeHistory(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -124,7 +125,7 @@ class APIWebService {
       var response = await client.saveOvertimeRequest(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -210,7 +211,7 @@ class APIWebService {
       var response = await client.changePassword(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -223,7 +224,7 @@ class APIWebService {
       var response = await client.getProfileAccount();
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -234,7 +235,7 @@ class APIWebService {
       var response = await client.getEvents();
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -245,7 +246,7 @@ class APIWebService {
       var response = await client.updateProfileAccount(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -256,7 +257,7 @@ class APIWebService {
       var response = await client.getLeaveReport(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -268,7 +269,7 @@ class APIWebService {
       var response = await client.getLatenessReport(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -281,7 +282,7 @@ class APIWebService {
       var response = await client.getAttandenceReport(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -291,7 +292,7 @@ class APIWebService {
       var response = await client.getDashboardData();
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -301,7 +302,7 @@ class APIWebService {
       var response = await client.getNotificationList();
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -312,7 +313,7 @@ class APIWebService {
       var response = await client.updateNotificationStatus(id);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -322,7 +323,7 @@ class APIWebService {
       var response = await client.deleteNotification(id);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -336,7 +337,7 @@ class APIWebService {
       var response = await client.markAttendance(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -351,7 +352,7 @@ class APIWebService {
       var response = await client.markClockOutAttendance(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -366,7 +367,7 @@ class APIWebService {
       var response = await client.validateVehicleTab(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -377,7 +378,7 @@ class APIWebService {
       var response = await client.getNotificationCount();
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -387,7 +388,7 @@ class APIWebService {
       var response = await client.getContactList();
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }
@@ -399,7 +400,7 @@ class APIWebService {
       var response = await client.postFcmToken(request);
       return response;
     } catch (e) {
-      print("$TAG$e");
+      Controller().printLogs("$TAG$e");
       return null;
     }
   }

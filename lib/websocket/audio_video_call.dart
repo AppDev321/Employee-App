@@ -154,7 +154,7 @@ void startTimer() {
 
     RTCPeerConnection pc = await createPeerConnection(configuration,
         isVideoCall ? offerVideoCallConstraints : offerAudioConstraints);
-    print("configuration == ${configuration["iceServers"]}" );
+    Controller().printLogs("configuration == ${configuration["iceServers"]}" );
 
     pc.onAddStream = (stream) {
       stopCallerTone();
@@ -195,21 +195,21 @@ void startTimer() {
     };
 
     pc.onIceGatheringState = (RTCIceGatheringState state) {
-      print("ICE gathering state changed: $state");
+      Controller().printLogs("ICE gathering state changed: $state");
     };
 
     pc.onConnectionState = (RTCPeerConnectionState state) {
-      print("Connection state change: $state");
+      Controller().printLogs("Connection state change: $state");
 
     };
 
     pc.onSignalingState = (RTCSignalingState state) {
-      print("Signaling state change: $state");
+      Controller().printLogs("Signaling state change: $state");
     };
 
 
     pc.onIceConnectionState = (state) async{
-      print("ICE Connection state changed: $state");
+      Controller().printLogs("ICE Connection state changed: $state");
       connectionState(state);
       if (state == RTCIceConnectionState.RTCIceConnectionStateFailed) {
         RTCSessionDescription description = await _peerConnection!
@@ -343,7 +343,7 @@ void startTimer() {
 
       socketService.sendMessageToWebSocket(createOffer);
     } catch (exception) {
-      print("Offer create exception == $exception");
+      Controller().printLogs("Offer create exception == $exception");
       if (exception
           .toString()
           .contains("Offer called when PeerConnection is closed")) {

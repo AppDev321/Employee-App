@@ -25,7 +25,7 @@ class LocalNotificationService
     _notificationsPlugin.initialize(
       initializationSettings,
       onSelectNotification: (String? screenName) async {
-        print("FlutterLocalNotificationsPlugin == ${screenName}");
+        Controller().printLogs("FlutterLocalNotificationsPlugin == ${screenName}");
 
         LocalNotificationService().navigateFCMScreen(screenName);
 
@@ -93,7 +93,7 @@ class LocalNotificationService
 
       );
     } on Exception catch (e) {
-      print(e);
+      Controller().printLogs("${e}");
     }
   }
 
@@ -118,7 +118,7 @@ class LocalNotificationService
 
       );
     } on Exception catch (e) {
-      print(e);
+      Controller().printLogs("${e}");
     }
   }
 

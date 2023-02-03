@@ -1,5 +1,6 @@
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -38,6 +39,7 @@ import '../../widget/internet_not_available.dart';
 import '../../widget/name_icon_badge.dart';
 import '../../widget/navigation_drawer_new.dart';
 import '../attandence/add_attendance.dart';
+import '../notification_history/notification_list.dart';
 import '../overtime/add_overtime.dart';
 import '../profile/components/profile_pic.dart';
 import '../reports/attendance_report.dart';
@@ -78,6 +80,7 @@ class _DashboardState extends State<Dashboard> {
   bool IsCheckIn = false;
 
   SocketService? chatService = null;
+  bool showVideoChatButton = false;
 
   @override
   void initState() {
@@ -121,12 +124,15 @@ class _DashboardState extends State<Dashboard> {
           dashBoardShift = _dashBoardViewModel.getDashBoardShift();
           dashboardStat = _dashBoardViewModel.getDashboardStat();
           userDashboard = _dashBoardViewModel.getUserObject();
+          showVideoChatButton = _dashBoardViewModel.videoCallStatus;
           userDashboard.profileURL ??= "";
           eventsList = _dashBoardViewModel.getEventsList();
           profileImageUrl = userDashboard.profileURL.toString();
 
           if (userDashboard.id != null) {
-            print("Socket connection...");
+            if(kDebugMode) {
+              Controller().printLogs("Socket connection...");
+            }
             Controller().saveObjectPreference(
                 Controller.PREF_KEY_USER_OBJECT, userDashboard);
 
@@ -166,8 +172,11 @@ class _DashboardState extends State<Dashboard> {
     });
 
     setState(() {
-      listQuickAccess.add(DashBoardGrid(
-          "5", "Video Chat", "assets/icons/leave_icon.svg", Colors.blueAccent));
+      if (showVideoChatButton) {
+        listQuickAccess.add(DashBoardGrid("5", "Video Chat",
+            "assets/icons/leave_icon.svg", Colors.blueAccent));
+      }
+
       listQuickAccess.add(DashBoardGrid("1", "Leave Request",
           "assets/icons/leave_icon.svg", claimedShiftApprovedColor));
       listQuickAccess.add(DashBoardGrid("2", "Overtime Request",
@@ -208,8 +217,7 @@ class _DashboardState extends State<Dashboard> {
       } else if (msgType == SocketMessageType.CallAlreadyAnswer.displayTitle) {
         _dashBoardViewModel.handleSocketMessage(
             SocketMessageType.CallAlreadyAnswer, message);
-      }
-      else{
+      } else {
         ChatViewModel chatViewModel = ChatViewModel();
         chatViewModel.handleSocketCallbackMessage(socketMessage,
             conversationTable: (conversationData) async {
@@ -300,10 +308,8 @@ class _DashboardState extends State<Dashboard> {
                   Container(
                     child: NamedIcon(
                       onTap: () {
-                        print(userDashboard.name);
+                        Get.to(() => const NotificationList());
                       },
-
-                      // Get.to(() => const NotificationList()),
                       notificationCount: notificationCount,
                       iconData: Icons.notifications,
                       color: colorText,
@@ -329,7 +335,6 @@ class _DashboardState extends State<Dashboard> {
                   return Container();
                 }
               }),
-
               Expanded(
                 child: RefreshIndicator(
                   key: _refreshIndicatorKey,
@@ -805,7 +810,8 @@ class _DashboardState extends State<Dashboard> {
               },
               keyboardType: TextInputType.number,
               controller: _textFieldController,
-              decoration: const InputDecoration(hintText: "Enter target user id"),
+              decoration:
+                  const InputDecoration(hintText: "Enter target user id"),
             ),
             actions: <Widget>[
               ElevatedButton(

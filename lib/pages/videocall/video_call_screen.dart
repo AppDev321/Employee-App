@@ -112,7 +112,7 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
       });
 
       audioVideoCall.onAddRemoteStream = ((stream) {
-      debugPrint("remote stream coming==>>");
+        Controller().printLogs("remote stream coming==>>");
         setState(() {
           _remoteVideoRenderer.srcObject = stream;
         });
@@ -172,7 +172,7 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
         (socketMessage, callback) {
       var message = socketMessage as SocketMessageModel;
-      debugPrint("Message Received Socket -- video call: ${message.toJson()}");
+      Controller().printLogs("Message Received Socket -- video call: ${message.toJson()}");
       var msgType = message.type.toString();
 
       if (msgType == SocketMessageType.CallResponse.displayTitle) {

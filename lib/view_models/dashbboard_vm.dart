@@ -50,6 +50,8 @@ class DashBoardViewModel extends BaseViewModel {
 
   User getUserObject() => userObject;
   bool isCheckInOut = false;
+  bool videoCallStatus = false;
+
 
   final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
 
@@ -125,6 +127,8 @@ class DashBoardViewModel extends BaseViewModel {
         dashBoardShift = results.data?.shift;
         dashboardStat = results.data?.stats;
         userObject = results.data!.user!;
+        videoCallStatus = results.data!.isChatEnabled!;
+
 
         attendance = results.data?.attendance;
         if (results.data!.checkedIn == false &&
@@ -204,10 +208,10 @@ class DashBoardViewModel extends BaseViewModel {
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
         if (message.notification != null) {
-          print(message.notification!.title);
-          print(message.notification!.body);
-          print("message.data22 ${message.data['title']}");
-          print("message.data22 ${message.data['body']}");
+          Controller().printLogs("${message.notification!.title}");
+          Controller().printLogs("${message.notification!.body!}");
+          Controller().printLogs("message.data22 ${message.data['title']}");
+          Controller().printLogs("message.data22 ${message.data['body']}");
         }
 
         LocalNotificationService.createandDisplayNotification(message);
@@ -215,7 +219,7 @@ class DashBoardViewModel extends BaseViewModel {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
+      Controller().printLogs('A new onMessageOpenedApp event was published!');
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
@@ -250,13 +254,13 @@ class DashBoardViewModel extends BaseViewModel {
 
   Future<AppData?> isAppUpdated() async {
     var appData = remoteConfig.getString("app_update_data");
-    print("Firebase Update = $appData");
+    Controller().printLogs("Firebase Update = $appData");
     final body = json.decode(appData);
     var obj = FirebaseAppUpdate.fromJson(body);
     var data = obj.appData as List<AppData>;
     for (int i = 0; i < data.length; i++) {
       var item = data[i];
-      if (item.appName == "CRM") {
+      if (item.appName == "EMPLOYEE") {
         PackageInfo packageInfo = await PackageInfo.fromPlatform();
         String version = packageInfo.version;
         //String code = packageInfo.buildNumber;
@@ -396,7 +400,7 @@ class DashBoardViewModel extends BaseViewModel {
     BilltechIncomingCall.showCallkitIncoming(params);
 
     listenerEvent((event) {
-      //   print('HOME: ${event?.body['extra']}');
+      //   Controller().printLogs('HOME: ${event?.body['extra']}');
       switch (event!.name) {
         case CallEvent.ACTION_CALL_ACCEPT:
           message.callType.toString().contains("audio")?

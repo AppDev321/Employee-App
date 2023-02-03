@@ -53,7 +53,7 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
         MaterialPageRoute(
           builder: (context) => AiBarcodeScanner(
             onScan: (String value) {
-              print("barcode text recevied: $value");
+              Controller().printLogs("barcode text recevied: $value");
 
 uploadId = "${DateTime.now().millisecondsSinceEpoch}";
                 _progressDialog?.showLoadingDialog();
@@ -65,9 +65,9 @@ uploadId = "${DateTime.now().millisecondsSinceEpoch}";
       );
 
     } on FormatException catch (ex) {
-      print('Pressed the Back Button before Scanning');
+      Controller().printLogs('Pressed the Back Button before Scanning');
     } catch (ex) {
-      print('Unknown Error $ex');
+      Controller().printLogs('Unknown Error $ex');
     }
   }
 
@@ -94,7 +94,7 @@ uploadId = "${DateTime.now().millisecondsSinceEpoch}";
         var profileViewModel = ProfileViewModel();
         profileViewModel.uploadImageToServer(
             context, File(userPicturePath), (isUploaded) {}, (imageUrl) {
-              print(imageUrl);
+          Controller().printLogs(imageUrl);
             uploadId = imageUrl;
         }, requestType: "qr_scan", isReturnPath: false, showUploadAlertMsg: false);
       }

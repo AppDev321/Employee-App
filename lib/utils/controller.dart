@@ -16,13 +16,13 @@ import '../pages/login/login.dart';
 enum ChatMessageType { text, audio, image, video, file }
 
 class Controller {
-  static const String appBaseURL = //"http://vmi808920.contaboserver.net/api";
-  "http://192.168.18.50:8000/api";
+  static const String appBaseURL = "http://vmi808920.contaboserver.net/api";
+ // "http://192.168.18.69:8000/api";
      // "http://afjdemo.hnhtechpk.com/api";
   //  "http://afjdev.hnhtechpk.com/api";
 
- // static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
- static const String webSocketURL  = "ws://192.168.18.50:6001/video-call?token=";
+  static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
+// static const String webSocketURL  = "ws://192.168.18.50:6001/video-call?token=";
   //static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
 
 
@@ -78,9 +78,9 @@ class Controller {
     return screenName;
   }
 
-  Future<void> setAuthToken(String auth_token) async {
+  Future<void> setAuthToken(String authToken) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(this.auth_token, auth_token);
+    prefs.setString(this.auth_token, authToken);
   }
 
   deleteUserToken() async {
@@ -90,9 +90,9 @@ class Controller {
 
   Future<String?> getAuthToken() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    String? auth_token;
-    auth_token = pref.getString(this.auth_token) ?? null;
-    return auth_token;
+    String? authToken;
+    authToken = pref.getString(this.auth_token) ?? null;
+    return authToken;
   }
 
   Future<void> setEmail(String emaiID) async {
@@ -270,10 +270,11 @@ class Controller {
 
       //return '${today.day} Days ${today.hour} Hours ${today.minute} Min';
 
-      if (today.hour > 0)
+      if (today.hour > 0) {
         return '${today.hour}h, ${today.minute}min';
-      else
+      } else {
         return '${today.minute}min';
+      }
     } catch (e) {
       return '';
     }
@@ -281,7 +282,7 @@ class Controller {
 
   String getServerDateFormated(String serverDate) {
     DateTime requestDateFormate =
-    new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
+     DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
     var dateFormat = DateFormat('dd-MMM-yyyy');
     var startDate =
     dateFormat.format(DateTime.parse(requestDateFormate.toString()));
@@ -289,7 +290,7 @@ class Controller {
   }
 
   String convertStringDate(String jsonDate, String parsingType) {
-    DateTime parseDate = new DateFormat("dd-MMM-yyyy").parse(jsonDate);
+    DateTime parseDate =  DateFormat("dd-MMM-yyyy").parse(jsonDate);
     var dateFormat = DateFormat('E MMM dd yyyy');
 
     switch (parsingType) {
@@ -328,17 +329,17 @@ class Controller {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Preview',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 IconButton(
                   onPressed: () {
                     // Get.back();
                   //  Navigator.pop(buildContext);
                   },
-                  icon: Icon(Icons.close_rounded),
+                  icon: const Icon(Icons.close_rounded),
                   color: Colors.redAccent,
                 ),
               ],
@@ -374,6 +375,14 @@ class Controller {
     );
   }
   String capitalize(String str) => str[0].toUpperCase() + str.substring(1);
+
+  printLogs(String message)
+  {
+    if(kDebugMode) {
+      debugPrint (message);
+    }
+  }
+
 
   showConfirmationMsgDialog(BuildContext context, String title, String msg,
       String positiveButtonLabel, ValueChanged<bool> OnPostiveButtonClick) {

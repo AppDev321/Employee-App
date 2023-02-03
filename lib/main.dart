@@ -38,15 +38,7 @@ String? platFormType = "android";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    // Replace with actual values
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyAWaOsY4NxIIKyKJjXpSS7rsYoyp7v7Uxs",
-      appId: "1:1094712997761:android:8b1c88f3fe70662da5da80",
-      messagingSenderId: "1094712997761",
-      projectId: "innovative-technology-f0514",
-    ),
-  );
+  await Firebase.initializeApp();
   fcmToken = await FirebaseMessaging.instance.getToken();
 /*  if (Platform.isIOS) {
     platFormType = "IOS";

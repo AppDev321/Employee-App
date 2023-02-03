@@ -62,7 +62,7 @@ class LoginViewModel extends BaseViewModel {
           // Add handling of no hardware here.
         } else if (e.code == auth_error.lockedOut ||
             e.code == auth_error.permanentlyLockedOut) {
-          // ...print("authenticate");
+          // ...Controller().printLogs("authenticate");
         }
       }
     return isAuthenticated;
@@ -77,7 +77,6 @@ class LoginViewModel extends BaseViewModel {
     setLoading(true);
 
     final results = await APIWebService().getLoginAuth(body);
-
     if (results == null) {
       var errorString = "Check your internet connection";
       setErrorMsg(errorString);
