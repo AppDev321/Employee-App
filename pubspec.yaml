@@ -74,6 +74,7 @@ dependencies:
   open_filex: ^4.3.2
   video_thumbnail: ^0.5.3
   change_app_package_name: ^1.1.0
+  firebase_crashlytics: ^2.9.0
 
 
 dev_dependencies:
