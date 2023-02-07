@@ -115,50 +115,56 @@ class DashBoardViewModel extends BaseViewModel {
 
 
   Future<void> getDashBoardData() async {
+
     setLoading(true);
-    final results = await APIWebService().getDashBoardData();
-
-    if (results == null) {
-      var errorString = "Check your internet connection";
-      setErrorMsg(errorString);
-    } else {
-      if (results.code == 200) {
-        isCheckInOut = false;
-        dashBoardShift = results.data?.shift;
-        dashboardStat = results.data?.stats;
-        userObject = results.data!.user!;
-        videoCallStatus = results.data!.isChatEnabled!;
 
 
-        attendance = results.data?.attendance;
-        if (results.data!.checkedIn == false &&
-            results.data?.attendance != null) {
-          isCheckInOut = true;
-        }
 
-        // setIsErrorReceived(false);
-      } else {
-        var errorString = "";
-        for (int i = 0; i < results.errors!.length; i++) {
-          errorString += "${results.errors![i].message!}\n";
-        }
+      final results = await APIWebService().getDashBoardData();
+
+      if (results == null) {
+        var errorString = "Check your internet connection";
         setErrorMsg(errorString);
+      } else {
+        if (results.code == 200) {
+          isCheckInOut = false;
+          dashBoardShift = results.data?.shift;
+          dashboardStat = results.data?.stats;
+          userObject = results.data!.user!;
+          videoCallStatus = results.data!.isChatEnabled!;
 
-        setIsErrorReceived(true);
+
+          attendance = results.data?.attendance;
+          if (results.data!.checkedIn == false &&
+              results.data?.attendance != null) {
+            isCheckInOut = true;
+          }
+
+          // setIsErrorReceived(false);
+        } else {
+          var errorString = "";
+          for (int i = 0; i < results.errors!.length; i++) {
+            errorString += "${results.errors![i].message!}\n";
+          }
+          setErrorMsg(errorString);
+
+          setIsErrorReceived(true);
+        }
       }
-    }
 
-    setResponseStatus(true);
-    setLoading(false);
-    notifyListeners();
+      setResponseStatus(true);
+      setLoading(false);
+      notifyListeners();
 
-    getNotificationCount();
+      getNotificationCount();
 
-    getEventsListResponse();
-    //Get Contact list and stored in database
-    ChatViewModel chatViewModel = ChatViewModel();
-    chatViewModel.getContactList();
-    //*********************
+      getEventsListResponse();
+      //Get Contact list and stored in database
+      ChatViewModel chatViewModel = ChatViewModel();
+      chatViewModel.getContactList();
+      //*********************
+
+
   }
 
   Future<void> getNotificationCount() async {
@@ -252,7 +258,20 @@ class DashBoardViewModel extends BaseViewModel {
     await remoteConfig.fetchAndActivate();
   }
 
+  Future<String> getWebSocketURL() async{
+    var webSocketURL= remoteConfig.getString("WEB_SOCKET_CALL_URL");
+    Controller().printLogs("WEB_SOCKET_CONFIG_URL = $webSocketURL");
+    Controller.webSocketURL = webSocketURL;
+    return webSocketURL;
+  }
+
   Future<AppData?> isAppUpdated() async {
+    var baseUrl = remoteConfig.getString("API_BASE_URL");
+    Controller().printLogs("CONFIG_BASE_URL = $baseUrl");
+    Controller.appBaseURL = baseUrl;
+
+
+
     var appData = remoteConfig.getString("app_update_data");
     Controller().printLogs("Firebase Update = $appData");
     final body = json.decode(appData);
@@ -271,6 +290,9 @@ class DashBoardViewModel extends BaseViewModel {
     }
     return null;
   }
+
+
+
 
   showVersionDialog(context, String url) async {
     await showDialog<String>(

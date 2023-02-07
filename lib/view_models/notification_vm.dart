@@ -39,7 +39,7 @@ class NotificationViewModel extends BaseViewModel {
         {
           setIsErrorReceived(true);
           notifications=[];
-          setErrorMsg("No Report found");
+          setErrorMsg("No Notification Found");
         }
       } else {
         var errorString = "";

@@ -2,9 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.afjltd.hnhtech.employee">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -33,15 +31,7 @@
 
 
     <!--End Web RTC-->
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-      />
 
-    <!--ACCESS_BACKGROUND_LOCATION
-    To get update in background.
-    WAKE_LOCK
-    to not sleep while getting the GPS.
-    FOREGROUND_SERVICE
-    To let the plugins operate as a service.-->
 
     <application
         android:label="AFJ CRM"

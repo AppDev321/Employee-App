@@ -2,6 +2,8 @@ import '../../utils/controller.dart';
 import 'api_client.dart';
 import 'package:dio/dio.dart';
 
+import 'logging.dart';
+
 
 class RetroClinetHeader
 {
@@ -10,26 +12,37 @@ class RetroClinetHeader
  static Future<ApiClient> getClientWithAuth() async{
     Controller controller = Controller();
     String? userToken = await controller.getAuthToken();
-
-    final client =
-    ApiClient(Dio(BaseOptions(
+    var dio = Dio(BaseOptions(
+      baseUrl: Controller.appBaseURL,
         connectTimeout:30000,
         contentType: "application/json", headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${userToken}',
       'Accept': 'application/json'
-    })));
+    }
+    ));
+    dio.interceptors.add(Logging());
+    final client = ApiClient( dio);
+
+
     return client;
   }
  static ApiClient getClientWithoutAuth() {
-   final client =
-   ApiClient(Dio(BaseOptions(
 
-     connectTimeout:30000,
+   var dio = Dio(BaseOptions(
+       baseUrl: Controller.appBaseURL,
+       connectTimeout:30000,
        contentType: "application/json", headers: {
      'Content-Type': 'application/json',
      'Accept': 'application/json'
-   })));
+   }
+   ));
+
+   dio.interceptors.add(Logging());
+   final client =  ApiClient(dio);
+
+
+
    return client;
  }
 

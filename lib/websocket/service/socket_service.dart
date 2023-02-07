@@ -18,6 +18,7 @@ class SocketService {
   }
 
   factory SocketService([String? socketUrl,BuildContext? context ]) {
+
     _instance ??= SocketService._(socketUrl.toString());
     buildContext = context;
     return _instance!;

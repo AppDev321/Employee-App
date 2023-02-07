@@ -94,12 +94,19 @@ class _DashboardState extends State<Dashboard> {
 
     _dashBoardViewModel.initFireBaseConfig();
     //  _dashBoardViewModel.getDashBoardData();
+
+
+
+
     _dashBoardViewModel.isAppUpdated().then((value) {
       if (value != null) {
         _dashBoardViewModel.showVersionDialog(
             context, value.downloadUrl.toString());
       }
     });
+
+
+
 
     _dashBoardViewModel.getBackgroundFCMNotificaiton();
     //  _dashBoardViewModel.getEventsListResponse();
@@ -137,9 +144,13 @@ class _DashboardState extends State<Dashboard> {
             Controller().saveObjectPreference(
                 Controller.PREF_KEY_USER_OBJECT, userDashboard);
 
-            chatService = SocketService(
-                "${Controller.webSocketURL}${userDashboard.id}&device=emp",
-                context);
+            _dashBoardViewModel.getWebSocketURL().then((value){
+              chatService = SocketService(
+                  "${Controller.webSocketURL}${userDashboard.id}&device=emp",
+                  context);
+
+            });
+
           }
 
           Controller().setUserProfilePic(profileImageUrl);
@@ -173,10 +184,10 @@ class _DashboardState extends State<Dashboard> {
     });
 
     setState(() {
-      if (showVideoChatButton) {
+     if (showVideoChatButton) {
         listQuickAccess.add(DashBoardGrid("5", "Video Chat",
             "assets/icons/leave_icon.svg", Colors.blueAccent));
-      }
+     }
 
       listQuickAccess.add(DashBoardGrid("1", "Leave Request",
           "assets/icons/leave_icon.svg", claimedShiftApprovedColor));

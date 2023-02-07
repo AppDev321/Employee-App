@@ -16,15 +16,8 @@ import '../pages/login/login.dart';
 enum ChatMessageType { text, audio, image, video, file }
 
 class Controller {
-  static const String appBaseURL = "http://vmi808920.contaboserver.net/api";
- // "http://192.168.18.69:8000/api";
-     // "http://afjdemo.hnhtechpk.com/api";
-  //  "http://afjdev.hnhtechpk.com/api";
-
-  static const String webSocketURL  = "ws://vmi808920.contaboserver.net:6001/video-call?token=";
-// static const String webSocketURL  = "ws://192.168.18.50:6001/video-call?token=";
-  //static const String webSocketURL  = "ws://192.168.18.69:6001/mobile?token=";
-
+  static  String appBaseURL = "https://vmi808920.contaboserver.net/api/"; //default url
+  static  String webSocketURL  = ""; //default url
 
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
@@ -337,7 +330,7 @@ class Controller {
                 IconButton(
                   onPressed: () {
                     // Get.back();
-                  //  Navigator.pop(buildContext);
+                    Navigator.of(buildContext, rootNavigator: true).pop('dialog');
                   },
                   icon: const Icon(Icons.close_rounded),
                   color: Colors.redAccent,

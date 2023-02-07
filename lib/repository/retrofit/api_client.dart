@@ -25,12 +25,15 @@ import '../model/response/report_lateness_response.dart';
 import '../model/response/report_leave_response.dart';
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: Controller.appBaseURL)
+
+@RestApi()
 abstract class ApiClient {
-  factory ApiClient(Dio dio, {String? baseUrl}) {
-    dio.interceptors.add(Logging());
-    return _ApiClient(dio, baseUrl: baseUrl);
+  factory ApiClient(Dio dio) {
+
+    return _ApiClient(dio);
   }
+
+
 
   @POST('/login')
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);

@@ -193,7 +193,8 @@ Future<void> getUserImageURLPreferecne() async{
   ) async {
      var stream = http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
      var length = await imageFile.length();
-     var uri = Uri.parse("${Controller.appBaseURL}/upload");
+     var uri = Uri.parse("${Controller.appBaseURL}upload");
+     print(uri);
      Controller controller = Controller();
      String? userToken = await controller.getAuthToken();
      var request = http.MultipartRequest("POST", uri);
