@@ -112,7 +112,7 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
       });
 
       audioVideoCall.onAddRemoteStream = ((stream) {
-      debugPrint("remote stream coming==>>");
+        Controller().printLogs("remote stream coming==>>");
         setState(() {
           _remoteVideoRenderer.srcObject = stream;
         });
@@ -135,6 +135,25 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
           audioVideoCall.checkUserIsOnline();
         }
       };
+
+      audioVideoCall.connectionState = (connectionState){
+        if (connectionState == RTCIceConnectionState.RTCIceConnectionStateConnected) {
+          setState(() {
+            callingStatus = "Connected";
+            isRemoteUserOnline = true;
+          });
+        }
+
+       else if (connectionState == RTCIceConnectionState.RTCIceConnectionStateDisconnected ||
+                connectionState == RTCIceConnectionState.RTCIceConnectionStateFailed)
+        {
+          setState(() {
+            callingStatus = "Reconnecting";
+              isRemoteUserOnline = false;
+          });
+        }
+      };
+
     });
   }
 
@@ -153,7 +172,7 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
         (socketMessage, callback) {
       var message = socketMessage as SocketMessageModel;
-      debugPrint("Message Received Socket -- video call: ${message.toJson()}");
+      Controller().printLogs("Message Received Socket -- video call: ${message.toJson()}");
       var msgType = message.type.toString();
 
       if (msgType == SocketMessageType.CallResponse.displayTitle) {
@@ -197,6 +216,7 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
 
       } else if (msgType == SocketMessageType.AnswerReceived.displayTitle) {
         audioVideoCall.setRemoteDescription(jsonEncode(message.data));
+        audioVideoCall.offerConnectionID = message.offerConnectionId as String;
         audioVideoCall.startTimer();
         setState(() {
           isRemoteUserOnline = true;
@@ -363,7 +383,7 @@ class _VideoCallScreenState extends State<VideoCallScreen>  {
           ),
           body: OrientationBuilder(builder: (context, orientation) {
             return
- showVideoPreviewScreen(true);
+        showVideoPreviewScreen(true);
 
 
 

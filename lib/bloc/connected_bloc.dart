@@ -40,11 +40,11 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
 
    /* socketService.listenWebSocketMessage(
       (serverMessage) {
-        print('Socket Message Received: ${serverMessage.toJson()}');
+           Controller().printLogs('Socket Message Received: ${serverMessage.toJson()}');
         add(SocketMessageReceived(msg: serverMessage, server: socketService));
       },
       (String errorMsg) {
-        print("Socket Message parsing issue: $errorMsg");
+           Controller().printLogs("Socket Message parsing issue: $errorMsg");
       },
     );
 */    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -52,7 +52,7 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
         if (message.notification != null) {
-          print("NotificationData=${message.data.toString()}");
+          Controller().printLogs("NotificationData=${message.data.toString()}");
 
           /// send msg
           FBroadcast.instance().broadcast(Controller().notificationBroadCast,
@@ -104,17 +104,17 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
         if (message.notification != null) {
-          print(message.notification!.title);
-          print(message.notification!.body);
-          print("message.data22 ${message.data['title']}");
-          print("message.data22 ${message.data['body']}");
+          Controller().printLogs(message.notification!.title!.toString());
+          Controller().printLogs("${message.notification!.body!}");
+          Controller().printLogs("message.data22 ${message.data['title']}");
+          Controller().printLogs("message.data22 ${message.data['body']}");
         }
         LocalNotificationService.createandDisplayNotification(message);
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('BLoc Msg:${message.data.toString()}');
+      Controller().printLogs('BLoc Msg:${message.data.toString()}');
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {

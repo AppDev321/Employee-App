@@ -31,7 +31,7 @@ class NotificationViewModel extends BaseViewModel {
     } else {
       if (results.code == 200) {
         setIsErrorReceived(false);
-        if(results.data!.notifications!.length > 0)
+        if(results.data!.notifications!.isNotEmpty)
         {
           notifications = results.data!.notifications!;
         }
@@ -39,7 +39,7 @@ class NotificationViewModel extends BaseViewModel {
         {
           setIsErrorReceived(true);
           notifications=[];
-          setErrorMsg("No Report found");
+          setErrorMsg("No Notification Found");
         }
       } else {
         var errorString = "";

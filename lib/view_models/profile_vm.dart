@@ -193,7 +193,8 @@ Future<void> getUserImageURLPreferecne() async{
   ) async {
      var stream = http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
      var length = await imageFile.length();
-     var uri = Uri.parse("${Controller.appBaseURL}/upload");
+     var uri = Uri.parse("${Controller.appBaseURL}upload");
+     print(uri);
      Controller controller = Controller();
      String? userToken = await controller.getAuthToken();
      var request = http.MultipartRequest("POST", uri);
@@ -206,12 +207,12 @@ Future<void> getUserImageURLPreferecne() async{
      request.fields['filetype']="image/jpg";
      request.fields['field_name']=requestType;
      request.fields['upload_id']="${DateTime.now().millisecondsSinceEpoch}";
-     print(request.fields.toString());
+     Controller().printLogs(request.fields.toString());
      var response = await request.send();
      response.stream.transform(utf8.decoder).listen((value) {
-       print("response = $value");
+       Controller().printLogs("response = $value");
        final parsedJson = jsonDecode(value);
-       print("parsedJson = $parsedJson");
+       Controller().printLogs("parsedJson = $parsedJson");
        isUpload(true);
        if(parsedJson['code'].toString()=="200")
          {

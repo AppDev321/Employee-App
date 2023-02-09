@@ -176,7 +176,7 @@ class _AudioCallScreenState extends State<AudioCallScreen> {
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
         (socketMessage, callback) {
       var message = socketMessage as SocketMessageModel;
-      print("Message Received Socket: ${message.toJson()}");
+      Controller().printLogs("Message Received Socket: ${message.toJson()}");
       var msgType = message.type.toString();
 
       if(msgType == SocketMessageType.CallResponse.displayTitle)

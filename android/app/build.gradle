@@ -21,12 +21,18 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
-
 
 android {
     compileSdkVersion 33//flutter.compileSdkVersion
@@ -46,7 +52,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.flutter.afj.crm"
+        applicationId "com.afjltd.hnhtech.employee"
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
@@ -54,23 +60,24 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+        release {
+
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     buildTypes {
         release {
-            shrinkResources false
-            minifyEnabled false
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
-                debug
-                        {
-                            shrinkResources false
-                            minifyEnabled false
-                }
-
-
-
     }
+
+
+
+
     lintOptions {
         checkReleaseBuilds false
         // Or, if you prefer, you can continue to check for errors in release builds,
@@ -88,8 +95,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx:23.0.6'
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.6'
     implementation("androidx.multidex:multidex:2.0.1")
-
-
 
 
 }

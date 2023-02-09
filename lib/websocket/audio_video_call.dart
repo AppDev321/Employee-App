@@ -13,11 +13,14 @@ import "../utils/controller.dart";
 typedef StreamStateCallback = void Function(MediaStream stream);
 typedef SreamTimerCallback = void Function(String timer);
 typedef PeerConnectionCreatedSuccessfully = void Function();
+typedef ConnectionState = void Function(RTCIceConnectionState);
+
 
 class AudioVideoCall {
   late StreamStateCallback onLocalStream;
   late StreamStateCallback onAddRemoteStream;
   late PeerConnectionCreatedSuccessfully peerConnectionStatus;
+  late ConnectionState connectionState;
   bool isVideoCall = true;
 
   late SreamTimerCallback timerCount;
@@ -36,12 +39,15 @@ class AudioVideoCall {
   bool _offer = false;
   SocketService socketService = SocketService();
   AudioPlayer? player;
+  String offerConnectionID= "";
+  List<SocketMessageModel> iceCandidateList = [];
 
 
   final Map<String, dynamic> offerVideoCallConstraints = {
     "mandatory": {
       "OfferToReceiveAudio": true,
       "OfferToReceiveVideo": true,
+      "IceRestart":true,
     },
     "optional": [
       {"DtlsSrtpKeyAgreement": true},
@@ -52,6 +58,7 @@ class AudioVideoCall {
   final Map<String, dynamic> offerAudioConstraints = {
     "mandatory": {
       "OfferToReceiveAudio": true,
+      "IceRestart":true,
     },
     "optional": [
       {"DtlsSrtpKeyAgreement": true},
@@ -147,7 +154,7 @@ void startTimer() {
 
     RTCPeerConnection pc = await createPeerConnection(configuration,
         isVideoCall ? offerVideoCallConstraints : offerAudioConstraints);
-    print("configuration == ${configuration["iceServers"]}" );
+    Controller().printLogs("configuration == ${configuration["iceServers"]}" );
 
     pc.onAddStream = (stream) {
       stopCallerTone();
@@ -182,36 +189,45 @@ void startTimer() {
             data: candidate);
             socketService.sendMessageToWebSocket(sendCandidate);
         //********************************************
-
+        iceCandidateList.add(iceCandidate);
 
       }
     };
 
     pc.onIceGatheringState = (RTCIceGatheringState state) {
-      print("ICE gathering state changed: $state");
+      Controller().printLogs("ICE gathering state changed: $state");
     };
 
     pc.onConnectionState = (RTCPeerConnectionState state) {
-      print("Connection state change: $state");
+      Controller().printLogs("Connection state change: $state");
 
     };
 
     pc.onSignalingState = (RTCSignalingState state) {
-      print("Signaling state change: $state");
+      Controller().printLogs("Signaling state change: $state");
     };
 
 
-    pc.onIceConnectionState = (state) {
-      print("ICE Connection state changed: $state");
-
+    pc.onIceConnectionState = (state) async{
+      Controller().printLogs("ICE Connection state changed: $state");
+      connectionState(state);
       if (state == RTCIceConnectionState.RTCIceConnectionStateFailed) {
-        /* possibly reconfigure the connection in some way here */
-        /* then request ICE restart */
+        RTCSessionDescription description = await _peerConnection!
+            .createOffer(isVideoCall ? offerVideoCallConstraints : offerAudioConstraints );
+        _offer = true;
+        _peerConnection!.setLocalDescription(description);
+        HashMap<String, dynamic> offerData =
+        HashMap.of({"type": "offer", "sdp": description.sdp.toString()});
+            var createOffer = SocketMessageModel(
+            type: SocketMessageType.ReconnectOffer.displayTitle,
+            sendTo: targetUserId,
+            sendFrom: currentUserId,
+            offerConnectionId:offerConnectionID ,
+            data: offerData);
+            socketService.sendMessageToWebSocket(createOffer);
+       }
 
-      }
     };
-
-
 
     /*  pc.onTrack = (event) async {
       if (event.track.kind == "video" && event.streams.isNotEmpty) {
@@ -327,7 +343,7 @@ void startTimer() {
 
       socketService.sendMessageToWebSocket(createOffer);
     } catch (exception) {
-      print("Offer create exception == $exception");
+      Controller().printLogs("Offer create exception == $exception");
       if (exception
           .toString()
           .contains("Offer called when PeerConnection is closed")) {
@@ -348,6 +364,8 @@ void startTimer() {
         offerConnectionId: answer.offerConnectionId,
         data: true);
     socketService.sendMessageToWebSocket(answerCall);
+
+    offerConnectionID = answer.offerConnectionId as String;
 
   }
 
@@ -371,6 +389,8 @@ void startTimer() {
         sendFrom: currentUserId,
         offerConnectionId: answer.offerConnectionId,
         data: offerData);
+
+
 
 
     socketService.sendMessageToWebSocket(answerCall);

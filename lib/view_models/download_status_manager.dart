@@ -124,12 +124,12 @@ class DownloadManager {
     request.files.add(multipartFile);
     // request.fields['type']=requestType;
 
-    print(request.fields.toString());
+    Controller().printLogs(request.fields.toString());
     var response = await request.send();
     response.stream.transform(utf8.decoder).listen((value) {
-    //  print("response = $value");
+    //  Controller().printLogs("response = $value");
       final parsedJson = jsonDecode(value);
-      print("parsedJson = $parsedJson");
+      Controller().printLogs("parsedJson = $parsedJson");
       isUploadCompleted(true);
       if (parsedJson['code'].toString() == "200") {
         var data = parsedJson['data'];

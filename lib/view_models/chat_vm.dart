@@ -287,10 +287,10 @@ class ChatViewModel extends BaseViewModel {
     var now = DateTime.now();
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final personDao = db?.callHistoryDAO as CallHistoryDAO;
-    print("store data caller ID => ${targetId}");
+    Controller().printLogs("store data caller ID => ${targetId}");
 
     var storedData = await personDao.getLastSingleCallHistoryRecord(targetId);
-    print("store data => ${storedData?.callTime.toString()}");
+    Controller().printLogs("store data => ${storedData?.callTime.toString()}");
     if (storedData != null) {
       storedData.isMissedCall = false;
       storedData.endCallTime = Controller().getConvertedDate(now);

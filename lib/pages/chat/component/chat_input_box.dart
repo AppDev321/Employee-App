@@ -53,8 +53,8 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     "Camera",
     "Gallery",
     "Audio",
-    "Location",
-    "Contact"
+ //   "Location",
+ //   "Contact"
   ];
 
   @override
@@ -300,7 +300,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
 
   Widget attachmentMenuBox() {
     return Container(
-      height: 278,
+      height: 180,
       width: MediaQuery
           .of(context)
           .size
@@ -311,39 +311,30 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  iconCreation(
-                      Icons.insert_drive_file, Colors.indigo, menus[0]),
-                  SizedBox(
-                    width: 40,
-                  ),
+
                   iconCreation(Icons.camera_alt, Colors.pink, menus[1]),
                   SizedBox(
                     width: 40,
                   ),
                   iconCreation(Icons.insert_photo, Colors.purple, menus[2]),
-                ],
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                  SizedBox(
+                    width: 40,
+                  ),
+                  iconCreation(
+                      Icons.insert_drive_file, Colors.indigo, menus[0]),
+                  SizedBox(
+                    width: 40,
+                  ),
                   iconCreation(Icons.headset, Colors.orange, menus[3]),
-                  SizedBox(
-                    width: 40,
-                  ),
-                  iconCreation(Icons.location_pin, Colors.teal, menus[4]),
-                  SizedBox(
-                    width: 40,
-                  ),
-                  iconCreation(Icons.person, Colors.blue, menus[5]),
                 ],
               ),
+
             ],
           ),
         ),

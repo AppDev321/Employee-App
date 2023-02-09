@@ -12,9 +12,7 @@ class _ApiClient implements ApiClient {
   _ApiClient(
     this._dio, {
     this.baseUrl,
-  }) {
-    baseUrl ??= 'http://vmi808920.contaboserver.net/api';
-  }
+  });
 
   final Dio _dio;
 

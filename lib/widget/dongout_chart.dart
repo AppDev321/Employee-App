@@ -24,7 +24,7 @@ class DoughnutChartState extends State<DoughnutChart> {
   @override
   Widget build(BuildContext context) {
     chartData = widget.chartData;
-    print(chartData.toString());
+    Controller().printLogs(chartData.toString());
     return  _buildDefaultPieChart();
   }
 

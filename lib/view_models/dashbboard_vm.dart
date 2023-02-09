@@ -50,6 +50,8 @@ class DashBoardViewModel extends BaseViewModel {
 
   User getUserObject() => userObject;
   bool isCheckInOut = false;
+  bool videoCallStatus = false;
+
 
   final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
 
@@ -113,48 +115,56 @@ class DashBoardViewModel extends BaseViewModel {
 
 
   Future<void> getDashBoardData() async {
+
     setLoading(true);
-    final results = await APIWebService().getDashBoardData();
 
-    if (results == null) {
-      var errorString = "Check your internet connection";
-      setErrorMsg(errorString);
-    } else {
-      if (results.code == 200) {
-        isCheckInOut = false;
-        dashBoardShift = results.data?.shift;
-        dashboardStat = results.data?.stats;
-        userObject = results.data!.user!;
 
-        attendance = results.data?.attendance;
-        if (results.data!.checkedIn == false &&
-            results.data?.attendance != null) {
-          isCheckInOut = true;
-        }
 
-        // setIsErrorReceived(false);
-      } else {
-        var errorString = "";
-        for (int i = 0; i < results.errors!.length; i++) {
-          errorString += "${results.errors![i].message!}\n";
-        }
+      final results = await APIWebService().getDashBoardData();
+
+      if (results == null) {
+        var errorString = "Check your internet connection";
         setErrorMsg(errorString);
+      } else {
+        if (results.code == 200) {
+          isCheckInOut = false;
+          dashBoardShift = results.data?.shift;
+          dashboardStat = results.data?.stats;
+          userObject = results.data!.user!;
+          videoCallStatus = results.data!.isChatEnabled!;
 
-        setIsErrorReceived(true);
+
+          attendance = results.data?.attendance;
+          if (results.data!.checkedIn == false &&
+              results.data?.attendance != null) {
+            isCheckInOut = true;
+          }
+
+          // setIsErrorReceived(false);
+        } else {
+          var errorString = "";
+          for (int i = 0; i < results.errors!.length; i++) {
+            errorString += "${results.errors![i].message!}\n";
+          }
+          setErrorMsg(errorString);
+
+          setIsErrorReceived(true);
+        }
       }
-    }
 
-    setResponseStatus(true);
-    setLoading(false);
-    notifyListeners();
+      setResponseStatus(true);
+      setLoading(false);
+      notifyListeners();
 
-    getNotificationCount();
+      getNotificationCount();
 
-    getEventsListResponse();
-    //Get Contact list and stored in database
-    ChatViewModel chatViewModel = ChatViewModel();
-    chatViewModel.getContactList();
-    //*********************
+      getEventsListResponse();
+      //Get Contact list and stored in database
+      ChatViewModel chatViewModel = ChatViewModel();
+      chatViewModel.getContactList();
+      //*********************
+
+
   }
 
   Future<void> getNotificationCount() async {
@@ -204,10 +214,10 @@ class DashBoardViewModel extends BaseViewModel {
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
         if (message.notification != null) {
-          print(message.notification!.title);
-          print(message.notification!.body);
-          print("message.data22 ${message.data['title']}");
-          print("message.data22 ${message.data['body']}");
+          Controller().printLogs("${message.notification!.title}");
+          Controller().printLogs("${message.notification!.body!}");
+          Controller().printLogs("message.data22 ${message.data['title']}");
+          Controller().printLogs("message.data22 ${message.data['body']}");
         }
 
         LocalNotificationService.createandDisplayNotification(message);
@@ -215,7 +225,7 @@ class DashBoardViewModel extends BaseViewModel {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
+      Controller().printLogs('A new onMessageOpenedApp event was published!');
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
@@ -248,15 +258,28 @@ class DashBoardViewModel extends BaseViewModel {
     await remoteConfig.fetchAndActivate();
   }
 
+  Future<String> getWebSocketURL() async{
+    var webSocketURL= remoteConfig.getString("WEB_SOCKET_CALL_URL");
+    Controller().printLogs("WEB_SOCKET_CONFIG_URL = $webSocketURL");
+    Controller.webSocketURL = webSocketURL;
+    return webSocketURL;
+  }
+
   Future<AppData?> isAppUpdated() async {
+    var baseUrl = remoteConfig.getString("API_BASE_URL");
+    Controller().printLogs("CONFIG_BASE_URL = $baseUrl");
+    Controller.appBaseURL = baseUrl;
+
+
+
     var appData = remoteConfig.getString("app_update_data");
-    print("Firebase Update = $appData");
+    Controller().printLogs("Firebase Update = $appData");
     final body = json.decode(appData);
     var obj = FirebaseAppUpdate.fromJson(body);
     var data = obj.appData as List<AppData>;
     for (int i = 0; i < data.length; i++) {
       var item = data[i];
-      if (item.appName == "CRM") {
+      if (item.appName == "EMPLOYEE") {
         PackageInfo packageInfo = await PackageInfo.fromPlatform();
         String version = packageInfo.version;
         //String code = packageInfo.buildNumber;
@@ -267,6 +290,9 @@ class DashBoardViewModel extends BaseViewModel {
     }
     return null;
   }
+
+
+
 
   showVersionDialog(context, String url) async {
     await showDialog<String>(
@@ -396,7 +422,7 @@ class DashBoardViewModel extends BaseViewModel {
     BilltechIncomingCall.showCallkitIncoming(params);
 
     listenerEvent((event) {
-      //   print('HOME: ${event?.body['extra']}');
+      //   Controller().printLogs('HOME: ${event?.body['extra']}');
       switch (event!.name) {
         case CallEvent.ACTION_CALL_ACCEPT:
           message.callType.toString().contains("audio")?

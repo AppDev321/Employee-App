@@ -45,7 +45,7 @@ class _AddAttendanceState extends State<AddAttendance> {
             var profileViewModel = ProfileViewModel();
             profileViewModel.uploadImageToServer(
                 context, File(userPicturePath), (isUploaded) {}, (imageUrl) {
-              print("image=== $imageUrl");
+              Controller().printLogs("image=== $imageUrl");
               _progressDialog?.hideOpenDialog();
               setState(() {
                 uploadId = imageUrl;
@@ -81,7 +81,7 @@ class _AddAttendanceState extends State<AddAttendance> {
         MaterialPageRoute(
           builder: (context) => AiBarcodeScanner(
             onScan: (String value) {
-              print("barcode text recevied: $value");
+              Controller().printLogs("barcode text recevied: $value");
               _progressDialog?.showLoadingDialog();
               attendanceViewModel.markAttendanceRequest(
                   value, widget.attendanceType!, uploadId);
@@ -91,9 +91,9 @@ class _AddAttendanceState extends State<AddAttendance> {
       );
 
     } on FormatException catch (ex) {
-      print('Pressed the Back Button before Scanning');
+      Controller().printLogs('Pressed the Back Button before Scanning');
     } catch (ex) {
-      print('Unknown Error $ex');
+      Controller().printLogs('Unknown Error $ex');
     }
   }
 

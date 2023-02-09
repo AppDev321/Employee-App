@@ -22,7 +22,7 @@ class AttendanceViewModel extends BaseViewModel {
 
       userPicturePath = image.path;
     } catch (e) {
-      // print(e);
+      // Controller().printLogs(e);
       await controller.dispose();
     }
     await controller.dispose();

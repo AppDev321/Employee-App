@@ -18,18 +18,18 @@ class GetNotificationResponse {
   GetNotificationResponse.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ?  Data.fromJson(json['data']) : null;
 
     if (json['errors'] != null) {
       errors = <Errors>[];
       json['errors'].forEach((v) {
-        errors!.add(new Errors.fromJson(v));
+        errors!.add( Errors.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data =  Map<String, dynamic>();
     data['code'] = this.code;
     data['message'] = this.message;
     if (this.data != null) {
@@ -52,13 +52,13 @@ class Data {
     if (json['notifications'] != null) {
       notifications = <NotificationData>[];
       json['notifications'].forEach((v) {
-        notifications!.add(new NotificationData.fromJson(v));
+        notifications!.add( NotificationData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data =  Map<String, dynamic>();
     data['message'] = this.message;
     if (this.notifications != null) {
       data['notifications'] =
@@ -83,13 +83,13 @@ class NotificationData {
     isRead = json['is_read'];
     type = json['type'];
     notificationData = json['notification_data'] != null
-        ? new NotificationObject.fromJson(json['notification_data'])
+        ?  NotificationObject.fromJson(json['notification_data'])
         : null;
     createdAt = json['created_at'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data =  Map<String, dynamic>();
     data['id'] = this.id;
     data['is_read'] = this.isRead;
     data['type'] = this.type;
@@ -117,7 +117,7 @@ class NotificationObject {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data =  Map<String, dynamic>();
     data['body'] = this.body;
     data['type'] = this.type;
     data['title'] = this.title;

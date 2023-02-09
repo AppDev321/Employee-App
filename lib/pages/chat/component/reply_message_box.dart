@@ -38,7 +38,7 @@ class ReplyCard extends StatelessWidget {
                      bottomRight: Radius.circular(25),
                    ),
                  ),
-                 child: chatModel.showMessageContentView(item),
+                 child: chatModel.showMessageContentView(item,false),
                ),
 
              ],

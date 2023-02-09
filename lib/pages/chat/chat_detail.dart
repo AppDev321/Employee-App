@@ -235,7 +235,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                       item: widget.item,
                       attachmentInsertedCallback: (path) {
                         var attachmentData = path as AttachmentsTable;
-                        debugPrint(" Path : ${attachmentData.attachmentUrl}");
+                        Controller().printLogs(" Path : ${attachmentData.attachmentUrl}");
                       },
                       onTextMessageSent: (msg) {
                         setState(() {

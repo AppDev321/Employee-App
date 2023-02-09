@@ -49,6 +49,7 @@ class Data {
   Stats? stats;
   bool? checkedIn;
   Attendance? attendance;
+  bool? isChatEnabled = false;
 
   Data({this.user, this.shift, this.stats,this.checkedIn,this.attendance});
 
@@ -58,6 +59,7 @@ class Data {
     stats = json['stats'] != null ? new Stats.fromJson(json['stats']) : null;
     attendance = json['attendance'] != null ? new Attendance.fromJson(json['attendance']) : null;
     checkedIn = json['checked_in'];
+    isChatEnabled= json['is_call_enabled'];
   }
 
   Map<String, dynamic> toJson() {
@@ -71,10 +73,14 @@ class Data {
     if (this.stats != null) {
       data['stats'] = this.stats!.toJson();
     }
-    data['checked_in'] = this.checkedIn;
+
     if (this.attendance != null) {
       data['attendance'] = this.attendance!.toJson();
     }
+    data['checked_in'] = this.checkedIn;
+    data['isChatEnabled'] = this.isChatEnabled;
+
+
     return data;
   }
 }
