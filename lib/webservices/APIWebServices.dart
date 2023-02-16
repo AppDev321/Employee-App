@@ -19,6 +19,7 @@ import '../repository/model/request/inspection_check_request.dart';
 import '../repository/model/request/login_data.dart';
 import '../repository/model/request/save_inspection_post_data.dart';
 import '../repository/model/request/vechicle_get_inspection_request.dart';
+import '../repository/model/request/web_login_data.dart';
 import '../repository/model/response/availability_list.dart';
 import '../repository/model/response/claimed_shift_list.dart';
 import '../repository/model/response/contact_list.dart';
@@ -365,6 +366,18 @@ class APIWebService {
       };
       final client = await RetroClinetHeader.getClientWithAuth();
       var response = await client.validateVehicleTab(request);
+      return response;
+    } catch (e) {
+      Controller().printLogs("$TAG$e");
+      return null;
+    }
+  }
+
+
+  Future<LoginApiResponse?> webLoginRequest(WebLoginRequest request) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.webLoginRequest(request);
       return response;
     } catch (e) {
       Controller().printLogs("$TAG$e");

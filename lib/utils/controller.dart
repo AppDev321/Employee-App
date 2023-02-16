@@ -16,8 +16,9 @@ import '../pages/login/login.dart';
 enum ChatMessageType { text, audio, image, video, file }
 
 class Controller {
-  static  String appBaseURL = "https://vmi808920.contaboserver.net/api/"; //default url
-  static  String webSocketURL  = ""; //default url
+  static String appBaseURL =
+      "https://vmi808920.contaboserver.net/api/"; //default url
+  static String webSocketURL = ""; //default url
 
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";
@@ -28,14 +29,33 @@ class Controller {
   final String fcmMsgValue = "fcm_msg_key";
   final String userKey = "user_key";
   final defaultPic = "http://simpleicon.com/wp-content/uploads/account.png";
-  final String emailPref="emailPref";
-  final String passPref="passPref";
+  final String emailPref = "emailPref";
+  final String passPref = "passPref";
   final String fingerPrintPref = "finger_pref";
   static const PREF_KEY_THEME = "pref_key_theme";
   static const PREF_KEY_USER_OBJECT = "pref_key_user_object";
 
-
   final String socketMessageBroadCast = "socketMessageBroadCast";
+
+
+  Map<String, dynamic> reGexs = {
+    'JSON': r'^[{\[]{1}([,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]|".*?")+[}\]]{1}',
+    'BASE64':
+        r'^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$',
+    'EMAIL':
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+  };
+
+  //valida Types
+  bool isValid(String rex, String s) {
+    return (s.length < 4) ? false : hasMatch(s, reGexs[rex]);
+  }
+  bool hasMatch(String? value, String pattern)
+  {
+    return (value == null) ? false :
+    RegExp(pattern).hasMatch(value);
+  }
+
 
   setTheme(bool value) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -91,7 +111,7 @@ class Controller {
   Future<void> setEmail(String emaiID) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.setString( emailPref,emaiID);
+    prefs.setString(emailPref, emaiID);
   }
 
   Future<void> setPassword(String pass) async {
@@ -102,16 +122,13 @@ class Controller {
   Future<String> getEmail() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    return  prefs.getString(emailPref)?? "";
+    return prefs.getString(emailPref) ?? "";
   }
 
   Future<String> getPassword() async {
-
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString( passPref)?? "";
+    return prefs.getString(passPref) ?? "";
   }
-
-
 
   Future<void> setBiometericStatus(bool isRemember) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -125,17 +142,15 @@ class Controller {
     return isRemember;
   }
 
-     getObjectPreference(String key) async {
+  getObjectPreference(String key) async {
     final prefs = await SharedPreferences.getInstance();
     return json.decode(prefs.getString(key).toString());
   }
 
-  saveObjectPreference(String key,  value) async {
+  saveObjectPreference(String key, value) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString(key, json.encode(value));
   }
-
-
 
   Future<void> setRememberLogin(bool isRemember) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -151,14 +166,14 @@ class Controller {
 
   String getConvertedDate(DateTime now) {
     //var now = new DateTime.now();
-    var formatter =  DateFormat('yyyy-MM-dd');
+    var formatter = DateFormat('yyyy-MM-dd');
     String formattedDate = formatter.format(now);
     return formattedDate;
   }
 
   String getConvertedTime(DateTime now) {
     //var now = new DateTime.now();
-    var formatter =  DateFormat('HH:mm a');
+    var formatter = DateFormat('HH:mm a');
     String formattedDate = formatter.format(now);
     return formattedDate;
   }
@@ -172,7 +187,7 @@ class Controller {
 
   bool validatePassword(String value) {
     RegExp regex =
-    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
     if (value.isEmpty) {
       return false;
     } else {
@@ -184,7 +199,8 @@ class Controller {
     }
   }
 
-  void showMessageDialog(BuildContext context,String msg, String title,VoidCallback? callback) {
+  void showMessageDialog(
+      BuildContext context, String msg, String title, VoidCallback? callback) {
     Get.dialog(
       AlertDialog(
         title: CustomTextWidget(
@@ -193,10 +209,7 @@ class Controller {
         ),
         content: CustomTextWidget(text: msg),
         actions: [
-          TextButton(
-              child: const Text("Yes"),
-              onPressed: callback
-          ),
+          TextButton(child: const Text("Yes"), onPressed: callback),
           TextButton(
             child: const Text("No"),
             onPressed: () {
@@ -259,7 +272,7 @@ class Controller {
       Duration difference = Duration(minutes: minute);
 
       final today =
-      DateTime(now.year).add(difference).subtract(const Duration(days: 1));
+          DateTime(now.year).add(difference).subtract(const Duration(days: 1));
 
       //return '${today.day} Days ${today.hour} Hours ${today.minute} Min';
 
@@ -275,15 +288,15 @@ class Controller {
 
   String getServerDateFormated(String serverDate) {
     DateTime requestDateFormate =
-     DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(serverDate);
     var dateFormat = DateFormat('dd-MMM-yyyy');
     var startDate =
-    dateFormat.format(DateTime.parse(requestDateFormate.toString()));
+        dateFormat.format(DateTime.parse(requestDateFormate.toString()));
     return startDate;
   }
 
   String convertStringDate(String jsonDate, String parsingType) {
-    DateTime parseDate =  DateFormat("dd-MMM-yyyy").parse(jsonDate);
+    DateTime parseDate = DateFormat("dd-MMM-yyyy").parse(jsonDate);
     var dateFormat = DateFormat('E MMM dd yyyy');
 
     switch (parsingType) {
@@ -309,7 +322,8 @@ class Controller {
 
   // Image Preview Dialog
 
-  Widget imageDialog(text,  path, BuildContext buildContext, {bool? isNetwork = false}) {
+  Widget imageDialog(text, path, BuildContext buildContext,
+      {bool? isNetwork = false}) {
     return Dialog(
       // backgroundColor: Colors.transparent,
       elevation: 10,
@@ -330,7 +344,8 @@ class Controller {
                 IconButton(
                   onPressed: () {
                     // Get.back();
-                    Navigator.of(buildContext, rootNavigator: true).pop('dialog');
+                    Navigator.of(buildContext, rootNavigator: true)
+                        .pop('dialog');
                   },
                   icon: const Icon(Icons.close_rounded),
                   color: Colors.redAccent,
@@ -341,41 +356,38 @@ class Controller {
           SizedBox(
             width: Get.mediaQuery.size.width / 2,
             height: Get.mediaQuery.size.height / 2,
-            child: isNetwork == true ? Image.network(
-              '$path',
-              fit: BoxFit.cover,
-              loadingBuilder: (BuildContext context, Widget child,
-                  ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                        : null,
-                  ),
-                );
-              },
-            ) : Image.file(
-                File(path),
-
-                fit: BoxFit.cover
-            ),
+            child: isNetwork == true
+                ? Image.network(
+                    '$path',
+                    fit: BoxFit.cover,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                  )
+                : Image.file(File(path), fit: BoxFit.cover),
           ),
         ],
       ),
     );
   }
+
   String capitalize(String str) => str[0].toUpperCase() + str.substring(1);
 
-  printLogs(String message)
-  {
-    if(kDebugMode) {
-      debugPrint (message);
+  printLogs(String message) {
+    if (kDebugMode) {
+      debugPrint(message);
     }
   }
-
 
   showConfirmationMsgDialog(BuildContext context, String title, String msg,
       String positiveButtonLabel, ValueChanged<bool> OnPostiveButtonClick) {
@@ -427,16 +439,14 @@ class Controller {
     final byteData = await rootBundle.load('assets/$path');
 
     final file = File('${(await getTemporaryDirectory()).path}/$path');
-    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    await file.writeAsBytes(byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
     return file;
   }
 }
-enum FingerPrintOption {
-  ENABLE,
-  DISABLE
-}
 
+enum FingerPrintOption { ENABLE, DISABLE }
 
 enum Screen {
   PROFILE,
@@ -474,9 +484,7 @@ extension ScreenNameExtention on Screen {
   }
 }
 
-
 enum SocketMessageType {
-
   //From App to Web
   StartCall,
   JoinCall,
@@ -490,8 +498,6 @@ enum SocketMessageType {
   Send,
   SendAttachment,
 
-
-
   //From Web to App
   IncomingCall,
   CallResponse,
@@ -503,7 +509,6 @@ enum SocketMessageType {
   CallAlreadyAnswer,
   Received,
   ReceivedAttachment,
-
 }
 
 extension MessageTypeExtention on SocketMessageType {
@@ -536,10 +541,7 @@ extension MessageTypeExtention on SocketMessageType {
       case SocketMessageType.SendAttachment:
         return 'send-attachment';
 
-
-
       /*      WEB to Mobile         */
-
 
       case SocketMessageType.CallResponse:
         return 'client-status';
@@ -558,13 +560,10 @@ extension MessageTypeExtention on SocketMessageType {
       case SocketMessageType.CallAlreadyAnswer:
         return 'call-already-answered';
 
-
-
       case SocketMessageType.Received:
         return 'received';
       case SocketMessageType.ReceivedAttachment:
         return 'received-attachment';
-
 
       default:
         return '';

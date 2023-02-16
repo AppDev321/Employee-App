@@ -146,7 +146,7 @@ class _DashboardState extends State<Dashboard> {
 
             _dashBoardViewModel.getWebSocketURL().then((value){
               chatService = SocketService(
-                  "${Controller.webSocketURL}${userDashboard.id}&device=emp",
+                  "${Controller.webSocketURL}${userDashboard.id}&device=EMPLOYEE",
                   context);
 
             });

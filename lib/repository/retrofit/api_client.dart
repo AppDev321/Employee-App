@@ -13,6 +13,7 @@ import '../../utils/controller.dart';
 import '../model/request/change_password_request.dart';
 import '../model/request/claim_shift_history_request.dart';
 import '../model/request/claim_shift_request.dart';
+import '../model/request/web_login_data.dart';
 import '../model/response/claimed_shift_list.dart';
 import '../model/response/contact_list.dart';
 import '../model/response/get_dashboard.dart';
@@ -95,7 +96,9 @@ abstract class ApiClient {
   Future<LoginApiResponse> markClockOutAttendance(@Body() Map<String,String> body);
 
   @POST('/validate-qr-code')
-  Future<LoginApiResponse> validateVehicleTab(@Body() Map<String,String> body );
+  Future<LoginApiResponse> validateVehicleTab(@Body()  Map<String,String>  body );
+  @POST('/qr-login')
+  Future<LoginApiResponse> webLoginRequest(@Body() WebLoginRequest body);
 
   @POST('/report/leaves')
   Future<LeaveReportResponse> getLeaveReport(@Body() ClaimShiftHistoryRequest body);

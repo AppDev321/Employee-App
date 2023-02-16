@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:camera/camera.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
+
+import '../repository/model/request/web_login_data.dart';
+import '../utils/controller.dart';
 
 class AttendanceViewModel extends BaseViewModel {
   String userPicturePath = "";
@@ -30,8 +35,8 @@ class AttendanceViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> markAttendanceRequest(
-      String code, int attendanceType, String uploadID) async {
+  Future<void> markAttendanceRequest(String code, int attendanceType,
+      String uploadID) async {
     setLoading(true);
     //0- check in , 1- check out
     final results = attendanceType == 0
@@ -91,5 +96,49 @@ class AttendanceViewModel extends BaseViewModel {
     setResponseStatus(true);
     setLoading(false);
     notifyListeners();
+  }
+
+
+  Future<void> verifyWebLogin(String qrCode) async {
+    var getEmailPref = await Controller().getEmail();
+    var getPassPref = await Controller().getPassword();
+    if (getEmailPref != null || getPassPref != null) {
+      Codec<String, String> stringToBase64 = utf8.fuse(base64);
+      String decyptEmail = stringToBase64.decode(getEmailPref);
+      String decryptPassword = stringToBase64.decode(getPassPref);
+
+      WebLoginRequest request = WebLoginRequest();
+      request.password = decryptPassword;
+      request.email = decyptEmail;
+      request.code = qrCode;
+
+      setLoading(true);
+      final results = await APIWebService().webLoginRequest(request);
+
+      if (results == null) {
+        var errorString = "Check your internet connection";
+        setErrorMsg(errorString);
+        setAttendanceRequestStatus(false);
+        // setIsErrorReceived(true);
+      } else {
+        if (results.code == 200) {
+          setAttendanceRequestStatus(true);
+
+          // setIsErrorReceived(false);
+        } else {
+          var errorString = "";
+          for (int i = 0; i < results.errors!.length; i++) {
+            errorString += "${results.errors![i].message!}\n";
+          }
+          setErrorMsg(errorString);
+          setAttendanceRequestStatus(false);
+          //  setIsErrorReceived(true);
+        }
+      }
+
+      setResponseStatus(true);
+      setLoading(false);
+      notifyListeners();
+    }
   }
 }

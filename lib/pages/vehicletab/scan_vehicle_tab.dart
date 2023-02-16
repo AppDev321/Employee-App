@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
@@ -6,6 +7,7 @@ import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
+import 'package:hnh_flutter/repository/model/response/qr_scan_data.dart';
 import 'package:hnh_flutter/view_models/profile_vm.dart';
 
 import '../../custom_style/strings.dart';
@@ -45,25 +47,30 @@ class _VehicleTabScanState extends State<VehicleTabScan> {
       centerTitle: true,
     );
     try {
-   //   var qrResult = await BarcodeScanner.scan();
-   //    _progressDialog?.showLoadingDialog();
-   //    attendanceViewModel.verifyVehicleTab(qrResult.rawContent,uploadId);
+      //   var qrResult = await BarcodeScanner.scan();
+      //    _progressDialog?.showLoadingDialog();
+      //    attendanceViewModel.verifyVehicleTab(qrResult.rawContent,uploadId);
 
       await Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => AiBarcodeScanner(
             onScan: (String value) {
-              Controller().printLogs("barcode text recevied: $value");
-
-uploadId = "${DateTime.now().millisecondsSinceEpoch}";
-                _progressDialog?.showLoadingDialog();
-                attendanceViewModel.verifyVehicleTab(value,uploadId);
-
+              Controller().printLogs("barcode= $value");
+              uploadId = "${DateTime.now().millisecondsSinceEpoch}";
+              _progressDialog?.showLoadingDialog();
+              if (Controller().isValid("BASE64",value) == true) {
+                String decoded = utf8.decode(base64Url.decode(value));
+                Map<String, dynamic> valueMap = json.decode(decoded);
+                QrScanData qrScanData = QrScanData.fromJson(valueMap);
+                Controller().printLogs("qr data: ${qrScanData.toJson()}");
+                attendanceViewModel.verifyWebLogin(qrScanData.code.toString());
+              } else {
+                attendanceViewModel.verifyVehicleTab(value, uploadId);
+              }
             },
           ),
         ),
       );
-
     } on FormatException catch (ex) {
       Controller().printLogs('Pressed the Back Button before Scanning');
     } catch (ex) {
@@ -71,12 +78,10 @@ uploadId = "${DateTime.now().millisecondsSinceEpoch}";
     }
   }
 
-
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-
   }
 
   @override
@@ -95,8 +100,11 @@ uploadId = "${DateTime.now().millisecondsSinceEpoch}";
         profileViewModel.uploadImageToServer(
             context, File(userPicturePath), (isUploaded) {}, (imageUrl) {
           Controller().printLogs(imageUrl);
-            uploadId = imageUrl;
-        }, requestType: "qr_scan", isReturnPath: false, showUploadAlertMsg: false);
+          uploadId = imageUrl;
+        },
+            requestType: "qr_scan",
+            isReturnPath: false,
+            showUploadAlertMsg: false);
       }
 
       _progressDialog?.hideOpenDialog();
@@ -121,7 +129,7 @@ uploadId = "${DateTime.now().millisecondsSinceEpoch}";
           Get.back();
           Controller()
               .showToastMessage(context, "Request submitted successfully");
-       //   Navigator.pop(context);
+          //   Navigator.pop(context);
 
         } else {
           _errorMsg = attendanceViewModel.getErrorMsg();
@@ -129,10 +137,12 @@ uploadId = "${DateTime.now().millisecondsSinceEpoch}";
             if (_errorMsg!.contains(ConstantData.unauthenticatedMsg)) {
               Controller().logoutUser();
             } else {
-              Controller().showToastMessage(context, _errorMsg!);
-              setState(() {
-                _isErrorInApi = true;
-              });
+              if (mounted) {
+                Controller().showToastMessage(context, _errorMsg!);
+                setState(() {
+                  _isErrorInApi = true;
+                });
+              }
             }
           }
         }
@@ -191,7 +201,7 @@ uploadId = "${DateTime.now().millisecondsSinceEpoch}";
                           alignment: Alignment.center,
                           child: Container(
                               margin: const EdgeInsets.all(20),
-                              child:  ErrorMessageWidget(
+                              child: ErrorMessageWidget(
                                 label: _errorMsg!,
                                 color: Colors.red,
                               )))
@@ -208,7 +218,7 @@ uploadId = "${DateTime.now().millisecondsSinceEpoch}";
           width: double.infinity,
           child: FloatingActionButton.extended(
             onPressed: () {
-                scanAttendanceCode();
+              scanAttendanceCode();
             },
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
