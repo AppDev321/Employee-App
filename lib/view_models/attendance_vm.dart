@@ -140,5 +140,11 @@ class AttendanceViewModel extends BaseViewModel {
       setLoading(false);
       notifyListeners();
     }
+    else{
+      setLoading(false);
+      setErrorMsg("No credential store");
+      setAttendanceRequestStatus(false);
+      notifyListeners();
+    }
   }
 }
