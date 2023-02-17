@@ -268,6 +268,8 @@ class DashBoardViewModel extends BaseViewModel {
   Future<AppData?> isAppUpdated() async {
     var baseUrl = remoteConfig.getString("API_BASE_URL");
     Controller().printLogs("CONFIG_BASE_URL = $baseUrl");
+
+    baseUrl = "http://192.168.18.69:8000/api/";
     Controller.appBaseURL = baseUrl;
 
 

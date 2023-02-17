@@ -7,6 +7,7 @@ import 'package:hnh_flutter/utils/controller.dart';
 import 'package:hnh_flutter/widget/error_message.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../custom_style/progress_hud.dart';
+import '../../view_models/dashbboard_vm.dart';
 import '../../view_models/login_view_model.dart';
 import '../../widget/custom_edit_text_widget.dart';
 import '../../widget/dialog_builder.dart';
@@ -40,6 +41,19 @@ class LoginClassStateful extends State<LoginClass> {
   @override
   void initState() {
     super.initState();
+
+
+    //For get Firebase config
+    DashBoardViewModel   _dashBoardViewModel = DashBoardViewModel();
+    _dashBoardViewModel.initFireBaseConfig();
+    _dashBoardViewModel.isAppUpdated().then((value) {
+      if (value != null) {
+        _dashBoardViewModel.showVersionDialog(
+            context, value.downloadUrl.toString());
+      }
+    });
+   //****************************************
+
 
     _loginViewModel.addListener(() {
       _progressDialog?.hideOpenDialog();
