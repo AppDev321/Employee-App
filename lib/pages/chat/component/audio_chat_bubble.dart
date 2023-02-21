@@ -92,7 +92,7 @@ class _AudioBubbleState extends State<AudioBubble> {
                             thumbColor: Colors.black,
                             activeColor: Colors.black,
                             inactiveColor: Colors.grey,
-                            value: snapshot.data!.inSeconds.toDouble() ,
+                            value: snapshot.data!.inSeconds.toDouble(),
                                      // (duration.inMilliseconds ?? 1),
                             min:0,
                             max: duration.inSeconds.toDouble(),

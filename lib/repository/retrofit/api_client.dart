@@ -13,6 +13,9 @@ import '../../utils/controller.dart';
 import '../model/request/change_password_request.dart';
 import '../model/request/claim_shift_history_request.dart';
 import '../model/request/claim_shift_request.dart';
+import '../model/request/forgot_password_request.dart';
+import '../model/request/reset_password_request.dart';
+import '../model/request/verify_email_code_request.dart';
 import '../model/request/web_login_data.dart';
 import '../model/response/claimed_shift_list.dart';
 import '../model/response/contact_list.dart';
@@ -35,9 +38,17 @@ abstract class ApiClient {
   }
 
 
-
   @POST('/login')
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);
+
+  @POST('/forgot-password')
+  Future<LoginApiResponse> forgotPassword(@Body() ForgotPasswordRequest body);
+
+  @POST('/verify-email')
+  Future<LoginApiResponse> verifyEmailCode(@Body() VerifyEmailCodeRequest body);
+
+  @POST('/reset-password')
+  Future<LoginApiResponse> resetPassword(@Body() ResetPasswordRequest body);
 
   @POST('/logout')
   Future<void> logout();

@@ -11,7 +11,9 @@ import '../../view_models/dashbboard_vm.dart';
 import '../../view_models/login_view_model.dart';
 import '../../widget/custom_edit_text_widget.dart';
 import '../../widget/dialog_builder.dart';
+import '../../widget/flat_button_widget.dart';
 import '../dashboard/dashboard.dart';
+import '../forgot_password/forgot_password.dart';
 
 class LoginClass extends StatefulWidget {
   const LoginClass({Key? key}) : super(key: key);
@@ -176,18 +178,30 @@ class LoginClassStateful extends State<LoginClass> {
                           text: "Password",
                           controller: _passwordController,
                           isPasswordField: true),
-                      CheckboxListTile(
-                        checkColor: Colors.white,
-                        activeColor: primaryColor,
-                        contentPadding: EdgeInsets.zero,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        title: const Text('Remember Me'),
-                        value: _passRemember,
-                        onChanged: (value) {
-                          setState(() {
-                            _passRemember = value!;
-                          });
-                        },
+                      const SizedBox(height: 10),
+                      Align(
+                          alignment: Alignment.topRight,
+                          child: FlatButton(text: "Forgot Password ?",callback: (callback) {
+                            Get.to(() => ForgotPassword());
+                          },)),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CheckboxListTile(
+                              checkColor: Colors.white,
+                              activeColor: primaryColor,
+                              contentPadding: EdgeInsets.zero,
+                              controlAffinity: ListTileControlAffinity.leading,
+                              title: const Text('Remember Me'),
+                              value: _passRemember,
+                              onChanged: (value) {
+                                setState(() {
+                                  _passRemember = value!;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       _isApiError
                           ? Padding(

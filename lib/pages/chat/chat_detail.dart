@@ -64,7 +64,6 @@ class _ChatDetailPageState extends State<ChatDetailPage>
             setState(() {
               messagesList.add(data);
             });
-
           }
           else
             {
@@ -74,16 +73,11 @@ class _ChatDetailPageState extends State<ChatDetailPage>
           await chatViewModel.insertLastMessageIDConversation(conversationData.receiverID!,isNewMessage: true);
         });
       } ,context: this);
-
   }
-
-
 
   @override
   void dispose() {
-
     FBroadcast.instance().unregister(this);
-
     chatViewModel.insertLastMessageIDConversation(
         widget.item.receiverid);
 

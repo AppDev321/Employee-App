@@ -10,7 +10,6 @@ import 'package:hnh_flutter/pages/chat/component/video_player_widget.dart';
 import 'package:hnh_flutter/utils/controller.dart';
 import 'package:hnh_flutter/view_models/chat_vm.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../custom_style/colors.dart';
 import '../../../database/model/attachments_table.dart';
 import '../../../voice_record_animation/audio_encoder_type.dart';

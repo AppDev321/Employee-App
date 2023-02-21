@@ -20,10 +20,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
-import '../database/app_database.dart';
-import '../database/dao/user_dao.dart';
 import '../database/database_single_instance.dart';
-import '../database/model/user_table.dart';
 import '../notification/firebase_notification.dart';
 import '../pages/videocall/video_call_screen.dart';
 import '../repository/model/request/socket_message_model.dart';
@@ -268,10 +265,9 @@ class DashBoardViewModel extends BaseViewModel {
   Future<AppData?> isAppUpdated() async {
     var baseUrl = remoteConfig.getString("API_BASE_URL");
     Controller().printLogs("CONFIG_BASE_URL = $baseUrl");
-
-    baseUrl = "http://192.168.18.69:8000/api/";
+    //For change server
+    //baseUrl = "http://192.168.18.69:8000/api/";
     Controller.appBaseURL = baseUrl;
-
 
 
     var appData = remoteConfig.getString("app_update_data");
@@ -440,7 +436,7 @@ class DashBoardViewModel extends BaseViewModel {
           ));
 
           insertCallDetailInDB(message,false);
-
+          
           break;
         case CallEvent.ACTION_CALL_TIMEOUT:
           insertCallDetailInDB(message,true);

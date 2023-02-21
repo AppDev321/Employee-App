@@ -51,7 +51,9 @@ class CustomTextWidget extends StatelessWidget {
         child: Text(
           text!,
           textAlign:textAlign,
+
           style: TextStyle(
+
             fontSize: size,
             fontWeight: fontWeight,
             color: colorText

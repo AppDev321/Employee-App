@@ -3,29 +3,22 @@ import 'package:hnh_flutter/repository/model/request/change_password_request.dar
 import 'package:hnh_flutter/repository/model/request/claim_shift_request.dart';
 import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
-import 'package:hnh_flutter/repository/model/request/save_inspection_request.dart';
 import 'package:hnh_flutter/repository/model/response/events_list.dart';
 import 'package:hnh_flutter/repository/model/response/get_notification.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/repository/model/response/login_api_response.dart';
-import 'package:hnh_flutter/repository/model/response/save_inspection_check_api_response.dart';
 import 'package:hnh_flutter/repository/model/response/user_profile.dart';
-import 'package:hnh_flutter/repository/model/response/vehicle_get_inspection_resposne.dart';
-import 'package:hnh_flutter/repository/model/response/vehicle_list_response.dart';
 
 import '../repository/model/request/claim_shift_history_request.dart';
-import '../repository/model/request/create_inspection_request.dart';
-import '../repository/model/request/inspection_check_request.dart';
+import '../repository/model/request/forgot_password_request.dart';
 import '../repository/model/request/login_data.dart';
-import '../repository/model/request/save_inspection_post_data.dart';
-import '../repository/model/request/vechicle_get_inspection_request.dart';
+import '../repository/model/request/reset_password_request.dart';
+import '../repository/model/request/verify_email_code_request.dart';
 import '../repository/model/request/web_login_data.dart';
 import '../repository/model/response/availability_list.dart';
 import '../repository/model/response/claimed_shift_list.dart';
 import '../repository/model/response/contact_list.dart';
-import '../repository/model/response/create_inspection_api_response.dart';
 import '../repository/model/response/get_dashboard.dart';
-import '../repository/model/response/get_inspection_check_api_response.dart';
 import '../repository/model/response/leave_list.dart';
 import '../repository/model/response/overtime_list.dart';
 import '../repository/model/response/report_attendance_response.dart';
@@ -50,6 +43,39 @@ class APIWebService {
     }
   }
 
+  Future<LoginApiResponse?> getForgotPasswordData(ForgotPasswordRequest body) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithoutAuth();
+      var response = await client.forgotPassword(body);
+      return response;
+    } catch (e) {
+      Controller().printLogs("$TAG$e");
+      return null;
+    }
+  }
+
+  Future<LoginApiResponse?> getEmailCodeData(VerifyEmailCodeRequest body) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithoutAuth();
+      var response = await client.verifyEmailCode(body);
+      return response;
+    } catch (e) {
+      Controller().printLogs("$TAG$e");
+      return null;
+    }
+  }
+
+
+  Future<LoginApiResponse?> resetPasswordData(ResetPasswordRequest body) async {
+    try {
+      final client = await RetroClinetHeader.getClientWithoutAuth();
+      var response = await client.resetPassword(body);
+      return response;
+    } catch (e) {
+      Controller().printLogs("$TAG$e");
+      return null;
+    }
+  }
 
 
   Future<GetShiftListResponse?> getShiftList(String weeklyShiftDate) async {

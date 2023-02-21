@@ -54,7 +54,6 @@ class ChatViewModel extends BaseViewModel {
   Future<List<User>> getContactList() async {
     final results = await APIWebService().getContactList();
     final listData = results?.data?.contacts as List<User>;
-
     insertContactList(listData);
     return listData;
   }

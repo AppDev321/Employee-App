@@ -127,7 +127,6 @@ class _ContactListItemState extends State<ContactListItem> {
                           children: [
                             InkWell(
                               onTap: () {
-
                                 chatViewModel.insertConversationData(
                                     senderID, item.userID!, (object) {
                                   widget.callBack(object);

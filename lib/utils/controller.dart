@@ -16,8 +16,7 @@ import '../pages/login/login.dart';
 enum ChatMessageType { text, audio, image, video, file }
 
 class Controller {
-  static String appBaseURL =
-      "https://vmi808920.contaboserver.net/api/"; //default url
+  static String appBaseURL =   "https://vmi808920.contaboserver.net/api/"; //default url
   static String webSocketURL = ""; //default url
 
   final String auth_token = "auth_token";
@@ -179,7 +178,8 @@ class Controller {
   }
 
   void showToastMessage(BuildContext context, String text) {
-    Get.snackbar('Alert', text,
+    Get.snackbar(
+        'Alert', text,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white);
@@ -236,7 +236,7 @@ class Controller {
       },
     );
 
-    // Create AlertDialog
+    // Create AlertDialogu78
     AlertDialog alert = AlertDialog(
       title: Text("Simple Alert"),
       content: Text("This is an alert message."),

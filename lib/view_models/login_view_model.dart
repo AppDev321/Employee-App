@@ -1,10 +1,15 @@
 import 'dart:convert';
+
 import 'package:flutter/services.dart';
+import 'package:hnh_flutter/repository/model/request/forgot_password_request.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
+import 'package:hnh_flutter/repository/model/request/reset_password_request.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
+import 'package:local_auth/local_auth.dart';
 import 'package:open_settings/open_settings.dart';
+
+import '../repository/model/request/verify_email_code_request.dart';
 import '../utils/controller.dart';
 import 'base_view_model.dart';
 
@@ -12,11 +17,18 @@ class LoginViewModel extends BaseViewModel {
   final LocalAuthentication localAuthentication = LocalAuthentication();
   var _auth = LocalAuthentication();
   String authToken = "";
+  String forgotPasswordToken = '';
 
   String getUserToken() => authToken;
 
   setUserAuth(String token) async {
     authToken = token;
+  }
+
+  String getForgotPasswordToken() => forgotPasswordToken;
+
+  setForgotPasswordToken(String token) async {
+    forgotPasswordToken = token;
   }
 
   Future<List<BiometricType>> getBiometrics() async {
@@ -109,5 +121,86 @@ class LoginViewModel extends BaseViewModel {
     setLoading(false);
     notifyListeners();
   }
-}
 
+  Future<void> getUserForgotPassword(
+      ForgotPasswordRequest body, ValueChanged<bool> callback) async {
+    setLoading(true);
+
+    final results = await APIWebService().getForgotPasswordData(body);
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+      setIsErrorReceived(true);
+    } else {
+      if (results.code == 200) {
+        callback(true);
+        setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += "${results.errors![i].message!}\n";
+        }
+        setErrorMsg(errorString);
+        setIsErrorReceived(true);
+      }
+    }
+
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+  }
+
+  Future<void> getEmailCode(
+      VerifyEmailCodeRequest body, ValueChanged<bool> callback) async {
+    setLoading(true);
+
+    final results = await APIWebService().getEmailCodeData(body);
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+      setIsErrorReceived(true);
+    } else {
+      if (results.code == 200) {
+        callback(true);
+        setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += "${results.errors![i].message!}\n";
+        }
+        setErrorMsg(errorString);
+        setIsErrorReceived(true);
+      }
+    }
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+  }
+
+  Future<void> resetUserPassword(
+      ResetPasswordRequest body, ValueChanged<bool> callback) async {
+    setLoading(true);
+
+    final results = await APIWebService().resetPasswordData(body);
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+      setIsErrorReceived(true);
+    } else {
+      if (results.code == 200) {
+        callback(true);
+        setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += "${results.errors![i].message!}\n";
+        }
+        setErrorMsg(errorString);
+        setIsErrorReceived(true);
+      }
+    }
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+  }
+}

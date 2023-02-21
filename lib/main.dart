@@ -132,7 +132,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-
     Widget example5 = SplashScreenView(
       navigateRoute: FutureBuilder<bool>(
           future: checkPassPreference(),
@@ -152,7 +151,6 @@ class MyApp extends StatelessWidget {
 
     );
     var multiProvider = MultiProvider(
-
         providers: [
           ChangeNotifierProvider(create: (context) => NavigationProvider()),
           ChangeNotifierProvider(create: (context) => ThemeModel()),

@@ -24,6 +24,12 @@ const Color textFielBoxBorderColor =Colors.black38;
 
 
 
+const Color accentPurpleColor = Color(0xFF6A53A1);
+const Color accentPinkColor = Color(0xFFF99BBD);
+const Color accentDarkGreenColor = Color(0xFF115C49);
+const Color accentYellowColor = Color(0xFFFFB612);
+const Color accentOrangeColor = Color(0xFFEA7A3B);
+
 
 
 const Color inspectionTableColor= Color(0xFFDBDBDB);

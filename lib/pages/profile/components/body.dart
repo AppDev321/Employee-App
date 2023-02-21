@@ -326,11 +326,13 @@ class _Body extends State<Body> {
                       onValueChange: (item) {
 
                         if (item.index == 0) {
+
                           Controller().setBiometericStatus(false);
                           // Navigator.of(context).pop();
                         Get.back();
                         } else {
                           Controller().setBiometericStatus(true);
+
                           Get.back();
                         }
                       }),
