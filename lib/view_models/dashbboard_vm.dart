@@ -262,12 +262,50 @@ class DashBoardViewModel extends BaseViewModel {
     return webSocketURL;
   }
 
+  Future<void> getAppVersionCheck() async {
+    setLoading(true);
+
+    final results = await APIWebService().getEventsList();
+
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+      setIsErrorReceived(true);
+    } else {
+      if (results.code == 200) {
+        events = results.data!.events!;
+
+        setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += "${results.errors![i].message!}\n";
+        }
+        setErrorMsg(errorString);
+        setIsErrorReceived(true);
+      }
+    }
+
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+
+
+
+  }
+
+
+
   Future<AppData?> isAppUpdated() async {
     var baseUrl = remoteConfig.getString("API_BASE_URL");
     Controller().printLogs("CONFIG_BASE_URL = $baseUrl");
     //For change server
     //baseUrl = "http://192.168.18.69:8000/api/";
     Controller.appBaseURL = baseUrl;
+
+
+
+
 
 
     var appData = remoteConfig.getString("app_update_data");

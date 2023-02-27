@@ -36,7 +36,8 @@ abstract class ApiClient {
 
     return _ApiClient(dio);
   }
-
+  @GET('/app-check')
+  Future<EventListResponse> getAppVersionCheck();
 
   @POST('/login')
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);
