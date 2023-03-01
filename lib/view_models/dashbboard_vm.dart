@@ -259,7 +259,7 @@ class DashBoardViewModel extends BaseViewModel {
   void fetchConfig() async {
     await remoteConfig.fetchAndActivate();
     var baseURL = remoteConfig.getString("API_BASE_URL");
-    Controller().printLogs("BASE_URL = $baseURL");
+    Controller().printLogs("BASE_URL_Firebase = $baseURL");
     Controller.appBaseURL = baseURL;
   }
 

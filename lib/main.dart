@@ -11,6 +11,7 @@ import 'package:hnh_flutter/pages/dashboard/dashboard.dart';
 import 'package:hnh_flutter/pages/login/login.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:hnh_flutter/provider/theme_provider.dart';
+import 'package:hnh_flutter/view_models/dashbboard_vm.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:provider/provider.dart';
 
@@ -27,22 +28,20 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
     importance: Importance.high, playSound: true);
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 final FirebaseMessaging fm = FirebaseMessaging.instance;
 
 String? fcmToken = "";
 String? platFormType = "android";
 
-
-class MyHttpOverrides extends HttpOverrides{
-@override
+class MyHttpOverrides extends HttpOverrides {
+  @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)..badCertificateCallback= (X509Certificate cert, String host, int port)=> true;
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
-
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +49,7 @@ void main() async {
   await Firebase.initializeApp();
 
   //For https certification SSL handshake
-  HttpOverrides.global =  MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverrides();
 
   fcmToken = await FirebaseMessaging.instance.getToken();
 /*  if (Platform.isIOS) {
@@ -63,7 +62,7 @@ void main() async {
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
   //For IOS
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -72,20 +71,24 @@ void main() async {
     sound: true,
   );
 
-  runApp(
-    //For internet connection states
-      BlocProvider(
-        create: (context) => ConnectedBloc(),
-        child: MaterialApp(
-          initialRoute: 'splash',
-          title: ConstantData.appName,
-          debugShowCheckedModeBanner: false, //for tablet desing
-          routes: {
-            'splash': (context) => MyApp(),
-            'login': (context) => LoginClass()
-          },
-        ),
-      ));
+  var dashBoardViewModel = DashBoardViewModel();
+  dashBoardViewModel.initFireBaseConfig().then((value)  {
+    runApp(
+      //For internet connection states
+        BlocProvider(
+          create: (context) => ConnectedBloc(),
+          child: MaterialApp(
+            initialRoute: 'splash',
+            title: ConstantData.appName,
+            debugShowCheckedModeBanner: false, //for tablet desing
+            routes: {
+              'splash': (context) => MyApp(),
+              'login': (context) => LoginClass()
+            },
+          ),
+        ));
+  });
+
 }
 
 Future<bool> checkPassPreference() async {
@@ -103,9 +106,6 @@ Future<bool> checkPassPreference() async {
   }
 }
 
-
-
-
 class MyApp extends StatelessWidget {
   Map<String, String> map = {'device_type': 'android', 'fcm_token': fcmToken!};
 
@@ -114,8 +114,8 @@ class MyApp extends StatelessWidget {
 
   Future<bool> checkPassPreference() async {
     Controller controller = Controller();
-    bool isRememmber = await controller.getRememberLogin();
-    if (isRememmber) {
+    bool isRemember = await controller.getRememberLogin();
+    if (isRemember) {
       String? isAuth = await controller.getAuthToken();
       if (isAuth != null) {
         return true;
@@ -129,37 +129,41 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     var multiProvider = MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => NavigationProvider()),
           ChangeNotifierProvider(create: (context) => ThemeModel()),
         ],
-        child:  Consumer<ThemeModel>(
-                builder: (context, ThemeModel themeNotifier, child) {
-                   primaryColor =  themeNotifier.isDark ? primaryDarkColor : primaryBlueColor;
-                   cardThemeBaseColor =  themeNotifier.isDark ? Colors.black : Colors.white;
-                   borderColor = themeNotifier.isDark ? blackThemeTextColor  : textFielBoxBorderColor;
-                  return GetMaterialApp(
-                    title: ConstantData.appName,
-                    home: FutureBuilder<bool>(
-                        future: checkPassPreference(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data!) {
-                              return const Dashboard();
-                            } else {
-                              return const LoginClass();
-                            }
-                          }
-                          return  Container(color: Colors.white,);
-                        }),
-                    debugShowCheckedModeBanner: false,
-                    theme: themeNotifier.isDark ? _darkTheme: _lightTheme,
-                    themeMode: themeNotifier.isDark ? ThemeMode.dark: ThemeMode.light,
+        child: Consumer<ThemeModel>(
+            builder: (context, ThemeModel themeNotifier, child) {
+          primaryColor =
+              themeNotifier.isDark ? primaryDarkColor : primaryBlueColor;
+          cardThemeBaseColor =
+              themeNotifier.isDark ? Colors.black : Colors.white;
+          borderColor = themeNotifier.isDark
+              ? blackThemeTextColor
+              : textFielBoxBorderColor;
+          return GetMaterialApp(
+            title: ConstantData.appName,
+            home: FutureBuilder<bool>(
+                future: checkPassPreference(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!) {
+                      return const Dashboard();
+                    } else {
+                      return const LoginClass();
+                    }
+                  }
+                  return Container(
+                    color: Colors.white,
                   );
-                }));
+                }),
+            debugShowCheckedModeBanner: false,
+            theme: themeNotifier.isDark ? _darkTheme : _lightTheme,
+            themeMode: themeNotifier.isDark ? ThemeMode.dark : ThemeMode.light,
+          );
+        }));
     return multiProvider;
   }
 
@@ -179,4 +183,3 @@ class MyApp extends StatelessWidget {
     primarySwatch: primaryColorTheme,
   );
 }
-

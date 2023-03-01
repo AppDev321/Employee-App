@@ -92,7 +92,7 @@ class _DashboardState extends State<Dashboard> {
 
     _dashBoardViewModel = DashBoardViewModel();
 
-    _dashBoardViewModel.initFireBaseConfig();
+
     //  _dashBoardViewModel.getDashBoardData();
 
 

@@ -64,14 +64,14 @@ class Data {
 class AppData {
   int? id;
   String? name;
-  Null? appName;
-  Null? version;
-  Null? downloadUrl;
-  Null? downloadUrlType;
+  String? appName;
+  String? version;
+  String? downloadUrl;
+  String? downloadUrlType;
   int? isEnabled;
   String? createdAt;
   String? updatedAt;
-  Null? deletedAt;
+  String? deletedAt;
 
   AppData(
       {this.id,

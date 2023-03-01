@@ -45,11 +45,6 @@ class LoginClassStateful extends State<LoginClass> {
     super.initState();
 
 
-    //For get Firebase config
-    DashBoardViewModel   _dashBoardViewModel = DashBoardViewModel();
-    _dashBoardViewModel.initFireBaseConfig();
-
-   //****************************************
 
 
     _loginViewModel.addListener(() {
