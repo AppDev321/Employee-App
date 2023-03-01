@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -14,7 +13,6 @@ import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:hnh_flutter/provider/theme_provider.dart';
 import 'package:hnh_flutter/webservices/APIWebServices.dart';
 import 'package:provider/provider.dart';
-import 'package:splash_screen_view/SplashScreenView.dart';
 
 import 'bloc/connected_bloc.dart';
 import 'custom_style/colors.dart';
@@ -132,24 +130,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Widget example5 = SplashScreenView(
-      navigateRoute: FutureBuilder<bool>(
-          future: checkPassPreference(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data!) {
-                return const Dashboard();
-              } else {
-                return const LoginClass();
-              }
-            }
-            return const Center();
-          }),
-      duration: 3000,
-      imageSize: 300,
-      imageSrc: ConstantData.logoIconPath,
 
-    );
     var multiProvider = MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => NavigationProvider()),
@@ -162,7 +143,18 @@ class MyApp extends StatelessWidget {
                    borderColor = themeNotifier.isDark ? blackThemeTextColor  : textFielBoxBorderColor;
                   return GetMaterialApp(
                     title: ConstantData.appName,
-                    home: example5,
+                    home: FutureBuilder<bool>(
+                        future: checkPassPreference(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data!) {
+                              return const Dashboard();
+                            } else {
+                              return const LoginClass();
+                            }
+                          }
+                          return  Container(color: Colors.white,);
+                        }),
                     debugShowCheckedModeBanner: false,
                     theme: themeNotifier.isDark ? _darkTheme: _lightTheme,
                     themeMode: themeNotifier.isDark ? ThemeMode.dark: ThemeMode.light,

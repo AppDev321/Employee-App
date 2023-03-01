@@ -98,11 +98,9 @@ class _DashboardState extends State<Dashboard> {
 
 
 
-    _dashBoardViewModel.isAppUpdated().then((value) {
-      if (value != null) {
+    _dashBoardViewModel.getAppVersionCheck((url){
         _dashBoardViewModel.showVersionDialog(
-            context, value.downloadUrl.toString());
-      }
+            context, url);
     });
 
 
@@ -184,10 +182,10 @@ class _DashboardState extends State<Dashboard> {
     });
 
     setState(() {
-     if (showVideoChatButton) {
+   if (showVideoChatButton) {
         listQuickAccess.add(DashBoardGrid("5", "Video Chat",
-            "assets/icons/leave_icon.svg", Colors.blueAccent));
-     }
+            "assets/icons/Call.svg", Colors.blueAccent));
+    }
 
       listQuickAccess.add(DashBoardGrid("1", "Leave Request",
           "assets/icons/leave_icon.svg", claimedShiftApprovedColor));

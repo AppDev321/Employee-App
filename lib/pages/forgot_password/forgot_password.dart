@@ -69,7 +69,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       'Forgot Password',
       style: TextStyle(
           color: colorText,
-          fontSize: 30.0,
+          fontSize: 20.0,
           fontWeight: FontWeight.bold,
           shadows: const [
             BoxShadow(
@@ -83,7 +83,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return Scaffold(
       //appBar: AppBar(),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: Get.mediaQuery.size.height,
           child: Stack(
             fit: StackFit.expand,
@@ -107,14 +107,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     children: [
                       forgotPassword,
                       SizedBox(
-                        height: 30,
+                        height: 20,
                       ),
                       Container(
-                        height: 200,
+                        height: 150,
                         child: Image.asset('assets/images/afj_logo.png'),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 20,
                       ),
                       CustomTextWidget(
                         textAlign: TextAlign.center,
@@ -123,7 +123,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         size: 20,
                       ),
                       SizedBox(
-                        height: 30,
+                        height: 20,
                       ),
                       CustomTextWidget(
                         textAlign: TextAlign.center,
@@ -132,10 +132,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         size: 16,
                         color: Colors.grey.shade500,
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: CustomEditTextWidget(
+                          isEmailField: true,
                           text: "Enter email address",
                           controller: emailController,
                         ),
@@ -158,7 +159,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               if (emailController.text.isEmpty) {
                                 setState(() {
                                   _isApiError = true;
-                                  _errorMsg = "Please enter email";
+                                  _errorMsg = "Please enter valid Email";
                                 });
                               } else {
                                 setState(() {

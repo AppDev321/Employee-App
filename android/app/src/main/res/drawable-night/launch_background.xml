@@ -8,6 +8,4 @@
         android:height="180dp"
         android:drawable="@drawable/img"
         android:gravity="center" />
-
-
 </layer-list>

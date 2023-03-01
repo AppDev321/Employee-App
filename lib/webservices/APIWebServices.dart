@@ -3,6 +3,7 @@ import 'package:hnh_flutter/repository/model/request/change_password_request.dar
 import 'package:hnh_flutter/repository/model/request/claim_shift_request.dart';
 import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
+import 'package:hnh_flutter/repository/model/response/app_version_reponse.dart';
 import 'package:hnh_flutter/repository/model/response/events_list.dart';
 import 'package:hnh_flutter/repository/model/response/get_notification.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
@@ -255,7 +256,16 @@ class APIWebService {
       return null;
     }
   }
-
+  Future<AppVersionResponse?> getAppVersion() async {
+    try {
+      final client = await RetroClinetHeader.getClientWithAuth();
+      var response = await client.getAppVersionCheck();
+      return response;
+    } catch (e) {
+      Controller().printLogs("$TAG$e");
+      return null;
+    }
+  }
   Future<EventListResponse?> getEventsList() async {
     try {
       final client = await RetroClinetHeader.getClientWithAuth();

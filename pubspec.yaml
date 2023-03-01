@@ -1,7 +1,7 @@
 name: hnh_flutter
 description: A new Flutter project.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -15,7 +15,6 @@ dependencies:
   retrofit: ^3.0.1+1
 
   logger: any
-  splash_screen_view: any
   google_maps_flutter: ^2.0.6
   permission_handler: ^10.0.0
   path_provider: ^2.0.8
@@ -49,8 +48,7 @@ dependencies:
   camera: ^0.10.0+3
   line_icons: ^2.0.1
   cached_network_image: ^3.2.2
-  flutter_webrtc: ^0.6.3
-  #web_socket_channel: ^2.2.0
+  #flutter_webrtc: ^0.6.3
   web_socket_client: ^0.1.0-dev.1
   just_audio: ^0.9.30
   lottie: ^2.0.0
@@ -75,6 +73,7 @@ dependencies:
   firebase_crashlytics: ^2.9.0
   flutter_otp_text_field: ^1.1.1
   email_validator: ^2.1.17
+  flutter_webrtc: ^0.9.23
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +82,8 @@ dev_dependencies:
   floor_generator: ^1.3.0
   build_runner: ^2.0.6
   retrofit_generator: ^4.0.3+1
+
+
 
 
 

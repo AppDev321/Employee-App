@@ -74,6 +74,7 @@ class LocalNotificationService
 
   static void createandDisplayNotification(RemoteMessage message) async {
     try {
+      initializeNotification();
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       const NotificationDetails notificationDetails = NotificationDetails(
         android: AndroidNotificationDetails(
@@ -100,6 +101,7 @@ class LocalNotificationService
 
   static void customNotification(int notificationID,{String? message="A new message arrived",String? title="AFJ Message"}) async {
     try {
+      initializeNotification();
       final id =notificationID ;//DateTime.now().millisecondsSinceEpoch ~/ 1000;
       const NotificationDetails notificationDetails = NotificationDetails(
         android: AndroidNotificationDetails(

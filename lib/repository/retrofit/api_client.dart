@@ -3,6 +3,7 @@ import 'package:hnh_flutter/repository/model/request/availability_request.dart';
 import 'package:hnh_flutter/repository/model/request/leave_save_request.dart';
 import 'package:hnh_flutter/repository/model/request/login_data.dart';
 import 'package:hnh_flutter/repository/model/request/overtime_save_request.dart';
+import 'package:hnh_flutter/repository/model/response/app_version_reponse.dart';
 import 'package:hnh_flutter/repository/model/response/availability_list.dart';
 import 'package:hnh_flutter/repository/model/response/events_list.dart';
 import 'package:hnh_flutter/repository/model/response/leave_list.dart';
@@ -37,7 +38,7 @@ abstract class ApiClient {
     return _ApiClient(dio);
   }
   @GET('/app-check')
-  Future<EventListResponse> getAppVersionCheck();
+  Future<AppVersionResponse> getAppVersionCheck();
 
   @POST('/login')
   Future<LoginApiResponse> login(@Body() LoginRequestBody body);

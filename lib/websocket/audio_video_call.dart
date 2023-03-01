@@ -117,6 +117,7 @@ void startTimer() {
 
   _createPeerConnection() async {
     Map<String, dynamic> configuration = {
+    'sdpSemantics': 'plan-b',
       "iceServers":
       [
           /*  {
@@ -171,7 +172,7 @@ void startTimer() {
         HashMap<String, dynamic> candidate = HashMap.of({
           "candidate": e.candidate.toString(),
           "sdpMid": e.sdpMid.toString(),
-          "sdpMLineIndex": e.sdpMlineIndex,
+          "sdpMLineIndex": e.sdpMLineIndex,
         });
         var iceCandidate = SocketMessageModel(
             type: SocketMessageType.SendIceCandidate.displayTitle,
@@ -401,7 +402,7 @@ void startTimer() {
         HashMap<String, dynamic> candidate = HashMap.of({
           "candidate": e.candidate.toString(),
           "sdpMid": e.sdpMid.toString(),
-          "sdpMLineIndex": e.sdpMlineIndex,
+          "sdpMLineIndex": e.sdpMLineIndex,
         });
 
         var iceCandidate = SocketMessageModel(

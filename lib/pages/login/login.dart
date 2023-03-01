@@ -48,12 +48,7 @@ class LoginClassStateful extends State<LoginClass> {
     //For get Firebase config
     DashBoardViewModel   _dashBoardViewModel = DashBoardViewModel();
     _dashBoardViewModel.initFireBaseConfig();
-    _dashBoardViewModel.isAppUpdated().then((value) {
-      if (value != null) {
-        _dashBoardViewModel.showVersionDialog(
-            context, value.downloadUrl.toString());
-      }
-    });
+
    //****************************************
 
 
@@ -172,6 +167,7 @@ class LoginClassStateful extends State<LoginClass> {
                       CustomEditTextWidget(
                         text: "Email",
                         controller: _emailController,
+                        isEmailField: true,
                       ),
                       const SizedBox(height: 20),
                       CustomEditTextWidget(

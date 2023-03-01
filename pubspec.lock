@@ -56,7 +56,7 @@ packages:
       name: args
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.1"
+    version: "2.4.0"
   async:
     dependency: transitive
     description:
@@ -407,6 +407,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.4"
+  dart_webrtc:
+    dependency: transitive
+    description:
+      name: dart_webrtc
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.15"
   dbus:
     dependency: transitive
     description:
@@ -663,7 +670,7 @@ packages:
       name: flutter_plugin_android_lifecycle
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.7"
+    version: "2.0.8"
   flutter_slidable:
     dependency: "direct main"
     description:
@@ -694,7 +701,7 @@ packages:
       name: flutter_webrtc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.10+hotfix.1"
+    version: "0.9.23"
   font_awesome_flutter:
     dependency: "direct main"
     description:
@@ -1213,6 +1220,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.0"
+  platform_detect:
+    dependency: transitive
+    description:
+      name: platform_detect
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.7"
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -1428,13 +1442,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.0"
-  splash_screen_view:
-    dependency: "direct main"
-    description:
-      name: splash_screen_view
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.1"
   sqflite:
     dependency: transitive
     description:
@@ -1750,6 +1757,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.0-dev.1"
+  webrtc_interface:
+    dependency: transitive
+    description:
+      name: webrtc_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.11"
   win32:
     dependency: transitive
     description:

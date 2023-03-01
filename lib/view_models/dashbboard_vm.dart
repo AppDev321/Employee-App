@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -11,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:hnh_flutter/database/dao/call_history_dao.dart';
 import 'package:hnh_flutter/database/model/call_history_table.dart';
 import 'package:hnh_flutter/pages/videocall/audio_call_screen.dart';
+import 'package:hnh_flutter/repository/model/response/app_version_reponse.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
@@ -72,16 +72,19 @@ class DashBoardViewModel extends BaseViewModel {
   //Future<AppDatabase?> get afjDatabase async => await AFJDatabaseInstance.instance.afjDatabase;
 
 
-
-  void insertCallDetailInDB(SocketMessageModel socketMessageModel,bool isMissed) async
+  void insertCallDetailInDB(SocketMessageModel socketMessageModel,
+      bool isMissed) async
   {
-
-    var now =  DateTime.now();
-    final db =  await AFJDatabaseInstance.instance.afjDatabase;
+    var now = DateTime.now();
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
     final callHisoryDAO = db?.callHistoryDAO as CallHistoryDAO;
 
 
-    var data = CallHistoryTable(socketMessageModel.sendFrom.toString(),"", socketMessageModel.callerName.toString(), socketMessageModel.callType.toString(),
+    var data = CallHistoryTable(
+        socketMessageModel.sendFrom.toString(),
+        "",
+        socketMessageModel.callerName.toString(),
+        socketMessageModel.callType.toString(),
         true,
         isMissed,
         Controller().getConvertedDate(now),
@@ -92,15 +95,19 @@ class DashBoardViewModel extends BaseViewModel {
   }
 
 
-  void insertMessageDetailInDB(SocketMessageModel socketMessageModel,bool isMissed) async
+  void insertMessageDetailInDB(SocketMessageModel socketMessageModel,
+      bool isMissed) async
   {
-
-    var now =  DateTime.now();
-    final db =  await AFJDatabaseInstance.instance.afjDatabase;
+    var now = DateTime.now();
+    final db = await AFJDatabaseInstance.instance.afjDatabase;
     final callHisoryDAO = db?.callHistoryDAO as CallHistoryDAO;
 
 
-    var data = CallHistoryTable(socketMessageModel.sendFrom.toString(),"", socketMessageModel.callerName.toString(), socketMessageModel.callType.toString(),
+    var data = CallHistoryTable(
+        socketMessageModel.sendFrom.toString(),
+        "",
+        socketMessageModel.callerName.toString(),
+        socketMessageModel.callType.toString(),
         true,
         isMissed,
         Controller().getConvertedDate(now),
@@ -112,54 +119,52 @@ class DashBoardViewModel extends BaseViewModel {
 
 
   Future<void> getDashBoardData() async {
-
     setLoading(true);
 
 
+    final results = await APIWebService().getDashBoardData();
 
-      final results = await APIWebService().getDashBoardData();
-
-      if (results == null) {
-        var errorString = "Check your internet connection";
-        setErrorMsg(errorString);
-      } else {
-        if (results.code == 200) {
-          isCheckInOut = false;
-          dashBoardShift = results.data?.shift;
-          dashboardStat = results.data?.stats;
-          userObject = results.data!.user!;
-          videoCallStatus = results.data!.isChatEnabled!;
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+    } else {
+      if (results.code == 200) {
+        isCheckInOut = false;
+        dashBoardShift = results.data?.shift;
+        dashboardStat = results.data?.stats;
+        userObject = results.data!.user!;
+        videoCallStatus = results.data!.isChatEnabled!;
 
 
-          attendance = results.data?.attendance;
-          if (results.data!.checkedIn == false &&
-              results.data?.attendance != null) {
-            isCheckInOut = true;
-          }
-
-          // setIsErrorReceived(false);
-        } else {
-          var errorString = "";
-          for (int i = 0; i < results.errors!.length; i++) {
-            errorString += "${results.errors![i].message!}\n";
-          }
-          setErrorMsg(errorString);
-
-          setIsErrorReceived(true);
+        attendance = results.data?.attendance;
+        if (results.data!.checkedIn == false &&
+            results.data?.attendance != null) {
+          isCheckInOut = true;
         }
+
+        // setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += "${results.errors![i].message!}\n";
+        }
+        setErrorMsg(errorString);
+
+        setIsErrorReceived(true);
       }
+    }
 
-      setResponseStatus(true);
-      setLoading(false);
-      notifyListeners();
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
 
-      getNotificationCount();
+    getNotificationCount();
 
-      getEventsListResponse();
-      //Get Contact list and stored in database
-      ChatViewModel chatViewModel = ChatViewModel();
-      chatViewModel.getContactList();
-      //*********************
+    getEventsListResponse();
+    //Get Contact list and stored in database
+    ChatViewModel chatViewModel = ChatViewModel();
+    chatViewModel.getContactList();
+    //*********************
 
 
   }
@@ -253,315 +258,276 @@ class DashBoardViewModel extends BaseViewModel {
 
   void fetchConfig() async {
     await remoteConfig.fetchAndActivate();
+    var baseURL = remoteConfig.getString("API_BASE_URL");
+    Controller().printLogs("BASE_URL = $baseURL");
+    Controller.appBaseURL = baseURL;
   }
 
-  Future<String> getWebSocketURL() async{
-    var webSocketURL= remoteConfig.getString("WEB_SOCKET_CALL_URL");
+  Future<String> getWebSocketURL() async {
+    var webSocketURL = remoteConfig.getString("WEB_SOCKET_CALL_URL");
     Controller().printLogs("WEB_SOCKET_CONFIG_URL = $webSocketURL");
     Controller.webSocketURL = webSocketURL;
     return webSocketURL;
   }
 
-  Future<void> getAppVersionCheck() async {
-    setLoading(true);
-
-    final results = await APIWebService().getEventsList();
-
-    if (results == null) {
-      var errorString = "Check your internet connection";
-      setErrorMsg(errorString);
-      setIsErrorReceived(true);
-    } else {
+  Future<void> getAppVersionCheck(ValueChanged<String> updateFound) async {
+    final results = await APIWebService().getAppVersion();
+    if (results != null) {
       if (results.code == 200) {
-        events = results.data!.events!;
+        var data = results.data?.appData as List<AppData>;
+        for (int i = 0; i < data.length; i++) {
+          var item = data[i];
+          if (item.appName.toString().toUpperCase() == "EMPLOYEE") {
+            PackageInfo packageInfo = await PackageInfo.fromPlatform();
+            String version = packageInfo.version;
+            //String code = packageInfo.buildNumber;
+            if (item.version != version) {
+              updateFound(item.downloadUrl.toString());
+            }
+          }
+        }
 
         setIsErrorReceived(false);
-      } else {
-        var errorString = "";
-        for (int i = 0; i < results.errors!.length; i++) {
-          errorString += "${results.errors![i].message!}\n";
-        }
+      }
+    }
+  }
+
+
+    showVersionDialog(context, String url) async {
+      await showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          String title = "New Update Available";
+          String message =
+              "There is a newer version of app available please update it now.";
+          String btnLabel = "Update Now";
+          String btnLabelCancel = "Close";
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: AlertDialog(
+              title: Text(title),
+              content: Text(message),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text(btnLabel),
+                  onPressed: () async {
+                    if (await canLaunchUrl(Uri.parse(url))) {
+                      await launchUrl(Uri.parse(url));
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
+                ),
+                ElevatedButton(
+                  child: Text(btnLabelCancel),
+                  onPressed: () => exit(0),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
+    Future<void> getEventsListResponse() async {
+      setLoading(true);
+
+      final results = await APIWebService().getEventsList();
+
+      if (results == null) {
+        var errorString = "Check your internet connection";
         setErrorMsg(errorString);
         setIsErrorReceived(true);
-      }
-    }
-
-    setResponseStatus(true);
-    setLoading(false);
-    notifyListeners();
-
-
-
-  }
-
-
-
-  Future<AppData?> isAppUpdated() async {
-    var baseUrl = remoteConfig.getString("API_BASE_URL");
-    Controller().printLogs("CONFIG_BASE_URL = $baseUrl");
-    //For change server
-    //baseUrl = "http://192.168.18.69:8000/api/";
-    Controller.appBaseURL = baseUrl;
-
-
-
-
-
-
-    var appData = remoteConfig.getString("app_update_data");
-    Controller().printLogs("Firebase Update = $appData");
-    final body = json.decode(appData);
-    var obj = FirebaseAppUpdate.fromJson(body);
-    var data = obj.appData as List<AppData>;
-    for (int i = 0; i < data.length; i++) {
-      var item = data[i];
-      if (item.appName == "EMPLOYEE") {
-        PackageInfo packageInfo = await PackageInfo.fromPlatform();
-        String version = packageInfo.version;
-        //String code = packageInfo.buildNumber;
-        if (item.version != version) {
-          return item;
-        }
-      }
-    }
-    return null;
-  }
-
-
-
-
-  showVersionDialog(context, String url) async {
-    await showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        String title = "New Update Available";
-        String message =
-            "There is a newer version of app available please update it now.";
-        String btnLabel = "Update Now";
-        String btnLabelCancel = "Close";
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: AlertDialog(
-            title: Text(title),
-            content: Text(message),
-            actions: <Widget>[
-              ElevatedButton(
-                child: Text(btnLabel),
-                onPressed: () async {
-                  if (await canLaunchUrl(Uri.parse(url))) {
-                    await launchUrl(Uri.parse(url));
-                  } else {
-                    throw 'Could not launch $url';
-                  }
-                },
-              ),
-              ElevatedButton(
-                child: Text(btnLabelCancel),
-                onPressed: () => exit(0),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> getEventsListResponse() async {
-    setLoading(true);
-
-    final results = await APIWebService().getEventsList();
-
-    if (results == null) {
-      var errorString = "Check your internet connection";
-      setErrorMsg(errorString);
-      setIsErrorReceived(true);
-    } else {
-      if (results.code == 200) {
-        events = results.data!.events!;
-
-        setIsErrorReceived(false);
       } else {
-        var errorString = "";
-        for (int i = 0; i < results.errors!.length; i++) {
-          errorString += "${results.errors![i].message!}\n";
+        if (results.code == 200) {
+          events = results.data!.events!;
+
+          setIsErrorReceived(false);
+        } else {
+          var errorString = "";
+          for (int i = 0; i < results.errors!.length; i++) {
+            errorString += "${results.errors![i].message!}\n";
+          }
+          setErrorMsg(errorString);
+          setIsErrorReceived(true);
         }
-        setErrorMsg(errorString);
-        setIsErrorReceived(true);
+      }
+
+      setResponseStatus(true);
+      setLoading(false);
+      notifyListeners();
+    }
+
+    //handle socketMessages
+    void handleSocketMessage(SocketMessageType type,
+        SocketMessageModel message) {
+      switch (type) {
+        case SocketMessageType.IncomingCall:
+          makeIncomingCall(message);
+          break;
+        case SocketMessageType.CallAlreadyAnswer:
+          BilltechIncomingCall.endAllCalls();
+          break;
       }
     }
 
-    setResponseStatus(true);
-    setLoading(false);
-    notifyListeners();
+    void makeIncomingCall(SocketMessageModel message) {
+      var uuid = const Uuid();
+      final _currentUuid = uuid.v4();
+      var params = <String, dynamic>{
+        'id': _currentUuid,
+        'nameCaller': message.callerName,
+        'appName': 'AFJ App',
+        'avatar': 'https://i.pravatar.cc/100',
+        'handle': 'Incoming Call',
+        'type': message.callType.toString().contains("audio") ? 0 : 1,
+        'duration': 1000 * 60,
+        'textAccept': 'Accept',
+        'textDecline': 'Decline',
+        'textMissedCall': 'Missed call',
+        'textCallback': 'Call back',
+        'extra': message.toJson(),
+        'headers': <String, dynamic>{
+          'apiKey': 'Abc@123!',
+          'platform': 'flutter'
+        },
+        'android': <String, dynamic>{
+          'isCustomNotification': true,
+          'isShowLogo': false,
+          'isShowCallback': true,
+          'isShowMissedCallNotification': true,
+          'ringtonePath': 'system_ringtone_default',
+          'backgroundColor': '#0955fa',
+          'backgroundUrl': '',
+          'actionColor': '#4CAF50'
+        },
+        'ios': <String, dynamic>{
+          'iconName': 'CallKitLogo',
+          'handleType': '',
+          'supportsVideo': true,
+          'maximumCallGroups': 2,
+          'maximumCallsPerCallGroup': 1,
+          'audioSessionMode': 'default',
+          'audioSessionActive': true,
+          'audioSessionPreferredSampleRate': 44100.0,
+          'audioSessionPreferredIOBufferDuration': 0.005,
+          'supportsDTMF': true,
+          'supportsHolding': true,
+          'supportsGrouping': false,
+          'supportsUngrouping': false,
+          'ringtonePath': 'system_ringtone_default'
+        }
+      };
+      BilltechIncomingCall.showCallkitIncoming(params);
 
+      listenerEvent((event) {
+        //   Controller().printLogs('HOME: ${event?.body['extra']}');
+        switch (event!.name) {
+          case CallEvent.ACTION_CALL_ACCEPT:
+            message.callType.toString().contains("audio") ?
+            Get.to(() =>
+                AudioCallScreen(
+                  targetUserID: message.sendFrom.toString(),
+                  isIncommingCall: true,
+                  socketMessageModel: message,
+                )) :
+            Get.to(() =>
+                VideoCallScreen(
+                  targetUserID: message.sendFrom.toString(),
+                  isIncommingCall: true,
+                  socketMessageModel: message,
+                ));
 
+            insertCallDetailInDB(message, false);
 
-  }
+            break;
+          case CallEvent.ACTION_CALL_TIMEOUT:
+            insertCallDetailInDB(message, true);
+            break;
+        }
+      });
+    }
 
-  //handle socketMessages
-  void handleSocketMessage(SocketMessageType type, SocketMessageModel message) {
-    switch (type) {
-      case SocketMessageType.IncomingCall:
-        makeIncomingCall(message);
-        break;
-      case SocketMessageType.CallAlreadyAnswer:
-        BilltechIncomingCall.endAllCalls();
-        break;
+    void listenerEvent(Function? callback) {
+      BilltechIncomingCall.onEvent.listen((event) {
+        switch (event!.name) {
+          case CallEvent.ACTION_CALL_INCOMING:
+          // TODO: received an incoming call
+            break;
+          case CallEvent.ACTION_CALL_START:
+          // TODO: started an outgoing call
+          // TODO: show screen calling in Flutter
+            break;
+          case CallEvent.ACTION_CALL_ACCEPT:
+            if (callback != null) {
+              callback(event);
+            }
+            break;
+          case CallEvent.ACTION_CALL_DECLINE:
+            if (callback != null) {
+              callback(event);
+            }
+
+            break;
+          case CallEvent.ACTION_CALL_ENDED:
+          // TODO: ended an incoming/outgoing call
+            break;
+          case CallEvent.ACTION_CALL_TIMEOUT:
+            if (callback != null) {
+              callback(event);
+            }
+            break;
+          case CallEvent.ACTION_CALL_CALLBACK:
+          // TODO: only Android - click action `Call back` from missed call notification
+            break;
+          case CallEvent.ACTION_CALL_TOGGLE_HOLD:
+          // TODO: only iOS
+            break;
+          case CallEvent.ACTION_CALL_TOGGLE_MUTE:
+          // TODO: only iOS
+            break;
+          case CallEvent.ACTION_CALL_TOGGLE_DMTF:
+          // TODO: only iOS
+            break;
+          case CallEvent.ACTION_CALL_TOGGLE_GROUP:
+          // TODO: only iOS
+            break;
+          case CallEvent.ACTION_CALL_TOGGLE_AUDIO_SESSION:
+          // TODO: only iOS
+            break;
+          case CallEvent.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
+          // TODO: only iOS
+            break;
+        }
+      });
     }
   }
 
-  void makeIncomingCall(SocketMessageModel message) {
-    var uuid = const Uuid();
-    final _currentUuid = uuid.v4();
-    var params = <String, dynamic>{
-      'id': _currentUuid,
-      'nameCaller': message.callerName,
-      'appName': 'AFJ App',
-      'avatar': 'https://i.pravatar.cc/100',
-      'handle': 'Incoming Call',
-      'type': message.callType.toString().contains("audio") ? 0 : 1,
-      'duration': 1000 * 60,
-      'textAccept': 'Accept',
-      'textDecline': 'Decline',
-      'textMissedCall': 'Missed call',
-      'textCallback': 'Call back',
-      'extra': message.toJson(),
-      'headers': <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
-      'android': <String, dynamic>{
-        'isCustomNotification': true,
-        'isShowLogo': false,
-        'isShowCallback': true,
-        'isShowMissedCallNotification': true,
-        'ringtonePath': 'system_ringtone_default',
-        'backgroundColor': '#0955fa',
-        'backgroundUrl': '',
-        'actionColor': '#4CAF50'
-      },
-      'ios': <String, dynamic>{
-        'iconName': 'CallKitLogo',
-        'handleType': '',
-        'supportsVideo': true,
-        'maximumCallGroups': 2,
-        'maximumCallsPerCallGroup': 1,
-        'audioSessionMode': 'default',
-        'audioSessionActive': true,
-        'audioSessionPreferredSampleRate': 44100.0,
-        'audioSessionPreferredIOBufferDuration': 0.005,
-        'supportsDTMF': true,
-        'supportsHolding': true,
-        'supportsGrouping': false,
-        'supportsUngrouping': false,
-        'ringtonePath': 'system_ringtone_default'
-      }
-    };
-    BilltechIncomingCall.showCallkitIncoming(params);
-
-    listenerEvent((event) {
-      //   Controller().printLogs('HOME: ${event?.body['extra']}');
-      switch (event!.name) {
-        case CallEvent.ACTION_CALL_ACCEPT:
-          message.callType.toString().contains("audio")?
-          Get.to(() => AudioCallScreen(
-                targetUserID: message.sendFrom.toString(),
-                isIncommingCall: true,
-                socketMessageModel: message,
-              )):
-          Get.to(() => VideoCallScreen(
-            targetUserID: message.sendFrom.toString(),
-            isIncommingCall: true,
-            socketMessageModel: message,
-          ));
-
-          insertCallDetailInDB(message,false);
-          
-          break;
-        case CallEvent.ACTION_CALL_TIMEOUT:
-          insertCallDetailInDB(message,true);
-          break;
-      }
-    });
-  }
-
-  void listenerEvent(Function? callback) {
-    BilltechIncomingCall.onEvent.listen((event) {
-      switch (event!.name) {
-        case CallEvent.ACTION_CALL_INCOMING:
-        // TODO: received an incoming call
-          break;
-        case CallEvent.ACTION_CALL_START:
-        // TODO: started an outgoing call
-        // TODO: show screen calling in Flutter
-          break;
-        case CallEvent.ACTION_CALL_ACCEPT:
-          if (callback != null) {
-            callback(event);
-          }
-          break;
-        case CallEvent.ACTION_CALL_DECLINE:
-          if (callback != null) {
-            callback(event);
-          }
-
-          break;
-        case CallEvent.ACTION_CALL_ENDED:
-        // TODO: ended an incoming/outgoing call
-          break;
-        case CallEvent.ACTION_CALL_TIMEOUT:
-          if (callback != null) {
-            callback(event);
-          }
-          break;
-        case CallEvent.ACTION_CALL_CALLBACK:
-        // TODO: only Android - click action `Call back` from missed call notification
-          break;
-        case CallEvent.ACTION_CALL_TOGGLE_HOLD:
-        // TODO: only iOS
-          break;
-        case CallEvent.ACTION_CALL_TOGGLE_MUTE:
-        // TODO: only iOS
-          break;
-        case CallEvent.ACTION_CALL_TOGGLE_DMTF:
-        // TODO: only iOS
-          break;
-        case CallEvent.ACTION_CALL_TOGGLE_GROUP:
-        // TODO: only iOS
-          break;
-        case CallEvent.ACTION_CALL_TOGGLE_AUDIO_SESSION:
-        // TODO: only iOS
-          break;
-        case CallEvent.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
-        // TODO: only iOS
-          break;
-      }
-    });
-  }
-}
-
-class FirebaseAppUpdate {
+  class FirebaseAppUpdate {
   List<AppData>? appData;
 
   FirebaseAppUpdate({this.appData});
 
   FirebaseAppUpdate.fromJson(Map<String, dynamic> json) {
-    if (json['app_data'] != null) {
-      appData = <AppData>[];
-      json['app_data'].forEach((v) {
-        appData!.add(AppData.fromJson(v));
-      });
-    }
+  if (json['app_data'] != null) {
+  appData = <AppData>[];
+  json['app_data'].forEach((v) {
+  appData!.add(AppData.fromJson(v));
+  });
+  }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (appData != null) {
-      data['app_data'] = appData!.map((v) => v.toJson()).toList();
-    }
-    return data;
+  final Map<String, dynamic> data = <String, dynamic>{};
+  if (appData != null) {
+  data['app_data'] = appData!.map((v) => v.toJson()).toList();
   }
-}
+  return data;
+  }
+  }
 
-class AppData {
+  class AppData {
   String? appName;
   String? version;
   String? downloadUrl;
@@ -569,16 +535,16 @@ class AppData {
   AppData({this.appName, this.version, this.downloadUrl});
 
   AppData.fromJson(Map<String, dynamic> json) {
-    appName = json['app_name'];
-    version = json['version'];
-    downloadUrl = json['download_url'];
+  appName = json['app_name'];
+  version = json['version'];
+  downloadUrl = json['download_url'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['app_name'] = appName;
-    data['version'] = version;
-    data['download_url'] = downloadUrl;
-    return data;
+  final Map<String, dynamic> data = <String, dynamic>{};
+  data['app_name'] = appName;
+  data['version'] = version;
+  data['download_url'] = downloadUrl;
+  return data;
   }
-}
+  }
