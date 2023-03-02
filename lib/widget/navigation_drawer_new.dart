@@ -30,7 +30,7 @@ import '../pages/reports/lateness_report.dart';
 import '../pages/shift/shift_list.dart';
 import '../utils/controller.dart';
 
-class NavigationDrawer extends StatelessWidget {
+class NavigationDrawerWidget extends StatelessWidget {
   final padding = EdgeInsets.symmetric(horizontal: 0);
   Map<String,String> map = {
     'device_type': 'android',
