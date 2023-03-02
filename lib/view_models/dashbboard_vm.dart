@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:billtech_incoming_call/billtech_incoming_call.dart';
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/database/dao/call_history_dao.dart';
@@ -261,6 +263,10 @@ class DashBoardViewModel extends BaseViewModel {
     var baseURL = remoteConfig.getString("API_BASE_URL");
     Controller().printLogs("BASE_URL_Firebase = $baseURL");
     Controller.appBaseURL = baseURL;
+
+    Controller.appBaseURL = "http://192.168.18.50:8000/api/";
+
+
   }
 
   Future<String> getWebSocketURL() async {
