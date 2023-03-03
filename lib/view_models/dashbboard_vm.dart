@@ -264,7 +264,7 @@ class DashBoardViewModel extends BaseViewModel {
     Controller().printLogs("BASE_URL_Firebase = $baseURL");
     Controller.appBaseURL = baseURL;
 
-    Controller.appBaseURL = "http://192.168.18.50:8000/api/";
+    //Controller.appBaseURL = "http://192.168.18.50:8000/api/";
 
 
   }
