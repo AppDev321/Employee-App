@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 
@@ -41,18 +42,33 @@ class _ChatDetailPageState extends State<ChatDetailPage>
   HashSet<MessagesTable> selectedItem = HashSet();
   bool isMultiSelectionEnabled = false;
 
+  late Future<List<MessagesTable>> databaseMessageList;
+  StreamController<MessagesTable> messageStream = StreamController<MessagesTable>.broadcast();
+
+  Future<List<MessagesTable>> fetchDatabaseMsg() async {
+  final messages =   await chatViewModel.getMessagesList(widget.item.conversationId);
+    for (var message in messages) {
+    //  messageStream.sink.add(message);
+    }
+  print("message db = ${messages.length }");
+
+    return messages;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    chatViewModel.getMessagesList(widget.item.conversationId).then((value) {
+    databaseMessageList = fetchDatabaseMsg();
+   /* chatViewModel.getMessagesList(widget.item.conversationId).then((value) {
       setState(() {
         var data = value;
         messagesList = data;
 
       });
-    });
+
+
+    });*/
 
     //Handle web socket msg
     FBroadcast.instance().register(Controller().socketMessageBroadCast,
@@ -61,9 +77,11 @@ class _ChatDetailPageState extends State<ChatDetailPage>
         chatViewModel.handleSocketCallbackMessage(socketMessage, messageTable: (msgData){
           var data = msgData as MessagesTable;
           if(data.receiverID == widget.item.receiverid) {
-            setState(() {
+            /*setState(() {
               messagesList.add(data);
             });
+*/
+            messageStream.sink.add(data);
           }
           else
             {
@@ -78,6 +96,8 @@ class _ChatDetailPageState extends State<ChatDetailPage>
   @override
   void dispose() {
     FBroadcast.instance().unregister(this);
+
+   messageStream.close();
     chatViewModel.insertLastMessageIDConversation(
         widget.item.receiverid);
 
@@ -194,9 +214,9 @@ class _ChatDetailPageState extends State<ChatDetailPage>
                           "Are you sure you want to delete ?","Delete",
                               (){
                             chatViewModel.deleteMessages(selectedItem.toList());
-                            selectedItem.forEach((nature) {
+                            for (var nature in selectedItem) {
                               messagesList.remove(nature);
-                            });
+                            }
                             isMultiSelectionEnabled = false;
                             selectedItem.clear();
                             setState(() {});
@@ -215,108 +235,161 @@ class _ChatDetailPageState extends State<ChatDetailPage>
             ),
           )
         ),
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: [
-              Expanded(child:
-                  getChatList()
-              ),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ChatInputBox(
-                      item: widget.item,
-                      attachmentInsertedCallback: (path) {
-                        var attachmentData = path as AttachmentsTable;
-                        Controller().printLogs(" Path : ${attachmentData.attachmentUrl}");
-                      },
-                      onTextMessageSent: (msg) {
-                        setState(() {
-                          chatViewModel.insertLastMessageIDConversation(
-                              widget.item.receiverid);
-                          messagesList.add(msg);
+        body: Column(
+          children: [
+            Expanded(child:
+                getChatList()
+            ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: ChatInputBox(
+                    item: widget.item,
+                    attachmentInsertedCallback: (path) {
+                      var attachmentData = path as AttachmentsTable;
+                      Controller().printLogs(" Path : ${attachmentData.attachmentUrl}");
+                    },
+                    onTextMessageSent: (msg) {
+                      setState(() {
+                        chatViewModel.insertLastMessageIDConversation(
+                            widget.item.receiverid);
+                      //  messagesList.add(msg);
+                        messageStream.sink.add(msg);
 
-                          if(msg.isAttachments== false) {
-                            var message = SocketMessageModel(
-                                type: SocketMessageType.Send.displayTitle,
-                                sendTo: widget.item.receiverid.toString(),
-                                sendFrom: widget.item.senderId.toString(),
-                                data: msg);
+                        if(msg.isAttachments== false) {
+                          var message = SocketMessageModel(
+                              type: SocketMessageType.Send.displayTitle,
+                              sendTo: widget.item.receiverid.toString(),
+                              sendFrom: widget.item.senderId.toString(),
+                              data: msg);
 
-                            socketService.sendMessageToWebSocket(message);
-                          }
-                        });
-                      }))
-            ],
-          ),
+                          socketService.sendMessageToWebSocket(message);
+                        }
+                      });
+                    }))
+          ],
         ));
   }
 
 
-
   Widget getChatList() {
-    return ListView.builder(
-      reverse: messagesList.length >5 ?true:false,
-      itemCount: messagesList.length + 1,
-      shrinkWrap: true,
-      //physics: const BouncingScrollPhysics(),
-      controller: _scrollController,
-      padding: const EdgeInsets.only(left: 5,right: 5),
-      itemBuilder: (context, index1) {
-        var index =index1;
-        if(messagesList.length >5)
-          {
-            int itemCount = messagesList.length + 1;
-            index= itemCount - 1 - index1;
-          }
+    return
+          FutureBuilder<List<MessagesTable>>(
+            future: databaseMessageList,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  final messages = snapshot.data as List<MessagesTable>;
+                  print("message db2 = ${messages.length }");
+                  return StreamBuilder<MessagesTable>(
+                    stream: messageStream.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var message = snapshot.data as MessagesTable;
+                        print("message stream = ${message.content }");
+                        messages.add(message);
+                      }
 
-        if (index == messagesList.length) {
-          return Container(
-            height: 20,
+                      final itemCount = messages.length + 1;
+                      final shouldReverse = itemCount > 5;
+
+                      return
+                        ListView.builder(
+                            reverse:  shouldReverse ,
+                            itemCount: itemCount,
+                            shrinkWrap: true,
+                            controller: _scrollController,
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            itemBuilder: (context, index) {
+                              final isLastItem = index == messages.length;
+
+                              if (isLastItem) {
+                                return Container(height: 20);
+                              }
+
+                              final item = messages[shouldReverse ? itemCount - index - 2 : index];
+
+                              return InkWell(
+                                onTap: () => doMultiSelection(item),
+                                onLongPress: () => setState(() {
+                                  isMultiSelectionEnabled = true;
+                                  doMultiSelection(item);
+                                }),
+                                child: Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: [
+                                    if (item.isMine = true) OwnMessageCard(item: item)
+                                    else ReplyCard(item: item),
+                                    Visibility(
+                                      visible: isMultiSelectionEnabled,
+                                      child: Icon(
+                                        selectedItem.contains(item) ? Icons.check_circle : Icons.radio_button_unchecked,
+                                        size: 30,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Text('No messages found');
+                }
+              } else {
+                return CircularProgressIndicator();
+              }
+            },
           );
-        } else {
-          var item = messagesList[index];
-          if (item.isMine == true) {
-            return InkWell(
-              onTap: () {
-                doMultiSelection(item);
-              },
-              onLongPress: () {
-                setState(() {
-                  isMultiSelectionEnabled = true;
-                  doMultiSelection(item);
-                });
-              },
-              child: Stack(
-                alignment: Alignment.centerLeft,
-                children: [
-                  OwnMessageCard(
-                    item: item,
-                  ),
-                  Visibility(
-                      visible: isMultiSelectionEnabled,
-                      child: Icon(
-                        selectedItem.contains(item)
-                            ? Icons.check_circle
-                            : Icons.radio_button_unchecked,
-                        size: 30,
+  }
+/*
+  Widget getChatList() {
+    final itemCount = messagesList.length + 1;
+    final shouldReverse = itemCount > 5;
 
-                      ))
-                ],
-              ),
-            );
-          }
-          else
-          {
-            return ReplyCard(
-              item: item,
-            );
-          }
+    return ListView.builder(
+      reverse: shouldReverse,
+      itemCount: itemCount,
+      shrinkWrap: true,
+      controller: _scrollController,
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      itemBuilder: (context, index) {
+        final isLastItem = index == messagesList.length;
+
+        if (isLastItem) {
+          return Container(height: 20);
         }
+
+        final item = messagesList[shouldReverse ? itemCount - index - 2 : index];
+
+        return InkWell(
+          onTap: () => doMultiSelection(item),
+          onLongPress: () => setState(() {
+            isMultiSelectionEnabled = true;
+            doMultiSelection(item);
+          }),
+          child: Stack(
+            alignment: Alignment.centerLeft,
+            children: [
+              if (item.isMine = true) OwnMessageCard(item: item)
+              else ReplyCard(item: item),
+              Visibility(
+                visible: isMultiSelectionEnabled,
+                child: Icon(
+                  selectedItem.contains(item) ? Icons.check_circle : Icons.radio_button_unchecked,
+                  size: 30,
+                ),
+              ),
+            ],
+          ),
+        );
       },
     );
-  }
+  }*/
+
   void doMultiSelection(item) {
     if (isMultiSelectionEnabled) {
       if (selectedItem.contains(item)) {
@@ -332,7 +405,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
 
   String getSelectedItemCount() {
     return selectedItem.isNotEmpty
-        ? selectedItem.length.toString() + " item selected"
+        ? "${selectedItem.length} item selected"
         : "No item selected";
   }
 }

@@ -99,6 +99,7 @@ class LoginClassStateful extends State<LoginClass> {
     );
   }
 
+
   Widget _uiSetup(BuildContext context) {
     var colorText = Get.isDarkMode ? blackThemeTextColor : cardDarkThemeBg;
 
@@ -208,32 +209,23 @@ class LoginClassStateful extends State<LoginClass> {
                           padding: const EdgeInsets.all(10),
                           child: ElevatedButton(
                             onPressed: () async{
-                              if (_emailController.text.isEmpty) {
-                                setState(() {
-                                  _isApiError = true;
-                                  _errorMsg = "Please enter email";
-                                });
-                              } else if (!RegExp(r'\S+@\S+\.\S+')
-                                  .hasMatch(_emailController.text)) {
-                                setState(() {
-                                  _isApiError = true;
-                                  _errorMsg = "Enter valid Email address";
-                                });
-                              } else if (_passwordController.text.isEmpty) {
-                                setState(() {
-                                  _isApiError = true;
-                                  _errorMsg = "Please enter password";
-                                });
+                              final email = _emailController.text.trim();
+                              final password = _passwordController.text.trim();
+
+                              if (email.isEmpty) {
+                                showError("Please Enter Email");
+                              } else if (!isEmailValid(email)) {
+                                showError("Enter valid Email Address");
+                              } else if (password.isEmpty) {
+                                showError("Please Enter Password");
                               } else {
-                                setState(() {
-                                  _isApiError = false;
-                                  _errorMsg = "";
-                                });
-                                FocusScope.of(context)
-                                    .requestFocus(new FocusNode()); //remove focus
-                                _onLoginButtonPress(_emailController.text,
-                                    _passwordController.text);
+                                clearError();
+                                unfocusFields();
+                                _onLoginButtonPress(email, password);
                               }
+
+
+
                             },
                             style: ElevatedButton.styleFrom(
                                 minimumSize: const Size(300, 50),
@@ -323,4 +315,28 @@ class LoginClassStateful extends State<LoginClass> {
           ],
         ),
       );
+
+
+  void showError(String errorMsg) {
+    setState(() {
+      _isApiError = true;
+      _errorMsg = errorMsg;
+    });
+  }
+
+  void clearError() {
+    setState(() {
+      _isApiError = false;
+      _errorMsg = "";
+    });
+  }
+
+  void unfocusFields() {
+    FocusScope.of(context).unfocus();
+  }
+
+  bool isEmailValid(String email) {
+    final emailRegex = RegExp(r'\S+@\S+\.\S+');
+    return emailRegex.hasMatch(email);
+  }
 }

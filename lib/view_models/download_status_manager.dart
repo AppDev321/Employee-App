@@ -102,7 +102,7 @@ class DownloadManager {
 
     var stream = http.ByteStream(DelegatingStream.typed(filePath.openRead()));
     var length = await filePath.length();
-    var uri = Uri.parse("${Controller.appBaseURL}/media-upload");
+    var uri = Uri.parse("${Controller.appBaseURL}media-upload");
     Controller controller = Controller();
     String? userToken = await controller.getAuthToken();
 

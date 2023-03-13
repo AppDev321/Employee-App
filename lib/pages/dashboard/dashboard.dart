@@ -1,9 +1,12 @@
 import 'package:fbroadcast/fbroadcast.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/pages/chat/conversation_list_screen.dart';
 import 'package:hnh_flutter/pages/leave/add_my_leave.dart';
@@ -179,10 +182,10 @@ class _DashboardState extends State<Dashboard> {
     });
 
     setState(() {
-   if (showVideoChatButton) {
+   //if (showVideoChatButton) {
         listQuickAccess.add(DashBoardGrid("5", "Video Chat",
             "assets/icons/Call.svg", Colors.blueAccent));
-    }
+    //}
 
       listQuickAccess.add(DashBoardGrid("1", "Leave Request",
           "assets/icons/leave_icon.svg", claimedShiftApprovedColor));
@@ -328,17 +331,20 @@ class _DashboardState extends State<Dashboard> {
           ),
           body: Column(
             children: [
-              BlocBuilder<ConnectedBloc, ConnectedState>(
-                  builder: (context, state) {
+
+              BlocConsumer<ConnectedBloc, ConnectedState>(
+                  listener: (context, state) {
+                    if (state is FirebaseMsgReceived) {
+                      if (state.screenName == Screen.DASHBOARD) {
+                        _dashBoardViewModel.getDashBoardData();
+                        state.screenName = Screen.NULL;
+                      }
+                    }
+                    },
+          builder: (context, state) {
                 if (state is ConnectedFailureState) {
                   return const InternetNotAvailable();
-                } else if (state is FirebaseMsgReceived) {
-                  if (state.screenName == Screen.DASHBOARD) {
-                    _dashBoardViewModel.getDashBoardData();
-                    state.screenName = Screen.NULL;
-                  }
-                  return Container();
-                } else {
+                }  else {
                   return Container();
                 }
               }),

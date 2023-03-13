@@ -145,14 +145,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.1"
-  billtech_incoming_call:
-    dependency: "direct main"
-    description:
-      name: billtech_incoming_call
-      sha256: a645fbcfc81e47ea624a92b001e803a0d181eb87b3374b6b7aff93269d2452a3
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0+2"
   bloc:
     dependency: transitive
     description:
@@ -718,6 +710,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.0"
+  flutter_callkit_incoming:
+    dependency: "direct main"
+    description:
+      path: flutter_callkit_incoming-master
+      relative: true
+    source: path
+    version: "1.0.3+3"
   flutter_lints:
     dependency: "direct dev"
     description:

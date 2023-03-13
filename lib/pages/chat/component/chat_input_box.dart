@@ -319,16 +319,16 @@ class _ChatInputBoxState extends State<ChatInputBox> {
 
                   iconCreation(Icons.camera_alt, Colors.pink, menus[1]),
                   SizedBox(
-                    width: 40,
+                    width: 20,
                   ),
                   iconCreation(Icons.insert_photo, Colors.purple, menus[2]),
                   SizedBox(
-                    width: 40,
+                    width: 20,
                   ),
                   iconCreation(
                       Icons.insert_drive_file, Colors.indigo, menus[0]),
                   SizedBox(
-                    width: 40,
+                    width: 20,
                   ),
                   iconCreation(Icons.headset, Colors.orange, menus[3]),
                 ],

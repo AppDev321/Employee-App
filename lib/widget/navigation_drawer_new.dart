@@ -4,13 +4,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
 import 'package:hnh_flutter/custom_style/colors.dart';
 import 'package:hnh_flutter/custom_style/strings.dart';
 import 'package:hnh_flutter/data/drawer_item.dart';
-import 'package:hnh_flutter/pages/availability/add_my_availability.dart';
 import 'package:hnh_flutter/pages/leave/leave_listing.dart';
-import 'package:hnh_flutter/pages/overtime/add_overtime.dart';
 import 'package:hnh_flutter/pages/profile/profile_screen.dart';
 import 'package:hnh_flutter/pages/reports/leave_report.dart';
 import 'package:hnh_flutter/pages/shift/claimed_shift_list.dart';
@@ -18,13 +15,12 @@ import 'package:hnh_flutter/pages/vehicletab/scan_vehicle_tab.dart';
 import 'package:hnh_flutter/provider/navigation_provider.dart';
 import 'package:hnh_flutter/widget/custom_text_widget.dart';
 import 'package:provider/provider.dart';
+
 import '../data/drawer_items.dart';
 import '../main.dart';
 import '../pages/attandence/add_attendance.dart';
 import '../pages/availability/availability_listing.dart';
-import '../pages/login/login.dart';
 import '../pages/overtime/overtime_list.dart';
-import '../pages/profile/setting_screen.dart';
 import '../pages/reports/attendance_report.dart';
 import '../pages/reports/lateness_report.dart';
 import '../pages/shift/shift_list.dart';

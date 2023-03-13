@@ -91,20 +91,6 @@ void main() async {
 
 }
 
-Future<bool> checkPassPreference() async {
-  Controller controller = Controller();
-  bool isRemember = await controller.getRememberLogin();
-  if (isRemember) {
-    String? isAuth = await controller.getAuthToken();
-    if (isAuth != null) {
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    return false;
-  }
-}
 
 class MyApp extends StatelessWidget {
   Map<String, String> map = {'device_type': 'android', 'fcm_token': fcmToken!};
@@ -112,20 +98,15 @@ class MyApp extends StatelessWidget {
   var api = APIWebService();
   late Widget routeClass;
 
+
   Future<bool> checkPassPreference() async {
-    Controller controller = Controller();
-    bool isRemember = await controller.getRememberLogin();
-    if (isRemember) {
-      String? isAuth = await controller.getAuthToken();
-      if (isAuth != null) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
+    final controller = Controller();
+    final isRemembered = await controller.getRememberLogin();
+    return isRemembered
+        ? await controller.getAuthToken() != null
+        : false;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -145,20 +126,17 @@ class MyApp extends StatelessWidget {
               : textFielBoxBorderColor;
           return GetMaterialApp(
             title: ConstantData.appName,
-            home: FutureBuilder<bool>(
-                future: checkPassPreference(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data!) {
-                      return const Dashboard();
-                    } else {
-                      return const LoginClass();
-                    }
-                  }
-                  return Container(
-                    color: Colors.white,
-                  );
-                }),
+            home:
+
+            FutureBuilder<bool>(
+              future: checkPassPreference(),
+              builder: (context, snapshot) => snapshot.hasData ? snapshot.data!
+                  ? Dashboard()
+                  : LoginClass():Container(color: Colors.white,),
+            ),
+
+
+
             debugShowCheckedModeBanner: false,
             theme: themeNotifier.isDark ? _darkTheme : _lightTheme,
             themeMode: themeNotifier.isDark ? ThemeMode.dark : ThemeMode.light,

@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1094712997761-6ad2v0cmt7lu1c76e0ma7nafbr3tjqd6.apps.googleusercontent.com</string>
+	<string>291962846138-bteq9v6273rq4g7cpgvogd6at2pkjo15.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1094712997761-6ad2v0cmt7lu1c76e0ma7nafbr3tjqd6</string>
+	<string>com.googleusercontent.apps.291962846138-bteq9v6273rq4g7cpgvogd6at2pkjo15</string>
 	<key>API_KEY</key>
-	<string>AIzaSyB181z6JjY8hX686v6rwt5kJkcObpKxzuw</string>
+	<string>AIzaSyAUXgrUvddbeigcXUAMx5L07MFXS8IDY9k</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1094712997761</string>
+	<string>291962846138</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.flutter.ios.afj.crm</string>
+	<string>com.afjltd.hnhtech.employee</string>
 	<key>PROJECT_ID</key>
-	<string>innovative-technology-f0514</string>
+	<string>afj-travel</string>
 	<key>STORAGE_BUCKET</key>
-	<string>innovative-technology-f0514.appspot.com</string>
+	<string>afj-travel.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1094712997761:ios:3da6359c2a43481ea5da80</string>
+	<string>1:291962846138:ios:23170970147b9be76bbb83</string>
 	<key>DATABASE_URL</key>
-	<string>https://innovative-technology-f0514.firebaseio.com</string>
+	<string>https://afj-travel-default-rtdb.firebaseio.com</string>
 </dict>
 </plist>

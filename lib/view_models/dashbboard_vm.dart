@@ -1,16 +1,17 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:billtech_incoming_call/billtech_incoming_call.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/entities/android_params.dart';
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/entities/ios_params.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:get/get.dart';
 import 'package:hnh_flutter/database/dao/call_history_dao.dart';
 import 'package:hnh_flutter/database/model/call_history_table.dart';
 import 'package:hnh_flutter/pages/videocall/audio_call_screen.dart';
-import 'package:hnh_flutter/repository/model/response/app_version_reponse.dart';
 import 'package:hnh_flutter/repository/model/response/get_shift_list.dart';
 import 'package:hnh_flutter/repository/model/response/report_attendance_response.dart';
 import 'package:hnh_flutter/view_models/base_view_model.dart';
@@ -265,7 +266,6 @@ class DashBoardViewModel extends BaseViewModel {
 
   Future<String> getWebSocketURL() async {
     var webSocketURL = remoteConfig.getString("WEB_SOCKET_CALL_URL");
-    Controller().printLogs("WEB_SOCKET_CONFIG_URL = $webSocketURL");
     Controller.webSocketURL = webSocketURL;
     return webSocketURL;
   }
@@ -367,7 +367,7 @@ class DashBoardViewModel extends BaseViewModel {
           makeIncomingCall(message);
           break;
         case SocketMessageType.CallAlreadyAnswer:
-          BilltechIncomingCall.endAllCalls();
+          FlutterCallkitIncoming.endAllCalls();
           break;
       }
     }
@@ -419,12 +419,55 @@ class DashBoardViewModel extends BaseViewModel {
           'ringtonePath': 'system_ringtone_default'
         }
       };
-      BilltechIncomingCall.showCallkitIncoming(params);
 
-      listenerEvent((event) {
+
+      CallKitParams callKitParams = CallKitParams(
+        id: _currentUuid,
+        nameCaller: message.callerName,
+        appName: 'AFJ App',
+        avatar: 'https://i.pravatar.cc/100',
+        handle: 'Incoming Call',
+        type:  message.callType.toString().contains("audio") ? 0 : 1,
+        textAccept: 'Accept',
+        textDecline: 'Decline',
+        textMissedCall: 'Missed call',
+        textCallback: 'Call back',
+        duration: 1000 * 60,
+        android: const AndroidParams(
+            isCustomNotification: true,
+            isShowLogo: false,
+            isShowCallback: false,
+            isShowMissedCallNotification: true,
+            ringtonePath: 'system_ringtone_default',
+            backgroundColor: '#0955fa',
+            backgroundUrl: 'https://i.pravatar.cc/500',
+            actionColor: '#4CAF50',
+            incomingCallNotificationChannelName: "Incoming Call",
+            missedCallNotificationChannelName: "Missed Call"),
+        ios: IOSParams(
+          iconName: 'CallKitLogo',
+          handleType: 'generic',
+          supportsVideo: true,
+          maximumCallGroups: 2,
+          maximumCallsPerCallGroup: 1,
+          audioSessionMode: 'default',
+          audioSessionActive: true,
+          audioSessionPreferredSampleRate: 44100.0,
+          audioSessionPreferredIOBufferDuration: 0.005,
+          supportsDTMF: true,
+          supportsHolding: true,
+          supportsGrouping: false,
+          supportsUngrouping: false,
+          ringtonePath: 'system_ringtone_default',
+        ),
+      );
+
+      FlutterCallkitIncoming.showCallkitIncoming(callKitParams);
+
+      listenerEvent((callback) {
         //   Controller().printLogs('HOME: ${event?.body['extra']}');
-        switch (event!.name) {
-          case CallEvent.ACTION_CALL_ACCEPT:
+        switch (callback.event) {
+          case Event.ACTION_CALL_ACCEPT:
             message.callType.toString().contains("audio") ?
             Get.to(() =>
                 AudioCallScreen(
@@ -442,7 +485,7 @@ class DashBoardViewModel extends BaseViewModel {
             insertCallDetailInDB(message, false);
 
             break;
-          case CallEvent.ACTION_CALL_TIMEOUT:
+          case Event.ACTION_CALL_TIMEOUT:
             insertCallDetailInDB(message, true);
             break;
         }
@@ -450,53 +493,53 @@ class DashBoardViewModel extends BaseViewModel {
     }
 
     void listenerEvent(Function? callback) {
-      BilltechIncomingCall.onEvent.listen((event) {
-        switch (event!.name) {
-          case CallEvent.ACTION_CALL_INCOMING:
+      FlutterCallkitIncoming.onEvent.listen((event) {
+        switch (event?.event) {
+          case Event.ACTION_CALL_INCOMING:
           // TODO: received an incoming call
             break;
-          case CallEvent.ACTION_CALL_START:
+          case Event.ACTION_CALL_START:
           // TODO: started an outgoing call
           // TODO: show screen calling in Flutter
             break;
-          case CallEvent.ACTION_CALL_ACCEPT:
+          case Event.ACTION_CALL_ACCEPT:
             if (callback != null) {
               callback(event);
             }
             break;
-          case CallEvent.ACTION_CALL_DECLINE:
+          case Event.ACTION_CALL_DECLINE:
             if (callback != null) {
               callback(event);
             }
 
             break;
-          case CallEvent.ACTION_CALL_ENDED:
-          // TODO: ended an incoming/outgoing call
+          case Event.ACTION_CALL_ENDED:
+
             break;
-          case CallEvent.ACTION_CALL_TIMEOUT:
+          case Event.ACTION_CALL_TIMEOUT:
             if (callback != null) {
               callback(event);
             }
             break;
-          case CallEvent.ACTION_CALL_CALLBACK:
+          case Event.ACTION_CALL_CALLBACK:
           // TODO: only Android - click action `Call back` from missed call notification
             break;
-          case CallEvent.ACTION_CALL_TOGGLE_HOLD:
+          case Event.ACTION_CALL_TOGGLE_HOLD:
           // TODO: only iOS
             break;
-          case CallEvent.ACTION_CALL_TOGGLE_MUTE:
+          case Event.ACTION_CALL_TOGGLE_MUTE:
           // TODO: only iOS
             break;
-          case CallEvent.ACTION_CALL_TOGGLE_DMTF:
+          case Event.ACTION_CALL_TOGGLE_DMTF:
           // TODO: only iOS
             break;
-          case CallEvent.ACTION_CALL_TOGGLE_GROUP:
+          case Event.ACTION_CALL_TOGGLE_GROUP:
           // TODO: only iOS
             break;
-          case CallEvent.ACTION_CALL_TOGGLE_AUDIO_SESSION:
+          case Event.ACTION_CALL_TOGGLE_AUDIO_SESSION:
           // TODO: only iOS
             break;
-          case CallEvent.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
+          case Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
           // TODO: only iOS
             break;
         }

@@ -113,17 +113,19 @@ class ShiftListState extends State<ShiftList> with TickerProviderStateMixin {
       ),
       body: Column(
         children: [
-          BlocBuilder<ConnectedBloc, ConnectedState>(builder: (context, state) {
-            if (state is ConnectedFailureState) {
-              return const InternetNotAvailable();
-            } else if (state is FirebaseMsgReceived) {
+          BlocConsumer<ConnectedBloc, ConnectedState>(
+              listener: (context, state) {
+            if (state is FirebaseMsgReceived) {
               if (state.screenName == Screen.SHIFT) {
                 var now = DateTime.now();
                 String formattedDate = Controller().getConvertedDate(now);
                 _shiftListViewModel.getShiftList(formattedDate);
                 state.screenName = Screen.NULL;
               }
-              return Container();
+            }
+          }, builder: (context, state) {
+            if (state is ConnectedFailureState) {
+              return const InternetNotAvailable();
             } else {
               return Container();
             }

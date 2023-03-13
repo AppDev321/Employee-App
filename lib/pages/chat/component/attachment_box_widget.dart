@@ -41,7 +41,9 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
 
     super.initState();
     generateViewUsingCheckSum();
-    generateThumbnail();
+    if (widget.item.attachmentType! == ChatMessageType.video.name) {
+      generateThumbnail();
+    }
   }
   @override
   void didUpdateWidget(covariant AttachmentWidget oldWidget) {
