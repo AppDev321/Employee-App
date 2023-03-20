@@ -16,7 +16,8 @@ part 'connected_state.dart';
 
 class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
   StreamSubscription? subscription;
- // SocketService socketService = SocketService(Controller.webSocketURL);
+
+  // SocketService socketService = SocketService(Controller.webSocketURL);
 
   ConnectedBloc() : super(ConnectedInitialState()) {
     on<OnConnectedEvent>((event, emit) => emit(ConnectedSucessState()));
@@ -24,7 +25,7 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
     on<OnFirebaseNotificationReceive>((event, emit) =>
         emit(FirebaseMsgReceived(screenName: event.screenName)));
 
-  /*  on<SocketMessageReceived>((event, emit) =>
+    /*  on<SocketMessageReceived>((event, emit) =>
         emit(SocketMessage(msg: event.msg, server: socketService)));
 */
     subscription = Connectivity()
@@ -38,7 +39,7 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
       }
     });
 
-   /* socketService.listenWebSocketMessage(
+    /* socketService.listenWebSocketMessage(
       (serverMessage) {
            Controller().printLogs('Socket Message Received: ${serverMessage.toJson()}');
         add(SocketMessageReceived(msg: serverMessage, server: socketService));
@@ -47,14 +48,15 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
            Controller().printLogs("Socket Message parsing issue: $errorMsg");
       },
     );
-*/    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+*/
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      LocalNotificationService.createandDisplayNotification(message);
+
       RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
+      if (notification != null) {
         if (message.notification != null) {
           Controller().printLogs("NotificationData=${message.data.toString()}");
-
-          /// send msg
+          //Refresh notification count in dashboard
           FBroadcast.instance().broadcast(Controller().notificationBroadCast,
               value: Controller().fcmMsgValue);
 
@@ -84,10 +86,9 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
             }
           }
         }
-
-        LocalNotificationService.createandDisplayNotification(message);
       }
     });
+
   }
 
   @override
@@ -96,13 +97,10 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
     return super.close();
   }
 
-
-  //Notificaiton
   void firebaseMessaging(BuildContext context) {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
+      if (notification != null) {
         if (message.notification != null) {
           Controller().printLogs(message.notification!.title!.toString());
           Controller().printLogs("${message.notification!.body!}");
@@ -117,7 +115,7 @@ class ConnectedBloc extends Bloc<ConnectedEvent, ConnectedState> {
       Controller().printLogs('BLoc Msg:${message.data.toString()}');
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
+      if (notification != null) {
         showDialog(
             context: context,
             builder: (_) {

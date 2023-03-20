@@ -318,7 +318,8 @@ class _DashboardState extends State<Dashboard> {
                   Container(
                     child: NamedIcon(
                       onTap: () {
-                        Get.to(() => const NotificationList());
+                       /* LocalNotificationService.customNotification(1231);*/
+                        Get.to(() =>  const NotificationList());
                       },
                       notificationCount: notificationCount,
                       iconData: Icons.notifications,

@@ -17,7 +17,7 @@ enum ChatMessageType { text, audio, image, video, file }
 
 class Controller {
   static String appBaseURL =   "https://vmi808920.contaboserver.net/api/"; //default url
-  static String webSocketURL = ""; //default url
+  static String webSocketURL = "wss://vmi808920.contaboserver.net:6001/video-call?token="; //default url
 
   final String auth_token = "auth_token";
   final String loginRemember = "login_remember";

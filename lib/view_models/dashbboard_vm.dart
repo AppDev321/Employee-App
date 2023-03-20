@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/entities/android_params.dart';
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
@@ -50,7 +51,6 @@ class DashBoardViewModel extends BaseViewModel {
   bool isCheckInOut = false;
   bool videoCallStatus = false;
 
-
   final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
 
   final List<DropMenuItems> leaveTypes = [
@@ -69,17 +69,13 @@ class DashBoardViewModel extends BaseViewModel {
 
   int notificationCount = 0;
 
-
   //Future<AppDatabase?> get afjDatabase async => await AFJDatabaseInstance.instance.afjDatabase;
 
-
-  void insertCallDetailInDB(SocketMessageModel socketMessageModel,
-      bool isMissed) async
-  {
+  void insertCallDetailInDB(
+      SocketMessageModel socketMessageModel, bool isMissed) async {
     var now = DateTime.now();
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final callHisoryDAO = db?.callHistoryDAO as CallHistoryDAO;
-
 
     var data = CallHistoryTable(
         socketMessageModel.sendFrom.toString(),
@@ -95,14 +91,11 @@ class DashBoardViewModel extends BaseViewModel {
     await callHisoryDAO.insertCallHistoryRecord(data);
   }
 
-
-  void insertMessageDetailInDB(SocketMessageModel socketMessageModel,
-      bool isMissed) async
-  {
+  void insertMessageDetailInDB(
+      SocketMessageModel socketMessageModel, bool isMissed) async {
     var now = DateTime.now();
     final db = await AFJDatabaseInstance.instance.afjDatabase;
     final callHisoryDAO = db?.callHistoryDAO as CallHistoryDAO;
-
 
     var data = CallHistoryTable(
         socketMessageModel.sendFrom.toString(),
@@ -117,11 +110,9 @@ class DashBoardViewModel extends BaseViewModel {
         "0");
     await callHisoryDAO.insertCallHistoryRecord(data);
   }
-
 
   Future<void> getDashBoardData() async {
     setLoading(true);
-
 
     final results = await APIWebService().getDashBoardData();
 
@@ -135,7 +126,6 @@ class DashBoardViewModel extends BaseViewModel {
         dashboardStat = results.data?.stats;
         userObject = results.data!.user!;
         videoCallStatus = results.data!.isChatEnabled!;
-
 
         attendance = results.data?.attendance;
         if (results.data!.checkedIn == false &&
@@ -166,8 +156,6 @@ class DashBoardViewModel extends BaseViewModel {
     ChatViewModel chatViewModel = ChatViewModel();
     chatViewModel.getContactList();
     //*********************
-
-
   }
 
   Future<void> getNotificationCount() async {
@@ -259,14 +247,23 @@ class DashBoardViewModel extends BaseViewModel {
 
   void fetchConfig() async {
     await remoteConfig.fetchAndActivate();
-    var baseURL = remoteConfig.getString("API_BASE_URL");
-    Controller().printLogs("BASE_URL_Firebase = $baseURL");
-    Controller.appBaseURL = baseURL;
-  }
+    if(kDebugMode==false) {
+      var baseURL = remoteConfig.getString("API_BASE_URL");
+      Controller().printLogs("BASE_URL_Firebase = $baseURL");
+      Controller.appBaseURL = baseURL;
+    }
+      }
 
   Future<String> getWebSocketURL() async {
     var webSocketURL = remoteConfig.getString("WEB_SOCKET_CALL_URL");
-    Controller.webSocketURL = webSocketURL;
+    if(kDebugMode==false) {
+
+      Controller.webSocketURL = webSocketURL;
+    }
+    else
+      {
+        webSocketURL = Controller.webSocketURL;
+      }
     return webSocketURL;
   }
 
@@ -292,285 +289,276 @@ class DashBoardViewModel extends BaseViewModel {
     }
   }
 
+  showVersionDialog(context, String url) async {
+    await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        String title = "New Update Available";
+        String message =
+            "There is a newer version of app available please update it now.";
+        String btnLabel = "Update Now";
+        String btnLabelCancel = "Close";
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text(btnLabel),
+                onPressed: () async {
+                  if (await canLaunchUrl(Uri.parse(url))) {
+                    await launchUrl(Uri.parse(url));
+                  } else {
+                    throw 'Could not launch $url';
+                  }
+                },
+              ),
+              ElevatedButton(
+                child: Text(btnLabelCancel),
+                onPressed: () => exit(0),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-    showVersionDialog(context, String url) async {
-      await showDialog<String>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          String title = "New Update Available";
-          String message =
-              "There is a newer version of app available please update it now.";
-          String btnLabel = "Update Now";
-          String btnLabelCancel = "Close";
-          return WillPopScope(
-            onWillPop: () async => false,
-            child: AlertDialog(
-              title: Text(title),
-              content: Text(message),
-              actions: <Widget>[
-                ElevatedButton(
-                  child: Text(btnLabel),
-                  onPressed: () async {
-                    if (await canLaunchUrl(Uri.parse(url))) {
-                      await launchUrl(Uri.parse(url));
-                    } else {
-                      throw 'Could not launch $url';
-                    }
-                  },
-                ),
-                ElevatedButton(
-                  child: Text(btnLabelCancel),
-                  onPressed: () => exit(0),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    }
+  Future<void> getEventsListResponse() async {
+    setLoading(true);
 
-    Future<void> getEventsListResponse() async {
-      setLoading(true);
+    final results = await APIWebService().getEventsList();
 
-      final results = await APIWebService().getEventsList();
+    if (results == null) {
+      var errorString = "Check your internet connection";
+      setErrorMsg(errorString);
+      setIsErrorReceived(true);
+    } else {
+      if (results.code == 200) {
+        events = results.data!.events!;
 
-      if (results == null) {
-        var errorString = "Check your internet connection";
+        setIsErrorReceived(false);
+      } else {
+        var errorString = "";
+        for (int i = 0; i < results.errors!.length; i++) {
+          errorString += "${results.errors![i].message!}\n";
+        }
         setErrorMsg(errorString);
         setIsErrorReceived(true);
-      } else {
-        if (results.code == 200) {
-          events = results.data!.events!;
-
-          setIsErrorReceived(false);
-        } else {
-          var errorString = "";
-          for (int i = 0; i < results.errors!.length; i++) {
-            errorString += "${results.errors![i].message!}\n";
-          }
-          setErrorMsg(errorString);
-          setIsErrorReceived(true);
-        }
-      }
-
-      setResponseStatus(true);
-      setLoading(false);
-      notifyListeners();
-    }
-
-    //handle socketMessages
-    void handleSocketMessage(SocketMessageType type,
-        SocketMessageModel message) {
-      switch (type) {
-        case SocketMessageType.IncomingCall:
-          makeIncomingCall(message);
-          break;
-        case SocketMessageType.CallAlreadyAnswer:
-          FlutterCallkitIncoming.endAllCalls();
-          break;
       }
     }
 
-    void makeIncomingCall(SocketMessageModel message) {
-      var uuid = const Uuid();
-      final _currentUuid = uuid.v4();
-      var params = <String, dynamic>{
-        'id': _currentUuid,
-        'nameCaller': message.callerName,
-        'appName': 'AFJ App',
-        'avatar': 'https://i.pravatar.cc/100',
-        'handle': 'Incoming Call',
-        'type': message.callType.toString().contains("audio") ? 0 : 1,
-        'duration': 1000 * 60,
-        'textAccept': 'Accept',
-        'textDecline': 'Decline',
-        'textMissedCall': 'Missed call',
-        'textCallback': 'Call back',
-        'extra': message.toJson(),
-        'headers': <String, dynamic>{
-          'apiKey': 'Abc@123!',
-          'platform': 'flutter'
-        },
-        'android': <String, dynamic>{
-          'isCustomNotification': true,
-          'isShowLogo': false,
-          'isShowCallback': true,
-          'isShowMissedCallNotification': true,
-          'ringtonePath': 'system_ringtone_default',
-          'backgroundColor': '#0955fa',
-          'backgroundUrl': '',
-          'actionColor': '#4CAF50'
-        },
-        'ios': <String, dynamic>{
-          'iconName': 'CallKitLogo',
-          'handleType': '',
-          'supportsVideo': true,
-          'maximumCallGroups': 2,
-          'maximumCallsPerCallGroup': 1,
-          'audioSessionMode': 'default',
-          'audioSessionActive': true,
-          'audioSessionPreferredSampleRate': 44100.0,
-          'audioSessionPreferredIOBufferDuration': 0.005,
-          'supportsDTMF': true,
-          'supportsHolding': true,
-          'supportsGrouping': false,
-          'supportsUngrouping': false,
-          'ringtonePath': 'system_ringtone_default'
-        }
-      };
+    setResponseStatus(true);
+    setLoading(false);
+    notifyListeners();
+  }
 
-
-      CallKitParams callKitParams = CallKitParams(
-        id: _currentUuid,
-        nameCaller: message.callerName,
-        appName: 'AFJ App',
-        avatar: 'https://i.pravatar.cc/100',
-        handle: 'Incoming Call',
-        type:  message.callType.toString().contains("audio") ? 0 : 1,
-        textAccept: 'Accept',
-        textDecline: 'Decline',
-        textMissedCall: 'Missed call',
-        textCallback: 'Call back',
-        duration: 1000 * 60,
-        android: const AndroidParams(
-            isCustomNotification: true,
-            isShowLogo: false,
-            isShowCallback: false,
-            isShowMissedCallNotification: true,
-            ringtonePath: 'system_ringtone_default',
-            backgroundColor: '#0955fa',
-            backgroundUrl: 'https://i.pravatar.cc/500',
-            actionColor: '#4CAF50',
-            incomingCallNotificationChannelName: "Incoming Call",
-            missedCallNotificationChannelName: "Missed Call"),
-        ios: IOSParams(
-          iconName: 'CallKitLogo',
-          handleType: 'generic',
-          supportsVideo: true,
-          maximumCallGroups: 2,
-          maximumCallsPerCallGroup: 1,
-          audioSessionMode: 'default',
-          audioSessionActive: true,
-          audioSessionPreferredSampleRate: 44100.0,
-          audioSessionPreferredIOBufferDuration: 0.005,
-          supportsDTMF: true,
-          supportsHolding: true,
-          supportsGrouping: false,
-          supportsUngrouping: false,
-          ringtonePath: 'system_ringtone_default',
-        ),
-      );
-
-      FlutterCallkitIncoming.showCallkitIncoming(callKitParams);
-
-      listenerEvent((callback) {
-        //   Controller().printLogs('HOME: ${event?.body['extra']}');
-        switch (callback.event) {
-          case Event.ACTION_CALL_ACCEPT:
-            message.callType.toString().contains("audio") ?
-            Get.to(() =>
-                AudioCallScreen(
-                  targetUserID: message.sendFrom.toString(),
-                  isIncommingCall: true,
-                  socketMessageModel: message,
-                )) :
-            Get.to(() =>
-                VideoCallScreen(
-                  targetUserID: message.sendFrom.toString(),
-                  isIncommingCall: true,
-                  socketMessageModel: message,
-                ));
-
-            insertCallDetailInDB(message, false);
-
-            break;
-          case Event.ACTION_CALL_TIMEOUT:
-            insertCallDetailInDB(message, true);
-            break;
-        }
-      });
-    }
-
-    void listenerEvent(Function? callback) {
-      FlutterCallkitIncoming.onEvent.listen((event) {
-        switch (event?.event) {
-          case Event.ACTION_CALL_INCOMING:
-          // TODO: received an incoming call
-            break;
-          case Event.ACTION_CALL_START:
-          // TODO: started an outgoing call
-          // TODO: show screen calling in Flutter
-            break;
-          case Event.ACTION_CALL_ACCEPT:
-            if (callback != null) {
-              callback(event);
-            }
-            break;
-          case Event.ACTION_CALL_DECLINE:
-            if (callback != null) {
-              callback(event);
-            }
-
-            break;
-          case Event.ACTION_CALL_ENDED:
-
-            break;
-          case Event.ACTION_CALL_TIMEOUT:
-            if (callback != null) {
-              callback(event);
-            }
-            break;
-          case Event.ACTION_CALL_CALLBACK:
-          // TODO: only Android - click action `Call back` from missed call notification
-            break;
-          case Event.ACTION_CALL_TOGGLE_HOLD:
-          // TODO: only iOS
-            break;
-          case Event.ACTION_CALL_TOGGLE_MUTE:
-          // TODO: only iOS
-            break;
-          case Event.ACTION_CALL_TOGGLE_DMTF:
-          // TODO: only iOS
-            break;
-          case Event.ACTION_CALL_TOGGLE_GROUP:
-          // TODO: only iOS
-            break;
-          case Event.ACTION_CALL_TOGGLE_AUDIO_SESSION:
-          // TODO: only iOS
-            break;
-          case Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
-          // TODO: only iOS
-            break;
-        }
-      });
+  //handle socketMessages
+  void handleSocketMessage(SocketMessageType type, SocketMessageModel message) {
+    switch (type) {
+      case SocketMessageType.IncomingCall:
+        makeIncomingCall(message);
+        break;
+      case SocketMessageType.CallAlreadyAnswer:
+        FlutterCallkitIncoming.endAllCalls();
+        break;
     }
   }
 
-  class FirebaseAppUpdate {
+  void makeIncomingCall(SocketMessageModel message) {
+    var uuid = const Uuid();
+    final _currentUuid = uuid.v4();
+    var params = <String, dynamic>{
+      'id': _currentUuid,
+      'nameCaller': message.callerName,
+      'appName': 'AFJ App',
+      'avatar': 'https://i.pravatar.cc/100',
+      'handle': 'Incoming Call',
+      'type': message.callType.toString().contains("audio") ? 0 : 1,
+      'duration': 1000 * 60,
+      'textAccept': 'Accept',
+      'textDecline': 'Decline',
+      'textMissedCall': 'Missed call',
+      'textCallback': 'Call back',
+      'extra': message.toJson(),
+      'headers': <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+      'android': <String, dynamic>{
+        'isCustomNotification': true,
+        'isShowLogo': false,
+        'isShowCallback': true,
+        'isShowMissedCallNotification': true,
+        'ringtonePath': 'system_ringtone_default',
+        'backgroundColor': '#0955fa',
+        'backgroundUrl': '',
+        'actionColor': '#4CAF50'
+      },
+      'ios': <String, dynamic>{
+        'iconName': 'CallKitLogo',
+        'handleType': '',
+        'supportsVideo': true,
+        'maximumCallGroups': 2,
+        'maximumCallsPerCallGroup': 1,
+        'audioSessionMode': 'default',
+        'audioSessionActive': true,
+        'audioSessionPreferredSampleRate': 44100.0,
+        'audioSessionPreferredIOBufferDuration': 0.005,
+        'supportsDTMF': true,
+        'supportsHolding': true,
+        'supportsGrouping': false,
+        'supportsUngrouping': false,
+        'ringtonePath': 'system_ringtone_default'
+      }
+    };
+
+    CallKitParams callKitParams = CallKitParams(
+      id: _currentUuid,
+      nameCaller: message.callerName,
+      appName: 'AFJ App',
+      avatar: 'https://i.pravatar.cc/100',
+      handle: 'Incoming Call',
+      type: message.callType.toString().contains("audio") ? 0 : 1,
+      textAccept: 'Accept',
+      textDecline: 'Decline',
+      textMissedCall: 'Missed call',
+      textCallback: 'Call back',
+      duration: 1000 * 60,
+      android: const AndroidParams(
+          isCustomNotification: true,
+          isShowLogo: false,
+          isShowCallback: false,
+          isShowMissedCallNotification: true,
+          ringtonePath: 'system_ringtone_default',
+          backgroundColor: '#0955fa',
+          backgroundUrl: 'https://i.pravatar.cc/500',
+          actionColor: '#4CAF50',
+          incomingCallNotificationChannelName: "Incoming Call",
+          missedCallNotificationChannelName: "Missed Call"),
+      ios: IOSParams(
+        iconName: 'CallKitLogo',
+        handleType: 'generic',
+        supportsVideo: true,
+        maximumCallGroups: 2,
+        maximumCallsPerCallGroup: 1,
+        audioSessionMode: 'default',
+        audioSessionActive: true,
+        audioSessionPreferredSampleRate: 44100.0,
+        audioSessionPreferredIOBufferDuration: 0.005,
+        supportsDTMF: true,
+        supportsHolding: true,
+        supportsGrouping: false,
+        supportsUngrouping: false,
+        ringtonePath: 'system_ringtone_default',
+      ),
+    );
+
+    FlutterCallkitIncoming.showCallkitIncoming(callKitParams);
+
+    listenerEvent((callback) {
+      //   Controller().printLogs('HOME: ${event?.body['extra']}');
+      switch (callback.event) {
+        case Event.ACTION_CALL_ACCEPT:
+          message.callType.toString().contains("audio")
+              ? Get.to(() => AudioCallScreen(
+                    targetUserID: message.sendFrom.toString(),
+                    isIncommingCall: true,
+                    socketMessageModel: message,
+                  ))
+              : Get.to(() => VideoCallScreen(
+                    targetUserID: message.sendFrom.toString(),
+                    isIncommingCall: true,
+                    socketMessageModel: message,
+                  ));
+
+          insertCallDetailInDB(message, false);
+
+          break;
+        case Event.ACTION_CALL_TIMEOUT:
+          insertCallDetailInDB(message, true);
+          break;
+      }
+    });
+  }
+
+  void listenerEvent(Function? callback) {
+    FlutterCallkitIncoming.onEvent.listen((event) {
+      switch (event?.event) {
+        case Event.ACTION_CALL_INCOMING:
+          // TODO: received an incoming call
+          break;
+        case Event.ACTION_CALL_START:
+          // TODO: started an outgoing call
+          // TODO: show screen calling in Flutter
+          break;
+        case Event.ACTION_CALL_ACCEPT:
+          if (callback != null) {
+            callback(event);
+          }
+          break;
+        case Event.ACTION_CALL_DECLINE:
+          if (callback != null) {
+            callback(event);
+          }
+
+          break;
+        case Event.ACTION_CALL_ENDED:
+          break;
+        case Event.ACTION_CALL_TIMEOUT:
+          if (callback != null) {
+            callback(event);
+          }
+          break;
+        case Event.ACTION_CALL_CALLBACK:
+          // TODO: only Android - click action `Call back` from missed call notification
+          break;
+        case Event.ACTION_CALL_TOGGLE_HOLD:
+          // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_MUTE:
+          // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_DMTF:
+          // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_GROUP:
+          // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_AUDIO_SESSION:
+          // TODO: only iOS
+          break;
+        case Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
+          // TODO: only iOS
+          break;
+      }
+    });
+  }
+}
+
+class FirebaseAppUpdate {
   List<AppData>? appData;
 
   FirebaseAppUpdate({this.appData});
 
   FirebaseAppUpdate.fromJson(Map<String, dynamic> json) {
-  if (json['app_data'] != null) {
-  appData = <AppData>[];
-  json['app_data'].forEach((v) {
-  appData!.add(AppData.fromJson(v));
-  });
-  }
+    if (json['app_data'] != null) {
+      appData = <AppData>[];
+      json['app_data'].forEach((v) {
+        appData!.add(AppData.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = <String, dynamic>{};
-  if (appData != null) {
-  data['app_data'] = appData!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (appData != null) {
+      data['app_data'] = appData!.map((v) => v.toJson()).toList();
+    }
+    return data;
   }
-  return data;
-  }
-  }
+}
 
-  class AppData {
+class AppData {
   String? appName;
   String? version;
   String? downloadUrl;
@@ -578,16 +566,16 @@ class DashBoardViewModel extends BaseViewModel {
   AppData({this.appName, this.version, this.downloadUrl});
 
   AppData.fromJson(Map<String, dynamic> json) {
-  appName = json['app_name'];
-  version = json['version'];
-  downloadUrl = json['download_url'];
+    appName = json['app_name'];
+    version = json['version'];
+    downloadUrl = json['download_url'];
   }
 
   Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = <String, dynamic>{};
-  data['app_name'] = appName;
-  data['version'] = version;
-  data['download_url'] = downloadUrl;
-  return data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['app_name'] = appName;
+    data['version'] = version;
+    data['download_url'] = downloadUrl;
+    return data;
   }
-  }
+}

@@ -413,7 +413,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
 
   pickFile(FileType type, ValueChanged<PlatformFile> imageFiles) async {
     final result =
-    await FilePicker.platform.pickFiles(allowMultiple: true, type: type);
+    await FilePicker.platform.pickFiles(allowMultiple: false, type: type);
 
     if (result != null) {
       final file = result!.files.first;
@@ -446,6 +446,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
           widget.onTextMessageSent(value);
         });
         break;
+      case ChatMessageType.file:
       case ChatMessageType.image:
       case ChatMessageType.audio:
       case ChatMessageType.video:
@@ -466,6 +467,8 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         });
         widget.attachmentInsertedCallback(data);
         break;
+
+
     }
   }
 }

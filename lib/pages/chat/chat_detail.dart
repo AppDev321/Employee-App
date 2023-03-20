@@ -50,7 +50,7 @@ class _ChatDetailPageState extends State<ChatDetailPage>
     for (var message in messages) {
     //  messageStream.sink.add(message);
     }
-  print("message db = ${messages.length }");
+
 
     return messages;
   }
@@ -279,13 +279,13 @@ class _ChatDetailPageState extends State<ChatDetailPage>
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasData) {
                   final messages = snapshot.data as List<MessagesTable>;
-                  print("message db2 = ${messages.length }");
+
                   return StreamBuilder<MessagesTable>(
                     stream: messageStream.stream,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         var message = snapshot.data as MessagesTable;
-                        print("message stream = ${message.content }");
+
                         messages.add(message);
                       }
 
